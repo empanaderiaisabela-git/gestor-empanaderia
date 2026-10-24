@@ -119,7 +119,7 @@ cargando en el Sprint 1 en paralelo.
 | 6   | [BUG-5](#bug-5--consultas-en-paralelo-sobre-la-misma-conexión-en-el-dashboard) | Consultas en paralelo en el dashboard        | En revisión | T-2                | 30 min          |
 | 7   | [BUG-6](#bug-6--datos-sensibles-en-los-logs-de-desarrollo-y-lecturas-de-más)   | Datos sensibles en logs y lecturas de más    | En revisión | T-2                | 35 min          |
 | 8   | [BUG-9](#bug-9--errores-de-base-de-datos-mal-traducidos)                       | Errores de base de datos mal traducidos      | En revisión | T-2                | 40 min          |
-| 9   | [T-4](#t-4--bases-de-la-arquitectura-objetivo)                                 | Bases de la arquitectura objetivo            | Pendiente   | T-3                | 2 h             |
+| 9   | [T-4](#t-4--bases-de-la-arquitectura-objetivo)                                 | Bases de la arquitectura objetivo            | En revisión | T-3                | 2 h             |
 | 10  | [BUG-1](#bug-1--acciones-de-fotos-de-producto-sin-control-de-sesión)           | Acciones de fotos sin control de sesión      | Pendiente   | T-4                | 45 min          |
 | 11  | [BUG-7](#bug-7--el-password_hash-llega-al-navegador)                           | El `password_hash` llega al navegador        | Pendiente   | T-4                | 50 min          |
 | 12  | [BUG-8](#bug-8--lecturas-de-productos-y-proveedores-sin-sesión)                | Lecturas de productos y proveedores sin sesión | Pendiente | T-4                | 30 min          |
@@ -359,12 +359,12 @@ nuevo no pueda violarlas.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
-| Dueño        | —         |
-| Inicio       | —         |
+| Estado       | En revisión |
+| Dueño        | Ignacio Tomas |
+| Inicio       | 2026-10-24 |
 | Tamaño       | M         |
 | Depende de   | T-3       |
-| Plan         | —         |
+| Plan         | [`docs/plans/T-4-bases-arquitectura.md`](docs/plans/T-4-bases-arquitectura.md) |
 | Merge        | —         |
 | Horas reales | —         |
 
@@ -373,13 +373,30 @@ pueda migrarse o crearse siguiendo `docs/architecture.md`.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · `AppError(code)` y su catálogo en `src/lib/errors/`, con los mismos textos que `src/config/messages.ts`; el código heredado muestra los mismos mensajes · Estimación: 45 min · Completado: —
+- [x] **CA-1** · `AppError(code)` y su catálogo en `src/lib/errors/`, con los mismos textos que `src/config/messages.ts`; el código heredado muestra los mismos mensajes · Estimación: 45 min · Completado: 2026-10-24 17:20
 
-- [ ] **CA-2** · El caso de error de `ActionResult` suma `code` y conserva `error` · Estimación: 15 min · Completado: —
+- [x] **CA-2** · El caso de error de `ActionResult` suma `code` y conserva `error` · Estimación: 15 min · Completado: 2026-10-24 17:20
 
-- [ ] **CA-3** · `withTransaction` en `src/lib/db/`, `import 'server-only'` en `src/lib/db/index.ts` y `formatDateTime` en `America/Argentina/Buenos_Aires` · Estimación: 30 min · Completado: —
+- [x] **CA-3** · `withTransaction` en `src/lib/db/`, `import 'server-only'` en `src/lib/db/index.ts` y `formatDateTime` en `America/Argentina/Buenos_Aires` · Estimación: 30 min · Completado: 2026-10-24 17:20
 
-- [ ] **CA-4** · Helpers de test `asUser({ role })` y `truncateAll()`, con un test de `asUser` contra `verifyAuthOrAdmin` · Estimación: 30 min · Completado: —
+- [x] **CA-4** · Helpers de test `asUser({ role })` y `truncateAll()`, con un test de `asUser` contra `verifyAuthOrAdmin` · Estimación: 30 min · Completado: 2026-10-24 17:20
+
+**Notas**
+
+- **CA-1**: códigos `VALIDATION`, `UNAUTHENTICATED`, `SESSION_EXPIRED`, `INACTIVE_USER`, `FORBIDDEN`, `NOT_FOUND`,
+  `DUPLICATE`, `HAS_RELATIONS`, `RELATION_NOT_FOUND`, `STALE_VERSION` y `UNEXPECTED`, con los textos que ya veía el
+  usuario (los de `MESSAGES` y los de `verifyAuthOrAdmin`/`verifyToken`, que ahora lanzan `AppError`).
+  `src/lib/errors.ts` pasó a `src/lib/errors/legacy-errors.ts`, y `@/lib/errors` sigue resolviendo para los 12
+  archivos que lo importan.
+- **CA-2**: `code` es opcional en el tipo, para no romper el código heredado. `fail(code)` y
+  `toActionFailure(error, entidad)` lo completan siempre, y el segundo nunca filtra el mensaje de un error desconocido.
+- **CA-3**: con `server-only`, un script corrido con `tsx` sin la condición falla (verificado). Los scripts `db:*`, el
+  paso de seed de `reset-full` y `test:e2e` corren con `--conditions=react-server`. `db:seed` contra `db-test` y
+  `next build` funcionan.
+- **CA-4**: `truncateAll()` se había adelantado en BUG-5. `asUser` usa un `next/headers` simulado (setup global) y
+  un spy de `getUserById`. En unit, `@/lib/db` falla al usarse.
+- **Para T-6**: el `webServer` de Playwright tiene que vaciar `NODE_OPTIONS`, porque la condición `react-server`
+  aplicada a `next start` rompería el render.
 
 ### T-5 · Proveedores como feature molde
 

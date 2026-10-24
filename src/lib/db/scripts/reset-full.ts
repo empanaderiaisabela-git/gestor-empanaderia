@@ -24,7 +24,7 @@ try {
   execSync('npm run db:migrate', { stdio: 'inherit' });
 
   console.log('Step 4: Seeding initial data (setup-initial-data.ts)...');
-  execSync('npx tsx src/lib/db/scripts/setup-initial-data.ts', { stdio: 'inherit' });
+  execSync('npx tsx --conditions=react-server src/lib/db/scripts/setup-initial-data.ts', { stdio: 'inherit' });
 
   console.log('✅ Full Database Reset completed successfully!');
 } catch (error) {

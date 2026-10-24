@@ -1,8 +1,8 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
 import { MESSAGES } from '@/config/messages';
-import { handleDatabaseError } from './db-errors';
-import { ConcurrencyError, DuplicateEntityError } from './errors';
+import { databaseErrorCode, handleDatabaseError, toActionFailure } from './db-errors';
+import { AppError, ConcurrencyError, DuplicateEntityError } from './errors';
 
 const { DATABASE } = MESSAGES.ERROR;
 const NOT_PRESENT = 'Key (provider_id)=(1) is not present in table "providers".';
@@ -22,6 +22,27 @@ describe('handleDatabaseError', () => {
     { caso: 'algo que no es un error', error: null, expected: DATABASE.GENERIC('Proveedor') },
   ])('traduce $caso', ({ error, expected }) => {
     expect(handleDatabaseError(error, 'Proveedor')).toBe(expected);
+  });
+
+  it('un AppError conserva su propio mensaje', () => {
+    expect(handleDatabaseError(new AppError('NOT_FOUND', { entity: 'Usuario' }), 'Proveedor')).toBe(DATABASE.NOT_FOUND('Usuario'));
+  });
+
+  it.each([
+    { caso: 'un AppError', error: new AppError('FORBIDDEN'), expected: 'FORBIDDEN' },
+    { caso: 'un 23503 de registro referenciado', error: { cause: { code: '23503', detail: STILL_REFERENCED } }, expected: 'HAS_RELATIONS' },
+    { caso: 'un ConcurrencyError', error: new ConcurrencyError(), expected: 'STALE_VERSION' },
+    { caso: 'un error desconocido', error: new Error('x'), expected: null },
+  ])('databaseErrorCode clasifica $caso', ({ error, expected }) => {
+    expect(databaseErrorCode(error)).toBe(expected);
+  });
+
+  it('toActionFailure arma el ActionResult de error con code', () => {
+    expect(toActionFailure({ cause: { code: '23505' } }, 'Proveedor')).toEqual({ success: false, code: 'DUPLICATE', error: DATABASE.UNIQUE_VIOLATION });
+  });
+
+  it('toActionFailure no filtra al cliente el mensaje de un error desconocido', () => {
+    expect(toActionFailure(new Error('detalle interno'), 'Proveedor')).toEqual({ success: false, code: 'UNEXPECTED', error: DATABASE.GENERIC('Proveedor') });
   });
 
   it('nunca lanza y siempre devuelve un mensaje, sea cual sea el error', () => {

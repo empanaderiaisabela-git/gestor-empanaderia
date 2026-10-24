@@ -109,13 +109,22 @@ Detalle en [`docs/architecture.md`](architecture.md).
   - `services/`: hoy sólo en `stats`.
   - `actions/`, `store/` (Zustand) y `ui/`.
   - `testing/`: fakes y builders; hoy sólo `stats/testing/seed-dashboard.ts`.
-- Helpers de test en `src/test/`: la guarda de `db-test`, el `globalSetup` de integración y `truncateAll()`.
+- Helpers de test en `src/test/`:
+  - La guarda de `db-test`, el `globalSetup` de integración y `truncateAll()`.
+  - `asUser({ role })`, que simula la sesión, y los setups que simulan `next/headers` y bloquean la base en unit.
+- Piezas transversales (T-4): el catálogo `AppError(code)` en `src/lib/errors/`, `fail(code)` en
+  `src/lib/action-result.ts`, `toActionFailure(error)` en `src/lib/db-errors.ts`, `withTransaction` en
+  `src/lib/db/transaction.ts` y `formatDateTime` en `src/lib/format-date-time.ts`.
+- `src/lib/db/index.ts` lleva `import 'server-only'`. Los scripts `db:*` y el E2E corren con
+  `--conditions=react-server`, ya configurado en `package.json`. Si agregás un script que importe `@/lib/db`, sumale
+  esa condición.
 - Doc por feature en `docs/features/<f>/README.md`; hoy sólo `stats`.
 - Schema de la base en `src/lib/db/schema.ts`.
 - **Seguridad**:
   - JWT en la cookie `session`.
   - `src/proxy.ts` filtra por ruta y rol, pero es sólo una barrera de navegación.
-  - La barrera real está en cada Server Action, con `verifyAuthOrAdmin`.
+  - La barrera real está en cada Server Action, con `verifyAuthOrAdmin`, que lanza `AppError` (`UNAUTHENTICATED`,
+    `SESSION_EXPIRED`, `INACTIVE_USER` o `FORBIDDEN`).
 - **Concurrencia optimista**: toda tabla que recibe `UPDATE` tiene `version`. El update filtra por `id` y
   `version`; si afecta 0 filas, hay conflicto y el usuario tiene que sincronizar. El stock se descuenta con un
   `UPDATE` condicional atómico.
@@ -132,7 +141,7 @@ Detalle en [`docs/architecture.md`](architecture.md).
 | Capas | `ui → actions → service → repository → db`. Sólo el repositorio toca Drizzle |
 | SQL | Sin SQL plano. `sql` de Drizzle sólo dentro de `check()` del schema |
 | Restricciones | Todo lo que Postgres pueda garantizar va en el schema (`notNull`, `unique`, `check`, FKs) |
-| Errores | `AppError(code)` de un catálogo (`src/lib/errors`, a crear) con mensaje en español |
+| Errores | `AppError(code)` del catálogo (`src/lib/errors`) con mensaje en español; `fail(code)` / `toActionFailure(error)` arman el `ActionResult` |
 | Seguridad | Sesión y rol verificados en el servidor; Zod `strictObject` en la entrada; respuesta validada con `RowSchema` |
 | Fechas | UTC al guardar y transmitir; se muestran en `America/Argentina/Buenos_Aires` |
 | Secretos | Nunca se commitea un `.env`; toda variable nueva va a `.env.example` |

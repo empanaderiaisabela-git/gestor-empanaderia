@@ -1,6 +1,6 @@
-import { MESSAGES } from '@/config/messages';
+import type { ActionFailure } from './action-result';
+import { AppError, type ErrorCode, errorMessage } from './errors';
 
-const { DATABASE } = MESSAGES.ERROR;
 const FOREIGN_KEY = '23503';
 const UNIQUE = '23505';
 
@@ -34,12 +34,24 @@ function isUnique({ code, message }: ErrorFacts): boolean {
   return code === UNIQUE || message.includes('unique constraint') || message.includes('already exists');
 }
 
-export function handleDatabaseError(error: unknown, entityName: string): string {
+export function databaseErrorCode(error: unknown): ErrorCode | null {
+  if (error instanceof AppError) return error.code;
   const facts = factsOf(error);
-  if (isForeignKey(facts)) {
-    return facts.detail.includes('is still referenced') ? DATABASE.FOREIGN_KEY_VIOLATION : DATABASE.RELATION_NOT_FOUND;
-  }
-  if (isUnique(facts) || facts.name === 'DuplicateEntityError') return DATABASE.UNIQUE_VIOLATION;
-  if (facts.message.includes('failed query') || facts.name === 'ConcurrencyError') return DATABASE.CONCURRENCY;
-  return text(error, 'message') || DATABASE.GENERIC(entityName);
+  if (isForeignKey(facts)) return facts.detail.includes('is still referenced') ? 'HAS_RELATIONS' : 'RELATION_NOT_FOUND';
+  if (isUnique(facts) || facts.name === 'DuplicateEntityError') return 'DUPLICATE';
+  if (facts.message.includes('failed query') || facts.name === 'ConcurrencyError') return 'STALE_VERSION';
+  return null;
+}
+
+export function handleDatabaseError(error: unknown, entityName: string): string {
+  if (error instanceof AppError) return error.message;
+  const code = databaseErrorCode(error);
+  if (code !== null) return errorMessage(code, entityName);
+  return text(error, 'message') || errorMessage('UNEXPECTED', entityName);
+}
+
+export function toActionFailure(error: unknown, entityName: string): ActionFailure {
+  if (error instanceof AppError) return { success: false, code: error.code, error: error.message };
+  const code = databaseErrorCode(error) ?? 'UNEXPECTED';
+  return { success: false, code, error: errorMessage(code, entityName) };
 }

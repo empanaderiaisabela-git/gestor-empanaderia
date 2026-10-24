@@ -29,7 +29,13 @@ Herramientas: Vitest para unit, tipos, contrato, fuzz, integración y componente
 
 Una Server Action depende de `next/headers` (cookies) y de los repositorios. En el test de contrato:
 
-- La sesión se simula con un helper `asUser({ role })` que mockea `cookies()` con un JWT firmado para ese rol.
+- La sesión se simula con `asUser({ role, isActive?, username? })` (`src/test/as-user.ts`). El helper firma un JWT
+  para ese rol, lo guarda en la cookie `session` y hace un `vi.spyOn` de `userRepository.getUserById` para que
+  `verifyAuthOrAdmin` encuentre al usuario. `next/headers` está simulado para todos los tests por
+  `src/test/setup/next-headers.setup.ts`, que además limpia cookies, spies y variables después de cada test. Los
+  ids de los usuarios de test están en `TEST_USER_IDS`, por si un test de integración necesita insertarlos.
+- En el proyecto unit, `src/test/setup/no-database.setup.ts` reemplaza `@/lib/db` por un objeto que falla al
+  usarse: un test unit nunca toca la base.
 - Los repositorios del feature, y el de usuarios que usa `verifyAuthOrAdmin`, se reemplazan por sus fakes en
   memoria con `vi.mock`.
 - Se llama a la action exportada como lo haría el cliente y se verifica sólo lo observable: `success`, el código
@@ -178,7 +184,8 @@ Fuera de la cobertura: migraciones, `src/lib/db/scripts/`, `src/scripts/`, archi
 sólo se prueba por E2E (`proxy.ts`, layouts). `reports/` se agrega al `.gitignore` al instalar Stryker.
 
 Cómo se mide hoy (`vitest.config.mts`): sólo cuentan los archivos que importan los tests unit (comportamiento de
-Vitest 5), y se excluyen `eslint/`, `scripts/` y `src/config/` (textos y columnas de tablas).
+Vitest 5), y se excluyen `eslint/`, `scripts/`, `src/config/` (textos y columnas de tablas), los repositorios y
+`src/lib/db/schema.ts`, que se prueban con integración.
 
 ## Matriz de pruebas del incremento: Sprint N
 

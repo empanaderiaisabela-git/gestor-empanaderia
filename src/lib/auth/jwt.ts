@@ -1,5 +1,6 @@
 import { SignJWT, jwtVerify } from 'jose';
 import { UserSession, userSessionSchema } from '@/features/auth/domain/auth.schema';
+import { AppError } from '@/lib/errors';
 
 function getSecretKey(): Uint8Array {
   const secret = process.env.JWT_SECRET;
@@ -31,6 +32,6 @@ export async function verifyToken(token: string): Promise<UserSession> {
     const { payload } = await jwtVerify(token, secretKey);
     return userSessionSchema.parse(payload);
   } catch (error) {
-    throw new Error('El token es inválido o ha expirado');
+    throw new AppError('SESSION_EXPIRED', { cause: error });
   }
 }

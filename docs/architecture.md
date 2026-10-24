@@ -99,8 +99,10 @@ ui (src/app, features/*/ui) → actions → services → repository → db
 Por qué:
 
 - **El navegador nunca importa código con acceso a datos.** `@/lib/db` abre un pool de `pg` con credenciales.
-  Los archivos de servidor (`lib/db/index.ts`, repositorios, services) llevan `import 'server-only'` para que el
-  build falle si un Client Component los importa **(a agregar)**.
+  `lib/db/index.ts` lleva `import 'server-only'` (T-4) para que el build falle si un Client Component lo importa, y
+  con él cualquier repositorio o service que lo use. Los scripts `db:*` y el E2E, que corren fuera de Next, usan la
+  condición `--conditions=react-server`, que resuelve `server-only` a un módulo vacío (ya configurada en los scripts
+  de `package.json`). En Vitest, un alias lo reemplaza por `src/test/empty-module.ts`.
 - **Las actions no llaman al repositorio.** Las reglas de negocio (stock suficiente, permisos finos,
   reactivación por DNI duplicado) tienen que poder testearse sin Next.js ni base de datos: viven en el service y
   se prueban con un repositorio fake.
@@ -137,7 +139,9 @@ Con el tope de 100 líneas, cuando un archivo crece se parte por operación (`cr
 | `src/lib/db/scripts/` | Seeds, reset, stress test y backfills (`npm run db:*`). |
 | `src/lib/auth/` | `jwt.ts` firma y verifica tokens con `jose`. `utils.ts` expone `verifyAuthOrAdmin`, que valida el token, vuelve a leer al usuario de la base (tiene que seguir activo) y controla el rol. |
 | `src/lib/audit-logs.ts` | `recordAuditLog`: registra cada mutación dentro de la misma transacción. |
-| `src/lib/errors.ts`, `src/lib/db-errors.ts` | Errores de dominio (`ConcurrencyError`, `DuplicateEntityError`) y traducción de errores de Postgres a mensajes en español: 23505 → duplicado; 23503 → "entidad relacionada inexistente" al insertar o "registros relacionados" al borrar. Lee el error original también en `error.cause`, donde lo deja Drizzle 0.45 (BUG-9). |
+| `src/lib/db-errors.ts` | Traducción de errores a código y mensaje: `databaseErrorCode` (23505 → `DUPLICATE`; 23503 → `RELATION_NOT_FOUND` al insertar o `HAS_RELATIONS` al borrar; `Failed query` → `STALE_VERSION`), `handleDatabaseError` (texto, para el código heredado) y `toActionFailure` (`ActionResult` con `code`, para el código nuevo; nunca filtra el mensaje de un error desconocido). Lee el error original también en `error.cause`, donde lo deja Drizzle 0.45 (BUG-9). |
+| `src/lib/db/transaction.ts` | `withTransaction(work)` y el tipo `DbTransaction`: el único acceso a la transacción que pueden usar los services. |
+| `src/lib/format-date-time.ts` | `formatDateTime(fecha)`: `DD/MM/AAAA, HH:mm` en `America/Argentina/Buenos_Aires`; "—" si la fecha no es válida. |
 | `src/lib/cloudinary.ts` | Subida y borrado de fotos. |
 | `src/scripts/` | Mantenimiento de la base (`enable-unaccent`). |
 
@@ -164,9 +168,9 @@ Con el tope de 100 líneas, cuando un archivo crece se parte por operación (`cr
 | Ruta | Contenido |
 |---|---|
 | `src/features/<f>/domain/` | Schemas Zod y tipos inferidos: `*CreateSchema` (entrada), `*UpdateSchema` (parcial + `version`) y `*RowSchema` (lo que devuelve el servidor). El formulario y la action validan con el **mismo** schema. |
-| `src/lib/action-result.ts` | `ActionResult<T>`: resultado tipado de toda action. Éxito con `data` y `message`, o fallo con `error`. |
+| `src/lib/action-result.ts` | `ActionResult<T>`: resultado tipado de toda action. Éxito con `data` y `message`, o fallo con `error` (texto en español) y `code` del catálogo. `code` es opcional para no romper el código heredado; el código nuevo arma el fallo con `fail(code)` o `toActionFailure(error)`. |
 | `src/lib/utils.ts`, `src/lib/zod-helpers.ts` | Utilidades puras: normalización para búsqueda, slugs, helpers de Zod. |
-| `src/lib/errors/` | **(a crear)** Catálogo `AppError(code)` con su mensaje en español. Reemplaza a `MESSAGES.ERROR` + `handleDatabaseError`, y el cliente puede reaccionar por `code` en vez de comparar textos. |
+| `src/lib/errors/` | Catálogo de códigos (`codes.ts`: `VALIDATION`, `UNAUTHENTICATED`, `SESSION_EXPIRED`, `INACTIVE_USER`, `FORBIDDEN`, `NOT_FOUND`, `DUPLICATE`, `HAS_RELATIONS`, `RELATION_NOT_FOUND`, `STALE_VERSION`, `UNEXPECTED`), `AppError(code)` con su mensaje en español (los mismos textos que ya veía el usuario) y los errores heredados `ConcurrencyError` y `DuplicateEntityError`. `verifyAuthOrAdmin` lanza `AppError` (T-4). El cliente puede reaccionar por `code` en vez de comparar textos. |
 
 ## Flujo de una petición
 
@@ -282,10 +286,11 @@ Convenciones:
 
 - Claves `uuid` generadas por Postgres (`gen_random_uuid()`), con `created_at` y `updated_at`.
 - Dinero en `numeric(10,2)`. Drizzle lo devuelve como string y el `*RowSchema` lo convierte a número.
-- Búsquedas sin distinguir acentos con la extensión `unaccent`, que hay que habilitar una vez por base
-  (`npm run db:enable-unaccent`).
+- Búsquedas sin distinguir acentos con la extensión `unaccent`, que la migración `0005_enable-unaccent` habilita en
+  toda base que migre (`npm run db:enable-unaccent` queda como alternativa manual).
 - Fechas: se guardan y viajan en UTC y se muestran en `America/Argentina/Buenos_Aires` con un único
-  `formatDateTime` **(a crear)**.
+  `formatDateTime` (`src/lib/format-date-time.ts`, T-4). El código heredado todavía usa `toLocaleString('es-AR')` sin
+  zona (brecha de fechas).
 - Cambio de schema: editar `schema.ts` → `npm run db:generate -- --name <descripcion>` → revisar el SQL generado
   → `npm run db:migrate`.
 
