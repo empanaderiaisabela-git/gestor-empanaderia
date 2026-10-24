@@ -1,7 +1,12 @@
+import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { configDefaults, defineConfig } from 'vitest/config';
 
 const emptyModule = fileURLToPath(new URL('./src/test/empty-module.ts', import.meta.url));
+const legacyFiles: string[] = JSON.parse(readFileSync(new URL('./eslint-legacy.json', import.meta.url), 'utf8'));
+const literalGlob = (path: string): string => path.replace(/[[\]()*?{}!+@]/g, (char) => `\\${char}`);
+
+const NOT_COVERED = ['eslint/**', 'scripts/**', 'src/config/**', 'src/**/repository/**', 'src/lib/db/schema.ts', 'src/test/**', 'src/**/testing/**'];
 
 export default defineConfig({
   resolve: {
@@ -14,7 +19,7 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'html', 'lcov'],
       reportsDirectory: './coverage',
-      exclude: ['eslint/**', 'scripts/**', 'src/config/**', 'src/**/repository/**', 'src/lib/db/schema.ts'],
+      exclude: [...NOT_COVERED, ...legacyFiles.map(literalGlob)],
       thresholds: { lines: 90, functions: 90, statements: 90, branches: 85 },
     },
     projects: [

@@ -43,6 +43,12 @@ describe('computeDashboardStats', () => {
   it('muestra "Sistema" cuando la venta no tiene vendedor', () => {
     expect(computeDashboardStats({ ...EMPTY, sales: [aSale({ vendor: null })] }).topSellers[0].username).toBe('Sistema');
   });
+
+  it('tolera valores vacíos como lo hacía el cálculo original', () => {
+    const sales = [aSale({ vendorId: '', vendor: { username: '' }, items: [{ unitCost: '', quantity: 3 }] })];
+    const stats = computeDashboardStats({ products: [{ stock: 0, purchasePrice: '' }], sales, losses: [{ quantity: 0, product: { purchasePrice: '' } }] });
+    expect(stats).toMatchObject({ totalEquipos: 0, currentInventoryCost: 0, totalLossCost: 0, netProfit: 100, topSellers: [{ username: 'Sistema', total: 100, count: 1 }] });
+  });
 });
 
 describe('toDashboardRange', () => {

@@ -160,7 +160,7 @@ exacto de archivos es `eslint-legacy.json`. Si tu ítem corrige un archivo hered
 - **No lo arregles "de paso".** Cada brecha se corrige cuando un ítem del backlog toca ese código, o con un ítem
   propio.
 - **Seguridad:**
-  - Las acciones de fotos de producto no verifican sesión (BUG-1, sin corregir).
+  - Las acciones de fotos de producto exigen sesión; las usan `admin` y `vendedor` (BUG-1).
   - `JWT_SECRET` ya no tiene valor por defecto: es obligatoria y sin ella falla el login (BUG-2, con su test de
     regresión).
   - En desarrollo, Next ya no imprime los argumentos de las Server Actions (`logging.serverFunctions: false`), y

@@ -120,7 +120,7 @@ cargando en el Sprint 1 en paralelo.
 | 7   | [BUG-6](#bug-6--datos-sensibles-en-los-logs-de-desarrollo-y-lecturas-de-más)   | Datos sensibles en logs y lecturas de más    | En revisión | T-2                | 35 min          |
 | 8   | [BUG-9](#bug-9--errores-de-base-de-datos-mal-traducidos)                       | Errores de base de datos mal traducidos      | En revisión | T-2                | 40 min          |
 | 9   | [T-4](#t-4--bases-de-la-arquitectura-objetivo)                                 | Bases de la arquitectura objetivo            | En revisión | T-3                | 2 h             |
-| 10  | [BUG-1](#bug-1--acciones-de-fotos-de-producto-sin-control-de-sesión)           | Acciones de fotos sin control de sesión      | Pendiente   | T-4                | 45 min          |
+| 10  | [BUG-1](#bug-1--acciones-de-fotos-de-producto-sin-control-de-sesión)           | Acciones de fotos sin control de sesión      | En revisión | T-4                | 45 min          |
 | 11  | [BUG-7](#bug-7--el-password_hash-llega-al-navegador)                           | El `password_hash` llega al navegador        | Pendiente   | T-4                | 50 min          |
 | 12  | [BUG-8](#bug-8--lecturas-de-productos-y-proveedores-sin-sesión)                | Lecturas de productos y proveedores sin sesión | Pendiente | T-4                | 30 min          |
 | 13  | [T-6](#t-6--e2e-sobre-db-test)                                                 | E2E sobre `db-test`                          | Pendiente   | T-4, T-8           | 1 h 25 min      |
@@ -441,12 +441,12 @@ forma que sirva de molde para las demás y demuestre el flujo de punta a punta.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
-| Dueño        | —         |
-| Inicio       | —         |
+| Estado       | En revisión |
+| Dueño        | Ignacio Tomas |
+| Inicio       | 2026-10-24 |
 | Tamaño       | S         |
 | Depende de   | T-4       |
-| Plan         | —         |
+| Plan         | [`docs/plans/BUG-1-fotos-sesion.md`](docs/plans/BUG-1-fotos-sesion.md) |
 | Merge        | —         |
 | Horas reales | —         |
 
@@ -458,16 +458,28 @@ forma que sirva de molde para las demás y demuestre el flujo de punta a punta.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · Un test `regression BUG-1` por acción, que falla antes del fix · Estimación: 20 min · Completado: —
+- [x] **CA-1** · Un test `regression BUG-1` por acción, que falla antes del fix · Estimación: 20 min · Completado: 2026-10-24 17:30
 
-- [ ] **CA-2** · Las tres acciones verifican sesión y permiten `admin` y `vendedor` · Estimación: 15 min · Completado: —
+- [x] **CA-2** · Las tres acciones verifican sesión y permiten `admin` y `vendedor` · Estimación: 15 min · Completado: 2026-10-24 17:30
 
-- [ ] **CA-3** · El `vendedor` ve el botón de fotos en la tabla y en la tarjeta de productos, con su test · Estimación: 10 min · Completado: —
+- [x] **CA-3** · El `vendedor` ve el botón de fotos en la tabla y en la tarjeta de productos, con su test · Estimación: 10 min · Completado: 2026-10-24 17:30
 
 **Preguntas resueltas** (dev, 2026-10-24)
 
 - Subir, borrar y listar fotos: `admin` y `vendedor`. Por eso se le muestra el botón al vendedor (hoy sólo lo ve el
   admin).
+
+**Notas**
+
+- **CA-1**: `product-photos.contract.test.ts`. Antes del fix, subir una foto sin sesión **llamaba a Cloudinary**, y
+  las otras dos llegaban a la base. Ahora las tres devuelven `{ code: 'UNAUTHENTICATED' }`.
+- **CA-2**: `product-photos.contract.int.test.ts`: admin y vendedor suben, listan y borran contra `db-test`, con
+  Cloudinary reemplazado por un fake. El cambio en las acciones es mínimo y siguen en la lista legacy; la validación
+  y la auditoría de las fotos son BUG-11.
+- **CA-3**: `canManagePhotos(role)` en `product/domain/product-permissions.ts` y render a HTML de la tabla y del menú
+  de la tarjeta. Con la condición vieja, el test del vendedor falla.
+- La cobertura excluye ahora los archivos de `eslint-legacy.json` y los helpers de test: el umbral es para el código
+  nuevo (`docs/testing.md`).
 
 ### BUG-2 · `JWT_SECRET` con valor por defecto en el código
 

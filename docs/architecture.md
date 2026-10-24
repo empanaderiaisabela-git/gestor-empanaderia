@@ -329,7 +329,6 @@ Cuando un ítem corrige uno, lo saca de la lista, y la lista nunca crece (ADR 00
 
 | Brecha | Dónde | Regla de `AGENTS.md` |
 |---|---|---|
-| Las acciones de fotos no verifican sesión ni rol: cualquiera puede subir, listar o borrar fotos | `features/product/actions/{upload,delete}-product-photo.ts`, `get-product-photos.ts` | Seguridad |
 | No existe la capa `services`: la lógica de negocio está en actions y repositorios | Todos los features | Capas |
 | `lib/` importa de `features/` | `lib/auth/utils.ts`, `lib/audit-logs.ts` | Capas |
 | `sql` de Drizzle dentro de queries (unaccent, normalización de DNI, `version + 1`, `NOW()`): unas 54 líneas | Repositorios | SQL |

@@ -183,9 +183,13 @@ Hoy no es así: el E2E corre contra la base de desarrollo (los Page Objects impo
 Fuera de la cobertura: migraciones, `src/lib/db/scripts/`, `src/scripts/`, archivos de configuración y lo que
 sólo se prueba por E2E (`proxy.ts`, layouts). `reports/` se agrega al `.gitignore` al instalar Stryker.
 
-Cómo se mide hoy (`vitest.config.mts`): sólo cuentan los archivos que importan los tests unit (comportamiento de
-Vitest 5), y se excluyen `eslint/`, `scripts/`, `src/config/` (textos y columnas de tablas), los repositorios y
-`src/lib/db/schema.ts`, que se prueban con integración.
+Cómo se mide hoy (`vitest.config.mts`):
+
+- Sólo cuentan los archivos que importan los tests unit (comportamiento de Vitest 5).
+- Se excluyen `eslint/`, `scripts/` y `src/config/` (textos y columnas de tablas); los repositorios y
+  `src/lib/db/schema.ts`, que se prueban con integración; y los helpers de test (`src/test/`, `testing/`).
+- Se excluyen los archivos de `eslint-legacy.json`: el umbral es un gate para el código nuevo, igual que las reglas
+  duras (ADR 0003). Cuando un archivo sale de la lista, entra solo a la medición.
 
 ## Matriz de pruebas del incremento: Sprint N
 

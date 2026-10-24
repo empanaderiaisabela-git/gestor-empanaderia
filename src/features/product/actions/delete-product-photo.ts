@@ -5,10 +5,13 @@ import { productImages } from '@/lib/db/schema';
 import { cloudinaryService } from '@/lib/cloudinary';
 import { ActionResult } from '@/lib/action-result';
 import { eq } from 'drizzle-orm';
-import { ConcurrencyError } from '@/lib/errors';
+import { verifyAuthOrAdmin } from '@/lib/auth/utils';
+import { toActionFailure } from '@/lib/db-errors';
+import { ConcurrencyError, isAppError } from '@/lib/errors';
 
 export async function deleteProductPhoto(publicId: string): Promise<ActionResult> {
   try {
+    await verifyAuthOrAdmin(false);
     if (!publicId) {
       return { success: false, error: 'Public ID is required' };
     }
@@ -34,6 +37,7 @@ export async function deleteProductPhoto(publicId: string): Promise<ActionResult
 
     return { success: true, data: undefined };
   } catch (error: any) {
+    if (isAppError(error)) return toActionFailure(error, 'foto');
     console.error('Error in deleteProductPhoto:', error);
     if (error instanceof ConcurrencyError) {
       return { success: false, error: error.message };
