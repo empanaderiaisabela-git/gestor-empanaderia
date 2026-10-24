@@ -3,9 +3,10 @@
 Todo cambio de comportamiento viene con tests. Se escriben **antes** del código (TDD, skill
 `test-driven-development`): test que falla → código mínimo → refactor.
 
-> **Estado actual.** Hoy sólo existe la suite E2E de Playwright (`tests/`). Vitest, Testing Library,
-> fast-check y Stryker **no están instalados** y los scripts `test:*`, `typecheck` y `verify` no existen en
-> `package.json`. Este documento define cómo tiene que quedar. La puesta en marcha es un habilitador del backlog.
+> **Estado actual.** Desde T-2 existen Vitest 5 (proyectos `unit` e `integration`), fast-check, la base
+> `db-test` y los scripts `typecheck`, `test`, `test:watch`, `test:coverage`, `test:int` y `test:e2e`
+> ([ADR 0001](adr/0001-vitest-como-runner-de-tests.md)). Todavía faltan Testing Library con jsdom, Stryker,
+> `test:mutation` y `verify` (T-5). Este documento define cómo tiene que quedar.
 
 ## Tipos de test
 
@@ -120,7 +121,7 @@ Reglas:
 | Antes de integrar a `develop` | `npm run verify` | Lint, tipos, cobertura, integración, mutación y `next build` |
 | Push a `develop` o `main` | GitHub Actions | Lo mismo que `verify` más E2E, en jobs paralelos |
 
-Scripts a agregar en `package.json` (`dotenv-cli` ya está instalado):
+Scripts de `package.json` (`test:mutation` y `verify` se agregan en T-5, junto con Stryker):
 
 ```jsonc
 "typecheck": "tsc --noEmit",
@@ -155,8 +156,8 @@ Cómo tiene que quedar:
 
 | Uso | Detalle |
 |---|---|
-| `db-test` | **(a crear)** postgres:15 en otro puerto, con `tmpfs` (los datos no sobreviven al contenedor y es más rápido). Se configura en `.env.test`. Se levanta con `docker compose up -d db-test`. |
-| Integración | `globalSetup` aplica las migraciones y habilita `unaccent`. Cada test arranca con las tablas vacías. |
+| `db-test` | postgres:15 en `127.0.0.1:5434`, base `stock_test`, con `tmpfs` (los datos no sobreviven al contenedor y es más rápido) y perfil `test` (`docker compose up -d` no lo levanta). Se configura en `.env.test`, que está versionado. Se levanta con `docker compose up -d --wait db-test`. |
+| Integración | `src/test/integration.global-setup.ts` aborta si `NODE_ENV=production` o si `LOCAL_DATABASE_URL` no es la de `db-test`, y aplica las migraciones (incluida `0005_enable-unaccent`). Cada test arranca con las tablas vacías (`truncateAll()`, T-4). |
 | E2E | Playwright levanta la app con `webServer` apuntando a `db-test`, y un proyecto `setup` carga el seed mínimo (usuario `admin` y datos base). |
 | Scripts destructivos | `db:seed`, `db:reset-*` y similares se niegan a correr si la URL no es local o de test. |
 

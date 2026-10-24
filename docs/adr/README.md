@@ -6,4 +6,4 @@ nuevo que lo reemplaza y se actualiza el estado del anterior.
 
 | N° | Título | Estado | Fecha |
 |---|---|---|---|
-| | Todavía no hay ADRs. Los primeros están previstos en T-2 (Vitest) y T-3 (lista legacy). | | |
+| [0001](0001-vitest-como-runner-de-tests.md) | Vitest como runner de tests con Next.js | Aceptado | 2026-10-24 |

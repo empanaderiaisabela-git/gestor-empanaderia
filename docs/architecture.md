@@ -73,7 +73,7 @@ flowchart LR
 | Archivos | Cloudinary (fotos de producto recortadas a 1:1 al subir) |
 | Comprobantes | `window.print()` sobre una vista de impresión |
 | Calidad | ESLint 9 (`eslint-config-next`) + Prettier |
-| Tests | Playwright (E2E). Vitest, Testing Library, fast-check y Stryker **(a instalar)**, ver [`testing.md`](testing.md) |
+| Tests | Vitest 5 (unit e integración), fast-check y Playwright (E2E). Testing Library y Stryker **(a instalar, T-5)**. Ver [`testing.md`](testing.md) |
 
 ## Reglas de dependencia
 
@@ -262,7 +262,7 @@ Casos especiales:
 | Entrada | Toda action valida con Zod antes de tocar datos. Objetivo: `z.strictObject`, que rechaza campos de más. |
 | Salida | Las lecturas se parsean con `*RowSchema`. `password_hash` nunca sale del servidor. |
 | Auditoría | Cada mutación y cada login quedan en `audit_logs` con usuario, entidad, id y detalle en JSON. |
-| Secretos | Viven en `.env.local` y `.env.prod`, ignorados por git. Toda variable nueva va a `.env.example` **(a crear)**. `JWT_SECRET` es obligatoria: sin ella no se firman ni se verifican sesiones (BUG-2). |
+| Secretos | Viven en `.env.local` y `.env.prod`, ignorados por git. Toda variable nueva va a `.env.example`. `JWT_SECRET` es obligatoria: sin ella no se firman ni se verifican sesiones (BUG-2). |
 
 ## Datos
 
@@ -294,7 +294,7 @@ Convenciones:
 | Entorno | Base | Configuración | Notas |
 |---|---|---|---|
 | Desarrollo | Docker `db` (postgres:15, puerto 5433 en el host, para no chocar con otros Postgres locales) | `.env.local`: `LOCAL_DATABASE_URL`, `JWT_SECRET`, `CLOUDINARY_URL` | `next.config.ts` fija `turbopack.root` en la carpeta del proyecto, para que un lockfile suelto en una carpeta superior no cambie la raíz (BUG-4). Si el repo está dentro de OneDrive, la sincronización de `node_modules` y `.next` hace lento el primer compilado de cada página. |
-| Tests | Docker `db-test` **(a crear)** | `.env.test` **(a crear)** | Base descartable. Nunca la de desarrollo. Ver [`testing.md`](testing.md#bases-de-datos). |
+| Tests | Docker `db-test` (postgres:15, puerto 5434 en el host, `tmpfs`, perfil `test`) | `.env.test` (versionado: sólo apunta a `db-test`) | Base descartable. Nunca la de desarrollo. Ver [`testing.md`](testing.md#bases-de-datos). |
 | Producción | Supabase (pooler, SSL) | `.env.prod` + `NODE_ENV=production` | Un workflow de GitHub Actions la consulta a diario para que Supabase no la suspenda. El hosting de la app está a definir. |
 
 > **Cuidado.** Los scripts `db:*` usan `.env.prod` si `NODE_ENV=production`, y `db:seed` / `db:reset-data`

@@ -111,7 +111,7 @@ cargando en el Sprint 1 en paralelo.
 | —   | [T-1](#t-1--backlog-specs-y-base-inicial-del-repo)                             | Backlog, specs y base inicial del repo       | Hecho       | —                  | 1 h 5 min       |
 | —   | [BUG-4](#bug-4--npm-run-dev-se-cuelga-en-compiling-home)                       | `npm run dev` se cuelga en "Compiling /home" | Hecho       | —                  | 42 min          |
 | 0   | [T-9](#t-9--flujo-sin-pr-y-backlog-al-día)                                     | Flujo sin PR y backlog al día                | En revisión | —                  | 25 min          |
-| 1   | [T-2](#t-2--infraestructura-de-tests)                                          | Infraestructura de tests                     | Pendiente   | T-1                | 2 h 10 min      |
+| 1   | [T-2](#t-2--infraestructura-de-tests)                                          | Infraestructura de tests                     | En revisión | T-1                | 2 h 10 min      |
 | 2   | [BUG-2](#bug-2--jwt_secret-con-valor-por-defecto-en-el-código)                 | `JWT_SECRET` con valor por defecto           | En progreso | T-2                | 25 min          |
 | 3   | [T-8](#t-8--la-base-de-producción-se-elige-con-app_env)                        | La base de producción se elige con `APP_ENV` | Pendiente   | T-2                | 55 min          |
 | 4   | [BUG-3](#bug-3--scripts-de-base-que-borran-todo-sin-protección)                | Scripts que borran todo sin protección       | Pendiente   | T-2, T-8           | 35 min          |
@@ -217,12 +217,12 @@ todo el Sprint 0 ordenado, de forma que cada ítem se integre siempre igual y na
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
-| Dueño        | —         |
-| Inicio       | —         |
+| Estado       | En revisión |
+| Dueño        | Ignacio Tomas |
+| Inicio       | 2026-10-24 |
 | Tamaño       | M         |
 | Depende de   | T-1       |
-| Plan         | —         |
+| Plan         | [`docs/plans/T-2-infraestructura-de-tests.md`](docs/plans/T-2-infraestructura-de-tests.md) |
 | Merge        | —         |
 | Horas reales | —         |
 
@@ -231,17 +231,29 @@ descartable, de forma que cada ítem se pueda hacer con TDD.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · Vitest configurado según la guía oficial de Next.js (proyectos `unit` e `integration`, alias `@/`, `server-only` reemplazado por un módulo vacío) · Estimación: 40 min · Completado: —
+- [x] **CA-1** · Vitest configurado según la guía oficial de Next.js (proyectos `unit` e `integration`, alias `@/`, `server-only` reemplazado por un módulo vacío) · Estimación: 40 min · Completado: 2026-10-24 16:15
 
-- [ ] **CA-2** · Servicio `db-test` en `docker-compose.yml` (postgres:15, puerto 5434, `tmpfs`) y `.env.test` · Estimación: 15 min · Completado: —
+- [x] **CA-2** · Servicio `db-test` en `docker-compose.yml` (postgres:15, puerto 5434, `tmpfs`) y `.env.test` · Estimación: 15 min · Completado: 2026-10-24 16:15
 
-- [ ] **CA-3** · El `globalSetup` de integración aborta si la URL no es la de `db-test`, y aplica las migraciones y `unaccent` · Estimación: 30 min · Completado: —
+- [x] **CA-3** · El `globalSetup` de integración aborta si la URL no es la de `db-test`, y aplica las migraciones y `unaccent` · Estimación: 30 min · Completado: 2026-10-24 16:15
 
-- [ ] **CA-4** · `.env.example` (con `!.env.example` en `.gitignore`) y los scripts `typecheck`, `test`, `test:watch`, `test:coverage`, `test:int` y `test:e2e` · Estimación: 15 min · Completado: —
+- [x] **CA-4** · `.env.example` (con `!.env.example` en `.gitignore`) y los scripts `typecheck`, `test`, `test:watch`, `test:coverage`, `test:int` y `test:e2e` · Estimación: 15 min · Completado: 2026-10-24 16:15
 
-- [ ] **CA-5** · Un test unit y uno de integración de prueba pasan; `npm run typecheck` en verde · Estimación: 15 min · Completado: —
+- [x] **CA-5** · Un test unit y uno de integración de prueba pasan; `npm run typecheck` en verde · Estimación: 15 min · Completado: 2026-10-24 16:15
 
-- [ ] **CA-6** · ADR "Vitest como runner de tests con Next.js" · Estimación: 15 min · Completado: —
+- [x] **CA-6** · ADR "Vitest como runner de tests con Next.js" · Estimación: 15 min · Completado: 2026-10-24 16:15
+
+**Notas**
+
+- **Desvío de la guía de Next**: el alias `@/` usa `resolve.tsconfigPaths`, que es nativo en Vite 8, en lugar del
+  plugin `vite-tsconfig-paths` (el propio Vite pide no usar el plugin). Va en el ADR 0001.
+- **`@types/node` pasó de `^20` a `^22`**: Vitest 5 lo pide, y coincide con el Node del proyecto (22.15).
+- **Evidencia de la guarda (CA-3)**: sin `.env.test`, con la URL del 5433, con `NODE_ENV=production` y con
+  `db-test` apagada, `vitest --project integration` sale con código 1 y el mensaje en español. Con `.env.test` y
+  `db-test` nueva, aplica las 6 migraciones y pasa.
+- **Bug de Vite 8**: al imprimir un error del `globalSetup`, el mapeo del stack falla y oculta el mensaje. El setup
+  relanza los errores con un stack plano (ver ADR 0001).
+- La migración `0005_enable-unaccent` va a correr en producción en el próximo `db:migrate`. Es idempotente.
 
 ### T-8 · La base de producción se elige con `APP_ENV`
 
@@ -442,7 +454,7 @@ entorno.
 
 - [ ] **CA-2** · Test `regression BUG-2`: sin la variable, firmar y verificar falla con un error claro (requiere T-2) · Estimación: 10 min · Completado: —
 
-- [ ] **CA-3** · `JWT_SECRET` documentada en `.env.example` (se crea en T-2) · Estimación: 5 min · Completado: —
+- [x] **CA-3** · `JWT_SECRET` documentada en `.env.example` (se crea en T-2) · Estimación: 5 min · Completado: 2026-10-24 16:15
 
 **Notas**
 

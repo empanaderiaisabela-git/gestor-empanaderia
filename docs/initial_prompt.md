@@ -67,20 +67,21 @@ Hacer preguntas de más es mejor que inventar.
   las US sí se pueden ir cargando en el Sprint 1.
 - Git: `main` y `develop` parten del commit inicial (T-1). El trabajo nuevo sale de `develop`. El repo de GitHub
   es **público**: todo lo que se pushea queda publicado.
-- **No existen todavía**:
-  - `docs/features/` y `docs/conventions/`
-  - `.env.example` (T-2)
+- **No existen todavía**: `docs/features/` y `docs/conventions/`.
 - **Sí existen**:
   - `BACKLOG.md`, con el Sprint 0 (T-1 a T-9 y BUG-1 a BUG-9) en orden de ejecución, y el Sprint 1 con BUG-10
     a BUG-12.
   - El plan del sprint completo en `docs/plans/sprint-0.md`: orden, decisiones del dev y enfoque de cada ítem.
-  - Las plantillas en `docs/templates/` (`plan.md`, `feature.md`, `adr.md`), los planes en `docs/plans/` y el
-    índice `docs/adr/README.md`, todavía sin ADRs.
+  - Las plantillas en `docs/templates/` (`plan.md`, `feature.md`, `adr.md`), los planes en `docs/plans/` y los
+    ADR en `docs/adr/`.
   - El archivo de requerimientos `docs/requerimientos/specs.md`.
-- Tests: **sólo E2E con Playwright** (`tests/`, con Page Objects). Vitest, Testing Library, fast-check,
-  Stryker, lefthook y commitlint **no están instalados**.
-- Scripts pendientes: `test:*`, `typecheck` y `verify` no existen. Hay que crearlos según
-  [`testing.md`](testing.md).
+  - `.env.example` y `.env.test` (versionado: sólo apunta a `db-test`).
+- Tests:
+  - Vitest 5 con los proyectos `unit` e `integration`, y fast-check (T-2, ADR 0001).
+  - Integración contra `db-test` (postgres:15 en el 5434, `tmpfs`), con una guarda que aborta si la URL no es esa.
+  - E2E con Playwright (`tests/`, con Page Objects); todavía corre contra la base de desarrollo hasta T-6.
+  - Testing Library, Stryker, lefthook y commitlint **no están instalados**.
+- Scripts pendientes: `test:mutation` y `verify` (T-5).
 - CI: sólo `.github/workflows/keep-alive.yml`, que hace un ping diario a Supabase.
 - `README.md` todavía describe ArgenStock.
 - Skills: la fuente es `.agents/skills/`. Se copian a `.claude/skills/` con `npm run skills:sync`, y
@@ -251,15 +252,17 @@ Requerimiento → Ítem de backlog → Descubrimiento → Plan aprobado → Rama
 | Para | Comando |
 |---|---|
 | Levantar la base local | `docker compose up -d` (servicio `db`, postgres:15, puerto 5433 en el host) |
-| Migrar y preparar la base | `npm run db:migrate` → `npm run db:enable-unaccent` → `npm run db:seed-users` (usuario `admin` / `admin`) |
+| Migrar y preparar la base | `npm run db:migrate` (incluye `unaccent` desde la migración 0005) → `npm run db:seed-users` (usuario `admin` / `admin`) |
 | Desarrollo | `npm run dev` → http://localhost:3000 |
-| Lint / build | `npm run lint` · `npm run build` |
-| E2E | `npx playwright test --project=chromium`; hoy corre contra la base de desarrollo |
+| Lint / tipos / build | `npm run lint` · `npm run typecheck` · `npm run build` |
+| Tests unit | `npm test` · `npm run test:watch` · `npm run test:coverage` |
+| Tests de integración | `docker compose up -d --wait db-test` → `npm run test:int` |
+| E2E | `npm run test:e2e` (Chromium); hoy corre contra la base de desarrollo, hasta T-6 |
 | Skills | `npm run skills:sync` · `npm run skills:check` |
-| Planeados (no existen aún) | `typecheck`, `test`, `test:watch`, `test:coverage`, `test:int`, `test:e2e`, `test:mutation`, `verify` |
+| Planeados (no existen aún) | `test:mutation`, `verify` (T-5) |
 
-La configuración local va en `.env.local`: `LOCAL_DATABASE_URL`, `JWT_SECRET` (**obligatoria**) y
-`CLOUDINARY_URL`. Usuarios del seed: `admin`/`admin` y `vendedor`/`vendedor`. Son temporales: después se crean
+La configuración local va en `.env.local` (plantilla: `.env.example`): `LOCAL_DATABASE_URL`, `JWT_SECRET`
+(**obligatoria**) y `CLOUDINARY_URL`. Usuarios del seed: `admin`/`admin` y `vendedor`/`vendedor`. Son temporales: después se crean
 las cuentas reales y se borran esas.
 
 > **Si levantás `npm run dev` para verificar algo**, al terminar detené el servidor y **borrá `.next`**. Next 16
