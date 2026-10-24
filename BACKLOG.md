@@ -121,7 +121,7 @@ cargando en el Sprint 1 en paralelo.
 | 8   | [BUG-9](#bug-9--errores-de-base-de-datos-mal-traducidos)                       | Errores de base de datos mal traducidos      | En revisión | T-2                | 40 min          |
 | 9   | [T-4](#t-4--bases-de-la-arquitectura-objetivo)                                 | Bases de la arquitectura objetivo            | En revisión | T-3                | 2 h             |
 | 10  | [BUG-1](#bug-1--acciones-de-fotos-de-producto-sin-control-de-sesión)           | Acciones de fotos sin control de sesión      | En revisión | T-4                | 45 min          |
-| 11  | [BUG-7](#bug-7--el-password_hash-llega-al-navegador)                           | El `password_hash` llega al navegador        | Pendiente   | T-4                | 50 min          |
+| 11  | [BUG-7](#bug-7--el-password_hash-llega-al-navegador)                           | El `password_hash` llega al navegador        | En revisión | T-4                | 50 min          |
 | 12  | [BUG-8](#bug-8--lecturas-de-productos-y-proveedores-sin-sesión)                | Lecturas de productos y proveedores sin sesión | Pendiente | T-4                | 30 min          |
 | 13  | [T-6](#t-6--e2e-sobre-db-test)                                                 | E2E sobre `db-test`                          | Pendiente   | T-4, T-8           | 1 h 25 min      |
 | 14  | [T-5](#t-5--proveedores-como-feature-molde)                                    | Proveedores como feature molde               | Pendiente   | T-6                | 5 h             |
@@ -696,12 +696,12 @@ local y `.env.local` quedan listos para loguearse.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
-| Dueño        | —         |
-| Inicio       | —         |
+| Estado       | En revisión |
+| Dueño        | Ignacio Tomas |
+| Inicio       | 2026-10-24 |
 | Tamaño       | S         |
 | Depende de   | T-4       |
-| Plan         | —         |
+| Plan         | [`docs/plans/BUG-7-password-hash.md`](docs/plans/BUG-7-password-hash.md) |
 | Merge        | —         |
 | Horas reales | —         |
 
@@ -714,11 +714,21 @@ navegador en la respuesta. Además, `verifyAuthOrAdmin` devuelve la fila complet
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · Test `regression BUG-7` de contrato: la `data` de crear y de editar un usuario no tiene `passwordHash` · Estimación: 20 min · Completado: —
+- [x] **CA-1** · Test `regression BUG-7` de contrato: la `data` de crear y de editar un usuario no tiene `passwordHash` · Estimación: 20 min · Completado: 2026-10-24 17:34
 
-- [ ] **CA-2** · Las actions de usuario parsean la respuesta con `userRowSchema`, y los `.returning()` de `user.repository` listan las columnas · Estimación: 15 min · Completado: —
+- [x] **CA-2** · Las actions de usuario parsean la respuesta con `userRowSchema`, y los `.returning()` de `user.repository` listan las columnas · Estimación: 15 min · Completado: 2026-10-24 17:34
 
-- [ ] **CA-3** · `verifyAuthOrAdmin` devuelve un tipo sin `passwordHash`, con su test de tipos · Estimación: 15 min · Completado: —
+- [x] **CA-3** · `verifyAuthOrAdmin` devuelve un tipo sin `passwordHash`, con su test de tipos · Estimación: 15 min · Completado: 2026-10-24 17:34
+
+**Notas**
+
+- **CA-1**: `user-password-hash.contract.int.test.ts`, con `asUser` admin contra `db-test`. Cubre crear, reactivar y
+  editar, y que editar no toca el hash guardado. Antes del fix fallaban los 3.
+- **CA-2**: los cinco `.returning()` de `user.repository` usan `PUBLIC_USER_COLUMNS`, y las actions parsean con
+  `userRowSchema`.
+- **CA-3**: `verifyAuthOrAdmin(): Promise<UserDef>` y `userRowSchema.parse`. El test de tipos (`expectTypeOf`) lo
+  controla `npm run typecheck`: antes del fix el tipo era `any` y `tsc` fallaba. Además, una regresión unit verifica
+  que el hash no sale aunque el repositorio lo traiga.
 
 ### BUG-8 · Lecturas de productos y proveedores sin sesión
 

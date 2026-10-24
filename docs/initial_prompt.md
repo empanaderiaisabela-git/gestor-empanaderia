@@ -165,8 +165,8 @@ exacto de archivos es `eslint-legacy.json`. Si tu ítem corrige un archivo hered
     regresión).
   - En desarrollo, Next ya no imprime los argumentos de las Server Actions (`logging.serverFunctions: false`), y
     Drizzle loguea el SQL sin parámetros. Fuera de `auth`, las lecturas no traen `password_hash` (BUG-6).
-  - Crear y editar un usuario devuelven el `password_hash` al navegador (BUG-7), y `fetchProducts` y
-    `fetchSelectorData` no piden sesión (BUG-8). Sin corregir.
+  - Ninguna respuesta al navegador ni el usuario de `verifyAuthOrAdmin` llevan el `password_hash` (BUG-7).
+  - `fetchProducts` y `fetchSelectorData` no piden sesión (BUG-8, sin corregir).
   - `handleDatabaseError` lee el error original de Postgres (también en `error.cause` de Drizzle): un duplicado,
     una referencia inexistente y un borrado de algo referenciado tienen cada uno su mensaje (BUG-9).
 - **Qué base se usa** (T-8, ADR 0002): la de producción, **sólo** con `APP_ENV=production` (`.env.prod`, con

@@ -5,6 +5,16 @@ import * as bcrypt from 'bcrypt';
 import type { UserInput, UserUpdateInput } from '@/features/user/domain/user.schema';
 import { ConcurrencyError, DuplicateEntityError } from '@/lib/errors';
 
+const PUBLIC_USER_COLUMNS = {
+  id: users.id,
+  username: users.username,
+  role: users.role,
+  isActive: users.isActive,
+  version: users.version,
+  createdAt: users.createdAt,
+  updatedAt: users.updatedAt,
+};
+
 export class UserRepository {
   async getUserByUsername(username: string, dbtx: any = db) {
     return await dbtx.query.users.findFirst({
@@ -60,7 +70,7 @@ export class UserRepository {
         version: sql`${users.version} + 1`,
       })
       .where(eq(users.id, id))
-      .returning();
+      .returning(PUBLIC_USER_COLUMNS);
     if (result.length === 0) throw new ConcurrencyError();
     return result[0];
   }
@@ -88,7 +98,7 @@ export class UserRepository {
             version: sql`${users.version} + 1`,
           })
           .where(eq(users.id, existing.id))
-          .returning();
+          .returning(PUBLIC_USER_COLUMNS);
         return { ...result[0], wasInactive: true };
       } else {
         throw new DuplicateEntityError();
@@ -104,7 +114,7 @@ export class UserRepository {
         isActive: true,
         version: 1,
       })
-      .returning();
+      .returning(PUBLIC_USER_COLUMNS);
 
     return result[0];
   }
@@ -133,7 +143,7 @@ export class UserRepository {
       .update(users)
       .set(updateSet)
       .where(and(eq(users.id, id), eq(users.version, input.version)))
-      .returning();
+      .returning(PUBLIC_USER_COLUMNS);
 
     if (result.length === 0) {
       throw new ConcurrencyError();
@@ -143,7 +153,7 @@ export class UserRepository {
   }
 
   async deleteUser(id: string, dbtx: any = db) {
-    const result = await dbtx.delete(users).where(eq(users.id, id)).returning();
+    const result = await dbtx.delete(users).where(eq(users.id, id)).returning(PUBLIC_USER_COLUMNS);
     if (result.length === 0) throw new ConcurrencyError();
   }
 }
