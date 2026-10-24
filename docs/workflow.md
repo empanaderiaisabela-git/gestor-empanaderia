@@ -100,7 +100,8 @@ Nunca `--no-verify`. Si un gate falla, se arregla la causa.
    decisión de arquitectura, un ADR.
 3. `BACKLOG.md`: fecha y hora de cierre de cada criterio, horas reales del ítem, estado `En revisión` y link al
    PR.
-4. Abrí el PR a `develop` con la plantilla completa. Otro integrante revisa; al mergear, el ítem pasa a `Hecho`.
+4. Abrí el PR a `develop` con la plantilla completa. El dev lo revisa; cuando lo aprueba y se mergea, el ítem pasa
+   a `Hecho`.
 
 ## 8. Skills
 

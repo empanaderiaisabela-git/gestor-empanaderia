@@ -22,12 +22,12 @@
 
 ### Estados
 
-| Estado        | Significa                                                |
-| ------------- | -------------------------------------------------------- |
-| `Pendiente`   | Cargado, todavía no empezó                               |
-| `En progreso` | Alguien lo tomó: tiene dueño y fecha de inicio           |
-| `En revisión` | Terminado y esperando la aprobación del dev (PR abierto) |
-| `Hecho`       | Aprobado y mergeado                                      |
+| Estado        | Significa                                                                                                 |
+| ------------- | --------------------------------------------------------------------------------------------------------- |
+| `Pendiente`   | Cargado, todavía no empezó                                                                                |
+| `En progreso` | Alguien lo tomó: tiene dueño y fecha de inicio                                                            |
+| `En revisión` | Terminado y verificado; espera que el dev lo revise y lo apruebe. Si el ítem tiene PR, el PR está abierto |
+| `Hecho`       | El dev lo aprobó y los cambios ya están en `develop` (o en `main`, en el caso del arranque)               |
 
 ### Cuándo se puede tomar un ítem
 
@@ -102,7 +102,7 @@ cargando en el Sprint 1 en paralelo.
 
 | ID                                                                             | Título                                       | Estado      | Depende de         | Estimación     |
 | ------------------------------------------------------------------------------ | -------------------------------------------- | ----------- | ------------------ | -------------- |
-| [T-1](#t-1--backlog-specs-y-base-inicial-del-repo)                             | Backlog, specs y base inicial del repo       | En revisión | —                  | 1 h 5 min      |
+| [T-1](#t-1--backlog-specs-y-base-inicial-del-repo)                             | Backlog, specs y base inicial del repo       | Hecho       | —                  | 1 h 5 min      |
 | [T-2](#t-2--infraestructura-de-tests)                                          | Infraestructura de tests                     | Pendiente   | T-1                | 2 h 10 min     |
 | [T-3](#t-3--gates-eslint-con-reglas-duras-hooks-y-ci)                          | Gates: ESLint con reglas duras, hooks y CI   | Pendiente   | T-2                | 3 h            |
 | [T-4](#t-4--bases-de-la-arquitectura-objetivo)                                 | Bases de la arquitectura objetivo            | Pendiente   | T-3                | 2 h            |
@@ -110,7 +110,7 @@ cargando en el Sprint 1 en paralelo.
 | [BUG-1](#bug-1--acciones-de-fotos-de-producto-sin-control-de-sesión)           | Acciones de fotos sin control de sesión      | Pendiente   | T-4                | 35 min         |
 | [BUG-2](#bug-2--jwt_secret-con-valor-por-defecto-en-el-código)                 | `JWT_SECRET` con valor por defecto           | En progreso | T-2                | 25 min         |
 | [BUG-3](#bug-3--scripts-de-base-que-borran-todo-sin-protección)                | Scripts que borran todo sin protección       | Pendiente   | T-2                | 35 min         |
-| [BUG-4](#bug-4--npm-run-dev-se-cuelga-en-compiling-home)                       | `npm run dev` se cuelga en "Compiling /home" | En revisión | —                  | 42 min         |
+| [BUG-4](#bug-4--npm-run-dev-se-cuelga-en-compiling-home)                       | `npm run dev` se cuelga en "Compiling /home" | Hecho       | —                  | 42 min         |
 | [BUG-5](#bug-5--consultas-en-paralelo-sobre-la-misma-conexión-en-el-dashboard) | Consultas en paralelo en el dashboard        | Pendiente   | T-2                | 30 min         |
 | [BUG-6](#bug-6--datos-sensibles-en-los-logs-de-desarrollo-y-lecturas-de-más)   | Datos sensibles en logs y lecturas de más    | Pendiente   | T-2                | 35 min         |
 | [T-6](#t-6--e2e-sobre-db-test)                                                 | E2E sobre `db-test`                          | Pendiente   | T-5                | 1 h 25 min     |
@@ -121,7 +121,7 @@ cargando en el Sprint 1 en paralelo.
 
 | Campo        | Valor                                                              |
 | ------------ | ------------------------------------------------------------------ |
-| Estado       | En revisión                                                        |
+| Estado       | Hecho                                                              |
 | Dueño        | Ignacio Tomas                                                      |
 | Inicio       | 2026-10-23                                                         |
 | Tamaño       | S                                                                  |
@@ -149,7 +149,7 @@ forma que el flujo de `docs/workflow.md` se pueda seguir desde el primer ítem.
 
 - [x] **CA-7** · Lo que se va a commitear no tiene secretos ni logs (sin el `JWT_SECRET` por defecto, `*.log` ignorados) · Estimación: 10 min · Completado: 2026-10-23 22:07
 
-- [ ] **CA-8** · `main` y `develop` existen en `origin` con el commit inicial, sin ningún `.env` · Estimación: 15 min · Completado: —
+- [x] **CA-8** · `main` y `develop` existen en `origin` con el commit inicial, sin ningún `.env` · Estimación: 15 min · Completado: 2026-10-24 15:09
 
 **Preguntas resueltas** (dev, 2026-10-23)
 
@@ -160,6 +160,15 @@ El repo de GitHub es **público**, así que:
   queda en el código, sin publicar.
 - `eslint-error.log` se borra y `*.log` pasa al `.gitignore`.
 - El commit y el push esperan la revisión del dev.
+
+**Avance de CA-8** (2026-10-24 15:08): el dev aprobó el commit inicial **sólo en su PC**. Se hizo `f6be135 chore:
+base inicial del proyecto` en `main` y se creó `develop` localmente, que es la rama activa. Todavía no se subió nada
+a GitHub, así que CA-8 sigue pendiente hasta el push de `main` y `develop`.
+
+**CA-8 cumplido** (2026-10-24 15:09): a pedido del dev se subieron `main` y `develop` a GitHub. Las dos apuntan a
+`f6be135` y `main` es la rama por defecto del repo.
+
+**Cerrado por el dev** (2026-10-24 15:14): T-1 pasa a `Hecho`. Las horas reales quedan sin cargar.
 
 ### T-2 · Infraestructura de tests
 
@@ -393,7 +402,7 @@ entorno.
 
 | Campo        | Valor                                          |
 | ------------ | ---------------------------------------------- |
-| Estado       | En revisión                                    |
+| Estado       | Hecho                                          |
 | Dueño        | Ignacio Tomas                                  |
 | Inicio       | 2026-10-24                                     |
 | Tamaño       | S                                              |
@@ -442,6 +451,8 @@ local y `.env.local` quedan listos para loguearse.
   - Al terminar se detuvo el servidor de verificación y se volvió a borrar `.next`.
   - **Confirmado por el dev** (2026-10-24 14:28, log de su `npm run dev`): `GET /login 200`, `loginAction` con
     `admin` y `GET / 200` con el dashboard cargado.
+- **Cerrado por el dev** (2026-10-24 15:14): BUG-4 pasa a `Hecho`. Los cambios ya están en `main` y `develop`
+  (`f6be135`).
 - **Para que no se repita:** quedó anotado en `docs/initial_prompt.md` (sección 10) que un agente que levanta
   `npm run dev` para verificar debe borrar `.next` al terminar, y verificar en el servidor del dev.
 - **Pendiente del dev:**
