@@ -118,7 +118,7 @@ cargando en el Sprint 1 en paralelo.
 | 5   | [T-3](#t-3--gates-eslint-con-reglas-duras-hooks-y-ci)                          | Gates: ESLint con reglas duras, hooks y CI   | En revisión | T-2, T-8           | 3 h             |
 | 6   | [BUG-5](#bug-5--consultas-en-paralelo-sobre-la-misma-conexión-en-el-dashboard) | Consultas en paralelo en el dashboard        | En revisión | T-2                | 30 min          |
 | 7   | [BUG-6](#bug-6--datos-sensibles-en-los-logs-de-desarrollo-y-lecturas-de-más)   | Datos sensibles en logs y lecturas de más    | En revisión | T-2                | 35 min          |
-| 8   | [BUG-9](#bug-9--errores-de-base-de-datos-mal-traducidos)                       | Errores de base de datos mal traducidos      | Pendiente   | T-2                | 40 min          |
+| 8   | [BUG-9](#bug-9--errores-de-base-de-datos-mal-traducidos)                       | Errores de base de datos mal traducidos      | En revisión | T-2                | 40 min          |
 | 9   | [T-4](#t-4--bases-de-la-arquitectura-objetivo)                                 | Bases de la arquitectura objetivo            | Pendiente   | T-3                | 2 h             |
 | 10  | [BUG-1](#bug-1--acciones-de-fotos-de-producto-sin-control-de-sesión)           | Acciones de fotos sin control de sesión      | Pendiente   | T-4                | 45 min          |
 | 11  | [BUG-7](#bug-7--el-password_hash-llega-al-navegador)                           | El `password_hash` llega al navegador        | Pendiente   | T-4                | 50 min          |
@@ -724,12 +724,12 @@ teléfono y el mail de los proveedores.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
-| Dueño        | —         |
-| Inicio       | —         |
+| Estado       | En revisión |
+| Dueño        | Ignacio Tomas |
+| Inicio       | 2026-10-24 |
 | Tamaño       | S         |
 | Depende de   | T-2       |
-| Plan         | —         |
+| Plan         | [`docs/plans/BUG-9-errores-de-base.md`](docs/plans/BUG-9-errores-de-base.md) |
 | Merge        | —         |
 | Horas reales | —         |
 
@@ -743,11 +743,23 @@ relacionados).
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · Test `regression BUG-9` de integración contra `db-test`: duplicado → `UNIQUE_VIOLATION`, referencia inexistente → `RELATION_NOT_FOUND`, borrado de un registro referenciado → `FOREIGN_KEY_VIOLATION` · Estimación: 20 min · Completado: —
+- [x] **CA-1** · Test `regression BUG-9` de integración contra `db-test`: duplicado → `UNIQUE_VIOLATION`, referencia inexistente → `RELATION_NOT_FOUND`, borrado de un registro referenciado → `FOREIGN_KEY_VIOLATION` · Estimación: 20 min · Completado: 2026-10-24 17:07
 
-- [ ] **CA-2** · `handleDatabaseError` lee el código y el detalle de `error.cause` · Estimación: 10 min · Completado: —
+- [x] **CA-2** · `handleDatabaseError` lee el código y el detalle de `error.cause` · Estimación: 10 min · Completado: 2026-10-24 17:07
 
-- [ ] **CA-3** · Revisado el escenario C de `tests/concurrencia.spec.ts`, que hoy espera el texto de concurrencia; queda confirmado en T-6, sobre `db-test` · Estimación: 10 min · Completado: —
+- [x] **CA-3** · Revisado el escenario C de `tests/concurrencia.spec.ts`, que hoy espera el texto de concurrencia; queda confirmado en T-6, sobre `db-test` · Estimación: 10 min · Completado: 2026-10-24 17:07
+
+**Notas**
+
+- **CA-1**: `src/lib/db-errors.int.test.ts`, con errores reales de Drizzle. Antes del fix fallaban los 3 casos.
+- **CA-2**: `handleDatabaseError` lee código, detalle y mensaje en el error, en `originalError` y en `cause`, y
+  distingue los dos 23503 por el `detail`. Un fuzz (`fast-check`) demostró que la versión anterior **lanzaba** con
+  entradas como `null`; la nueva nunca lanza. Salió de `eslint-legacy.json` (142 → 141).
+- **CA-3**: el escenario C (crear un producto cuyo proveedor se acaba de borrar) recibía el texto de concurrencia
+  **por culpa de este bug**: `createProductAction` no verifica la versión del proveedor, así que lo que falla es la
+  clave foránea. Ahora el mensaje correcto es "Una de las entidades relacionadas ya no existe. Por favor, sincroniza
+  los datos.", y el spec se actualizó para esperarlo. La corrida del E2E queda para T-6, sobre `db-test`.
+- `src/config/` quedó fuera de la cobertura (textos), como ya decía `testing.md`.
 
 ### T-6 · E2E sobre `db-test`
 

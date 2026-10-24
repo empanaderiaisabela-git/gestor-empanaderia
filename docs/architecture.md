@@ -137,7 +137,7 @@ Con el tope de 100 líneas, cuando un archivo crece se parte por operación (`cr
 | `src/lib/db/scripts/` | Seeds, reset, stress test y backfills (`npm run db:*`). |
 | `src/lib/auth/` | `jwt.ts` firma y verifica tokens con `jose`. `utils.ts` expone `verifyAuthOrAdmin`, que valida el token, vuelve a leer al usuario de la base (tiene que seguir activo) y controla el rol. |
 | `src/lib/audit-logs.ts` | `recordAuditLog`: registra cada mutación dentro de la misma transacción. |
-| `src/lib/errors.ts`, `src/lib/db-errors.ts` | Errores de dominio (`ConcurrencyError`, `DuplicateEntityError`) y traducción de errores de Postgres (23505 unique, 23503 FK) a mensajes en español. |
+| `src/lib/errors.ts`, `src/lib/db-errors.ts` | Errores de dominio (`ConcurrencyError`, `DuplicateEntityError`) y traducción de errores de Postgres a mensajes en español: 23505 → duplicado; 23503 → "entidad relacionada inexistente" al insertar o "registros relacionados" al borrar. Lee el error original también en `error.cause`, donde lo deja Drizzle 0.45 (BUG-9). |
 | `src/lib/cloudinary.ts` | Subida y borrado de fotos. |
 | `src/scripts/` | Mantenimiento de la base (`enable-unaccent`). |
 

@@ -115,7 +115,6 @@
   "src/lib/auth/utils.ts",
   "src/lib/cloudinary.ts",
   "src/lib/contact/message-generator.ts",
-  "src/lib/db-errors.ts",
   "src/lib/db/schema.ts",
   "src/lib/db/scripts/backfill-sale-item-cost.ts",
   "src/lib/db/scripts/seed-stress-test.ts",

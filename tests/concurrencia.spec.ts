@@ -106,7 +106,7 @@ test.describe.parallel('Pruebas de Concurrencia', () => {
     const context1 = await browser.newContext();
     const context2 = await browser.newContext();
 
-    const errorMessage = 'Los datos en el servidor han cambiado. Por favor, sincroniza la lista e intenta nuevamente.';
+    const errorMessage = 'Una de las entidades relacionadas ya no existe. Por favor, sincroniza los datos.';
 
     const page1 = await context1.newPage();
     const page2 = await context2.newPage();

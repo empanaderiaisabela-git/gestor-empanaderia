@@ -158,8 +158,8 @@ exacto de archivos es `eslint-legacy.json`. Si tu ítem corrige un archivo hered
     Drizzle loguea el SQL sin parámetros. Fuera de `auth`, las lecturas no traen `password_hash` (BUG-6).
   - Crear y editar un usuario devuelven el `password_hash` al navegador (BUG-7), y `fetchProducts` y
     `fetchSelectorData` no piden sesión (BUG-8). Sin corregir.
-  - `handleDatabaseError` no lee `error.cause` de Drizzle: los errores de unicidad y de clave foránea se muestran
-    como "concurrencia" (BUG-9, sin corregir).
+  - `handleDatabaseError` lee el error original de Postgres (también en `error.cause` de Drizzle): un duplicado,
+    una referencia inexistente y un borrado de algo referenciado tienen cada uno su mensaje (BUG-9).
 - **Qué base se usa** (T-8, ADR 0002): la de producción, **sólo** con `APP_ENV=production` (`.env.prod`, con
   `DATABASE_URL` y SSL). Con cualquier otro valor se usa `.env.local` y `LOCAL_DATABASE_URL`, que es obligatoria.
   `NODE_ENV` ya no elige la base: `next build` y `next start` usan la base local.
