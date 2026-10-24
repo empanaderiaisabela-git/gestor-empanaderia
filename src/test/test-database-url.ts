@@ -8,6 +8,7 @@ export const TEST_DATABASE_URL = {
 type TestDatabaseGuardInput = {
   url: string | undefined;
   nodeEnv: string | undefined;
+  appEnv?: string | undefined;
 };
 
 function parseUrl(url: string): URL | null {
@@ -27,9 +28,12 @@ function isTestDatabase(parsed: URL | null): boolean {
   return isPostgres && isLocalHost && isTestPort && isTestName;
 }
 
-export function assertTestDatabaseUrl({ url, nodeEnv }: TestDatabaseGuardInput): string {
+export function assertTestDatabaseUrl({ url, nodeEnv, appEnv }: TestDatabaseGuardInput): string {
   if (nodeEnv === 'production') {
     throw new Error('Los tests de integración no corren con NODE_ENV=production.');
+  }
+  if (appEnv === 'production') {
+    throw new Error('Los tests de integración no corren con APP_ENV=production.');
   }
   if (!url) {
     throw new Error('Falta LOCAL_DATABASE_URL. Corré los tests de integración con npm run test:int.');

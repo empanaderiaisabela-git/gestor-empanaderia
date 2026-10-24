@@ -13,7 +13,8 @@ function readableError(message: string): Error {
 
 function guardedUrl(): string {
   try {
-    return assertTestDatabaseUrl({ url: process.env.LOCAL_DATABASE_URL, nodeEnv: process.env.NODE_ENV });
+    const { LOCAL_DATABASE_URL, NODE_ENV, APP_ENV } = process.env;
+    return assertTestDatabaseUrl({ url: LOCAL_DATABASE_URL, nodeEnv: NODE_ENV, appEnv: APP_ENV });
   } catch (error) {
     throw readableError(error instanceof Error ? error.message : String(error));
   }

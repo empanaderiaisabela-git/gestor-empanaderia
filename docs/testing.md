@@ -157,7 +157,7 @@ Cómo tiene que quedar:
 | Uso | Detalle |
 |---|---|
 | `db-test` | postgres:15 en `127.0.0.1:5434`, base `stock_test`, con `tmpfs` (los datos no sobreviven al contenedor y es más rápido) y perfil `test` (`docker compose up -d` no lo levanta). Se configura en `.env.test`, que está versionado. Se levanta con `docker compose up -d --wait db-test`. |
-| Integración | `src/test/integration.global-setup.ts` aborta si `NODE_ENV=production` o si `LOCAL_DATABASE_URL` no es la de `db-test`, y aplica las migraciones (incluida `0005_enable-unaccent`). Cada test arranca con las tablas vacías (`truncateAll()`, T-4). |
+| Integración | `src/test/integration.global-setup.ts` aborta si `NODE_ENV=production`, si `APP_ENV=production` o si `LOCAL_DATABASE_URL` no es la de `db-test`, y aplica las migraciones (incluida `0005_enable-unaccent`). Cada test arranca con las tablas vacías (`truncateAll()`, T-4). |
 | E2E | Playwright levanta la app con `webServer` apuntando a `db-test`, y un proyecto `setup` carga el seed mínimo (usuario `admin` y datos base). |
 | Scripts destructivos | `db:seed`, `db:reset-*` y similares se niegan a correr si la URL no es local o de test. |
 

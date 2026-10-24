@@ -35,6 +35,11 @@ describe('assertTestDatabaseUrl', () => {
     expect(() => assertTestDatabaseUrl({ url, nodeEnv: 'production' })).toThrow('Los tests de integración no corren con NODE_ENV=production.');
   });
 
+  it('rechaza APP_ENV=production, que haría que la app use DATABASE_URL', () => {
+    const url = 'postgresql://postgres:password@127.0.0.1:5434/stock_test';
+    expect(() => assertTestDatabaseUrl({ url, nodeEnv: 'test', appEnv: 'production' })).toThrow('Los tests de integración no corren con APP_ENV=production.');
+  });
+
   it('ninguna cadena arbitraria pasa la guarda', () => {
     fc.assert(
       fc.property(fc.string(), (url) => {

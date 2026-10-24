@@ -143,20 +143,21 @@ de 100 líneas, comentarios por todos lados y errores como textos sueltos. La li
   propio.
 - **Seguridad:**
   - Las acciones de fotos de producto no verifican sesión (BUG-1, sin corregir).
-  - `JWT_SECRET` ya no tiene valor por defecto: es obligatoria y sin ella falla el login (BUG-2; falta su test
-    de regresión).
+  - `JWT_SECRET` ya no tiene valor por defecto: es obligatoria y sin ella falla el login (BUG-2, con su test de
+    regresión).
   - En desarrollo, la contraseña del login aparece en los logs de la terminal y el dashboard lee el
     `password_hash` de los vendedores (BUG-6, sin corregir).
   - Crear y editar un usuario devuelven el `password_hash` al navegador (BUG-7), y `fetchProducts` y
     `fetchSelectorData` no piden sesión (BUG-8). Sin corregir.
   - `handleDatabaseError` no lee `error.cause` de Drizzle: los errores de unicidad y de clave foránea se muestran
     como "concurrencia" (BUG-9, sin corregir).
-  - `next build` corre con `NODE_ENV=production`, así que carga `.env.prod` y prerenderiza `/home` contra
-    producción. Lo corrige T-8: hasta entonces, **no corras `npm run build`** si existe `.env.prod`.
+- **Qué base se usa** (T-8, ADR 0002): la de producción, **sólo** con `APP_ENV=production` (`.env.prod`, con
+  `DATABASE_URL` y SSL). Con cualquier otro valor se usa `.env.local` y `LOCAL_DATABASE_URL`, que es obligatoria.
+  `NODE_ENV` ya no elige la base: `next build` y `next start` usan la base local.
 - **Peligro con datos reales:**
   - `db:seed`, `db:reset-data` y `db:reset-full` **borran todas las tablas**.
-  - Con `NODE_ENV=production` apuntan a la base de producción en Supabase, y ningún script lo impide.
-  - **Nunca los corras con `NODE_ENV=production`**, y nunca leas ni modifiques `.env.prod`.
+  - Con `APP_ENV=production` apuntan a la base de producción en Supabase (hasta BUG-3, ningún script lo impide).
+  - **Nunca corras nada con `APP_ENV=production`**, y nunca leas ni modifiques `.env.prod`.
 
 ## 8. Cómo se trabaja
 

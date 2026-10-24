@@ -113,7 +113,7 @@ cargando en el Sprint 1 en paralelo.
 | 0   | [T-9](#t-9--flujo-sin-pr-y-backlog-al-día)                                     | Flujo sin PR y backlog al día                | En revisión | —                  | 25 min          |
 | 1   | [T-2](#t-2--infraestructura-de-tests)                                          | Infraestructura de tests                     | En revisión | T-1                | 2 h 10 min      |
 | 2   | [BUG-2](#bug-2--jwt_secret-con-valor-por-defecto-en-el-código)                 | `JWT_SECRET` con valor por defecto           | En revisión | T-2                | 25 min          |
-| 3   | [T-8](#t-8--la-base-de-producción-se-elige-con-app_env)                        | La base de producción se elige con `APP_ENV` | Pendiente   | T-2                | 55 min          |
+| 3   | [T-8](#t-8--la-base-de-producción-se-elige-con-app_env)                        | La base de producción se elige con `APP_ENV` | En revisión | T-2                | 55 min          |
 | 4   | [BUG-3](#bug-3--scripts-de-base-que-borran-todo-sin-protección)                | Scripts que borran todo sin protección       | Pendiente   | T-2, T-8           | 35 min          |
 | 5   | [T-3](#t-3--gates-eslint-con-reglas-duras-hooks-y-ci)                          | Gates: ESLint con reglas duras, hooks y CI   | Pendiente   | T-2, T-8           | 3 h             |
 | 6   | [BUG-5](#bug-5--consultas-en-paralelo-sobre-la-misma-conexión-en-el-dashboard) | Consultas en paralelo en el dashboard        | Pendiente   | T-2                | 30 min          |
@@ -259,12 +259,12 @@ descartable, de forma que cada ítem se pueda hacer con TDD.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
-| Dueño        | —         |
-| Inicio       | —         |
+| Estado       | En revisión |
+| Dueño        | Ignacio Tomas |
+| Inicio       | 2026-10-24 |
 | Tamaño       | S         |
 | Depende de   | T-2       |
-| Plan         | —         |
+| Plan         | [`docs/plans/T-8-base-explicita.md`](docs/plans/T-8-base-explicita.md) |
 | Merge        | —         |
 | Horas reales | —         |
 
@@ -277,15 +277,20 @@ así que un `npm run build` local consulta la base de producción, y en el CI no
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · Una función pura resuelve la configuración: producción sólo con `APP_ENV=production` (`DATABASE_URL` y SSL); si no, `LOCAL_DATABASE_URL` obligatoria y sin SSL. Tests en tabla, incluido `NODE_ENV=production` sin `APP_ENV` → base local · Estimación: 20 min · Completado: —
+- [x] **CA-1** · Una función pura resuelve la configuración: producción sólo con `APP_ENV=production` (`DATABASE_URL` y SSL); si no, `LOCAL_DATABASE_URL` obligatoria y sin SSL. Tests en tabla, incluido `NODE_ENV=production` sin `APP_ENV` → base local · Estimación: 20 min · Completado: 2026-10-24 16:24
 
-- [ ] **CA-2** · `src/lib/db/index.ts` y `drizzle.config.ts` la usan, y `npm run build` prerenderiza `/home` contra la base local, verificado · Estimación: 20 min · Completado: —
+- [x] **CA-2** · `src/lib/db/index.ts` y `drizzle.config.ts` la usan, y `npm run build` prerenderiza `/home` contra la base local, verificado · Estimación: 20 min · Completado: 2026-10-24 16:24
 
-- [ ] **CA-3** · `.env.example`, `docs/architecture.md` (Entornos), `docs/initial_prompt.md` y los comandos contra producción (`APP_ENV=production npm run …`) actualizados; ADR "La base se elige con `APP_ENV`, no con `NODE_ENV`" · Estimación: 15 min · Completado: —
+- [x] **CA-3** · `.env.example`, `docs/architecture.md` (Entornos), `docs/initial_prompt.md` y los comandos contra producción (`APP_ENV=production npm run …`) actualizados; ADR "La base se elige con `APP_ENV`, no con `NODE_ENV`" · Estimación: 15 min · Completado: 2026-10-24 16:24
 
 **Notas**
 
 - Quien despliegue la app (el hosting está a definir) tiene que definir `APP_ENV=production`.
+- **Evidencia de CA-2**: `npm run build` con `DATABASE_URL` apuntando a una IP inalcanzable (203.0.113.1) terminó con
+  código 0, prerenderizó `/home` (ISR de 30 s) y el log mostró las 2 consultas del catálogo por la configuración
+  local. No hubo ningún intento de conexión al host falso. En esta PC no existe `.env.prod`.
+- `APP_ENV` desconocido (`prod`, `PRODUCTION`…) es un error, para que una errata no elija una base sin querer.
+- La guarda de los tests de integración (T-2) también rechaza `APP_ENV=production`.
 
 ### T-3 · Gates: ESLint con reglas duras, hooks y CI
 

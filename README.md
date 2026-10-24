@@ -161,10 +161,10 @@ npx playwright install
 
 ### 2. Environment Configuration
 
-The project uses a standard `.env` hierarchy. The environment is determined by the `NODE_ENV` variable:
+The project uses a standard `.env` hierarchy. The database is chosen by the `APP_ENV` variable, never by `NODE_ENV` (see `docs/adr/0002-la-base-se-elige-con-app-env.md`):
 
 - **Local Development**: Run commands without prefixes (defaults to `.env.local`).
-- **Production**: Prefix commands with `NODE_ENV=production` to use `.env.prod`.
+- **Production**: Prefix commands with `APP_ENV=production` to use `.env.prod`.
 
 #### A. Local Development (`.env.local`)
 Create a `.env.local` file at the root.
@@ -190,7 +190,7 @@ CLOUDINARY_URL=cloudinary://your_prod_key...
 npm run db:migrate
 
 # Production (uses .env.prod)
-NODE_ENV=production npm run db:migrate
+APP_ENV=production npm run db:migrate
 ```
 
 ### 3. Spawn Database Infrastructure
@@ -217,7 +217,7 @@ npm run db:enable-unaccent
 npm run db:seed-users
 ```
 
-*Note: For production, prefix these with `NODE_ENV=production`.*
+*Note: For production, prefix these with `APP_ENV=production`.*
 
 ### 5. Start the Development Server
 
