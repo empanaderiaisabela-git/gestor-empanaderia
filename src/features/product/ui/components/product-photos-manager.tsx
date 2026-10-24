@@ -26,16 +26,6 @@ export function ProductPhotosManager({ product, isOpen, onClose }: ProductPhotos
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    if (isOpen && product?.id) {
-      setActiveTab('view');
-      loadPhotos(product.id);
-    } else {
-      setPhotos([]);
-      setError(null);
-    }
-  }, [isOpen, product]);
-
   const loadPhotos = async (productId: string) => {
     setIsLoading(true);
     setError(null);
@@ -52,6 +42,16 @@ export function ProductPhotosManager({ product, isOpen, onClose }: ProductPhotos
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (isOpen && product?.id) {
+      setActiveTab('view');
+      loadPhotos(product.id);
+    } else {
+      setPhotos([]);
+      setError(null);
+    }
+  }, [isOpen, product]);
 
   const handleDelete = (publicId: string) => {
     startTransition(async () => {

@@ -72,7 +72,7 @@ flowchart LR
 | Autenticación | JWT HS256 (`jose`) en cookie `httpOnly`, contraseñas con `bcrypt` |
 | Archivos | Cloudinary (fotos de producto recortadas a 1:1 al subir) |
 | Comprobantes | `window.print()` sobre una vista de impresión |
-| Calidad | ESLint 9 (`eslint-config-next`) + Prettier |
+| Calidad | ESLint 9 (`eslint-config-next` + reglas duras en `eslint/`, con la lista `eslint-legacy.json`), Prettier, lefthook, commitlint y GitHub Actions (ADR 0003) |
 | Tests | Vitest 5 (unit e integración), fast-check y Playwright (E2E). Testing Library y Stryker **(a instalar, T-5)**. Ver [`testing.md`](testing.md) |
 
 ## Reglas de dependencia
@@ -318,6 +318,9 @@ uso sin conexión), se decide con un ADR que evalúe primero una PWA y después 
 
 El código heredado **no se copia como ejemplo**. Cada brecha se corrige cuando un ítem del backlog toca ese
 código, o con un ítem propio. Nunca "de paso" dentro de otra tarea.
+
+El inventario exacto de archivos que violan las reglas duras es `eslint-legacy.json` (143 al activarlas en T-3).
+Cuando un ítem corrige uno, lo saca de la lista, y la lista nunca crece (ADR 0003).
 
 | Brecha | Dónde | Regla de `AGENTS.md` |
 |---|---|---|

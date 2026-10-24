@@ -8,3 +8,4 @@ nuevo que lo reemplaza y se actualiza el estado del anterior.
 |---|---|---|---|
 | [0001](0001-vitest-como-runner-de-tests.md) | Vitest como runner de tests con Next.js | Aceptado | 2026-10-24 |
 | [0002](0002-la-base-se-elige-con-app-env.md) | La base se elige con `APP_ENV`, no con `NODE_ENV` | Aceptado | 2026-10-24 |
+| [0003](0003-reglas-estrictas-con-lista-legacy.md) | Reglas estrictas en código nuevo, con una lista legacy que sólo se achica | Aceptado | 2026-10-24 |

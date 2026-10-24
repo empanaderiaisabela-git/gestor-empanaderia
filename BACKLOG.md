@@ -296,12 +296,12 @@ así que un `npm run build` local consulta la base de producción, y en el CI no
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
-| Dueño        | —         |
-| Inicio       | —         |
+| Estado       | En progreso |
+| Dueño        | Ignacio Tomas |
+| Inicio       | 2026-10-24 |
 | Tamaño       | M         |
 | Depende de   | T-2, T-8  |
-| Plan         | —         |
+| Plan         | [`docs/plans/T-3-gates.md`](docs/plans/T-3-gates.md) |
 | Merge        | —         |
 | Horas reales | —         |
 
@@ -310,19 +310,33 @@ nuevo no pueda violarlas.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · ESLint rechaza las violaciones de las reglas duras (ver detalle) · Estimación: 45 min · Completado: —
+- [x] **CA-1** · ESLint rechaza las violaciones de las reglas duras (ver detalle) · Estimación: 45 min · Completado: 2026-10-24 16:41
 
-- [ ] **CA-2** · `eslint-legacy.json` lista los archivos heredados que hoy las violan; el CI rechaza un push que agregue entradas · Estimación: 30 min · Completado: —
+- [x] **CA-2** · `eslint-legacy.json` lista los archivos heredados que hoy las violan; el CI rechaza un push que agregue entradas · Estimación: 30 min · Completado: 2026-10-24 16:41
 
-- [ ] **CA-3** · Corregido el error de `react-hooks/immutability` en `product-photos-manager.tsx`; `npm run lint` en verde · Estimación: 10 min · Completado: —
+- [x] **CA-3** · Corregido el error de `react-hooks/immutability` en `product-photos-manager.tsx`; `npm run lint` en verde · Estimación: 10 min · Completado: 2026-10-24 16:41
 
-- [ ] **CA-4** · lefthook: `pre-commit` (bloquea `.env`, lint, typecheck), `commit-msg` (commitlint), `pre-push` (`test:coverage`, `skills:check`) · Estimación: 20 min · Completado: —
+- [x] **CA-4** · lefthook: `pre-commit` (bloquea `.env`, lint, typecheck), `commit-msg` (commitlint), `pre-push` (`test:coverage`, `skills:check`) · Estimación: 20 min · Completado: 2026-10-24 16:41
 
 - [ ] **CA-5** · `.github/workflows/ci.yml` en cada push a `develop`/`main` · Estimación: 45 min · Completado: —
 
-- [ ] **CA-6** · Demostrado que se rechazan un mensaje de commit inválido, un `.env` staged y un archivo nuevo de 101 líneas · Estimación: 15 min · Completado: —
+- [x] **CA-6** · Demostrado que se rechazan un mensaje de commit inválido, un `.env` staged y un archivo nuevo de 101 líneas · Estimación: 15 min · Completado: 2026-10-24 16:41
 
-- [ ] **CA-7** · ADR "Reglas estrictas en código nuevo con lista legacy que sólo se achica" · Estimación: 15 min · Completado: —
+- [x] **CA-7** · ADR "Reglas estrictas en código nuevo con lista legacy que sólo se achica" · Estimación: 15 min · Completado: 2026-10-24 16:41
+
+**Notas**
+
+- **CA-1**: además de las reglas del detalle, `as` (salvo `as const`) y los tipos de retorno explícitos en lo
+  exportado. La excepción a "cero comentarios" se marca con `Por qué:`. `src/test/eslint-rules.test.ts` verifica cada
+  regla (22 casos).
+- **CA-2**: 143 archivos heredados (142 de código y `globals.css`). `npm run lint:legacy -- <ref>` falla si la lista
+  crece, tiene repetidos o apunta a archivos que ya no existen.
+- **CA-6**, evidencia en esta rama, con los hooks instalados:
+  - `git commit -m "cambio cualquiera"`: commitlint rechaza con `subject-empty` y `type-empty`.
+  - `.env.demo` en el stage: "Commit bloqueado: no se commitean archivos .env reales".
+  - `src/lib/demo-101.ts` de 101 líneas: `max-lines` "File has too many lines (101)".
+- Los tests no tienen `max-lines-per-function` (los `describe` son estructura); el tope por archivo y `max-params`
+  sí aplican.
 
 **Detalle**
 

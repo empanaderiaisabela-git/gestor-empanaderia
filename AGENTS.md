@@ -17,11 +17,14 @@ requerimientos del cliente, textuales, en [`docs/requerimientos/specs.md`](docs/
 
 ## Reglas duras (el lint/CI las hace cumplir)
 
+ESLint (`eslint.config.mjs` + `eslint/`), lefthook y el CI las aplican. Los archivos heredados listados en
+`eslint-legacy.json` las tienen apagadas, y esa lista **sólo se achica** (ADR 0003).
+
 | Regla | Detalle |
 |---|---|
 | Tope de líneas | **100 líneas físicas por archivo de código** (`.ts/.tsx/.js/.mjs/.css`, tests incluidos). Funciones ≤ 40 líneas, ≤ 3 parámetros (usar objeto). No aplica a `.md`/JSON/YAML. |
-| Comentarios | **Cero**. El código se explica solo. Única excepción: en español y sólo cuando el código no puede expresar el *por qué*. |
-| Tipado | Sin `any`, sin `!` (non-null), sin `as` salvo en fronteras ya validadas. Tipos de retorno explícitos en exports. Ausencia = `T \| null` explícito. |
+| Comentarios | **Cero**. El código se explica solo. Única excepción: en español, sólo cuando el código no puede expresar el *por qué*, y empezando con `Por qué:` (así lo reconoce el lint). |
+| Tipado | Sin `any`, sin `!` (non-null), sin `as` salvo en fronteras ya validadas (`as const` sí; la excepción se declara por archivo en la config de ESLint, nunca con un comentario). Tipos de retorno explícitos en exports. Ausencia = `T \| null` explícito. |
 | Capas | `ui → actions → service → repository → db`. Nunca saltear ni invertir. Sólo el repositorio toca Drizzle. Detalle en `docs/architecture.md`. |
 | SQL | **Prohibido SQL plano** (`sql\`\``, `pg` directo). Siempre el query builder de Drizzle. `sql` sólo en `check()` del schema. |
 | Tipos compartidos | Viven **sólo** en `src/features/<f>/domain` (schemas Zod + tipos inferidos). El código de cliente nunca importa `repository`, `services` ni `@/lib/db`. |

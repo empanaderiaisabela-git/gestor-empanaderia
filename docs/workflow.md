@@ -90,9 +90,10 @@ Ciclo por comportamiento: test que falla → código mínimo → refactor. Detal
 
 Nunca `--no-verify`. Si un gate falla, se arregla la causa.
 
-> Todavía no están instalados lefthook ni commitlint, faltan los scripts `test:mutation` y `verify`, y no hay
-> workflow de CI (sólo `keep-alive.yml`). Detalle de los scripts en
-> [`testing.md`](testing.md#cuándo-se-corre-cada-cosa).
+> Desde T-3 están lefthook (`lefthook.yml`), commitlint y el CI (`.github/workflows/ci.yml`: lint, lista legacy,
+> typecheck, `skills:check`, cobertura, integración y build). Faltan `test:mutation` y `verify` (T-5), y los jobs
+> de mutación (T-5) y E2E (T-6). Detalle de los scripts en
+> [`testing.md`](testing.md#cuándo-se-corre-cada-cosa) y de las reglas en el ADR 0003.
 
 ## 7. Cierre (skill `finish-task`)
 

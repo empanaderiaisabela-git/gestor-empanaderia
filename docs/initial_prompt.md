@@ -80,9 +80,15 @@ Hacer preguntas de más es mejor que inventar.
   - Vitest 5 con los proyectos `unit` e `integration`, y fast-check (T-2, ADR 0001).
   - Integración contra `db-test` (postgres:15 en el 5434, `tmpfs`), con una guarda que aborta si la URL no es esa.
   - E2E con Playwright (`tests/`, con Page Objects); todavía corre contra la base de desarrollo hasta T-6.
-  - Testing Library, Stryker, lefthook y commitlint **no están instalados**.
+  - Testing Library y Stryker **no están instalados** (T-5).
 - Scripts pendientes: `test:mutation` y `verify` (T-5).
-- CI: sólo `.github/workflows/keep-alive.yml`, que hace un ping diario a Supabase.
+- Gates (T-3, ADR 0003):
+  - ESLint aplica las reglas duras (`eslint.config.mjs` + `eslint/`), salvo en los archivos heredados de
+    `eslint-legacy.json`. Esa lista sólo se achica (`npm run lint:legacy`).
+  - lefthook: `pre-commit` bloquea los `.env` reales y corre ESLint, el tope de los `.css` y el typecheck;
+    `commit-msg` corre commitlint; `pre-push` corre `test:coverage` y `skills:check`.
+- CI: `.github/workflows/ci.yml` en cada push a `develop` y `main` (lint, lista legacy, typecheck, skills,
+  cobertura, integración y build contra `db-test`), más `keep-alive.yml`, que hace un ping diario a Supabase.
 - `README.md` todavía describe ArgenStock.
 - Skills: la fuente es `.agents/skills/`. Se copian a `.claude/skills/` con `npm run skills:sync`, y
   `npm run skills:check` verifica que estén iguales. **Nunca edites `.claude/skills/` directo.**
@@ -119,7 +125,7 @@ Detalle en [`docs/architecture.md`](architecture.md).
 | Regla | Resumen |
 |---|---|
 | Tamaño | ≤ 100 líneas por archivo de código (tests incluidos); funciones de ≤ 40 líneas y ≤ 3 parámetros |
-| Comentarios | Cero. Única excepción: un *por qué* en español que el código no puede expresar |
+| Comentarios | Cero. Única excepción: un *por qué* en español que el código no puede expresar, empezando con `Por qué:` |
 | Tipado | Sin `any`, sin `!` y sin `as` salvo en fronteras ya validadas; retornos explícitos en lo exportado |
 | Capas | `ui → actions → service → repository → db`. Sólo el repositorio toca Drizzle |
 | SQL | Sin SQL plano. `sql` de Drizzle sólo dentro de `check()` del schema |
@@ -136,7 +142,8 @@ los commits van en español aunque la skill `conventional-commit` diga inglés.
 
 El código actual **viola muchas de esas reglas**: más de 100 `any`, SQL dentro de queries, 50 archivos de más
 de 100 líneas, comentarios por todos lados y errores como textos sueltos. La lista completa está en
-[`architecture.md` → Brechas](architecture.md#brechas-entre-el-código-actual-y-estas-reglas).
+[`architecture.md` → Brechas](architecture.md#brechas-entre-el-código-actual-y-estas-reglas), y el inventario
+exacto de archivos es `eslint-legacy.json`. Si tu ítem corrige un archivo heredado, sacalo de esa lista.
 
 - **No lo copies como patrón.** El código nuevo sigue las reglas.
 - **No lo arregles "de paso".** Cada brecha se corrige cuando un ítem del backlog toca ese código, o con un ítem
@@ -256,7 +263,7 @@ Requerimiento → Ítem de backlog → Descubrimiento → Plan aprobado → Rama
 | Levantar la base local | `docker compose up -d` (servicio `db`, postgres:15, puerto 5433 en el host) |
 | Migrar y preparar la base | `npm run db:migrate` (incluye `unaccent` desde la migración 0005) → `npm run db:seed-users` (usuario `admin` / `admin`) |
 | Desarrollo | `npm run dev` → http://localhost:3000 |
-| Lint / tipos / build | `npm run lint` · `npm run typecheck` · `npm run build` |
+| Lint / tipos / build | `npm run lint` · `npm run lint:legacy` · `npm run typecheck` · `npm run build` |
 | Tests unit | `npm test` · `npm run test:watch` · `npm run test:coverage` |
 | Tests de integración | `docker compose up -d --wait db-test` → `npm run test:int` |
 | E2E | `npm run test:e2e` (Chromium); hoy corre contra la base de desarrollo, hasta T-6 |

@@ -72,7 +72,7 @@ Refs: US-20
 - Breaking change: `feat(sale)!: …` y un párrafo `BREAKING CHANGE: …` en el cuerpo.
 - Ejemplos: `feat(sale): registrar el medio de pago de cada venta`,
   `fix(customer): avisar del conflicto al editar con una versión vieja`, `docs(backlog): marcar US-3 en progreso`.
-- commitlint lo valida en el hook `commit-msg` y en CI (los dos a configurar).
+- commitlint (`commitlint.config.mjs`, Conventional Commits) lo valida en el hook `commit-msg` de lefthook.
 
 Commits hechos con asistencia de IA: se agrega el trailer que indique la herramienta
 (p. ej. `Co-Authored-By: Claude …`). 

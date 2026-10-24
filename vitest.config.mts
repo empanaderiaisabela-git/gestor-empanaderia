@@ -14,6 +14,7 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'html', 'lcov'],
       reportsDirectory: './coverage',
+      exclude: ['eslint/**', 'scripts/**'],
       thresholds: { lines: 90, functions: 90, statements: 90, branches: 85 },
     },
     projects: [
