@@ -124,7 +124,7 @@ cargando en el Sprint 1 en paralelo.
 | 11  | [BUG-7](#bug-7--el-password_hash-llega-al-navegador)                           | El `password_hash` llega al navegador        | En revisión | T-4                | 50 min          |
 | 12  | [BUG-8](#bug-8--lecturas-de-productos-y-proveedores-sin-sesión)                | Lecturas de productos y proveedores sin sesión | En revisión | T-4                | 30 min          |
 | 13  | [T-6](#t-6--e2e-sobre-db-test)                                                 | E2E sobre `db-test`                          | En revisión | T-4, T-8           | 1 h 25 min      |
-| 14  | [T-5](#t-5--proveedores-como-feature-molde)                                    | Proveedores como feature molde               | Pendiente   | T-6                | 5 h             |
+| 14  | [T-5](#t-5--proveedores-como-feature-molde)                                    | Proveedores como feature molde               | En progreso | T-6                | 5 h             |
 | 15  | [T-7](#t-7--cierre-del-sprint-0)                                               | Cierre del Sprint 0                          | Pendiente   | T-5, BUG-1 a BUG-9 | 1 h             |
 |     |                                                                                | **Total del sprint**                         |             |                    | **22 h 32 min** |
 
@@ -402,9 +402,9 @@ pueda migrarse o crearse siguiendo `docs/architecture.md`.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
-| Dueño        | —         |
-| Inicio       | —         |
+| Estado       | En progreso |
+| Dueño        | Ignacio Tomas |
+| Inicio       | 2026-10-24 |
 | Tamaño       | L         |
 | Depende de   | T-6       |
 | Plan         | —         |
@@ -436,6 +436,22 @@ forma que sirva de molde para las demás y demuestre el flujo de punta a punta.
 
 - CA-2 es la revisión más pesada del sprint: unos 15 archivos nuevos o partidos. La estimación es casi toda lectura
   de código del dev.
+
+**Avance (2026-10-24 18:55)**: integrado parcialmente en `develop` porque se cortó la sesión.
+
+- **Hecho**:
+  - `provider` quedó con domain (`strictObject`), repository (interfaz, Drizzle y unidad de trabajo con auditoría),
+    fake, service, una action por archivo y UI en `features/provider/ui`. Salió de `eslint-legacy.json` (139 → 132).
+  - La suite de comportamiento corre contra el fake y contra Drizzle (CA-3).
+  - Contratos por fila de la tabla de errores (`UNAUTHENTICATED`, `FORBIDDEN`, `VALIDATION`, `DUPLICATE`,
+    `STALE_VERSION`, `HAS_RELATIONS`) y un fuzz (CA-4).
+  - Activar/desactivar y borrar exigen `version` (CA-5).
+  - 184 unit y 27 de integración en verde; lint y cobertura en verde.
+- **Pendiente** (los CA quedan sin marcar):
+  - CA-1: correr `tests/proveedores.spec.ts` después del refactor.
+  - CA-6: Stryker (ya instalado, falta la config, `test:mutation` y `verify`).
+  - CA-7: `docs/features/provider/README.md`.
+  - CA-8: el proyecto `component` de Vitest con su primer test (Testing Library y jsdom ya instalados).
 
 ### BUG-1 · Acciones de fotos de producto sin control de sesión
 

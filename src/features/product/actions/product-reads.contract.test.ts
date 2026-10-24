@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { deviceRepository } from '@/features/device/repository/device.repository';
 import { productRepository } from '@/features/product/repository/product.repository';
-import { providerRepository } from '@/features/provider/repository/provider.repository';
+import { providerService } from '@/features/provider/services/provider.service';
 import { asUser } from '@/test/as-user';
 import { fetchProducts, fetchSelectorData } from './product.actions';
 
@@ -26,7 +26,7 @@ describe('lecturas de productos y proveedores (BUG-8)', () => {
   beforeEach(() => {
     vi.spyOn(productRepository, 'getAllProducts').mockResolvedValue([PRODUCT]);
     vi.spyOn(deviceRepository, 'getAllDevices').mockResolvedValue([DEVICE]);
-    vi.spyOn(providerRepository, 'getAllProviders').mockResolvedValue([PROVIDER]);
+    vi.spyOn(providerService, 'list').mockResolvedValue([PROVIDER]);
   });
 
   it('regression BUG-8: sin sesión fetchProducts no devuelve precios de compra', async () => {
@@ -36,7 +36,7 @@ describe('lecturas de productos y proveedores (BUG-8)', () => {
 
   it('regression BUG-8: sin sesión fetchSelectorData no devuelve el contacto de los proveedores', async () => {
     expect(await fetchSelectorData()).toEqual({ devices: [], providers: [] });
-    expect(providerRepository.getAllProviders).not.toHaveBeenCalled();
+    expect(providerService.list).not.toHaveBeenCalled();
   });
 
   it('con sesión de vendedor fetchProducts devuelve los productos', async () => {

@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 
 export const CODE_FILES = ['**/*.{ts,tsx,mts,js,mjs}'];
 export const TS_FILES = ['**/*.{ts,tsx}'];
-export const TEST_FILES = ['**/*.test.ts', '**/*.spec.ts', '**/*.setup.ts'];
+export const TEST_FILES = ['**/*.test.ts', '**/*.test.tsx', '**/*.spec.ts', '**/*.setup.ts', '**/*.behavior.ts'];
 
 export const codeRules = {
   'max-lines': ['error', { max: 100, skipBlankLines: false, skipComments: false }],
