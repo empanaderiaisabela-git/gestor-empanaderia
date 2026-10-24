@@ -129,7 +129,7 @@ Con el tope de 100 líneas, cuando un archivo crece se parte por operación (`cr
 |---|---|
 | `src/proxy.ts` | Next 16 renombró `middleware.ts` a `proxy.ts`. Corre en cada request: valida la cookie `session`, redirige a `/home` si no hay sesión y aplica RBAC por ruta (el `vendedor` sólo entra a `/productos`, `/ventas` y `/clientes`). Las rutas públicas están en `publicPaths`. |
 | `src/features/<f>/actions/` | Server Actions. Única puerta del cliente al servidor: sesión y rol, validación Zod, service y `ActionResult`. |
-| `src/features/<f>/services/` | **(a crear)** Reglas de negocio y orquestación. Abren la transacción y la pasan a los repositorios. Hoy esa lógica está repartida entre actions y repositorios. |
+| `src/features/<f>/services/` | Reglas de negocio y orquestación. Abren la transacción y la pasan a los repositorios. Hoy existe sólo en `stats` (BUG-5); en el resto de los features la lógica sigue repartida entre actions y repositorios **(a crear)**. |
 | `src/features/<f>/repository/` | Acceso a datos con Drizzle. Reciben `tx` opcional para participar de una transacción y traducen "0 filas afectadas" a error de concurrencia. |
 | `src/lib/db/schema.ts` | Schema Drizzle: tablas, enums, índices, FKs y relaciones. Fuente de verdad de la base. |
 | `src/lib/db/migrations/` | Migraciones SQL generadas por `drizzle-kit`. No se editan a mano. |

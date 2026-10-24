@@ -67,7 +67,7 @@ Hacer preguntas de más es mejor que inventar.
   las US sí se pueden ir cargando en el Sprint 1.
 - Git: `main` y `develop` parten del commit inicial (T-1). El trabajo nuevo sale de `develop`. El repo de GitHub
   es **público**: todo lo que se pushea queda publicado.
-- **No existen todavía**: `docs/features/` y `docs/conventions/`.
+- **No existe todavía**: `docs/conventions/`.
 - **Sí existen**:
   - `BACKLOG.md`, con el Sprint 0 (T-1 a T-9 y BUG-1 a BUG-9) en orden de ejecución, y el Sprint 1 con BUG-10
     a BUG-12.
@@ -101,14 +101,16 @@ Detalle en [`docs/architecture.md`](architecture.md).
   Form + Zod, Tailwind v4 y Cloudinary. Postgres corre en Docker en local y en Supabase en producción.
 - **En ejecución es cliente-servidor y en despliegue es un monolito modular.** El navegador habla con el
   servidor por **Server Actions** (`'use server'`), no por una API REST.
-- Capas: `ui → actions → service → repository → db`. **La capa `service` todavía no existe**: hoy la lógica
-  está repartida entre actions y repositorios. El código nuevo la crea.
+- Capas: `ui → actions → service → repository → db`. **La capa `service` existe sólo en `stats`** (BUG-5): en el
+  resto, la lógica está repartida entre actions y repositorios. El código nuevo la crea.
 - Cada feature vive en `src/features/<feature>/` con estas carpetas:
   - `domain/`: schemas Zod de entrada y de fila.
   - `repository/`: Drizzle.
-  - `services/`: a crear.
+  - `services/`: hoy sólo en `stats`.
   - `actions/`, `store/` (Zustand) y `ui/`.
-  - `testing/`: fakes y builders, a crear.
+  - `testing/`: fakes y builders; hoy sólo `stats/testing/seed-dashboard.ts`.
+- Helpers de test en `src/test/`: la guarda de `db-test`, el `globalSetup` de integración y `truncateAll()`.
+- Doc por feature en `docs/features/<f>/README.md`; hoy sólo `stats`.
 - Schema de la base en `src/lib/db/schema.ts`.
 - **Seguridad**:
   - JWT en la cookie `session`.

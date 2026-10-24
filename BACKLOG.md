@@ -116,7 +116,7 @@ cargando en el Sprint 1 en paralelo.
 | 3   | [T-8](#t-8--la-base-de-producción-se-elige-con-app_env)                        | La base de producción se elige con `APP_ENV` | En revisión | T-2                | 55 min          |
 | 4   | [BUG-3](#bug-3--scripts-de-base-que-borran-todo-sin-protección)                | Scripts que borran todo sin protección       | En revisión | T-2, T-8           | 35 min          |
 | 5   | [T-3](#t-3--gates-eslint-con-reglas-duras-hooks-y-ci)                          | Gates: ESLint con reglas duras, hooks y CI   | En revisión | T-2, T-8           | 3 h             |
-| 6   | [BUG-5](#bug-5--consultas-en-paralelo-sobre-la-misma-conexión-en-el-dashboard) | Consultas en paralelo en el dashboard        | Pendiente   | T-2                | 30 min          |
+| 6   | [BUG-5](#bug-5--consultas-en-paralelo-sobre-la-misma-conexión-en-el-dashboard) | Consultas en paralelo en el dashboard        | En revisión | T-2                | 30 min          |
 | 7   | [BUG-6](#bug-6--datos-sensibles-en-los-logs-de-desarrollo-y-lecturas-de-más)   | Datos sensibles en logs y lecturas de más    | Pendiente   | T-2                | 35 min          |
 | 8   | [BUG-9](#bug-9--errores-de-base-de-datos-mal-traducidos)                       | Errores de base de datos mal traducidos      | Pendiente   | T-2                | 40 min          |
 | 9   | [T-4](#t-4--bases-de-la-arquitectura-objetivo)                                 | Bases de la arquitectura objetivo            | Pendiente   | T-3                | 2 h             |
@@ -590,12 +590,12 @@ local y `.env.local` quedan listos para loguearse.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
-| Dueño        | —         |
-| Inicio       | —         |
+| Estado       | En revisión |
+| Dueño        | Ignacio Tomas |
+| Inicio       | 2026-10-24 |
 | Tamaño       | S         |
 | Depende de   | T-2       |
-| Plan         | —         |
+| Plan         | [`docs/plans/BUG-5-dashboard-secuencial.md`](docs/plans/BUG-5-dashboard-secuencial.md) |
 | Merge        | —         |
 | Horas reales | —         |
 
@@ -605,9 +605,23 @@ local y `.env.local` quedan listos para loguearse.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · Test `regression BUG-5` (integración) que reproduce el aviso antes del fix · Estimación: 15 min · Completado: —
+- [x] **CA-1** · Test `regression BUG-5` (integración) que reproduce el aviso antes del fix · Estimación: 15 min · Completado: 2026-10-24 16:53
 
-- [ ] **CA-2** · El dashboard muestra los mismos totales y el aviso de `pg` no aparece · Estimación: 15 min · Completado: —
+- [x] **CA-2** · El dashboard muestra los mismos totales y el aviso de `pg` no aparece · Estimación: 15 min · Completado: 2026-10-24 16:53
+
+**Notas**
+
+- **CA-1**: `stats.repository.int.test.ts` espía `process.emitWarning`. Con las consultas en paralelo (como antes)
+  el test falló, y con las consultas secuenciales pasa.
+- **CA-2**: los totales salen de un cálculo puro (`compute-dashboard-stats.ts`) que replica la fórmula original, con
+  el mismo orden de suma. Están verificados con tests unit y con un test de integración sobre datos sembrados. La
+  respuesta de la action tiene la misma forma que antes.
+- Las consultas corren en una transacción `repeatable read` de sólo lectura (antes, `read committed` no garantizaba
+  una foto consistente) y traen sólo las columnas que se usan. Del vendedor sólo viene `username`, lo que adelanta
+  parte de BUG-6.
+- `stats` es el primer feature con capas `services` y `repository`, y tiene su `docs/features/stats/README.md`.
+  `stats.actions.ts` salió de `eslint-legacy.json` (143 → 142).
+- `truncateAll()` (previsto en T-4 CA-4) se adelantó acá en `src/test/truncate-all.ts`, con la guarda de `db-test`.
 
 ### BUG-6 · Datos sensibles en los logs de desarrollo y lecturas de más
 

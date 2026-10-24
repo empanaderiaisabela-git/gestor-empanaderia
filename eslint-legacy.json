@@ -103,7 +103,6 @@
   "src/features/sale/ui/components/sales-print-view.tsx",
   "src/features/sale/ui/hooks/useCart.ts",
   "src/features/sale/ui/hooks/useSalesActions.ts",
-  "src/features/stats/actions/stats.actions.ts",
   "src/features/stats/store/stats.store.ts",
   "src/features/user/actions/user.actions.ts",
   "src/features/user/domain/user.schema.ts",
