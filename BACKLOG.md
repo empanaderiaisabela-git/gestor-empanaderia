@@ -115,7 +115,7 @@ cargando en el Sprint 1 en paralelo.
 | 2   | [BUG-2](#bug-2--jwt_secret-con-valor-por-defecto-en-el-código)                 | `JWT_SECRET` con valor por defecto           | En revisión | T-2                | 25 min          |
 | 3   | [T-8](#t-8--la-base-de-producción-se-elige-con-app_env)                        | La base de producción se elige con `APP_ENV` | En revisión | T-2                | 55 min          |
 | 4   | [BUG-3](#bug-3--scripts-de-base-que-borran-todo-sin-protección)                | Scripts que borran todo sin protección       | En revisión | T-2, T-8           | 35 min          |
-| 5   | [T-3](#t-3--gates-eslint-con-reglas-duras-hooks-y-ci)                          | Gates: ESLint con reglas duras, hooks y CI   | Pendiente   | T-2, T-8           | 3 h             |
+| 5   | [T-3](#t-3--gates-eslint-con-reglas-duras-hooks-y-ci)                          | Gates: ESLint con reglas duras, hooks y CI   | En revisión | T-2, T-8           | 3 h             |
 | 6   | [BUG-5](#bug-5--consultas-en-paralelo-sobre-la-misma-conexión-en-el-dashboard) | Consultas en paralelo en el dashboard        | Pendiente   | T-2                | 30 min          |
 | 7   | [BUG-6](#bug-6--datos-sensibles-en-los-logs-de-desarrollo-y-lecturas-de-más)   | Datos sensibles en logs y lecturas de más    | Pendiente   | T-2                | 35 min          |
 | 8   | [BUG-9](#bug-9--errores-de-base-de-datos-mal-traducidos)                       | Errores de base de datos mal traducidos      | Pendiente   | T-2                | 40 min          |
@@ -296,7 +296,7 @@ así que un `npm run build` local consulta la base de producción, y en el CI no
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | En progreso |
+| Estado       | En revisión |
 | Dueño        | Ignacio Tomas |
 | Inicio       | 2026-10-24 |
 | Tamaño       | M         |
@@ -318,7 +318,7 @@ nuevo no pueda violarlas.
 
 - [x] **CA-4** · lefthook: `pre-commit` (bloquea `.env`, lint, typecheck), `commit-msg` (commitlint), `pre-push` (`test:coverage`, `skills:check`) · Estimación: 20 min · Completado: 2026-10-24 16:41
 
-- [ ] **CA-5** · `.github/workflows/ci.yml` en cada push a `develop`/`main` · Estimación: 45 min · Completado: —
+- [x] **CA-5** · `.github/workflows/ci.yml` en cada push a `develop`/`main` · Estimación: 45 min · Completado: 2026-10-24 16:46
 
 - [x] **CA-6** · Demostrado que se rechazan un mensaje de commit inválido, un `.env` staged y un archivo nuevo de 101 líneas · Estimación: 15 min · Completado: 2026-10-24 16:41
 
@@ -337,6 +337,9 @@ nuevo no pueda violarlas.
   - `src/lib/demo-101.ts` de 101 líneas: `max-lines` "File has too many lines (101)".
 - Los tests no tienen `max-lines-per-function` (los `describe` son estructura); el tope por archivo y `max-params`
   sí aplican.
+- **CA-5**: la primera corrida del CI (run 40126729595, push de `036ee6c` a `develop`) terminó en verde en los 4 jobs
+  (quality, unit, integración y build contra `db-test`). El primer push lo frenó el `pre-push`: la cobertura medía la
+  config de ESLint, y se corrigió excluyendo `eslint/` y `scripts/` antes de publicar.
 
 **Detalle**
 
