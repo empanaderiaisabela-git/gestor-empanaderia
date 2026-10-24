@@ -1,5 +1,4 @@
 [
-  "playwright.config.ts",
   "src/app/(auth)/layout.tsx",
   "src/app/(auth)/login/page.tsx",
   "src/app/(main)/categorias/device-panel.tsx",
@@ -128,7 +127,6 @@
   "src/stores/index.ts",
   "tests/clientes.spec.ts",
   "tests/concurrencia.spec.ts",
-  "tests/db.setup.ts",
   "tests/equipos.spec.ts",
   "tests/pages/ClientesPage.ts",
   "tests/pages/EquiposPage.ts",

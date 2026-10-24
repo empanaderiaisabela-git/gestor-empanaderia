@@ -123,7 +123,7 @@ cargando en el Sprint 1 en paralelo.
 | 10  | [BUG-1](#bug-1--acciones-de-fotos-de-producto-sin-control-de-sesión)           | Acciones de fotos sin control de sesión      | En revisión | T-4                | 45 min          |
 | 11  | [BUG-7](#bug-7--el-password_hash-llega-al-navegador)                           | El `password_hash` llega al navegador        | En revisión | T-4                | 50 min          |
 | 12  | [BUG-8](#bug-8--lecturas-de-productos-y-proveedores-sin-sesión)                | Lecturas de productos y proveedores sin sesión | En revisión | T-4                | 30 min          |
-| 13  | [T-6](#t-6--e2e-sobre-db-test)                                                 | E2E sobre `db-test`                          | Pendiente   | T-4, T-8           | 1 h 25 min      |
+| 13  | [T-6](#t-6--e2e-sobre-db-test)                                                 | E2E sobre `db-test`                          | En revisión | T-4, T-8           | 1 h 25 min      |
 | 14  | [T-5](#t-5--proveedores-como-feature-molde)                                    | Proveedores como feature molde               | Pendiente   | T-6                | 5 h             |
 | 15  | [T-7](#t-7--cierre-del-sprint-0)                                               | Cierre del Sprint 0                          | Pendiente   | T-5, BUG-1 a BUG-9 | 1 h             |
 |     |                                                                                | **Total del sprint**                         |             |                    | **22 h 32 min** |
@@ -811,12 +811,12 @@ relacionados).
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
-| Dueño        | —         |
-| Inicio       | —         |
+| Estado       | En revisión |
+| Dueño        | Ignacio Tomas |
+| Inicio       | 2026-10-24 |
 | Tamaño       | M         |
 | Depende de   | T-4, T-8  |
-| Plan         | —         |
+| Plan         | [`docs/plans/T-6-e2e-db-test.md`](docs/plans/T-6-e2e-db-test.md) |
 | Merge        | —         |
 | Horas reales | —         |
 
@@ -825,13 +825,28 @@ desarrollo.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · Playwright levanta la app con `.env.test` (`webServer`) y carga un seed mínimo · Estimación: 40 min · Completado: —
+- [x] **CA-1** · Playwright levanta la app con `.env.test` (`webServer`) y carga un seed mínimo · Estimación: 40 min · Completado: 2026-10-24 18:30
 
-- [ ] **CA-2** · 0 reintentos en local y 1 en CI; Chromium por defecto y los tres navegadores en el CI de `main` · Estimación: 10 min · Completado: —
+- [x] **CA-2** · 0 reintentos en local y 1 en CI; Chromium por defecto y los tres navegadores en el CI de `main` · Estimación: 10 min · Completado: 2026-10-24 18:30
 
-- [ ] **CA-3** · `tests/readme.md` corregido: no menciona scripts inexistentes · Estimación: 5 min · Completado: —
+- [x] **CA-3** · `tests/readme.md` corregido: no menciona scripts inexistentes · Estimación: 5 min · Completado: 2026-10-24 18:30
 
-- [ ] **CA-4** · `npm run test:e2e` en verde, con su job en el CI, y la base de desarrollo igual antes y después · Estimación: 30 min · Completado: —
+- [x] **CA-4** · `npm run test:e2e` en verde, con su job en el CI, y la base de desarrollo igual antes y después · Estimación: 30 min · Completado: 2026-10-24 18:30
+
+**Notas de cierre**
+
+- **CA-4**: 79 de 79 tests en verde en Chromium (6 min). Los conteos por tabla de la base de desarrollo quedaron
+  iguales antes y después de 5 corridas completas.
+- **Decisión**: primero se probó con `next dev`, pero en esta PC fallaban por tiempo 3 a 7 tests distintos en cada
+  corrida. Se pasó a `next build` + `next start` (puerto 3100, carpeta `.next-e2e`), que es estable. El spec de
+  landing ahora espera la revalidación de ISR (30 s) del catálogo.
+- `playwright.config.ts` y `scripts/e2e-prepare.ts` abortan si la URL no es la de `db-test`. `tests/db.setup.ts`
+  se borró, y `playwright.config.ts` salió de la lista legacy (141 → 139).
+- **Escenario B de concurrencia**: con la suite en paralelo, a veces el aviso de éxito de la venta (que dura 4,5 s) no
+  se llegaba a ver, aunque la venta sí se registraba. Ahora espera la venta en la lista. El aviso de éxito lo cubre
+  `ventas.spec.ts`.
+- **Escenario C**: confirma en el navegador el mensaje correcto de BUG-9.
+- `ProductosPage.alternarVisibilidadLanding` espera la condición en vez de `waitForTimeout(500)`.
 
 **Notas**
 

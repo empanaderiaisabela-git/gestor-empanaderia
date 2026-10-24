@@ -149,27 +149,23 @@ Scripts de `package.json` (`test:mutation` y `verify` se agregan en T-5, junto c
 | E2E | < 5 min en Chromium | Datos efímeros en vez de resetear la base, login una sola vez (`storageState`). Los tres navegadores sólo en el CI de `main`. |
 | Mutación | < 10 min | Sólo `domain/`, `services/` y `lib/` puro, con el modo incremental de Stryker. |
 
-Reintentos: hoy Playwright reintenta 2 veces siempre. Un test que pasa al segundo intento es un test inestable.
-Objetivo: 0 reintentos local y 1 en CI, e investigar todo test que pase reintentando. Ningún test espera con
-`sleep`: espera una condición.
+Reintentos (desde T-6): 0 en local y 1 en el CI. Un test que pasa al segundo intento es un test inestable y se
+investiga. Ningún test espera con `sleep`: espera una condición. Los Page Objects heredados todavía tienen algunos
+`waitForTimeout` cortos al tipear; se sacan cuando un ítem los toque.
 
 ## Bases de datos
 
 - Desarrollo: servicio `db`.
 - Tests: servicio `db-test`. Nunca se testea contra la base de desarrollo, y **jamás** contra producción.
 
-Cómo tiene que quedar:
+Cómo está armado (desde T-6):
 
 | Uso | Detalle |
 |---|---|
 | `db-test` | postgres:15 en `127.0.0.1:5434`, base `stock_test`, con `tmpfs` (los datos no sobreviven al contenedor y es más rápido) y perfil `test` (`docker compose up -d` no lo levanta). Se configura en `.env.test`, que está versionado. Se levanta con `docker compose up -d --wait db-test`. |
 | Integración | `src/test/integration.global-setup.ts` aborta si `NODE_ENV=production`, si `APP_ENV=production` o si `LOCAL_DATABASE_URL` no es la de `db-test`, y aplica las migraciones (incluida `0005_enable-unaccent`). Cada test arranca con las tablas vacías (`truncateAll()`, T-4). |
-| E2E | Playwright levanta la app con `webServer` apuntando a `db-test`, y un proyecto `setup` carga el seed mínimo (usuario `admin` y datos base). |
-| Scripts destructivos | `db:seed`, `db:reset-*` y similares se niegan a correr si la URL no es local o de test. |
-
-Hoy no es así: el E2E corre contra la base de desarrollo (los Page Objects importan `db` de `src/lib/db`),
-`tests/db.setup.ts` está deshabilitado en `playwright.config.ts`, y el script `db:reset-data-hard` que mencionan
-`tests/readme.md` y `db.setup.ts` no existe en `package.json`.
+| E2E | `npm run test:e2e` carga `.env.test`, y `playwright.config.ts` aborta si la URL no es la de `db-test`. El `webServer` (`npm run e2e:server`) vuelve a verificarla, aplica las migraciones, carga el seed (`db:seed`: `admin`, `vendedor` y datos de demo) y levanta la app con `next build` + `next start` en el puerto 3100, con la carpeta `.next-e2e`. El proyecto `setup` inicia sesión y abre cada pantalla del panel (prueba de humo). Detalle en [`tests/readme.md`](../tests/readme.md). |
+| Scripts destructivos | `db:seed`, `db:reset-data` y `db:reset-full` se niegan a correr si la URL no es local o si `APP_ENV=production` (BUG-3); `wipe-db` y `seed-users`, todavía no (BUG-10). |
 
 ## Reportes
 

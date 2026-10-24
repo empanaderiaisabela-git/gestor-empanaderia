@@ -36,7 +36,7 @@ export function assertTestDatabaseUrl({ url, nodeEnv, appEnv }: TestDatabaseGuar
     throw new Error('Los tests de integración no corren con APP_ENV=production.');
   }
   if (!url) {
-    throw new Error('Falta LOCAL_DATABASE_URL. Corré los tests de integración con npm run test:int.');
+    throw new Error('Falta LOCAL_DATABASE_URL de db-test (.env.test). Corré los tests con npm run test:int o npm run test:e2e.');
   }
   if (!isTestDatabase(parseUrl(url))) {
     throw new Error(`La URL de la base no es la de db-test (${TEST_DATABASE_URL.description}).`);

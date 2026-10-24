@@ -14,7 +14,7 @@
     "test:watch": "vitest --project unit",
     "test:coverage": "vitest run --project unit --coverage",
     "test:int": "dotenv -e .env.test -- vitest run --project integration",
-    "test:e2e": "dotenv -v NODE_OPTIONS=--conditions=react-server -- playwright test --project=chromium",
+    "test:e2e": "dotenv -e .env.test -v NODE_OPTIONS=--conditions=react-server -- playwright test --project=chromium",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:seed": "tsx --conditions=react-server src/lib/db/scripts/setup-initial-data.ts",
@@ -25,7 +25,9 @@
     "db:backfill-cost": "tsx --conditions=react-server src/lib/db/scripts/backfill-sale-item-cost.ts",
     "db:enable-unaccent": "tsx --conditions=react-server src/scripts/enable-unaccent.ts",
     "skills:sync": "node scripts/skills.mjs sync",
-    "skills:check": "node scripts/skills.mjs check"
+    "skills:check": "node scripts/skills.mjs check",
+    "test:e2e:all": "dotenv -e .env.test -v NODE_OPTIONS=--conditions=react-server -- playwright test",
+    "e2e:server": "tsx scripts/e2e-prepare.ts && next build && next start -p 3100"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

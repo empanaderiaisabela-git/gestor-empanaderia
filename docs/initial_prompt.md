@@ -79,7 +79,8 @@ Hacer preguntas de más es mejor que inventar.
 - Tests:
   - Vitest 5 con los proyectos `unit` e `integration`, y fast-check (T-2, ADR 0001).
   - Integración contra `db-test` (postgres:15 en el 5434, `tmpfs`), con una guarda que aborta si la URL no es esa.
-  - E2E con Playwright (`tests/`, con Page Objects); todavía corre contra la base de desarrollo hasta T-6.
+  - E2E con Playwright (`tests/`, con Page Objects) contra `db-test`, con `next build` + `next start` en el 3100 y la carpeta
+    `.next-e2e` (T-6, ver `tests/readme.md`). Nunca toca la base de desarrollo.
   - Testing Library y Stryker **no están instalados** (T-5).
 - Scripts pendientes: `test:mutation` y `verify` (T-5).
 - Gates (T-3, ADR 0003):
@@ -278,7 +279,7 @@ Requerimiento → Ítem de backlog → Descubrimiento → Plan aprobado → Rama
 | Lint / tipos / build | `npm run lint` · `npm run lint:legacy` · `npm run typecheck` · `npm run build` |
 | Tests unit | `npm test` · `npm run test:watch` · `npm run test:coverage` |
 | Tests de integración | `docker compose up -d --wait db-test` → `npm run test:int` |
-| E2E | `npm run test:e2e` (Chromium); hoy corre contra la base de desarrollo, hasta T-6 |
+| E2E | `docker compose up -d --wait db-test` → `npm run test:e2e` (Chromium) o `npm run test:e2e:all` (tres navegadores) |
 | Skills | `npm run skills:sync` · `npm run skills:check` |
 | Planeados (no existen aún) | `test:mutation`, `verify` (T-5) |
 

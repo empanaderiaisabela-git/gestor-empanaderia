@@ -23,7 +23,7 @@ describe('assertTestDatabaseUrl', () => {
   });
 
   it('rechaza una URL ausente', () => {
-    expect(() => assertTestDatabaseUrl({ url: undefined, nodeEnv: 'test' })).toThrow('Falta LOCAL_DATABASE_URL. Corré los tests de integración con npm run test:int.');
+    expect(() => assertTestDatabaseUrl({ url: undefined, nodeEnv: 'test' })).toThrow('Falta LOCAL_DATABASE_URL de db-test (.env.test). Corré los tests con npm run test:int o npm run test:e2e.');
   });
 
   it('rechaza una URL mal formada', () => {

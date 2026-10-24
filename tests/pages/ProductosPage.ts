@@ -22,6 +22,7 @@ export class ProductosPage {
     BTN_REGISTRAR_PERDIDA: 'Registrar Pérdida',
     BTN_CONFIRMAR_PERDIDA: 'Confirmar Pérdida',
     BTN_OCULTAR: 'Ocultar en Landing',
+    BTN_MOSTRAR: 'Mostrar en Landing',
   } as const;
 
   // =========================================================================
@@ -286,9 +287,7 @@ export class ProductosPage {
     const fila = this.obtenerFila(equipo, proveedor, descActual);
     // Asumimos que hay un switch o botón relacionado a la visibilidad en la landing
     await fila.getByRole('button', { name: ProductosPage.UI.BTN_OCULTAR, exact: true }).click();
-
-    // Esperar un momento si hay una mutación optimista o un guardado automático
-    await this.page.waitForTimeout(500);
+    await expect(fila.getByRole('button', { name: ProductosPage.UI.BTN_MOSTRAR, exact: true })).toBeVisible({ timeout: 30_000 });
     await this.borrarBusqueda();
   }
 

@@ -7,7 +7,7 @@ import { localPlugin } from './eslint/rules/no-comments.mjs';
 const eslintConfig = [
   ...nextConfig,
   {
-    ignores: ['**/node_modules/**', '.next/**', 'dist/**', 'build/**', 'public/**', '**/playwright-report/**', '**/test-results/**', 'coverage/**', '.vitest/**', '.agents/**', '.claude/**', 'next-env.d.ts'],
+    ignores: ['**/node_modules/**', '.next/**', '.next-e2e/**', 'dist/**', 'build/**', 'public/**', '**/playwright-report/**', '**/test-results/**', 'coverage/**', '.vitest/**', '.agents/**', '.claude/**', 'next-env.d.ts'],
   },
   {
     files: ['**/*.{js,mjs,cjs,jsx}'],

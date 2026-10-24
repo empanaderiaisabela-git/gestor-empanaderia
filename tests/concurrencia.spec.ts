@@ -90,7 +90,8 @@ test.describe.parallel('Pruebas de Concurrencia', () => {
     await ventasPage2.agregarMetodoEfectivo();
     await ventasPage2.finalizarFactura();
 
-    await expect(page2.getByText('Venta realizada con éxito')).toBeVisible();
+    await ventasPage2.buscarVenta(cliente.nombre);
+    await expect(ventasPage2.obtenerFilaPorNombre(cliente.nombre)).toBeVisible({ timeout: 30_000 });
 
     // Usuario 1 Finaliza edicion
     await productosPage1.confirmarFormularioEdicion();
