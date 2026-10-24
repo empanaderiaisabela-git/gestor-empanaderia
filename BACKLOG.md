@@ -114,7 +114,7 @@ cargando en el Sprint 1 en paralelo.
 | 1   | [T-2](#t-2--infraestructura-de-tests)                                          | Infraestructura de tests                     | En revisión | T-1                | 2 h 10 min      |
 | 2   | [BUG-2](#bug-2--jwt_secret-con-valor-por-defecto-en-el-código)                 | `JWT_SECRET` con valor por defecto           | En revisión | T-2                | 25 min          |
 | 3   | [T-8](#t-8--la-base-de-producción-se-elige-con-app_env)                        | La base de producción se elige con `APP_ENV` | En revisión | T-2                | 55 min          |
-| 4   | [BUG-3](#bug-3--scripts-de-base-que-borran-todo-sin-protección)                | Scripts que borran todo sin protección       | Pendiente   | T-2, T-8           | 35 min          |
+| 4   | [BUG-3](#bug-3--scripts-de-base-que-borran-todo-sin-protección)                | Scripts que borran todo sin protección       | En revisión | T-2, T-8           | 35 min          |
 | 5   | [T-3](#t-3--gates-eslint-con-reglas-duras-hooks-y-ci)                          | Gates: ESLint con reglas duras, hooks y CI   | Pendiente   | T-2, T-8           | 3 h             |
 | 6   | [BUG-5](#bug-5--consultas-en-paralelo-sobre-la-misma-conexión-en-el-dashboard) | Consultas en paralelo en el dashboard        | Pendiente   | T-2                | 30 min          |
 | 7   | [BUG-6](#bug-6--datos-sensibles-en-los-logs-de-desarrollo-y-lecturas-de-más)   | Datos sensibles en logs y lecturas de más    | Pendiente   | T-2                | 35 min          |
@@ -477,12 +477,12 @@ entorno.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
-| Dueño        | —         |
-| Inicio       | —         |
+| Estado       | En revisión |
+| Dueño        | Ignacio Tomas |
+| Inicio       | 2026-10-24 |
 | Tamaño       | S         |
 | Depende de   | T-2, T-8  |
-| Plan         | —         |
+| Plan         | [`docs/plans/BUG-3-guarda-scripts.md`](docs/plans/BUG-3-guarda-scripts.md) |
 | Merge        | —         |
 | Horas reales | —         |
 
@@ -494,9 +494,19 @@ es local o de test.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · Función de guarda con su test `regression BUG-3` · Estimación: 25 min · Completado: —
+- [x] **CA-1** · Función de guarda con su test `regression BUG-3` · Estimación: 25 min · Completado: 2026-10-24 16:27
 
-- [ ] **CA-2** · Los tres scripts usan la guarda antes de borrar · Estimación: 10 min · Completado: —
+- [x] **CA-2** · Los tres scripts usan la guarda antes de borrar · Estimación: 10 min · Completado: 2026-10-24 16:27
+
+**Notas**
+
+- La guarda (`src/lib/db/scripts/assert-safe-to-wipe.ts`) valida la URL que resuelve `database-config.ts` (T-8):
+  bloquea `APP_ENV=production`, una URL inválida y cualquier host que no sea `localhost`/`127.0.0.1`.
+- **Evidencia**: con `APP_ENV=production` y con un host remoto falso, `db:seed`, `db:reset-data` y `db:reset-full`
+  salen con código 1 y el mensaje "Script destructivo bloqueado…"; `reset-full` no llega al paso 1. `db:seed` contra
+  `db-test` funciona (2 usuarios, 5 productos).
+- `reset-full` lee el `.env` en una copia del entorno, así sus pasos se comportan igual que antes.
+- `wipe-db.ts` (sin script npm), el `db:generate` de `reset-full` y `db:seed-users` quedan para BUG-10.
 
 ### BUG-4 · `npm run dev` se cuelga en "Compiling /home"
 

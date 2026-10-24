@@ -156,7 +156,8 @@ de 100 líneas, comentarios por todos lados y errores como textos sueltos. La li
   `NODE_ENV` ya no elige la base: `next build` y `next start` usan la base local.
 - **Peligro con datos reales:**
   - `db:seed`, `db:reset-data` y `db:reset-full` **borran todas las tablas**.
-  - Con `APP_ENV=production` apuntan a la base de producción en Supabase (hasta BUG-3, ningún script lo impide).
+  - Desde BUG-3 se niegan a correr con `APP_ENV=production` o contra una base que no sea local. `wipe-db.ts` y
+    `db:seed-users` todavía no tienen esa guarda (BUG-10, Sprint 1).
   - **Nunca corras nada con `APP_ENV=production`**, y nunca leas ni modifiques `.env.prod`.
 
 ## 8. Cómo se trabaja

@@ -304,7 +304,9 @@ que es obligatoria y no tiene valor por defecto. Un valor desconocido de `APP_EN
 y `next start`, que corren con `NODE_ENV=production`, usan la base local o la que indique `LOCAL_DATABASE_URL`.
 
 > **Cuidado.** Los scripts `db:*` usan `.env.prod` si `APP_ENV=production`, y `db:seed` / `db:reset-data`
-> **borran todas las tablas, usuarios incluidos**. Hasta BUG-3, ningún script se niega a correr contra producción.
+> **borran todas las tablas, usuarios incluidos**. Desde BUG-3, `db:seed`, `db:reset-data` y `db:reset-full` se
+> niegan a correr con `APP_ENV=production` o contra una base que no sea local (`assert-safe-to-wipe.ts`). `wipe-db.ts`
+> y `db:seed-users` todavía no tienen esa guarda (BUG-10).
 
 ## Mobile (Capacitor)
 
