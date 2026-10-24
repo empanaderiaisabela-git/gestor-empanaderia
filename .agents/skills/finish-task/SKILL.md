@@ -47,12 +47,14 @@ npm run verify
 - [ ] `docs/initial_prompt.md` adaptado y con la fecha al día si fue un avance significativo: cualquier cambio
       que vuelva falsa una línea del prompt (criterios en `docs/how-to-document.md`).
 
-## 5. Backlog y PR
+## 5. Backlog e integración (sin PR)
 
 - [ ] `BACKLOG.md`: cada criterio de aceptación con su fecha y hora de cierre (hora de Argentina,
-      `AAAA-MM-DD HH:MM`), **horas reales** del ítem, estado `En revisión` y link al PR.
+      `AAAA-MM-DD HH:MM`) y estado `En revisión`. Las **horas reales** y el hash en `Merge` se cargan al pasar a
+      `Hecho`.
 - [ ] Commits en Conventional Commits (español, scope = feature, footer `Refs: <ID>`).
 - [ ] Antes de commitear, mostrale al dev una **lista breve en lenguaje simple**, para alguien sin conocimientos
       técnicos, de todo lo esencial que entra en el commit: qué es, por qué importa, adónde va y qué **no** entra.
       Esa lista es lo que el dev aprueba. Los controles técnicos van después, separados.
-- [ ] push a `develop` con la plantilla completa explicando que se hizo .
+- [ ] **No se abren PR** (regla general). Con el OK del dev: `git merge --squash` de la rama a `develop` (un
+      commit por ítem, `Refs: <ID>`), push y borrado de la rama, como indica `docs/git.md` § Flujo.

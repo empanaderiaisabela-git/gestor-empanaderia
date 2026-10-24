@@ -117,8 +117,8 @@ Reglas:
 | `git push` (hook) | `npm run test:coverage` | Unit, tipos, contrato, fuzz y componente, con umbrales de cobertura |
 | Si tocaste un repositorio o el schema | `npm run test:int` | Integración contra `db-test` |
 | Si tocaste un flujo cubierto por E2E | `npm run test:e2e` | Playwright en Chromium |
-| Antes de abrir el PR | `npm run verify` | Lint, tipos, cobertura, integración, mutación y `next build` |
-| PR y push a `develop` o `main` | GitHub Actions | Lo mismo que `verify` más E2E, en jobs paralelos |
+| Antes de integrar a `develop` | `npm run verify` | Lint, tipos, cobertura, integración, mutación y `next build` |
+| Push a `develop` o `main` | GitHub Actions | Lo mismo que `verify` más E2E, en jobs paralelos |
 
 Scripts a agregar en `package.json` (`dotenv-cli` ya está instalado):
 

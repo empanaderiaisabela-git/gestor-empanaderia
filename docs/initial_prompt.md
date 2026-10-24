@@ -1,7 +1,7 @@
 # Prompt inicial: contexto completo de gestor-empanaderia
 
 > **Uso.** Al empezar una sesión nueva de Claude Code: `Leé @docs/initial_prompt.md y seguilo.`
-> Foto del proyecto al **2026-10-23**. Se adapta en cada avance significativo
+> Foto del proyecto al **2026-10-24**. Se adapta en cada avance significativo
 > ([criterios](how-to-document.md#mantener-al-día-docsinitial_promptmd)). Si algo de acá contradice a
 > [`AGENTS.md`](../AGENTS.md) o a los docs que enlaza, **ganan ellos**: avisale al dev que este archivo quedó
 > desactualizado.
@@ -14,7 +14,7 @@ Sos el agente de ingeniería de software del repo **gestor-empanaderia**. Trabaj
 persona que programa, decide y aprueba. El **cliente** es el dueño de una rotisería que vende empanadas, pizzas,
 sándwiches y ciabattas. Con el cliente no hablás vos: sus pedidos te llegan a través del dev.
 
-- Idioma: **docs, commits, PRs, UI y tus respuestas en español** (rioplatense neutro). **Código en inglés.**
+- Idioma: **docs, commits, UI y tus respuestas en español** (rioplatense neutro). **Código en inglés.**
 - El dev quiere prácticas de ingeniería serias: procesos explícitos, tests primero, evidencia antes de decir
   "listo" y nada inventado.
 - El dev viene de Java/JUnit: [`docs/testing.md`](testing.md) tiene una tabla de equivalencias.
@@ -61,7 +61,7 @@ preguntan cuando un ítem los toque, nunca se asumen:
 
 Hacer preguntas de más es mejor que inventar.
 
-## 4. Estado actual del repo (al 2026-10-23)
+## 4. Estado actual del repo (al 2026-10-24)
 
 - **Sprint 0 en curso** (base técnica, ver `BACKLOG.md`). No se implementa ninguna US hasta que esté `Hecho`;
   las US sí se pueden ir cargando en el Sprint 1.
@@ -71,7 +71,9 @@ Hacer preguntas de más es mejor que inventar.
   - `docs/features/` y `docs/conventions/`
   - `.env.example` (T-2)
 - **Sí existen**:
-  - `BACKLOG.md`, con el Sprint 0 (T-1 a T-7 y BUG-1 a BUG-6).
+  - `BACKLOG.md`, con el Sprint 0 (T-1 a T-9 y BUG-1 a BUG-9) en orden de ejecución, y el Sprint 1 con BUG-10
+    a BUG-12.
+  - El plan del sprint completo en `docs/plans/sprint-0.md`: orden, decisiones del dev y enfoque de cada ítem.
   - Las plantillas en `docs/templates/` (`plan.md`, `feature.md`, `adr.md`), los planes en `docs/plans/` y el
     índice `docs/adr/README.md`, todavía sin ADRs.
   - El archivo de requerimientos `docs/requerimientos/specs.md`.
@@ -144,6 +146,12 @@ de 100 líneas, comentarios por todos lados y errores como textos sueltos. La li
     de regresión).
   - En desarrollo, la contraseña del login aparece en los logs de la terminal y el dashboard lee el
     `password_hash` de los vendedores (BUG-6, sin corregir).
+  - Crear y editar un usuario devuelven el `password_hash` al navegador (BUG-7), y `fetchProducts` y
+    `fetchSelectorData` no piden sesión (BUG-8). Sin corregir.
+  - `handleDatabaseError` no lee `error.cause` de Drizzle: los errores de unicidad y de clave foránea se muestran
+    como "concurrencia" (BUG-9, sin corregir).
+  - `next build` corre con `NODE_ENV=production`, así que carga `.env.prod` y prerenderiza `/home` contra
+    producción. Lo corrige T-8: hasta entonces, **no corras `npm run build`** si existe `.env.prod`.
 - **Peligro con datos reales:**
   - `db:seed`, `db:reset-data` y `db:reset-full` **borran todas las tablas**.
   - Con `NODE_ENV=production` apuntan a la base de producción en Supabase, y ningún script lo impide.
@@ -154,7 +162,7 @@ de 100 líneas, comentarios por todos lados y errores como textos sueltos. La li
 Detalle en [`docs/workflow.md`](workflow.md). Las skills `start-task` y `finish-task` lo automatizan.
 
 ```
-Requerimiento → Ítem de backlog → Descubrimiento → Plan aprobado → Rama → TDD → Gates → Docs → PR → Hecho
+Requerimiento → Ítem de backlog → Descubrimiento → Plan aprobado → Rama → TDD → Gates → Docs → Merge squash → Hecho
 ```
 
 ### 8.1 Entrada de requerimientos
@@ -215,7 +223,9 @@ Requerimiento → Ítem de backlog → Descubrimiento → Plan aprobado → Rama
      técnico) de todo lo esencial que entra: qué es, por qué importa, adónde va y qué no entra. **Esperá su OK**
      sobre esa lista.
    - Nunca `--no-verify` ni `push --force` a `main` o `develop`.
-7. **PR** a `develop` con squash merge. Al cerrar el sprint: `develop → main` con el tag `sprint-N`.
+7. **Sin PR, como regla general.** Con el OK del dev: `git merge --squash` de la rama a `develop` (un commit por
+   ítem), push y borrado de la rama. Al cerrar el sprint: merge local `develop → main` con el tag `sprint-N`.
+   Detalle en [`docs/git.md`](git.md#flujo).
 
 ## 9. Cómo comportarte
 

@@ -41,5 +41,5 @@ Un ítem del backlog se puede tomar cuando:
 ### Proceso
 - [ ] `BACKLOG.md`: cada criterio con su fecha y hora de cierre (hora de Argentina), **horas reales** del ítem y
       estado.
-- [ ] Commits Conventional Commits; push a `develop` con la plantilla preguntando antes; CI verde.
+- [ ] Commits Conventional Commits. Sin PR: con el OK del dev, merge squash local a `develop`, push y CI verde.
 - [ ] Aprobado por el dev. Recién ahí el estado pasa a `Hecho`.

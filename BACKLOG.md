@@ -26,7 +26,7 @@
 | ------------- | --------------------------------------------------------------------------------------------------------- |
 | `Pendiente`   | Cargado, todavía no empezó                                                                                |
 | `En progreso` | Alguien lo tomó: tiene dueño y fecha de inicio                                                            |
-| `En revisión` | Terminado y verificado; espera que el dev lo revise y lo apruebe. Si el ítem tiene PR, el PR está abierto |
+| `En revisión` | Terminado, verificado e integrado en `develop` con el OK del dev (merge squash local, sin PR); espera la revisión final del dev |
 | `Hecho`       | El dev lo aprobó y los cambios ya están en `develop` (o en `main`, en el caso del arranque)               |
 
 ### Cuándo se puede tomar un ítem
@@ -69,7 +69,7 @@ Cuando cumple la Definition of Ready ([`docs/definition-of-done.md`](docs/defini
 | Tamaño       | S / M / L |
 | Depende de   | —         |
 | Plan         | —         |
-| PR           | —         |
+| Merge        | —         |
 | Horas reales | —         |
 
 **Historia**: Como <rol> quiero <qué>, de forma que <para qué>.
@@ -86,36 +86,47 @@ Cuando cumple la Definition of Ready ([`docs/definition-of-done.md`](docs/defini
 - <dudas que el dev no puede responder sin el cliente>
 ```
 
+`Merge` es el hash del commit del ítem en `develop`, y se carga al pasarlo a `Hecho`. No se abren PR: cada ítem se
+integra con merge squash local, con el OK del dev (ver [`docs/git.md`](docs/git.md#flujo)).
+
 ------------------------------------------------------------------------------------------------------------------------
 
 ## Sprint 0 · Base técnica
 
 ------------------------------------------------------------------------------------------------------------------------
 
-**Objetivo**: que el flujo completo (requerimiento → backlog → plan → TDD → tests → PR) se pueda ejecutar de punta
-a punta.
+**Objetivo**: que el flujo completo (requerimiento → backlog → plan → TDD → tests → integración) se pueda ejecutar
+de punta a punta.
+
+**Plan del sprint**: [`docs/plans/sprint-0.md`](docs/plans/sprint-0.md) (orden, decisiones del dev y enfoque de cada
+ítem). La tabla de abajo está en orden de ejecución.
 
 **Regla del sprint**: no se implementa ninguna US hasta que el Sprint 0 esté `Hecho`. Las US sí se pueden ir
 cargando en el Sprint 1 en paralelo.
 
 ### Resumen del Sprint 0
 
-| ID                                                                             | Título                                       | Estado      | Depende de         | Estimación     |
-| ------------------------------------------------------------------------------ | -------------------------------------------- | ----------- | ------------------ | -------------- |
-| [T-1](#t-1--backlog-specs-y-base-inicial-del-repo)                             | Backlog, specs y base inicial del repo       | Hecho       | —                  | 1 h 5 min      |
-| [T-2](#t-2--infraestructura-de-tests)                                          | Infraestructura de tests                     | Pendiente   | T-1                | 2 h 10 min     |
-| [T-3](#t-3--gates-eslint-con-reglas-duras-hooks-y-ci)                          | Gates: ESLint con reglas duras, hooks y CI   | Pendiente   | T-2                | 3 h            |
-| [T-4](#t-4--bases-de-la-arquitectura-objetivo)                                 | Bases de la arquitectura objetivo            | Pendiente   | T-3                | 2 h            |
-| [T-5](#t-5--proveedores-como-feature-molde)                                    | Proveedores como feature molde               | Pendiente   | T-4                | 5 h            |
-| [BUG-1](#bug-1--acciones-de-fotos-de-producto-sin-control-de-sesión)           | Acciones de fotos sin control de sesión      | Pendiente   | T-4                | 35 min         |
-| [BUG-2](#bug-2--jwt_secret-con-valor-por-defecto-en-el-código)                 | `JWT_SECRET` con valor por defecto           | En progreso | T-2                | 25 min         |
-| [BUG-3](#bug-3--scripts-de-base-que-borran-todo-sin-protección)                | Scripts que borran todo sin protección       | Pendiente   | T-2                | 35 min         |
-| [BUG-4](#bug-4--npm-run-dev-se-cuelga-en-compiling-home)                       | `npm run dev` se cuelga en "Compiling /home" | Hecho       | —                  | 42 min         |
-| [BUG-5](#bug-5--consultas-en-paralelo-sobre-la-misma-conexión-en-el-dashboard) | Consultas en paralelo en el dashboard        | Pendiente   | T-2                | 30 min         |
-| [BUG-6](#bug-6--datos-sensibles-en-los-logs-de-desarrollo-y-lecturas-de-más)   | Datos sensibles en logs y lecturas de más    | Pendiente   | T-2                | 35 min         |
-| [T-6](#t-6--e2e-sobre-db-test)                                                 | E2E sobre `db-test`                          | Pendiente   | T-5                | 1 h 25 min     |
-| [T-7](#t-7--cierre-del-sprint-0)                                               | Cierre del Sprint 0                          | Pendiente   | T-6, BUG-1 a BUG-6 | 1 h            |
-|                                                                                | **Total del sprint**                         |             |                    | **19 h 2 min** |
+| #   | ID                                                                             | Título                                       | Estado      | Depende de         | Estimación      |
+| --- | ------------------------------------------------------------------------------ | -------------------------------------------- | ----------- | ------------------ | --------------- |
+| —   | [T-1](#t-1--backlog-specs-y-base-inicial-del-repo)                             | Backlog, specs y base inicial del repo       | Hecho       | —                  | 1 h 5 min       |
+| —   | [BUG-4](#bug-4--npm-run-dev-se-cuelga-en-compiling-home)                       | `npm run dev` se cuelga en "Compiling /home" | Hecho       | —                  | 42 min          |
+| 0   | [T-9](#t-9--flujo-sin-pr-y-backlog-al-día)                                     | Flujo sin PR y backlog al día                | En revisión | —                  | 25 min          |
+| 1   | [T-2](#t-2--infraestructura-de-tests)                                          | Infraestructura de tests                     | Pendiente   | T-1                | 2 h 10 min      |
+| 2   | [BUG-2](#bug-2--jwt_secret-con-valor-por-defecto-en-el-código)                 | `JWT_SECRET` con valor por defecto           | En progreso | T-2                | 25 min          |
+| 3   | [T-8](#t-8--la-base-de-producción-se-elige-con-app_env)                        | La base de producción se elige con `APP_ENV` | Pendiente   | T-2                | 55 min          |
+| 4   | [BUG-3](#bug-3--scripts-de-base-que-borran-todo-sin-protección)                | Scripts que borran todo sin protección       | Pendiente   | T-2, T-8           | 35 min          |
+| 5   | [T-3](#t-3--gates-eslint-con-reglas-duras-hooks-y-ci)                          | Gates: ESLint con reglas duras, hooks y CI   | Pendiente   | T-2, T-8           | 3 h             |
+| 6   | [BUG-5](#bug-5--consultas-en-paralelo-sobre-la-misma-conexión-en-el-dashboard) | Consultas en paralelo en el dashboard        | Pendiente   | T-2                | 30 min          |
+| 7   | [BUG-6](#bug-6--datos-sensibles-en-los-logs-de-desarrollo-y-lecturas-de-más)   | Datos sensibles en logs y lecturas de más    | Pendiente   | T-2                | 35 min          |
+| 8   | [BUG-9](#bug-9--errores-de-base-de-datos-mal-traducidos)                       | Errores de base de datos mal traducidos      | Pendiente   | T-2                | 40 min          |
+| 9   | [T-4](#t-4--bases-de-la-arquitectura-objetivo)                                 | Bases de la arquitectura objetivo            | Pendiente   | T-3                | 2 h             |
+| 10  | [BUG-1](#bug-1--acciones-de-fotos-de-producto-sin-control-de-sesión)           | Acciones de fotos sin control de sesión      | Pendiente   | T-4                | 45 min          |
+| 11  | [BUG-7](#bug-7--el-password_hash-llega-al-navegador)                           | El `password_hash` llega al navegador        | Pendiente   | T-4                | 50 min          |
+| 12  | [BUG-8](#bug-8--lecturas-de-productos-y-proveedores-sin-sesión)                | Lecturas de productos y proveedores sin sesión | Pendiente | T-4                | 30 min          |
+| 13  | [T-6](#t-6--e2e-sobre-db-test)                                                 | E2E sobre `db-test`                          | Pendiente   | T-4, T-8           | 1 h 25 min      |
+| 14  | [T-5](#t-5--proveedores-como-feature-molde)                                    | Proveedores como feature molde               | Pendiente   | T-6                | 5 h             |
+| 15  | [T-7](#t-7--cierre-del-sprint-0)                                               | Cierre del Sprint 0                          | Pendiente   | T-5, BUG-1 a BUG-9 | 1 h             |
+|     |                                                                                | **Total del sprint**                         |             |                    | **22 h 32 min** |
 
 ### T-1 · Backlog, specs y base inicial del repo
 
@@ -127,7 +138,7 @@ cargando en el Sprint 1 en paralelo.
 | Tamaño       | S                                                                  |
 | Depende de   | —                                                                  |
 | Plan         | [`docs/plans/T-1-base-inicial.md`](docs/plans/T-1-base-inicial.md) |
-| PR           | — (arranque directo en `main`, porque todavía no existe `develop`) |
+| Merge        | `f6be135` (arranque directo en `main`, antes de existir `develop`) |
 | Horas reales | — (lo carga el dev)                                                |
 
 **Historia**: Como dev quiero un backlog, documentación coherente y el repo versionado con `main` y `develop`, de
@@ -170,6 +181,38 @@ a GitHub, así que CA-8 sigue pendiente hasta el push de `main` y `develop`.
 
 **Cerrado por el dev** (2026-10-24 15:14): T-1 pasa a `Hecho`. Las horas reales quedan sin cargar.
 
+### T-9 · Flujo sin PR y backlog al día
+
+| Campo        | Valor                                                         |
+| ------------ | ------------------------------------------------------------- |
+| Estado       | En revisión                                                   |
+| Dueño        | Ignacio Tomas                                                 |
+| Inicio       | 2026-10-24                                                    |
+| Tamaño       | S                                                             |
+| Depende de   | —                                                             |
+| Plan         | [`docs/plans/sprint-0.md`](docs/plans/sprint-0.md) (sección 0) |
+| Merge        | —                                                             |
+| Horas reales | —                                                             |
+
+**Historia**: Como dev quiero que el flujo documentado refleje que no se usan pull requests y que el backlog tenga
+todo el Sprint 0 ordenado, de forma que cada ítem se integre siempre igual y nada quede afuera del backlog.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · Ningún doc del flujo, skill propia ni regla pide abrir un PR; `docs/git.md` describe el merge squash local y el cierre de sprint con merge local y tag · Estimación: 15 min · Completado: 2026-10-24 15:55
+
+- [x] **CA-2** · `BACKLOG.md` con el campo `Merge`, los ítems nuevos (T-8, BUG-7 a BUG-12), las dependencias y el orden de `docs/plans/sprint-0.md` · Estimación: 8 min · Completado: 2026-10-24 15:55
+
+- [x] **CA-3** · `npm run skills:check` en verde después de `skills:sync` · Estimación: 2 min · Completado: 2026-10-24 15:55
+
+**Decisiones del dev** (2026-10-24)
+
+- **Sin PR, como regla general.** Rama por ítem y, con el OK del dev, `git merge --squash` a `develop`, push y
+  borrado de la rama. El cierre de sprint es un merge local `develop → main` con el tag.
+- Entran al Sprint 0 tres hallazgos de la exploración del código: BUG-7, BUG-8 y BUG-9. BUG-10, BUG-11 y BUG-12
+  quedan en el Sprint 1.
+- T-8 (la base de producción se elige con `APP_ENV`) va antes de T-3, y T-6 (E2E sobre `db-test`) antes de T-5.
+
 ### T-2 · Infraestructura de tests
 
 | Campo        | Valor     |
@@ -180,7 +223,7 @@ a GitHub, así que CA-8 sigue pendiente hasta el push de `main` y `develop`.
 | Tamaño       | M         |
 | Depende de   | T-1       |
 | Plan         | —         |
-| PR           | —         |
+| Merge        | —         |
 | Horas reales | —         |
 
 **Historia**: Como dev quiero poder correr tests unit, de contrato, fuzz e integración contra una base
@@ -200,6 +243,38 @@ descartable, de forma que cada ítem se pueda hacer con TDD.
 
 - [ ] **CA-6** · ADR "Vitest como runner de tests con Next.js" · Estimación: 15 min · Completado: —
 
+### T-8 · La base de producción se elige con `APP_ENV`
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Pendiente |
+| Dueño        | —         |
+| Inicio       | —         |
+| Tamaño       | S         |
+| Depende de   | T-2       |
+| Plan         | —         |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como dev quiero que la base de producción sólo se use cuando lo pido explícitamente, de forma que ni
+`next build`, ni `next start`, ni un test o un script le peguen a Supabase por accidente.
+
+Hoy `src/lib/db/index.ts` y `drizzle.config.ts` eligen la base por `NODE_ENV`. `next build` y `next start` corren con
+`NODE_ENV=production`, así que cargan `.env.prod`. Además, `/home` se prerenderiza en el build y lee los productos,
+así que un `npm run build` local consulta la base de producción, y en el CI no hay forma de apuntar a `db-test`.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · Una función pura resuelve la configuración: producción sólo con `APP_ENV=production` (`DATABASE_URL` y SSL); si no, `LOCAL_DATABASE_URL` obligatoria y sin SSL. Tests en tabla, incluido `NODE_ENV=production` sin `APP_ENV` → base local · Estimación: 20 min · Completado: —
+
+- [ ] **CA-2** · `src/lib/db/index.ts` y `drizzle.config.ts` la usan, y `npm run build` prerenderiza `/home` contra la base local, verificado · Estimación: 20 min · Completado: —
+
+- [ ] **CA-3** · `.env.example`, `docs/architecture.md` (Entornos), `docs/initial_prompt.md` y los comandos contra producción (`APP_ENV=production npm run …`) actualizados; ADR "La base se elige con `APP_ENV`, no con `NODE_ENV`" · Estimación: 15 min · Completado: —
+
+**Notas**
+
+- Quien despliegue la app (el hosting está a definir) tiene que definir `APP_ENV=production`.
+
 ### T-3 · Gates: ESLint con reglas duras, hooks y CI
 
 | Campo        | Valor     |
@@ -208,9 +283,9 @@ descartable, de forma que cada ítem se pueda hacer con TDD.
 | Dueño        | —         |
 | Inicio       | —         |
 | Tamaño       | M         |
-| Depende de   | T-2       |
+| Depende de   | T-2, T-8  |
 | Plan         | —         |
-| PR           | —         |
+| Merge        | —         |
 | Horas reales | —         |
 
 **Historia**: Como dev quiero que las reglas duras de `AGENTS.md` se hagan cumplir solas, de forma que el código
@@ -220,13 +295,13 @@ nuevo no pueda violarlas.
 
 - [ ] **CA-1** · ESLint rechaza las violaciones de las reglas duras (ver detalle) · Estimación: 45 min · Completado: —
 
-- [ ] **CA-2** · `eslint-legacy.json` lista los archivos heredados que hoy las violan; el CI rechaza un PR que agregue entradas · Estimación: 30 min · Completado: —
+- [ ] **CA-2** · `eslint-legacy.json` lista los archivos heredados que hoy las violan; el CI rechaza un push que agregue entradas · Estimación: 30 min · Completado: —
 
 - [ ] **CA-3** · Corregido el error de `react-hooks/immutability` en `product-photos-manager.tsx`; `npm run lint` en verde · Estimación: 10 min · Completado: —
 
 - [ ] **CA-4** · lefthook: `pre-commit` (bloquea `.env`, lint, typecheck), `commit-msg` (commitlint), `pre-push` (`test:coverage`, `skills:check`) · Estimación: 20 min · Completado: —
 
-- [ ] **CA-5** · `.github/workflows/ci.yml` en cada PR y push a `develop`/`main` · Estimación: 45 min · Completado: —
+- [ ] **CA-5** · `.github/workflows/ci.yml` en cada push a `develop`/`main` · Estimación: 45 min · Completado: —
 
 - [ ] **CA-6** · Demostrado que se rechazan un mensaje de commit inválido, un `.env` staged y un archivo nuevo de 101 líneas · Estimación: 15 min · Completado: —
 
@@ -242,8 +317,9 @@ nuevo no pueda violarlas.
   - Importaciones prohibidas entre capas.
   - Comentarios.
 - **Lista legacy (CA-2)**: en esos archivos se apagan *sólo* las reglas nuevas.
-- **CI (CA-5)**: lint, typecheck, cobertura, integración, build, `skills:check`, chequeo de la lista legacy y E2E.
-  La estimación incluye esperar las primeras corridas y corregir lo que falle.
+- **CI (CA-5)**: lint, typecheck, cobertura, integración, build (contra `db-test`, gracias a T-8), `skills:check` y
+  chequeo de la lista legacy. El job de E2E se suma en T-6 y el de mutación en T-5. La estimación incluye esperar
+  las primeras corridas y corregir lo que falle.
 
 ### T-4 · Bases de la arquitectura objetivo
 
@@ -255,7 +331,7 @@ nuevo no pueda violarlas.
 | Tamaño       | M         |
 | Depende de   | T-3       |
 | Plan         | —         |
-| PR           | —         |
+| Merge        | —         |
 | Horas reales | —         |
 
 **Historia**: Como dev quiero las piezas transversales de la arquitectura objetivo, de forma que cualquier feature
@@ -279,9 +355,9 @@ pueda migrarse o crearse siguiendo `docs/architecture.md`.
 | Dueño        | —         |
 | Inicio       | —         |
 | Tamaño       | L         |
-| Depende de   | T-4       |
+| Depende de   | T-6       |
 | Plan         | —         |
-| PR           | —         |
+| Merge        | —         |
 | Horas reales | —         |
 
 **Historia**: Como dev quiero una feature completa en la arquitectura objetivo y con todos los tipos de test, de
@@ -289,7 +365,7 @@ forma que sirva de molde para las demás y demuestre el flujo de punta a punta.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · `tests/proveedores.spec.ts` pasa antes y después: no cambia el comportamiento visible · Estimación: 20 min · Completado: —
+- [ ] **CA-1** · `tests/proveedores.spec.ts` pasa antes y después, sobre `db-test` (T-6): no cambia el comportamiento visible · Estimación: 20 min · Completado: —
 
 - [ ] **CA-2** · `provider` tiene `domain`, `repository` (más fake), `services`, `actions` y `ui` según las reglas duras, y sale de `eslint-legacy.json` · Estimación: 2 h · Completado: —
 
@@ -303,7 +379,7 @@ forma que sirva de molde para las demás y demuestre el flujo de punta a punta.
 
 - [ ] **CA-7** · `docs/features/provider/README.md` desde la plantilla · Estimación: 15 min · Completado: —
 
-- [ ] **CA-8** · Recorrió `start-task` → PR a `develop` con CI verde → `finish-task` · Estimación: 30 min · Completado: —
+- [ ] **CA-8** · Recorrió `start-task` → `finish-task` → merge squash local a `develop` con CI verde en el push · Estimación: 30 min · Completado: —
 
 **Detalle**
 
@@ -320,23 +396,27 @@ forma que sirva de molde para las demás y demuestre el flujo de punta a punta.
 | Tamaño       | S         |
 | Depende de   | T-4       |
 | Plan         | —         |
-| PR           | —         |
+| Merge        | —         |
 | Horas reales | —         |
 
 **Actual**: `upload-product-photo.ts`, `delete-product-photo.ts` y `get-product-photos.ts` (en
 `src/features/product/actions/`) no verifican sesión ni rol. Cualquiera puede invocarlas con un POST.
 
-**Esperado**: sólo los roles autorizados las ejecutan; el resto recibe `UNAUTHENTICATED` o `FORBIDDEN`.
+**Esperado**: `admin` y `vendedor` pueden subir, borrar y listar fotos; sin sesión válida se recibe
+`UNAUTHENTICATED`.
 
 **Criterios de aceptación**
 
 - [ ] **CA-1** · Un test `regression BUG-1` por acción, que falla antes del fix · Estimación: 20 min · Completado: —
 
-- [ ] **CA-2** · Las tres acciones verifican sesión y rol · Estimación: 15 min · Completado: —
+- [ ] **CA-2** · Las tres acciones verifican sesión y permiten `admin` y `vendedor` · Estimación: 15 min · Completado: —
 
-**Preguntas abiertas**
+- [ ] **CA-3** · El `vendedor` ve el botón de fotos en la tabla y en la tarjeta de productos, con su test · Estimación: 10 min · Completado: —
 
-- ¿Qué roles pueden subir, borrar y listar fotos? Hoy un `vendedor` puede crear productos.
+**Preguntas resueltas** (dev, 2026-10-24)
+
+- Subir, borrar y listar fotos: `admin` y `vendedor`. Por eso se le muestra el botón al vendedor (hoy sólo lo ve el
+  admin).
 
 ### BUG-2 · `JWT_SECRET` con valor por defecto en el código
 
@@ -348,7 +428,7 @@ forma que sirva de molde para las demás y demuestre el flujo de punta a punta.
 | Tamaño       | S                                |
 | Depende de   | T-2 (para el test)               |
 | Plan         | — (fix adelantado dentro de T-1) |
-| PR           | —                                |
+| Merge        | —                                |
 | Horas reales | —                                |
 
 **Actual** (antes del fix): `src/lib/auth/jwt.ts` usaba un secreto escrito en el código si faltaba la variable de
@@ -382,15 +462,16 @@ entorno.
 | Dueño        | —         |
 | Inicio       | —         |
 | Tamaño       | S         |
-| Depende de   | T-2       |
+| Depende de   | T-2, T-8  |
 | Plan         | —         |
-| PR           | —         |
+| Merge        | —         |
 | Horas reales | —         |
 
 **Actual**: `db:seed`, `db:reset-data` y `db:reset-full` borran todas las tablas, también con
 `NODE_ENV=production` (Supabase).
 
-**Esperado**: se niegan a correr si `NODE_ENV=production` o si la URL no es local o de test.
+**Esperado**: se niegan a correr si la configuración es de producción (`APP_ENV=production`, ver T-8) o si la URL no
+es local o de test.
 
 **Criterios de aceptación**
 
@@ -408,7 +489,7 @@ entorno.
 | Tamaño       | S                                              |
 | Depende de   | —                                              |
 | Plan         | — (aprobado en la sesión; causa y pasos abajo) |
-| PR           | —                                              |
+| Merge        | `f6be135`                                      |
 | Horas reales | —                                              |
 
 **Actual**: `npm run dev` arranca, pero se queda en `○ Compiling /home ...` y localhost nunca responde. Hay un
@@ -469,7 +550,7 @@ local y `.env.local` quedan listos para loguearse.
 | Tamaño       | S         |
 | Depende de   | T-2       |
 | Plan         | —         |
-| PR           | —         |
+| Merge        | —         |
 | Horas reales | —         |
 
 **Actual**: `fetchDashboardStats` (`src/features/stats/actions/stats.actions.ts`) abre una transacción y lanza tres consultas con `Promise.all` sobre la misma conexión. `pg` avisa: *"Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0"*. Con `pg` 9 va a fallar.
@@ -492,7 +573,7 @@ local y `.env.local` quedan listos para loguearse.
 | Tamaño       | S         |
 | Depende de   | T-2       |
 | Plan         | —         |
-| PR           | —         |
+| Merge        | —         |
 | Horas reales | —         |
 
 **Actual**:
@@ -512,6 +593,92 @@ local y `.env.local` quedan listos para loguearse.
 - Next 16 tiene la opción `logging.serverFunctions` (por defecto `true`) en `next.config.ts`. Apagarla o redactar los argumentos se decide en el plan del ítem.
 - El logger de Drizzle (`logger: !isProd` en `src/lib/db/index.ts`) también imprime los parámetros de las consultas en desarrollo: revisarlo en el mismo plan.
 
+### BUG-7 · El `password_hash` llega al navegador
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Pendiente |
+| Dueño        | —         |
+| Inicio       | —         |
+| Tamaño       | S         |
+| Depende de   | T-4       |
+| Plan         | —         |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Actual**: `createUserAction` y `updateUserAction` (`src/features/user/actions/user.actions.ts:79` y `:110`)
+devuelven la fila de `.returning()` con un cast `as UserDef`, sin parsear, así que el `password_hash` viaja al
+navegador en la respuesta. Además, `verifyAuthOrAdmin` devuelve la fila completa del usuario, hash incluido.
+
+**Esperado**: ninguna respuesta al cliente, ni el usuario que devuelve `verifyAuthOrAdmin`, lleva el
+`password_hash`.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · Test `regression BUG-7` de contrato: la `data` de crear y de editar un usuario no tiene `passwordHash` · Estimación: 20 min · Completado: —
+
+- [ ] **CA-2** · Las actions de usuario parsean la respuesta con `userRowSchema`, y los `.returning()` de `user.repository` listan las columnas · Estimación: 15 min · Completado: —
+
+- [ ] **CA-3** · `verifyAuthOrAdmin` devuelve un tipo sin `passwordHash`, con su test de tipos · Estimación: 15 min · Completado: —
+
+### BUG-8 · Lecturas de productos y proveedores sin sesión
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Pendiente |
+| Dueño        | —         |
+| Inicio       | —         |
+| Tamaño       | S         |
+| Depende de   | T-4       |
+| Plan         | —         |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Actual**: `fetchProducts` y `fetchSelectorData` (`src/features/product/actions/product.actions.ts`) no verifican
+sesión. Cualquiera puede llamarlas con un POST y leer los precios de compra, el proveedor de cada producto y el
+teléfono y el mail de los proveedores.
+
+**Esperado**: las dos exigen una sesión válida (`admin` o `vendedor`, que son quienes usan `/productos`).
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · Test `regression BUG-8` de contrato: sin sesión, ninguna de las dos devuelve datos · Estimación: 20 min · Completado: —
+
+- [ ] **CA-2** · Las dos acciones verifican la sesión · Estimación: 10 min · Completado: —
+
+**Preguntas abiertas**
+
+- ¿El vendedor debe ver los precios de compra y el contacto de los proveedores?
+
+### BUG-9 · Errores de base de datos mal traducidos
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Pendiente |
+| Dueño        | —         |
+| Inicio       | —         |
+| Tamaño       | S         |
+| Depende de   | T-2       |
+| Plan         | —         |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Actual**: Drizzle 0.45 envuelve cada error de Postgres en un `DrizzleQueryError` cuyo mensaje empieza con
+`Failed query:` y que guarda el error original en `.cause`. `handleDatabaseError` (`src/lib/db-errors.ts`) sólo mira
+`error.code` y `error.originalError?.code`, así que un 23505 (unicidad) o un 23503 (clave foránea) caen en la rama
+`failed query` y el usuario ve el mensaje de **concurrencia**.
+
+**Esperado**: cada error real de la base muestra su mensaje (duplicado, entidad relacionada inexistente, registros
+relacionados).
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · Test `regression BUG-9` de integración contra `db-test`: duplicado → `UNIQUE_VIOLATION`, referencia inexistente → `RELATION_NOT_FOUND`, borrado de un registro referenciado → `FOREIGN_KEY_VIOLATION` · Estimación: 20 min · Completado: —
+
+- [ ] **CA-2** · `handleDatabaseError` lee el código y el detalle de `error.cause` · Estimación: 10 min · Completado: —
+
+- [ ] **CA-3** · Revisado el escenario C de `tests/concurrencia.spec.ts`, que hoy espera el texto de concurrencia; queda confirmado en T-6, sobre `db-test` · Estimación: 10 min · Completado: —
+
 ### T-6 · E2E sobre `db-test`
 
 | Campo        | Valor     |
@@ -520,9 +687,9 @@ local y `.env.local` quedan listos para loguearse.
 | Dueño        | —         |
 | Inicio       | —         |
 | Tamaño       | M         |
-| Depende de   | T-5       |
+| Depende de   | T-4, T-8  |
 | Plan         | —         |
-| PR           | —         |
+| Merge        | —         |
 | Horas reales | —         |
 
 **Historia**: Como dev quiero que el E2E corra contra una base descartable, de forma que nunca toque los datos de
@@ -536,7 +703,12 @@ desarrollo.
 
 - [ ] **CA-3** · `tests/readme.md` corregido: no menciona scripts inexistentes · Estimación: 5 min · Completado: —
 
-- [ ] **CA-4** · `npm run test:e2e` en verde, y la base de desarrollo igual antes y después · Estimación: 30 min · Completado: —
+- [ ] **CA-4** · `npm run test:e2e` en verde, con su job en el CI, y la base de desarrollo igual antes y después · Estimación: 30 min · Completado: —
+
+**Notas**
+
+- Va **antes que T-5** (decisión del dev, 2026-10-24): así el E2E de proveedores de T-5 corre sobre `db-test` y no
+  ensucia la base de desarrollo.
 
 ### T-7 · Cierre del Sprint 0
 
@@ -546,9 +718,9 @@ desarrollo.
 | Dueño        | —                  |
 | Inicio       | —                  |
 | Tamaño       | S                  |
-| Depende de   | T-6, BUG-1 a BUG-6 |
+| Depende de   | T-5, BUG-1 a BUG-9 |
 | Plan         | —                  |
-| PR           | —                  |
+| Merge        | —                  |
 | Horas reales | —                  |
 
 **Historia**: Como dev quiero la documentación al día con lo construido, de forma que el próximo agente arranque
@@ -562,7 +734,7 @@ con un contexto verdadero.
 
 - [ ] **CA-3** · `docs/initial_prompt.md` actualizado · Estimación: 10 min · Completado: —
 
-- [ ] **CA-4** · `npm run verify` en verde sobre `develop`; merge a `main` con el tag `sprint-0` · Estimación: 20 min · Completado: —
+- [ ] **CA-4** · `npm run verify` en verde sobre `develop`; merge local `develop → main` ("release: sprint 0") con el tag `sprint-0` · Estimación: 20 min · Completado: —
 
 ------------------------------------------------------------------------------------------------------------------------
 
@@ -572,4 +744,103 @@ con un contexto verdadero.
 
 Se carga desde [`docs/requerimientos/specs.md`](docs/requerimientos/specs.md) siguiendo `docs/workflow.md` §0.
 
-Todavía no hay ítems.
+Todavía no hay historias del cliente. Hay tres bugs que aparecieron al explorar el código para el Sprint 0 y que el
+dev dejó para este sprint (2026-10-24).
+
+### BUG-10 · Scripts destructivos que quedaron fuera de BUG-3
+
+| Campo        | Valor           |
+| ------------ | --------------- |
+| Estado       | Pendiente       |
+| Dueño        | —               |
+| Inicio       | —               |
+| Tamaño       | S               |
+| Depende de   | BUG-3           |
+| Plan         | —               |
+| Merge        | —               |
+| Horas reales | —               |
+
+**Actual**:
+- `src/lib/db/scripts/wipe-db.ts` hace `DROP SCHEMA public CASCADE` sin verificar la URL. Lee sólo `.env` y no
+  tiene script npm.
+- `db:reset-full` corre `db:generate` en el medio, y puede crear migraciones nuevas en el repo.
+- `db:seed-users` pisa la contraseña y el rol de los usuarios que ya existen: contra producción, resetea al admin
+  real a `admin`/`admin`.
+
+**Esperado**: `wipe-db` usa la guarda de BUG-3, `reset-full` no genera migraciones y `seed-users` no pisa usuarios
+existentes.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · `wipe-db.ts` usa la guarda de BUG-3, con su test `regression BUG-10` · Estimación: 15 min · Completado: —
+
+- [ ] **CA-2** · `db:reset-full` no ejecuta `db:generate` · Estimación: 5 min · Completado: —
+
+- [ ] **CA-3** · `db:seed-users` sólo crea los usuarios que faltan, con su test · Estimación: 20 min · Completado: —
+
+**Preguntas abiertas**
+
+- ¿`db:seed-users` tiene que poder correr contra producción para crear la primera cuenta real?
+
+### BUG-11 · La subida de fotos no valida antes de subir
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Pendiente |
+| Dueño        | —         |
+| Inicio       | —         |
+| Tamaño       | S         |
+| Depende de   | BUG-1     |
+| Plan         | —         |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Actual**:
+- `uploadProductPhoto` sube a Cloudinary antes de comprobar que el producto existe. Si después falla el insert, la
+  imagen queda huérfana en Cloudinary.
+- No limita el tamaño ni el tipo del archivo, y Cloudinary acepta también URLs.
+- Subir y borrar fotos no quedan en la auditoría.
+
+**Esperado**: se valida el producto, el tipo y el tamaño antes de subir; si falla el insert, se borra la imagen;
+subir y borrar quedan auditados.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · Se rechazan un producto inexistente, un tipo no permitido y un archivo demasiado grande, sin llamar a Cloudinary (test de contrato con un fake) · Estimación: 25 min · Completado: —
+
+- [ ] **CA-2** · Si falla el insert, la imagen se borra de Cloudinary · Estimación: 15 min · Completado: —
+
+- [ ] **CA-3** · Subir y borrar una foto registran auditoría · Estimación: 15 min · Completado: —
+
+**Preguntas abiertas**
+
+- ¿Qué tamaño máximo y qué formatos se aceptan?
+
+### BUG-12 · El vendedor puede pedir las estadísticas del dashboard
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Pendiente |
+| Dueño        | —         |
+| Inicio       | —         |
+| Tamaño       | S         |
+| Depende de   | T-4       |
+| Plan         | —         |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Actual**: `fetchDashboardStats` usa `verifyAuthOrAdmin(false)`. `proxy.ts` no deja entrar al vendedor a `/`, pero
+la action se puede invocar igual y devuelve ingresos, costos y ganancia. Además, en caso de error devuelve `message`
+en vez del campo `error` de `ActionResult`.
+
+**Esperado**: lo decide el cliente (ver la pregunta abierta). El error tiene la forma de `ActionResult`.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · Test de contrato con el permiso que decida el cliente · Estimación: 15 min · Completado: —
+
+- [ ] **CA-2** · El error de `fetchDashboardStats` tiene la forma de `ActionResult` · Estimación: 10 min · Completado: —
+
+**Preguntas abiertas**
+
+- ¿El vendedor puede ver los ingresos, los costos y la ganancia del dashboard?

@@ -5,7 +5,7 @@ Fuente **canónica** de reglas del repo. `CLAUDE.md` (Claude Code). Si una regla
 ## Contexto
 
 Sistema de gestión de stock de comida para la empanadería de mi cliente. El backlog vigente está en [`BACKLOG.md`](BACKLOG.md) y los
-requerimientos del cliente, textuales, en [`docs/requerimientos/specs.md`](docs/requerimientos/specs.md). Idioma: **docs, commits, PRs y UI en español; código en inglés**.
+requerimientos del cliente, textuales, en [`docs/requerimientos/specs.md`](docs/requerimientos/specs.md). Idioma: **docs, commits y UI en español; código en inglés**.
 
 ## Antes de tocar código (obligatorio)
 
@@ -42,7 +42,7 @@ npm run lint && npm run typecheck
 npm run test:coverage    # unit + contrato + fuzz + cobertura (lo corre pre-push)
 npm run test:int         # integración de repositorios (requiere `docker compose up -d db-test`)
 npm run test:e2e         # Playwright en Chromium
-npm run verify           # TODO: lint, tipos, cobertura, integración, mutación y build. Obligatorio antes de un PR.
+npm run verify           # TODO: lint, tipos, cobertura, integración, mutación y build. Obligatorio antes de integrar a develop.
 ```
 
 ## Definition of Done (resumen — completo en `docs/definition-of-done.md`)
@@ -56,6 +56,8 @@ npm run verify           # TODO: lint, tipos, cobertura, integración, mutación
 - [ ] Commits Conventional Commits en español. ANTES de commitear, mostrarle al dev una **lista breve y en
       lenguaje simple** (para alguien que no sabe nada técnico) de todo lo esencial que entra en el commit. Esa
       lista es lo que el dev aprueba; sin su OK no se commitea ni se pushea.
+- [ ] **Sin PR** (regla general): cada ítem va en su rama y se integra con `git merge --squash` a `develop` (un
+      commit por ítem), con el OK del dev, push y borrado de la rama. Detalle en `docs/git.md`.
 
 ## Mapa de documentación
 
