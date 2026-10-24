@@ -122,7 +122,7 @@ cargando en el Sprint 1 en paralelo.
 | 9   | [T-4](#t-4--bases-de-la-arquitectura-objetivo)                                 | Bases de la arquitectura objetivo            | En revisión | T-3                | 2 h             |
 | 10  | [BUG-1](#bug-1--acciones-de-fotos-de-producto-sin-control-de-sesión)           | Acciones de fotos sin control de sesión      | En revisión | T-4                | 45 min          |
 | 11  | [BUG-7](#bug-7--el-password_hash-llega-al-navegador)                           | El `password_hash` llega al navegador        | En revisión | T-4                | 50 min          |
-| 12  | [BUG-8](#bug-8--lecturas-de-productos-y-proveedores-sin-sesión)                | Lecturas de productos y proveedores sin sesión | Pendiente | T-4                | 30 min          |
+| 12  | [BUG-8](#bug-8--lecturas-de-productos-y-proveedores-sin-sesión)                | Lecturas de productos y proveedores sin sesión | En revisión | T-4                | 30 min          |
 | 13  | [T-6](#t-6--e2e-sobre-db-test)                                                 | E2E sobre `db-test`                          | Pendiente   | T-4, T-8           | 1 h 25 min      |
 | 14  | [T-5](#t-5--proveedores-como-feature-molde)                                    | Proveedores como feature molde               | Pendiente   | T-6                | 5 h             |
 | 15  | [T-7](#t-7--cierre-del-sprint-0)                                               | Cierre del Sprint 0                          | Pendiente   | T-5, BUG-1 a BUG-9 | 1 h             |
@@ -734,12 +734,12 @@ navegador en la respuesta. Además, `verifyAuthOrAdmin` devuelve la fila complet
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
-| Dueño        | —         |
-| Inicio       | —         |
+| Estado       | En revisión |
+| Dueño        | Ignacio Tomas |
+| Inicio       | 2026-10-24 |
 | Tamaño       | S         |
 | Depende de   | T-4       |
-| Plan         | —         |
+| Plan         | [`docs/plans/BUG-8-lecturas-sin-sesion.md`](docs/plans/BUG-8-lecturas-sin-sesion.md) |
 | Merge        | —         |
 | Horas reales | —         |
 
@@ -751,9 +751,16 @@ teléfono y el mail de los proveedores.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · Test `regression BUG-8` de contrato: sin sesión, ninguna de las dos devuelve datos · Estimación: 20 min · Completado: —
+- [x] **CA-1** · Test `regression BUG-8` de contrato: sin sesión, ninguna de las dos devuelve datos · Estimación: 20 min · Completado: 2026-10-24 17:38
 
-- [ ] **CA-2** · Las dos acciones verifican la sesión · Estimación: 10 min · Completado: —
+- [x] **CA-2** · Las dos acciones verifican la sesión · Estimación: 10 min · Completado: 2026-10-24 17:38
+
+**Notas**
+
+- **CA-1**: `product-reads.contract.test.ts` espía los repositorios con datos reales. Antes del fix, sin sesión,
+  devolvían los productos (con precio de compra) y los proveedores (con teléfono y mail). Ahora devuelven listas
+  vacías sin llamar al repositorio, y con sesión de vendedor siguen devolviendo los datos.
+- **CA-2**: `verifyAuthOrAdmin(false)` al empezar las dos acciones. `product.actions.ts` sigue en la lista legacy.
 
 **Preguntas abiertas**
 

@@ -18,6 +18,7 @@ import { ActionResult } from '@/lib/action-result';
 
 export async function fetchProducts(): Promise<ProductDef[]> {
   try {
+    await verifyAuthOrAdmin(false);
     const products = await productRepository.getAllProducts();
     return z.array(productRowSchema).parse(products);
   } catch (error) {
@@ -28,6 +29,7 @@ export async function fetchProducts(): Promise<ProductDef[]> {
 
 export async function fetchSelectorData(): Promise<{ devices: DeviceDef[]; providers: ProviderDef[] }> {
   try {
+    await verifyAuthOrAdmin(false);
     const devicesList = await deviceRepository.getAllDevices();
     const providersList = await providerRepository.getAllProviders();
 
