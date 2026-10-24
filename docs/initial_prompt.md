@@ -154,8 +154,8 @@ exacto de archivos es `eslint-legacy.json`. Si tu ítem corrige un archivo hered
   - Las acciones de fotos de producto no verifican sesión (BUG-1, sin corregir).
   - `JWT_SECRET` ya no tiene valor por defecto: es obligatoria y sin ella falla el login (BUG-2, con su test de
     regresión).
-  - En desarrollo, la contraseña del login aparece en los logs de la terminal y el dashboard lee el
-    `password_hash` de los vendedores (BUG-6, sin corregir).
+  - En desarrollo, Next ya no imprime los argumentos de las Server Actions (`logging.serverFunctions: false`), y
+    Drizzle loguea el SQL sin parámetros. Fuera de `auth`, las lecturas no traen `password_hash` (BUG-6).
   - Crear y editar un usuario devuelven el `password_hash` al navegador (BUG-7), y `fetchProducts` y
     `fetchSelectorData` no piden sesión (BUG-8). Sin corregir.
   - `handleDatabaseError` no lee `error.cause` de Drizzle: los errores de unicidad y de clave foránea se muestran
@@ -280,6 +280,10 @@ las cuentas reales y se borran esas.
 > guarda una caché persistente de Turbopack en `.next/dev/cache`. Si cortás el proceso de golpe (`taskkill /F`),
 > la caché puede quedar corrupta y el servidor que levante después el dev puede dar 404 en rutas que existen
 > (pasó con `/login`, ver BUG-4). Además, verificá siempre en el servidor del dev, no sólo en el tuyo.
+>
+> **Lo mismo después de `npm run build`.** Un `next dev` levantado después de un build local dio 404 en `/login`
+> hasta que se borró `.next` (2026-10-24, BUG-6). Si corrés un build, borrá `.next` al terminar. El E2E (T-6)
+> compila en una carpeta aparte para no pisar la del dev.
 
 ## 11. Qué leer y en qué orden
 

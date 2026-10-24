@@ -23,6 +23,7 @@ export class UserRepository {
   async getUserById(id: string, dbtx: any = db) {
     return await dbtx.query.users.findFirst({
       where: (u: any, { eq }: any) => eq(u.id, id),
+      columns: { passwordHash: false },
     });
   }
 
@@ -68,6 +69,7 @@ export class UserRepository {
     // Check for existing (for reactivation logic)
     const existing = await dbtx.query.users.findFirst({
       where: ilike(users.username, input.username),
+      columns: { id: true, isActive: true },
     });
 
     const hashedPassword = await bcrypt.hash(input.password!, 10);
@@ -116,6 +118,7 @@ export class UserRepository {
     if (input.username !== undefined) {
       const existing = await dbtx.query.users.findFirst({
         where: and(ilike(users.username, input.username), sql`${users.id} != ${id}`),
+        columns: { id: true },
       });
       if (existing) throw new DuplicateEntityError();
       updateSet.username = input.username;

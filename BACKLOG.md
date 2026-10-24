@@ -117,7 +117,7 @@ cargando en el Sprint 1 en paralelo.
 | 4   | [BUG-3](#bug-3--scripts-de-base-que-borran-todo-sin-protección)                | Scripts que borran todo sin protección       | En revisión | T-2, T-8           | 35 min          |
 | 5   | [T-3](#t-3--gates-eslint-con-reglas-duras-hooks-y-ci)                          | Gates: ESLint con reglas duras, hooks y CI   | En revisión | T-2, T-8           | 3 h             |
 | 6   | [BUG-5](#bug-5--consultas-en-paralelo-sobre-la-misma-conexión-en-el-dashboard) | Consultas en paralelo en el dashboard        | En revisión | T-2                | 30 min          |
-| 7   | [BUG-6](#bug-6--datos-sensibles-en-los-logs-de-desarrollo-y-lecturas-de-más)   | Datos sensibles en logs y lecturas de más    | Pendiente   | T-2                | 35 min          |
+| 7   | [BUG-6](#bug-6--datos-sensibles-en-los-logs-de-desarrollo-y-lecturas-de-más)   | Datos sensibles en logs y lecturas de más    | En revisión | T-2                | 35 min          |
 | 8   | [BUG-9](#bug-9--errores-de-base-de-datos-mal-traducidos)                       | Errores de base de datos mal traducidos      | Pendiente   | T-2                | 40 min          |
 | 9   | [T-4](#t-4--bases-de-la-arquitectura-objetivo)                                 | Bases de la arquitectura objetivo            | Pendiente   | T-3                | 2 h             |
 | 10  | [BUG-1](#bug-1--acciones-de-fotos-de-producto-sin-control-de-sesión)           | Acciones de fotos sin control de sesión      | Pendiente   | T-4                | 45 min          |
@@ -627,12 +627,12 @@ local y `.env.local` quedan listos para loguearse.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
-| Dueño        | —         |
-| Inicio       | —         |
+| Estado       | En revisión |
+| Dueño        | Ignacio Tomas |
+| Inicio       | 2026-10-24 |
 | Tamaño       | S         |
 | Depende de   | T-2       |
-| Plan         | —         |
+| Plan         | [`docs/plans/BUG-6-datos-sensibles.md`](docs/plans/BUG-6-datos-sensibles.md) |
 | Merge        | —         |
 | Horas reales | —         |
 
@@ -644,14 +644,24 @@ local y `.env.local` quedan listos para loguearse.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · Loguearse en desarrollo no imprime la contraseña en la terminal · Estimación: 15 min · Completado: —
+- [x] **CA-1** · Loguearse en desarrollo no imprime la contraseña en la terminal · Estimación: 15 min · Completado: 2026-10-24 17:01
 
-- [ ] **CA-2** · Test que garantiza que las lecturas fuera de `auth` no traen `password_hash` · Estimación: 20 min · Completado: —
+- [x] **CA-2** · Test que garantiza que las lecturas fuera de `auth` no traen `password_hash` · Estimación: 20 min · Completado: 2026-10-24 17:01
 
 **Notas**
 
 - Next 16 tiene la opción `logging.serverFunctions` (por defecto `true`) en `next.config.ts`. Apagarla o redactar los argumentos se decide en el plan del ítem.
 - El logger de Drizzle (`logger: !isProd` en `src/lib/db/index.ts`) también imprime los parámetros de las consultas en desarrollo: revisarlo en el mismo plan.
+- **Decisión**: se apagó `logging.serverFunctions`, porque Next no permite redactar los argumentos, y Drizzle pasó a
+  un logger que imprime el SQL sin parámetros (`src/lib/db/query-logger.ts`).
+- **Evidencia de CA-1** con un `next dev` real en el puerto 3100 y un login con una contraseña única:
+  - Antes del fix, el log mostraba `ƒ loginAction({"password":"clave-unica-BUG6-7319","username":"admin"})`.
+  - Después, el `POST /login` aparece sin los argumentos y la contraseña no figura en el log (0 apariciones).
+- **CA-2**: `src/test/password-hash-reads.int.test.ts` cubre `getUserById` (lo usa `verifyAuthOrAdmin`),
+  `getSaleById`, la foto del dashboard y el listado de usuarios. Antes del fix, `getUserById` y `getSaleById` fallaban.
+  Los chequeos de duplicado de `createUser` y `updateUser` ahora piden sólo las columnas que usan.
+- **Hallazgo**: un `next dev` levantado después del `npm run build` de T-8 daba 404 en `/login` hasta borrar `.next`.
+  Quedó anotado en `docs/initial_prompt.md` y lo tiene en cuenta T-6.
 
 ### BUG-7 · El `password_hash` llega al navegador
 

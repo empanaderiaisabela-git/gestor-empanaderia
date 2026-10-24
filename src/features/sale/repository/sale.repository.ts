@@ -36,7 +36,7 @@ export class SaleRepository {
       where: eq(sales.id, id),
       with: {
         customer: true,
-        vendor: true,
+        vendor: { columns: { id: true, username: true } },
         items: {
           with: {
             product: {
