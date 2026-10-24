@@ -112,7 +112,7 @@ cargando en el Sprint 1 en paralelo.
 | —   | [BUG-4](#bug-4--npm-run-dev-se-cuelga-en-compiling-home)                       | `npm run dev` se cuelga en "Compiling /home" | Hecho       | —                  | 42 min          |
 | 0   | [T-9](#t-9--flujo-sin-pr-y-backlog-al-día)                                     | Flujo sin PR y backlog al día                | En revisión | —                  | 25 min          |
 | 1   | [T-2](#t-2--infraestructura-de-tests)                                          | Infraestructura de tests                     | En revisión | T-1                | 2 h 10 min      |
-| 2   | [BUG-2](#bug-2--jwt_secret-con-valor-por-defecto-en-el-código)                 | `JWT_SECRET` con valor por defecto           | En progreso | T-2                | 25 min          |
+| 2   | [BUG-2](#bug-2--jwt_secret-con-valor-por-defecto-en-el-código)                 | `JWT_SECRET` con valor por defecto           | En revisión | T-2                | 25 min          |
 | 3   | [T-8](#t-8--la-base-de-producción-se-elige-con-app_env)                        | La base de producción se elige con `APP_ENV` | Pendiente   | T-2                | 55 min          |
 | 4   | [BUG-3](#bug-3--scripts-de-base-que-borran-todo-sin-protección)                | Scripts que borran todo sin protección       | Pendiente   | T-2, T-8           | 35 min          |
 | 5   | [T-3](#t-3--gates-eslint-con-reglas-duras-hooks-y-ci)                          | Gates: ESLint con reglas duras, hooks y CI   | Pendiente   | T-2, T-8           | 3 h             |
@@ -434,7 +434,7 @@ forma que sirva de molde para las demás y demuestre el flujo de punta a punta.
 
 | Campo        | Valor                            |
 | ------------ | -------------------------------- |
-| Estado       | En progreso                      |
+| Estado       | En revisión                      |
 | Dueño        | Ignacio Tomas                    |
 | Inicio       | 2026-10-23                       |
 | Tamaño       | S                                |
@@ -452,7 +452,7 @@ entorno.
 
 - [x] **CA-1** · El secreto ya no está en el código y la variable es obligatoria · Estimación: 10 min · Completado: 2026-10-23 22:06
 
-- [ ] **CA-2** · Test `regression BUG-2`: sin la variable, firmar y verificar falla con un error claro (requiere T-2) · Estimación: 10 min · Completado: —
+- [x] **CA-2** · Test `regression BUG-2`: sin la variable, firmar y verificar falla con un error claro (requiere T-2) · Estimación: 10 min · Completado: 2026-10-24 16:18
 
 - [x] **CA-3** · `JWT_SECRET` documentada en `.env.example` (se crea en T-2) · Estimación: 5 min · Completado: 2026-10-24 16:15
 
@@ -465,6 +465,8 @@ entorno.
   variable de entorno JWT_SECRET.". `tsc` y ESLint en verde.
 - Las credenciales de login no cambian: `admin`/`admin` y `vendedor`/`vendedor` viven en la base (seed), son
   temporales y se borran cuando estén las cuentas reales.
+- **CA-2** (2026-10-24): `src/lib/auth/jwt.test.ts`. Como el fix ya estaba aplicado, el rojo se mostró simulando el
+  código anterior (secreto por defecto): los dos tests `regression BUG-2` fallaron, y con el fix pasan.
 
 ### BUG-3 · Scripts de base que borran todo sin protección
 
