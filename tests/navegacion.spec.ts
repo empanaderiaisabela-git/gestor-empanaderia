@@ -18,7 +18,7 @@ test.describe('menú y navegación por rol (US-2)', () => {
     test('entra a Ventas/Pedidos, ve sólo su menú y no puede abrir secciones ajenas', async ({ page }) => {
       await loginComo(page, 'vendedor');
       await expect(page).toHaveURL(/\/ventas$/);
-      await expect(menu(page).getByRole('link')).toHaveText(['Ventas/Pedidos', 'Productos', 'Clientes']);
+      await expect(menu(page).getByRole('link')).toHaveText(['Ventas/Pedidos', 'Stock', 'Clientes']);
       await page.goto('/usuarios');
       await expect(page).toHaveURL(/\/ventas$/);
       await page.goto('/');

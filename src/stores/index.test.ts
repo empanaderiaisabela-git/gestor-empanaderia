@@ -12,10 +12,33 @@ import { invalidateAllCaches } from './index';
 
 const STORES = [useAuditStore, useCustomerStore, useDeviceStore, useMenuStore, useProductStore, useProviderStore, useSaleStore, useStatsStore, useUserStore];
 
-describe('invalidateAllCaches', () => {
+const FILL = [
+  () => useAuditStore.getState().setLogs([]),
+  () => useCustomerStore.getState().setCustomers([]),
+  () => useDeviceStore.getState().setDevices([]),
+  () => useMenuStore.getState().setItems([]),
+  () => useProductStore.getState().setProducts([]),
+  () => useProviderStore.getState().setProviders([]),
+  () => useSaleStore.getState().setSales([]),
+  () => useStatsStore.getState().setStats(null),
+  () => useUserStore.getState().setUsers([]),
+];
+
+describe('cachés de los stores', () => {
+  it('cada store queda cargado al recibir sus datos', () => {
+    FILL.forEach((fill) => fill());
+    expect(STORES.map((store) => store.getState().isLoaded)).toEqual(STORES.map(() => true));
+  });
+
   it('después de una mutación, todos los stores (también el del menú) vuelven a pedir sus datos', () => {
     STORES.forEach((store) => store.getState().setLoaded(true));
     invalidateAllCaches();
     expect(STORES.map((store) => store.getState().isLoaded)).toEqual(STORES.map(() => false));
+  });
+
+  it('el store del menú guarda los precios del grupo sin cambiar si está cargado', () => {
+    useMenuStore.setState({ isLoaded: false });
+    useMenuStore.getState().setGroupPrices([]);
+    expect(useMenuStore.getState()).toMatchObject({ groupPrices: [], isLoaded: false });
   });
 });

@@ -4,7 +4,7 @@ import { type JSX, type FormEvent, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { type GroupPricedGroup, GROUPS, priceFieldsOf, priceLabelOf, type PriceField } from '@/features/menu/domain/menu-groups';
 import { type MenuGroupPriceDef, type MenuGroupPricesInput, menuGroupPricesSchema } from '@/features/menu/domain/menu-group-price.schema';
-import { inputClass } from './menu-field';
+import { inputClass } from '@/components/ui/form-field';
 
 type GroupPriceCardProps = {
   group: GroupPricedGroup;

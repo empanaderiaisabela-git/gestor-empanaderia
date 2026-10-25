@@ -27,7 +27,7 @@ Sistema de **gestión de stock y punto de venta + catálogo web** para la rotise
 | Cara | Rutas | Quién |
 |---|---|---|
 | Catálogo público | `/home`, `/product/[id]` | Clientes del local, sin login. Consultan por WhatsApp o Instagram; no hay pedidos online. **Por ahora no se publica**: sólo se despliega el gestor y el catálogo queda en el código. |
-| Panel de gestión | `/` (Estadísticas), `/productos`, `/ventas` (Ventas/Pedidos, el POS), `/clientes`, `/proveedores`, `/categorias`, `/usuarios`, `/logs` (Auditoría) | `admin`: todo. `vendedor`: sólo Ventas/Pedidos, productos y clientes, y entra a Ventas/Pedidos. El menú y `proxy.ts` salen de `src/config/navigation.ts` (US-2). |
+| Panel de gestión | `/` (Estadísticas), `/stock`, `/ventas` (Ventas/Pedidos, el POS), `/clientes`, `/proveedores`, `/alta-de-productos`, `/categorias`, `/usuarios`, `/logs` (Auditoría). `/productos` (panel viejo) sigue sólo por URL para el admin hasta T-12 | `admin`: todo. `vendedor`: sólo Ventas/Pedidos, Stock y Clientes, y entra a Ventas/Pedidos. El menú y `proxy.ts` salen de `src/config/navigation.ts` (US-2). |
 
 Funciones que ya existen:
 - ABM de productos, categorías, proveedores, clientes y usuarios.
@@ -142,7 +142,7 @@ Detalle en [`docs/architecture.md`](architecture.md).
 - `src/lib/db/index.ts` lleva `import 'server-only'`. Los scripts `db:*` y el E2E corren con
   `--conditions=react-server`, ya configurado en `package.json`. Si agregás un script que importe `@/lib/db`, sumale
   esa condición.
-- Doc por feature en `docs/features/<f>/README.md`: hoy `provider`, `stats` y `menu`.
+- Doc por feature en `docs/features/<f>/README.md`: hoy `provider`, `stats`, `menu` y `stock`.
 - Schema de la base en `src/lib/db/schema.ts`.
 - **Seguridad**:
   - JWT en la cookie `session`.

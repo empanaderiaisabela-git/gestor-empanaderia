@@ -4,7 +4,8 @@ import { CardAction, EntityCard } from '@/components/ui/entity-card';
 import { GROUPS } from '@/features/menu/domain/menu-groups';
 import type { MenuItemDef } from '@/features/menu/domain/menu-item.schema';
 import { formatMoney } from '@/lib/format-money';
-import { type MenuItemRowActions, priceSummary } from './menu-item-columns';
+import { priceSummary } from '@/features/menu/domain/menu-price-list';
+import type { MenuItemRowActions } from './menu-item-columns';
 
 function Details({ item }: { item: MenuItemDef }): JSX.Element {
   return (

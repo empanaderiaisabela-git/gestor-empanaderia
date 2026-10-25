@@ -19,7 +19,7 @@ function restrict(patterns, paths = [SQL, PG]) {
   return { 'no-restricted-imports': ['error', { paths, patterns }] };
 }
 
-const NOT_LAYERED = ['src/lib/db/schema.ts', 'src/lib/db/menu-schema.ts', 'src/lib/db/index.ts', 'src/test/**', 'src/**/testing/**', 'src/**/*.test.ts', 'src/**/*.test-d.ts'];
+const NOT_LAYERED = ['src/lib/db/schema.ts', 'src/lib/db/menu-schema.ts', 'src/lib/db/stock-schema.ts', 'src/lib/db/index.ts', 'src/test/**', 'src/**/testing/**', 'src/**/*.test.ts', 'src/**/*.test-d.ts'];
 
 export const layerConfigs = [
   { files: ['src/**/*.{ts,tsx}'], rules: restrict([]) },

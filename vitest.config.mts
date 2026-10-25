@@ -6,7 +6,7 @@ const emptyModule = fileURLToPath(new URL('./src/test/empty-module.ts', import.m
 const legacyFiles: string[] = JSON.parse(readFileSync(new URL('./eslint-legacy.json', import.meta.url), 'utf8'));
 const literalGlob = (path: string): string => path.replace(/[[\]()*?{}!+@]/g, (char) => `\\${char}`);
 
-const NOT_COVERED = ['eslint/**', 'scripts/**', 'src/config/**', 'src/**/repository/**', 'src/lib/db/schema.ts', 'src/lib/db/menu-schema.ts', 'src/test/**', 'src/**/testing/**'];
+const NOT_COVERED = ['eslint/**', 'scripts/**', 'src/config/**', 'src/**/repository/**', 'src/lib/db/schema.ts', 'src/lib/db/menu-schema.ts', 'src/lib/db/stock-schema.ts', 'src/test/**', 'src/**/testing/**'];
 
 export default defineConfig({
   resolve: {

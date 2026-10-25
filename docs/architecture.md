@@ -256,6 +256,10 @@ Casos especiales:
   `stock >= q`), sin depender de la versión que tenga el cliente: dos vendedores pueden vender el mismo producto
   a la vez mientras alcance. La venta también incrementa la `version` del producto, así que quien lo estaba
   editando recibe conflicto (test E2E "Venta vs Edición de Producto").
+- **Stock del modelo nuevo** (US-4). Un ingreso o una merma bloquea la fila del gusto con `SELECT … FOR UPDATE`
+  (`.for('update')` de Drizzle), calcula el stock nuevo en el service y lo guarda filtrando por `id` y `version`, en la
+  misma transacción que el historial y la auditoría. No usa `sql` plano. Dos operaciones simultáneas sobre el mismo
+  gusto se hacen una después de la otra (test de integración `stock.service.int.test.ts`).
 - **Anulación de una venta.** Bloquea la fila con `SELECT … FOR UPDATE` para evitar una doble anulación y
   repone el stock.
 - **Tablas append-only** (`sales`, `sale_items`, `sale_payments`, `product_losses`, `product_images`,
@@ -291,6 +295,8 @@ Casos especiales:
 | `audit_logs` | Bitácora de operaciones | No | — |
 | `menu_items` (`src/lib/db/menu-schema.ts`) | Gustos y bebidas del modelo nuevo (US-3): grupo, nombre, costo, stock con medias para pizzas y precios por gusto según el grupo ([ADR 0005](adr/0005-grupos-fijos-y-precio-del-grupo-o-por-gusto.md)) | Sí | Lógica; física si no tiene movimientos |
 | `menu_group_prices` | Precio único por presentación de Empanadas y Ciabattas | Sí | — |
+| `stock_entries` (`src/lib/db/stock-schema.ts`) | Ingresos de stock (US-4): gusto, cantidad entera, costo unitario, proveedor opcional y usuario | No | — |
+| `stock_losses` | Mermas del modelo nuevo: cantidad (media pizza incluida), costo unitario del momento, motivo y usuario | No | — |
 
 Convenciones:
 

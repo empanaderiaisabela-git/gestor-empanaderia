@@ -1,6 +1,6 @@
 import type { JSX } from 'react';
 import { GROUPS, isPricedByGroup, itemPriceFieldsOf, MENU_GROUPS, type MenuGroup, priceLabelOf } from '@/features/menu/domain/menu-groups';
-import { inputClass, MenuField } from './menu-field';
+import { FormField, inputClass } from '@/components/ui/form-field';
 import type { MenuItemFormErrors, MenuItemFormValues } from './menu-item-form';
 
 type MenuItemFieldsProps = {
@@ -16,7 +16,7 @@ export function MenuItemFields({ values, errors, isEditing, onChange }: MenuItem
   const set = (field: keyof MenuItemFormValues, value: string): void => onChange({ ...values, [field]: value });
   return (
     <div className='space-y-4'>
-      <MenuField label='Grupo' error={errors.group}>
+      <FormField label='Grupo' error={errors.group}>
         <select
           value={values.group}
           disabled={isEditing}
@@ -29,19 +29,19 @@ export function MenuItemFields({ values, errors, isEditing, onChange }: MenuItem
             </option>
           ))}
         </select>
-      </MenuField>
-      <MenuField label='Nombre del gusto o bebida' error={errors.name}>
+      </FormField>
+      <FormField label='Nombre del gusto o bebida' error={errors.name}>
         <input value={values.name} onChange={(event) => set('name', event.target.value)} placeholder='Ej: Carne suave' className={inputClass(Boolean(errors.name))} />
-      </MenuField>
-      <MenuField label='Costo por unidad' error={errors.unitCost}>
+      </FormField>
+      <FormField label='Costo por unidad' error={errors.unitCost}>
         <input inputMode='decimal' value={values.unitCost} onChange={(event) => set('unitCost', event.target.value)} placeholder='Ej: 450' className={inputClass(Boolean(errors.unitCost))} />
-      </MenuField>
+      </FormField>
       {isPricedByGroup(values.group) && <p className='text-sm text-zinc-500'>Este gusto usa los precios de {GROUPS[values.group].label}.</p>}
       <div className='grid grid-cols-2 gap-3'>
         {itemPriceFieldsOf(values.group).map((field) => (
-          <MenuField key={field} label={`Precio ${priceLabelOf(values.group, field)}`} error={errors[field]}>
+          <FormField key={field} label={`Precio ${priceLabelOf(values.group, field)}`} error={errors[field]}>
             <input inputMode='decimal' value={values[field]} onChange={(event) => set(field, event.target.value)} className={inputClass(Boolean(errors[field]))} />
-          </MenuField>
+          </FormField>
         ))}
       </div>
     </div>

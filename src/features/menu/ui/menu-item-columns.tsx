@@ -1,9 +1,9 @@
 import { Edit, Plus, Trash2 } from 'lucide-react';
 import type { JSX } from 'react';
 import type { ColumnDef } from '@/components/ui/virtualized-data-table';
-import { GROUPS, isPricedByGroup } from '@/features/menu/domain/menu-groups';
+import { GROUPS } from '@/features/menu/domain/menu-groups';
 import type { MenuItemDef } from '@/features/menu/domain/menu-item.schema';
-import { priceList } from '@/features/menu/domain/menu-price-list';
+import { priceSummary } from '@/features/menu/domain/menu-price-list';
 import { formatMoney } from '@/lib/format-money';
 
 export type MenuItemRowActions = {
@@ -11,13 +11,6 @@ export type MenuItemRowActions = {
   onToggleActive: (item: MenuItemDef) => void;
   onDelete: (id: string) => void;
 };
-
-export function priceSummary(item: MenuItemDef): string {
-  if (isPricedByGroup(item.group)) return `Precio de ${GROUPS[item.group].label}`;
-  return priceList(item.group, item)
-    .map(({ label, value }) => `${label}: ${formatMoney(value)}`)
-    .join(' · ');
-}
 
 function NameCell({ item }: { item: MenuItemDef }): JSX.Element {
   return (

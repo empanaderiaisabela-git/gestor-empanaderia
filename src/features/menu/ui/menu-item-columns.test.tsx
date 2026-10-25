@@ -2,7 +2,8 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import type { MenuItemDef } from '@/features/menu/domain/menu-item.schema';
 import { renderMenuItemCard } from './menu-item-card';
-import { getMenuItemColumns, type MenuItemRowActions, priceSummary } from './menu-item-columns';
+import { priceSummary } from '@/features/menu/domain/menu-price-list';
+import { getMenuItemColumns, type MenuItemRowActions } from './menu-item-columns';
 
 const BASE: MenuItemDef = { id: 'x', group: 'empanadas', name: 'Carne', unitCost: 400, stock: 24, price1: null, price3: null, price6: null, price12: null, isActive: true, version: 1, createdAt: '', updatedAt: '' };
 

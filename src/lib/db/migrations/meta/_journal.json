@@ -50,6 +50,13 @@
       "when": 1792940241941,
       "tag": "0006_menu-items",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1792942427560,
+      "tag": "0007_stock-entries-and-losses",
+      "breakpoints": true
     }
   ]
 }

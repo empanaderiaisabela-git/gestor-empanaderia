@@ -1,8 +1,11 @@
 import { db } from '..';
 import { menuGroupPrices, menuItems } from '../menu-schema';
+import { stockEntries, stockLosses } from '../stock-schema';
 import { SEED_GROUP_PRICES, SEED_MENU_ITEMS } from './menu-seed-data';
 
 export async function clearMenu(): Promise<void> {
+  await db.delete(stockEntries);
+  await db.delete(stockLosses);
   await db.delete(menuGroupPrices);
   await db.delete(menuItems);
 }

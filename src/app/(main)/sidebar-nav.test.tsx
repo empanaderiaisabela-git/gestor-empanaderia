@@ -5,15 +5,15 @@ import { SidebarNav } from './sidebar-nav';
 const linkNames = (): string[] => screen.getAllByRole('link').map((link) => link.textContent ?? '');
 
 describe('SidebarNav (US-2 CA-1)', () => {
-  it('el vendedor ve sólo Ventas/Pedidos, Productos y Clientes', () => {
+  it('el vendedor ve sólo Ventas/Pedidos, Stock y Clientes', () => {
     render(<SidebarNav role='vendedor' pathname='/ventas' onNavigate={vi.fn()} />);
-    expect(linkNames()).toEqual(['Ventas/Pedidos', 'Productos', 'Clientes']);
+    expect(linkNames()).toEqual(['Ventas/Pedidos', 'Stock', 'Clientes']);
     expect(screen.queryByText('Auditoría')).toBeNull();
   });
 
   it('el admin ve el menú completo, con Estadísticas primero', () => {
     render(<SidebarNav role='admin' pathname='/' onNavigate={vi.fn()} />);
-    expect(linkNames()).toEqual(['Estadísticas', 'Productos', 'Ventas/Pedidos', 'Clientes', 'Proveedores', 'Alta de productos', 'Categorías', 'Usuarios', 'Auditoría']);
+    expect(linkNames()).toEqual(['Estadísticas', 'Stock', 'Ventas/Pedidos', 'Clientes', 'Proveedores', 'Alta de productos', 'Categorías', 'Usuarios', 'Auditoría']);
   });
 
   it('marca la sección actual con aria-current', () => {

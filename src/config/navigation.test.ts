@@ -4,12 +4,12 @@ import { canVisit, homeFor, navigationFor } from './navigation';
 const labels = (role: 'admin' | 'vendedor'): string[] => navigationFor(role).map((item) => item.label);
 
 describe('menú por rol (US-2 CA-1)', () => {
-  it('el vendedor ve Ventas/Pedidos, el stock (hoy Productos) y Clientes, en ese orden; nunca Auditoría', () => {
-    expect(labels('vendedor')).toEqual(['Ventas/Pedidos', 'Productos', 'Clientes']);
+  it('el vendedor ve Ventas/Pedidos, Stock y Clientes, en ese orden; nunca Auditoría', () => {
+    expect(labels('vendedor')).toEqual(['Ventas/Pedidos', 'Stock', 'Clientes']);
   });
 
   it('el admin ve las secciones que ya existen en el orden del local', () => {
-    expect(labels('admin')).toEqual(['Estadísticas', 'Productos', 'Ventas/Pedidos', 'Clientes', 'Proveedores', 'Alta de productos', 'Categorías', 'Usuarios', 'Auditoría']);
+    expect(labels('admin')).toEqual(['Estadísticas', 'Stock', 'Ventas/Pedidos', 'Clientes', 'Proveedores', 'Alta de productos', 'Categorías', 'Usuarios', 'Auditoría']);
   });
 
   it('"Dashboard" pasó a llamarse "Estadísticas" (CA-2)', () => {
@@ -23,11 +23,11 @@ describe('a dónde entra y a dónde puede ir cada rol (US-2 CA-4)', () => {
     expect(homeFor('vendedor')).toBe('/ventas');
   });
 
-  it.each(['/ventas', '/productos', '/clientes', '/clientes/123'])('el vendedor puede entrar a %s', (path) => {
+  it.each(['/ventas', '/stock', '/clientes', '/clientes/123'])('el vendedor puede entrar a %s', (path) => {
     expect(canVisit('vendedor', path)).toBe(true);
   });
 
-  it.each(['/', '/logs', '/usuarios', '/proveedores', '/categorias', '/alta-de-productos', '/ventasx'])('el vendedor no puede entrar a %s', (path) => {
+  it.each(['/', '/logs', '/usuarios', '/proveedores', '/categorias', '/alta-de-productos', '/productos', '/ventasx'])('el vendedor no puede entrar a %s', (path) => {
     expect(canVisit('vendedor', path)).toBe(false);
   });
 

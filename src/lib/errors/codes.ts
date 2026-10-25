@@ -14,6 +14,7 @@ const CATALOG = {
   HAS_RELATIONS: () => DATABASE.FOREIGN_KEY_VIOLATION,
   RELATION_NOT_FOUND: () => DATABASE.RELATION_NOT_FOUND,
   STALE_VERSION: () => DATABASE.CONCURRENCY,
+  INSUFFICIENT_STOCK: (entity: string) => `No hay stock suficiente de ${entity}.`,
   UNEXPECTED: (entity: string) => DATABASE.GENERIC(entity),
 } satisfies Record<string, (entity: string) => string>;
 

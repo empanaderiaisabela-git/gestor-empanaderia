@@ -931,7 +931,7 @@ retira cuando la reemplaza su ítem, y T-12 borra el resto. `main` recibe el spr
 | 4   | [US-1](#us-1--la-app-con-la-marca-empanadería-isabela)                          | La app con la marca Empanadería Isabela                        | En revisión | —          | 1 h 50 min      |
 | 5   | [US-2](#us-2--menú-por-rol-y-sidebar-más-angosto)                               | Menú por rol y sidebar más angosto                             | En revisión | —          | 1 h 15 min      |
 | 6   | [US-3](#us-3--alta-de-productos-gustos-y-bebidas-con-precio-por-presentación)   | Alta de productos: gustos y bebidas con precio por presentación | En revisión | US-2       | 4 h 45 min      |
-| 7   | [US-4](#us-4--stock-grilla-ingresar-stock-y-mermas)                             | Stock: grilla, ingresar stock y mermas                         | Pendiente   | US-3       | 3 h 30 min      |
+| 7   | [US-4](#us-4--stock-grilla-ingresar-stock-y-mermas)                             | Stock: grilla, ingresar stock y mermas                         | En revisión | US-3       | 3 h 30 min      |
 | 8   | [US-5](#us-5--ventas-tablero-por-comida-y-pedido-actual)                        | Ventas: tablero por comida y pedido actual                     | Pendiente   | US-4       | 4 h 40 min      |
 | 9   | [US-6](#us-6--ventas-cobrar-con-4-medios-de-pago-y-precios-del-servidor)        | Ventas: cobrar con 4 medios de pago y precios del servidor     | Pendiente   | US-5       | 3 h 50 min      |
 | 10  | [US-7](#us-7--ventas-historial-comprobante-y-anulación)                         | Ventas: historial, comprobante y anulación                     | Pendiente   | US-6       | 2 h 30 min      |
@@ -1373,9 +1373,9 @@ costo y su precio para cada presentación, de forma que el POS y las estadístic
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
-| Dueño        | —         |
-| Inicio       | —         |
+| Estado       | En revisión |
+| Dueño        | Ignacio Tomas |
+| Inicio       | 2026-10-25 |
 | Tamaño       | L         |
 | Depende de   | US-3      |
 | Plan         | —         |
@@ -1387,17 +1387,17 @@ el POS sólo ofrezca lo que hay.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · `/stock` muestra la grilla de los gustos y bebidas activos, agrupados por grupo, con stock y precio de venta; costo y proveedor sólo los ve el admin; estados de carga, vacío y error · Estimación: 45 min · Completado: —
+- [x] **CA-1** · `/stock` muestra la grilla de los gustos y bebidas activos, agrupados por grupo, con stock y precio de venta; costo y proveedor sólo los ve el admin; estados de carga, vacío y error · Estimación: 45 min · Completado: 2026-10-25 12:58
 
-- [ ] **CA-2** · "Ingresar stock" pide gusto, cantidad (entera > 0), costo unitario (≥ 0, actualiza el costo del gusto) y proveedor opcional; suma de forma atómica sin pisar una venta simultánea (test de integración) y queda en un historial de sólo inserción · Estimación: 1 h · Completado: —
+- [x] **CA-2** · "Ingresar stock" pide gusto, cantidad (entera > 0), costo unitario (≥ 0, actualiza el costo del gusto) y proveedor opcional; suma de forma atómica sin pisar una venta simultánea (test de integración) y queda en un historial de sólo inserción · Estimación: 1 h · Completado: 2026-10-25 12:58
 
-- [ ] **CA-3** · Historial de ingresos por gusto: fecha en hora de Argentina, cantidad, costo, proveedor y usuario · Estimación: 30 min · Completado: —
+- [x] **CA-3** · Historial de ingresos por gusto: fecha en hora de Argentina, cantidad, costo, proveedor y usuario · Estimación: 30 min · Completado: 2026-10-25 12:58
 
-- [ ] **CA-4** · Registrar una merma (sólo admin) pide cantidad ≤ stock y motivo, descuenta el stock y guarda el costo unitario del momento · Estimación: 30 min · Completado: —
+- [x] **CA-4** · Registrar una merma (sólo admin) pide cantidad ≤ stock y motivo, descuenta el stock y guarda el costo unitario del momento · Estimación: 30 min · Completado: 2026-10-25 12:58
 
-- [ ] **CA-5** · Errores por fila con su test de contrato: cantidad ≤ 0 → `VALIDATION`; gusto inexistente → `NOT_FOUND`; merma mayor que el stock → `INSUFFICIENT_STOCK` (código nuevo del catálogo) · Estimación: 30 min · Completado: —
+- [x] **CA-5** · Errores por fila con su test de contrato: cantidad ≤ 0 → `VALIDATION`; gusto inexistente → `NOT_FOUND`; merma mayor que el stock → `INSUFFICIENT_STOCK` (código nuevo del catálogo) · Estimación: 30 min · Completado: 2026-10-25 12:58
 
-- [ ] **CA-6** · "Stock" reemplaza a "Productos" en el menú de los dos roles; se retiran el panel viejo de `/productos` y su E2E; `docs/features/<f>/README.md` · Estimación: 15 min · Completado: —
+- [x] **CA-6** · "Stock" reemplaza a "Productos" en el menú de los dos roles; se retiran el panel viejo de `/productos` y su E2E; `docs/features/<f>/README.md` · Estimación: 15 min · Completado: 2026-10-25 12:58
 
 **Detalle**
 
@@ -1408,6 +1408,33 @@ el POS sólo ofrezca lo que hay.
 
 - (Cliente, junto con la de BUG-8) ¿El vendedor puede ingresar stock? ¿Ve costos y proveedores? Mientras no
   responda, se mantiene lo de hoy: el vendedor ingresa stock y no ve costos ni proveedores.
+
+**Cierre** (2026-10-25) · [README del feature](docs/features/stock/README.md)
+
+- **CA-1**: `/stock` para los dos roles, con la grilla de gustos y bebidas activos.
+  - Búsqueda y filtro por grupo; stock con "Sin stock" en rojo y precio. El costo, sólo para el admin.
+  - El vendedor recibe el costo en `null` desde `fetchMenuItems` (ver US-3).
+- **CA-2**: tabla `stock_entries` (migración `0007`), de sólo inserción.
+  - El ingreso bloquea el gusto con `SELECT … FOR UPDATE` (sin `sql` plano), suma, actualiza el costo y sube la
+    `version`, todo en la misma transacción que el historial y la auditoría.
+  - `stock.service.int.test.ts`: 5 ingresos y 2 mermas simultáneos dejan exactamente 10 + 10 − 2.
+- **CA-3**: historial de los últimos 50 ingresos por gusto, con fecha en hora de Argentina, cantidad, costo,
+  proveedor y usuario. Para el vendedor van sin costo ni proveedor.
+- **CA-4**: `stock_losses` guarda el costo del momento. Sólo las pizzas admiten media unidad.
+- **CA-5**: código nuevo `INSUFFICIENT_STOCK` ("No hay stock suficiente de <gusto>."), además de `VALIDATION`,
+  `NOT_FOUND`, `FORBIDDEN` y `UNAUTHENTICATED`, cada uno con su test de contrato.
+- **CA-6**: "Stock" reemplaza a "Productos" en el menú de los dos roles; el vendedor ya no puede entrar a
+  `/productos`. **Desvío**:
+  - El panel viejo de `/productos` y sus E2E siguen, sólo por URL para el admin, y los borra T-12 (su CA-2 ya lo
+    incluía).
+  - Hasta T-12, el POS viejo vende los productos viejos y `landing.spec.ts` usa ese panel para mostrar y ocultar
+    productos del catálogo.
+- **Hallazgo corregido**: `db:seed` no borraba los movimientos de stock antes de los gustos y fallaba con stock
+  cargado. `clearMenu` ahora los borra primero.
+- Con `stock_entries` ya existe una referencia real a `menu_items`, así que el caso "no deja borrar con
+  movimientos" de US-3 corre también contra Drizzle.
+- El campo de formulario genérico pasó a `src/components/ui/form-field.tsx` y `priceSummary` al dominio de `menu`.
+- Mutación 92,57 en total (96,10 en `stock`). `npm run test:e2e` en verde (83 tests, con `tests/stock.spec.ts`).
 
 ### US-5 · Ventas: tablero por comida y pedido actual
 
