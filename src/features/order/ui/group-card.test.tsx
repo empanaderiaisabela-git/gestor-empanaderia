@@ -38,4 +38,16 @@ describe('subdivisión de cada grupo en el tablero (US-5 CA-1)', () => {
     expect(screen.getByText('Falta cargar el precio del grupo')).toBeDefined();
     expect(screen.getAllByRole('button').every((button) => button.hasAttribute('disabled'))).toBe(true);
   });
+
+  it.each([
+    { group: 'empanadas' as const, emoji: '🥟', fill: 'bg-group-empanadas' },
+    { group: 'pizzas' as const, emoji: '🍕', fill: 'bg-group-pizzas' },
+    { group: 'coca_cola' as const, emoji: '🥤', fill: 'bg-group-coca' },
+  ])('$group se rellena con su color y lleva su emoji Unicode (US-15)', ({ group, emoji, fill }) => {
+    render(<GroupCard group={group} board={board} />);
+    const card = screen.getAllByRole('region')[0];
+    expect(card.className).toContain(fill);
+    expect(within(card).getByText(emoji)).toBeDefined();
+    expect(card.querySelector('svg')).toBeNull();
+  });
 });

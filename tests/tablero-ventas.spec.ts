@@ -33,4 +33,13 @@ test.describe('tablero de ventas (US-5)', () => {
     await expect(pedido.getByText('faltan 5')).toBeVisible();
     await expect(pedido.getByRole('button', { name: /Cobrar/ })).toBeDisabled();
   });
+
+  test('cada grupo se pinta con su color y lleva su emoji (US-15)', async ({ page }) => {
+    await page.goto('/ventas/nueva');
+    const colores = { Empanadas: ['rgb(255, 237, 213)', '🥟'], Pizzas: ['rgb(253, 244, 200)', '🍕'], Sanguches: ['rgb(226, 241, 223)', '🥪'], Ciabattas: ['rgb(242, 230, 215)', '🥖'], 'Coca-Cola': ['rgb(253, 227, 227)', '🥤'], Pepsi: ['rgb(223, 233, 251)', '🥤'] };
+    for (const [nombre, [fondo, emoji]] of Object.entries(colores)) {
+      await expect(grupo(page, nombre)).toHaveCSS('background-color', fondo);
+      await expect(grupo(page, nombre).getByText(emoji)).toBeVisible();
+    }
+  });
 });

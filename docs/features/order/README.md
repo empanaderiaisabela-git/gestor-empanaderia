@@ -121,7 +121,9 @@ que sumar el total".
 
 `src/app/(main)/ventas/nueva/page.tsx` → `OrderBoard`:
 
-- `GroupCard` por grupo, con ícono, "N en pedido" y botones de presentación con el precio (del grupo) o "desde $X".
+- `GroupCard` por grupo, rellena con el color de su grupo y con su emoji Unicode (US-15: `src/config/group-theme.ts`
+  y `src/app/group-colors.css`, que también usará el KPI de dinero por comida), "N en pedido" y botones de presentación
+  con el precio (del grupo) o "desde $X".
   Avisa si el grupo no tiene gustos o si falta el precio del grupo, y deshabilita los botones.
 - `FlavorPicker` / `FlavorRow`: gustos con precio y stock disponible, y los botones según la presentación.
 - `CurrentOrder` / `OrderTable`: el pedido, con el total, Vaciar y Cobrar.
@@ -143,6 +145,7 @@ Al tablero se entra con "Nuevo pedido", desde Ventas/Pedidos.
   orden, reposición exacta, dos anulaciones simultáneas, ventas viejas fuera del historial).
 - Componente: `ui/*.test.tsx` (tarjeta de grupo, lista de gustos, pedido actual, tablero, cobro, grilla de ventas,
   comprobante y panel).
-- E2E: `tests/tablero-ventas.spec.ts` y `tests/cobro.spec.ts` (armar, cobrar con efectivo y débito, y ver el stock
+- Contraste WCAG AA de los textos sobre el color de cada grupo, en claro y oscuro: `src/test/group-colors-contrast.test.ts`.
+- E2E: `tests/tablero-ventas.spec.ts` (también el color real de cada grupo) y `tests/cobro.spec.ts` (armar, cobrar con efectivo y débito, y ver el stock
   descontado en `/stock`) y `tests/historial-ventas.spec.ts` ("Nuevo pedido", la venta en la grilla, el comprobante y
   la anulación que repone el stock).

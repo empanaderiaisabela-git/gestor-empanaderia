@@ -1,0 +1,31 @@
+@theme {
+  --color-group-empanadas: #ffedd5;
+  --color-group-empanadas-edge: #fdba74;
+  --color-group-empanadas-dark: #3b2414;
+  --color-group-empanadas-dark-edge: #7a4a24;
+
+  --color-group-pizzas: #fdf4c8;
+  --color-group-pizzas-edge: #ecd27a;
+  --color-group-pizzas-dark: #36301a;
+  --color-group-pizzas-dark-edge: #77682e;
+
+  --color-group-sanguches: #e2f1df;
+  --color-group-sanguches-edge: #a6d39d;
+  --color-group-sanguches-dark: #1d3221;
+  --color-group-sanguches-dark-edge: #3d6a44;
+
+  --color-group-ciabattas: #f2e6d7;
+  --color-group-ciabattas-edge: #d8b993;
+  --color-group-ciabattas-dark: #32281e;
+  --color-group-ciabattas-dark-edge: #6d5641;
+
+  --color-group-coca: #fde3e3;
+  --color-group-coca-edge: #f2a2a2;
+  --color-group-coca-dark: #3a1b1c;
+  --color-group-coca-dark-edge: #7a3436;
+
+  --color-group-pepsi: #dfe9fb;
+  --color-group-pepsi-edge: #9dbbee;
+  --color-group-pepsi-dark: #19263e;
+  --color-group-pepsi-dark-edge: #344f88;
+}

@@ -935,7 +935,7 @@ retira cuando la reemplaza su ítem, y T-12 borra el resto. `main` recibe el spr
 | 8   | [US-5](#us-5--ventas-tablero-por-comida-y-pedido-actual)                        | Ventas: tablero por comida y pedido actual                     | En revisión | US-4       | 4 h 40 min      |
 | 9   | [US-6](#us-6--ventas-cobrar-con-4-medios-de-pago-y-precios-del-servidor)        | Ventas: cobrar con 4 medios de pago y precios del servidor     | En revisión | US-5       | 3 h 50 min      |
 | 10  | [US-7](#us-7--ventas-historial-comprobante-y-anulación)                         | Ventas: historial, comprobante y anulación                     | En revisión | US-6       | 2 h 30 min      |
-| 11  | [US-15](#us-15--ventas-colores-y-emojis-de-cada-grupo)                          | Ventas: colores y emojis de cada grupo                         | Pendiente   | US-5       | 1 h             |
+| 11  | [US-15](#us-15--ventas-colores-y-emojis-de-cada-grupo)                          | Ventas: colores y emojis de cada grupo                         | En revisión | US-5       | 1 h             |
 | 12  | [T-12](#t-12--retirar-el-modelo-heredado-de-la-casa-de-celulares)               | Retirar el modelo heredado de la casa de celulares             | Pendiente   | US-7, T-11 | 3 h 30 min      |
 | 13  | [T-13](#t-13--cierre-del-sprint-1)                                              | Cierre del Sprint 1                                            | Pendiente   | todos      | 1 h             |
 |     |                                                                                 | **Total del sprint**                                           |             |            | **30 h 30 min** |
@@ -1646,9 +1646,9 @@ una venta, de forma que los errores de carga se corrijan y el stock vuelva.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
-| Dueño        | —         |
-| Inicio       | —         |
+| Estado       | En revisión |
+| Dueño        | Ignacio Tomas |
+| Inicio       | 2026-10-25 |
 | Tamaño       | S         |
 | Depende de   | US-5      |
 | Plan         | —         |
@@ -1660,16 +1660,29 @@ un vistazo.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · Cada subdivisión del tablero se rellena con el color de su grupo, en un tono suave: Empanadas naranja, Pizzas amarillo suave, Ciabattas marrón claro (tostado), Sanguches verde suave, Coca-Cola rojo y Pepsi azul. Funciona en modo claro y oscuro, y el texto cumple contraste WCAG AA (test) · Estimación: 30 min · Completado: —
+- [x] **CA-1** · Cada subdivisión del tablero se rellena con el color de su grupo, en un tono suave: Empanadas naranja, Pizzas amarillo suave, Ciabattas marrón claro (tostado), Sanguches verde suave, Coca-Cola rojo y Pepsi azul. Funciona en modo claro y oscuro, y el texto cumple contraste WCAG AA (test) · Estimación: 30 min · Completado: 2026-10-25 16:02
 
-- [ ] **CA-2** · El ícono de cada grupo pasa a un emoji Unicode, en lugar de la librería de íconos: 🥟 Empanadas, 🍕 Pizzas, 🥖 Ciabattas, 🥪 Sanguches, 🥤 Coca-Cola y 🥤 Pepsi · Estimación: 15 min · Completado: —
+- [x] **CA-2** · El ícono de cada grupo pasa a un emoji Unicode, en lugar de la librería de íconos: 🥟 Empanadas, 🍕 Pizzas, 🥖 Ciabattas, 🥪 Sanguches, 🥤 Coca-Cola y 🥤 Pepsi · Estimación: 15 min · Completado: 2026-10-25 16:02
 
-- [ ] **CA-3** · Colores y emojis se definen en un solo lugar, para que el KPI de dinero por comida (US-12) use los mismos; tests de componente y E2E del tablero en verde · Estimación: 15 min · Completado: —
+- [x] **CA-3** · Colores y emojis se definen en un solo lugar, para que el KPI de dinero por comida (US-12) use los mismos; tests de componente y E2E del tablero en verde · Estimación: 15 min · Completado: 2026-10-25 16:02
 
 **Detalle**
 
 - Pedido del dev en "Consideraciones del primer sprint" de `specs.md`, para el tablero de Ventas y para el KPI de
   dinero por comida de Estadísticas.
+
+**Cierre** (2026-10-25) · [README del feature](docs/features/order/README.md)
+
+- **CA-1**:
+  - Cada subdivisión del tablero se rellena con el color de su grupo, con tokens suaves de modo claro y oscuro en
+    `src/app/group-colors.css` (importado por `globals.css`).
+  - `src/test/group-colors-contrast.test.ts` verifica contraste AA de los textos de la tarjeta (título, contador,
+    precios y avisos) en los dos modos.
+  - El E2E del tablero comprueba el color real que pinta el navegador.
+- **CA-2**: los íconos de `lucide-react` pasan a emojis Unicode: 🥟 🍕 🥪 🥖 🥤 🥤.
+- **CA-3**:
+  - Colores y emojis viven en `src/config/group-theme.ts`, listo para el KPI de dinero por comida (US-12).
+  - Los helpers de contraste se comparten en `src/test/contrast.ts`.
 
 ### T-12 · Retirar el modelo heredado de la casa de celulares
 
