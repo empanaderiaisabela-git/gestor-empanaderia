@@ -15,6 +15,7 @@ import { ConcurrencyError } from '@/lib/errors';
 import { MESSAGES } from '@/config/messages';
 import { handleDatabaseError } from '@/lib/db-errors';
 import { ActionResult } from '@/lib/action-result';
+import { afterCatalogChange } from '@/lib/catalog-cache';
 
 export async function fetchProducts(): Promise<ProductDef[]> {
   try {
@@ -49,7 +50,7 @@ export async function createProductAction(input: ProductInput): Promise<ActionRe
     const parsed = productCreateSchema.safeParse(input);
     if (!parsed.success) return { success: false, error: MESSAGES.ERROR.VALIDATION.INVALID_DATA };
 
-    return await db.transaction(async (tx) => {
+    return afterCatalogChange(await db.transaction(async (tx) => {
       const newProduct = await productRepository.createProduct(parsed.data, tx);
 
       const [device, provider] = await Promise.all([
@@ -79,7 +80,7 @@ export async function createProductAction(input: ProductInput): Promise<ActionRe
         message: MESSAGES.SUCCESS.CREATED('Producto'),
         data: newProduct as ProductDef,
       };
-    });
+    }));
   } catch (error: any) {
     return { success: false, error: handleDatabaseError(error, 'producto') };
   }
@@ -91,7 +92,7 @@ export async function updateProductAction(id: string, input: ProductUpdateInput)
     const parsed = productUpdateSchema.safeParse(input);
     if (!parsed.success) return { success: false, error: MESSAGES.ERROR.VALIDATION.INVALID_DATA };
 
-    return await db.transaction(async (tx) => {
+    return afterCatalogChange(await db.transaction(async (tx) => {
       const updated = await productRepository.updateProduct(id, parsed.data, tx);
 
       const [device, provider] = await Promise.all([
@@ -113,7 +114,7 @@ export async function updateProductAction(id: string, input: ProductUpdateInput)
         message: MESSAGES.SUCCESS.UPDATED('Producto'),
         data: updated as ProductDef,
       };
-    });
+    }));
   } catch (error: any) {
     return { success: false, error: handleDatabaseError(error, 'producto') };
   }
@@ -123,7 +124,7 @@ export async function deleteProductAction(id: string): Promise<ActionResult> {
   try {
     const caller = await verifyAuthOrAdmin(true);
 
-    return await db.transaction(async (tx) => {
+    return afterCatalogChange(await db.transaction(async (tx) => {
       // Rule: Cannot delete if has sales or losses (Business check before DB constraint)
       const hasRelations = await productRepository.checkHasRelations(id, tx);
       if (hasRelations) {
@@ -142,7 +143,7 @@ export async function deleteProductAction(id: string): Promise<ActionResult> {
       }, tx);
 
       return { success: true, message: MESSAGES.SUCCESS.DELETED('Producto') };
-    });
+    }));
   } catch (error: any) {
     return { success: false, error: handleDatabaseError(error, 'producto') };
   }
@@ -155,7 +156,7 @@ export async function registerProductLossAction(productId: string, quantity: num
     if (quantity <= 0) return { success: false, error: 'La cantidad debe ser mayor a 0' };
     if (!reason.trim()) return { success: false, error: 'Debe especificar un motivo' };
 
-    return await db.transaction(async (tx) => {
+    return afterCatalogChange(await db.transaction(async (tx) => {
       const product = await productRepository.getProductById(productId);
       const stockBefore = product?.stock ?? 0;
 
@@ -171,7 +172,7 @@ export async function registerProductLossAction(productId: string, quantity: num
       }, tx);
 
       return { success: true, message: 'Pérdida registrada exitosamente' };
-    });
+    }));
   } catch (error: any) {
     console.error('Error in registerProductLossAction:', error);
     return { success: false, error: handleDatabaseError(error, 'producto') };
@@ -192,7 +193,7 @@ export async function toggleProductVisibilityAction(id: string, isVisible: boole
   try {
     const caller = await verifyAuthOrAdmin(true);
 
-    return await db.transaction(async (tx) => {
+    return afterCatalogChange(await db.transaction(async (tx) => {
       await productRepository.toggleVisibility(id, isVisible, tx);
 
       const product = await productRepository.getProductById(id);
@@ -207,7 +208,7 @@ export async function toggleProductVisibilityAction(id: string, isVisible: boole
         success: true,
         message: isVisible ? 'Producto visible en landing page' : 'Producto oculto en landing page',
       };
-    });
+    }));
   } catch (error: any) {
     return { success: false, error: handleDatabaseError(error, 'producto') };
   }

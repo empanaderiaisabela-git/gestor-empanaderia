@@ -4,6 +4,7 @@ import { db } from '@/lib/db';
 import { productImages } from '@/lib/db/schema';
 import { cloudinaryService } from '@/lib/cloudinary';
 import { ActionResult } from '@/lib/action-result';
+import { revalidateCatalog } from '@/lib/catalog-cache';
 import { eq } from 'drizzle-orm';
 import { verifyAuthOrAdmin } from '@/lib/auth/utils';
 import { toActionFailure } from '@/lib/db-errors';
@@ -35,6 +36,7 @@ export async function deleteProductPhoto(publicId: string): Promise<ActionResult
       throw new ConcurrencyError('Error de concurrencia al eliminar la imagen.');
     }
 
+    revalidateCatalog();
     return { success: true, data: undefined };
   } catch (error: any) {
     if (isAppError(error)) return toActionFailure(error, 'foto');

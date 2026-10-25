@@ -30,7 +30,7 @@ export default defineConfig({
           environment: 'node',
           include: ['src/**/*.test.ts'],
           exclude: [...configDefaults.exclude, 'src/**/*.int.test.ts'],
-          setupFiles: ['./src/test/setup/next-headers.setup.ts', './src/test/setup/no-database.setup.ts'],
+          setupFiles: ['./src/test/setup/next-headers.setup.ts', './src/test/setup/next-cache.setup.ts', './src/test/setup/no-database.setup.ts'],
         },
       },
       {
@@ -49,7 +49,7 @@ export default defineConfig({
           environment: 'node',
           include: ['src/**/*.int.test.ts'],
           globalSetup: ['./src/test/integration.global-setup.ts'],
-          setupFiles: ['./src/test/setup/next-headers.setup.ts'],
+          setupFiles: ['./src/test/setup/next-headers.setup.ts', './src/test/setup/next-cache.setup.ts'],
           fileParallelism: false,
         },
       },

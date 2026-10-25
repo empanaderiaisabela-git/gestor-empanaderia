@@ -17,7 +17,7 @@ Una sola aplicación **Next.js 16 (App Router)** con dos caras:
 
 | Cara | Rutas | Quién la usa | Cómo renderiza |
 |---|---|---|---|
-| Catálogo público | `/home`, `/product/[id]` | Clientes del local, sin login | Server Components con ISR (`revalidate = 30`) |
+| Catálogo público | `/home`, `/product/[id]` | Clientes del local, sin login | Server Components: `/home` estática con revalidación a demanda ([ADR 0004](adr/0004-revalidacion-a-demanda-del-catalogo.md)); `/product/[id]` dinámica |
 | Login | `/login` | Personal | Client Component + Server Action |
 | Panel de gestión | `/` (dashboard), `/productos`, `/ventas`, `/clientes`, `/proveedores`, `/categorias`, `/usuarios`, `/logs` | `admin` y `vendedor` | Client Components + Server Actions |
 
@@ -226,8 +226,14 @@ que se pagina y busca en el servidor con `unaccent`.
 
 ### Catálogo público
 
-`/home` y `/product/[id]` son Server Components: leen sin sesión los productos con `show_on_landing = true` y se
-regeneran cada 30 segundos (ISR). No hay carrito ni pedidos online: el cliente consulta por WhatsApp o Instagram.
+`/home` y `/product/[id]` son Server Components: leen sin sesión los productos con `show_on_landing = true`. No hay
+carrito ni pedidos online: el cliente consulta por WhatsApp o Instagram.
+
+- `/home` se prerenderiza en el build y **no vence por tiempo**. Toda mutación que cambia lo que muestra (productos,
+  visibilidad, fotos, categorías, mermas, ventas y anulaciones) llama a `revalidateCatalog()`
+  (`src/lib/catalog-cache.ts`), y la página se regenera en la próxima visita (T-11,
+  [ADR 0004](adr/0004-revalidacion-a-demanda-del-catalogo.md)).
+- `/product/[id]` se renderiza en cada pedido.
 
 ## Concurrencia optimista
 

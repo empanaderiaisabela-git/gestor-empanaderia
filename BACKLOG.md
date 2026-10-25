@@ -927,7 +927,7 @@ retira cuando la reemplaza su ítem, y T-12 borra el resto. `main` recibe el spr
 | 0   | [T-10](#t-10--backlog-de-los-sprints-1-y-2-desde-specsmd)                       | Backlog de los Sprints 1 y 2 desde `specs.md`                  | En revisión | —          | 30 min          |
 | 1   | [BUG-12](#bug-12--el-vendedor-puede-pedir-las-estadísticas-del-dashboard)       | El vendedor puede pedir las estadísticas                       | En revisión | T-4        | 25 min          |
 | 2   | [BUG-10](#bug-10--scripts-destructivos-que-quedaron-fuera-de-bug-3)             | Scripts destructivos que quedaron fuera de BUG-3               | En revisión | BUG-3      | 40 min          |
-| 3   | [T-11](#t-11--el-catálogo-público-se-regenera-sólo-cuando-cambia)               | El catálogo público se regenera sólo cuando cambia             | Pendiente   | —          | 1 h 5 min       |
+| 3   | [T-11](#t-11--el-catálogo-público-se-regenera-sólo-cuando-cambia)               | El catálogo público se regenera sólo cuando cambia             | En revisión | —          | 1 h 5 min       |
 | 4   | [US-1](#us-1--la-app-con-la-marca-empanadería-isabela)                          | La app con la marca Empanadería Isabela                        | Pendiente   | —          | 1 h 50 min      |
 | 5   | [US-2](#us-2--menú-por-rol-y-sidebar-más-angosto)                               | Menú por rol y sidebar más angosto                             | Pendiente   | —          | 1 h 15 min      |
 | 6   | [US-3](#us-3--alta-de-productos-gustos-y-bebidas-con-precio-por-presentación)   | Alta de productos: gustos y bebidas con precio por presentación | Pendiente   | US-2       | 4 h             |
@@ -1092,9 +1092,9 @@ existentes.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
-| Dueño        | —         |
-| Inicio       | —         |
+| Estado       | En revisión |
+| Dueño        | Ignacio Tomas |
+| Inicio       | 2026-10-25 |
 | Tamaño       | S         |
 | Depende de   | —         |
 | Plan         | —         |
@@ -1106,13 +1106,13 @@ ISR Writes de Vercel cuando no cambió nada.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · `/home` no exporta `revalidate`; las lecturas del catálogo se cachean con una etiqueta, sin vencimiento por tiempo · Estimación: 20 min · Completado: —
+- [x] **CA-1** · `/home` no exporta `revalidate`; las lecturas del catálogo se cachean con una etiqueta, sin vencimiento por tiempo · Estimación: 20 min · Completado: 2026-10-25 11:09
 
-- [ ] **CA-2** · Toda mutación que cambia lo que muestra el catálogo (alta, edición, borrado, visibilidad, fotos, venta y anulación) invalida la etiqueta con un único helper; un test unit verifica que cada action lo llama · Estimación: 20 min · Completado: —
+- [x] **CA-2** · Toda mutación que cambia lo que muestra el catálogo (alta, edición, borrado, visibilidad, fotos, venta y anulación) invalida la etiqueta con un único helper; un test unit verifica que cada action lo llama · Estimación: 20 min · Completado: 2026-10-25 11:09
 
-- [ ] **CA-3** · `next build` lista `/home` sin "Revalidate 30s"; `tests/landing.spec.ts` deja de esperar 30 s y ve el cambio al instante · Estimación: 15 min · Completado: —
+- [x] **CA-3** · `next build` lista `/home` sin "Revalidate 30s"; `tests/landing.spec.ts` deja de esperar 30 s y ve el cambio al instante · Estimación: 15 min · Completado: 2026-10-25 11:09
 
-- [ ] **CA-4** · `docs/architecture.md` (Vista general y Catálogo público) y ADR "Revalidación a demanda del catálogo" · Estimación: 10 min · Completado: —
+- [x] **CA-4** · `docs/architecture.md` (Vista general y Catálogo público) y ADR "Revalidación a demanda del catálogo" · Estimación: 10 min · Completado: 2026-10-25 11:09
 
 **Notas**
 
@@ -1121,6 +1121,29 @@ ISR Writes de Vercel cuando no cambió nada.
 - El arreglo llega a producción en el cierre del sprint (T-13). Si el dev lo quiere antes, se integra como
   `hotfix/` desde `main` ([`docs/git.md`](docs/git.md)).
 - T-12 conecta la invalidación con Alta de productos y Stock, cuando el catálogo pase al modelo nuevo.
+
+**Cierre** (2026-10-25)
+
+- **Decisión del plan** ([ADR 0004](docs/adr/0004-revalidacion-a-demanda-del-catalogo.md)): en vez de etiqueta +
+  `unstable_cache`, `revalidatePath('/home')`. Hay una sola página cacheada, así que no hace falta envolver las
+  lecturas. CA-1 y CA-2 se cumplen con la ruta en lugar de la etiqueta.
+- **CA-1**: `/home` sin `revalidate`. Next la prerenderiza en el build y no vence por tiempo. `/product/[id]` ya era
+  dinámica.
+- **CA-2**:
+  - `src/lib/catalog-cache.ts` (`revalidateCatalog` y `afterCatalogChange`) tiene su test unit.
+  - Las actions heredadas usan la base directo, así que la verificación es de integración:
+    `src/test/catalog-revalidation-*.int.test.ts` cubre las 13 mutaciones (productos, visibilidad, merma, fotos,
+    categorías, venta y anulación). También verifica que una mutación rechazada no invalida.
+  - Antes del cambio, los 4 tests fallaron.
+  - `src/test/setup/next-cache.setup.ts` simula `next/cache` en unit, integración y mutación, como ya se hacía con
+    `next/headers`.
+- **CA-3**: `next build` lista `/home` como `○` sin columna de revalidación (antes, `30s 1y`).
+  - `landing.spec.ts` se reescribió: el producto nace oculto, se muestra y se oculta desde Productos, y el catálogo
+    lo refleja en menos de 10 s (antes se esperaban hasta 90 s).
+  - Un producto insertado directo en la base no aparece en el catálogo hasta la próxima mutación.
+  - Evidencia: `npm run test:e2e -- tests/landing.spec.ts` contra `db-test`, 3 de 3 en verde (2,3 min, con el
+    setup de login).
+- **CA-4**: ADR 0004, `docs/architecture.md` (Vista general y Catálogo público) y `tests/readme.md`.
 
 ### US-1 · La app con la marca Empanadería Isabela
 

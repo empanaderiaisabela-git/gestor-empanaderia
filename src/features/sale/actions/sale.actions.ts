@@ -10,6 +10,7 @@ import { recordAuditLog } from '@/lib/audit-logs';
 import { MESSAGES } from '@/config/messages';
 import { handleDatabaseError } from '@/lib/db-errors';
 import { ActionResult } from '@/lib/action-result';
+import { afterCatalogChange } from '@/lib/catalog-cache';
 
 /**
  * Fetch all sales. Vendors can see their history.
@@ -36,7 +37,7 @@ export async function createSaleAction(input: SaleInput): Promise<ActionResult<{
     const parsed = saleCreateSchema.safeParse(input);
     if (!parsed.success) return { success: false, error: MESSAGES.ERROR.VALIDATION.INVALID_DATA };
 
-    return await db.transaction(async (tx) => {
+    return afterCatalogChange(await db.transaction(async (tx) => {
       const result = await saleRepository.createSale(caller.id, parsed.data, tx);
 
       const saleDetail = {
@@ -54,7 +55,7 @@ export async function createSaleAction(input: SaleInput): Promise<ActionResult<{
         message: 'Venta realizada con éxito',
         data: { id: result.id },
       };
-    });
+    }));
   } catch (error: any) {
     return { success: false, error: handleDatabaseError(error, 'Venta') };
   }
@@ -67,7 +68,7 @@ export async function deleteSaleAction(id: string): Promise<ActionResult> {
   try {
     const caller = await verifyAuthOrAdmin(true);
 
-    return await db.transaction(async (tx) => {
+    return afterCatalogChange(await db.transaction(async (tx) => {
       const sale = await saleRepository.getSaleById(id);
       if (!sale) return { success: false, error: MESSAGES.ERROR.DATABASE.NOT_FOUND('Venta') };
 
@@ -89,7 +90,7 @@ export async function deleteSaleAction(id: string): Promise<ActionResult> {
       await saleRepository.deleteSale(id, tx);
       await recordAuditLog(caller.id, 'ELIMINAR', 'SALE', id, saleDetail, tx);
       return { success: true, message: 'Venta anulada y stock restablecido.' };
-    });
+    }));
   } catch (error: any) {
     return { success: false, error: handleDatabaseError(error, 'Venta') };
   }

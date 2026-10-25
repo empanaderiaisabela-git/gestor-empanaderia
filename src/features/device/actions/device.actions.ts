@@ -11,6 +11,7 @@ import { ConcurrencyError } from '@/lib/errors';
 import { MESSAGES } from '@/config/messages';
 import { handleDatabaseError } from '@/lib/db-errors';
 import { ActionResult } from '@/lib/action-result';
+import { afterCatalogChange } from '@/lib/catalog-cache';
 
 export async function fetchDevices(): Promise<DeviceDef[]> {
   try {
@@ -27,7 +28,7 @@ export async function toggleDeviceActiveAction(id: string, isActive: boolean): P
   try {
     const caller = await verifyAuthOrAdmin(true);
 
-    return await db.transaction(async (tx) => {
+    return afterCatalogChange(await db.transaction(async (tx) => {
       const device = await deviceRepository.getDeviceById(id);
       await deviceRepository.updateActiveStatus(id, isActive, tx);
       await recordAuditLog(caller.id, isActive ? 'ACTUALIZAR' : 'ELIMINAR', 'DEVICE', id, {
@@ -39,7 +40,7 @@ export async function toggleDeviceActiveAction(id: string, isActive: boolean): P
         success: true,
         message: isActive ? MESSAGES.SUCCESS.ACTIVATED('Equipo') : MESSAGES.SUCCESS.DEACTIVATED('Equipo'),
       };
-    });
+    }));
   } catch (error: any) {
     return { success: false, error: handleDatabaseError(error, 'Equipo') };
   }
@@ -51,7 +52,7 @@ export async function createDeviceAction(input: DeviceInput): Promise<ActionResu
     const parsed = deviceCreateSchema.safeParse(input);
     if (!parsed.success) return { success: false, error: MESSAGES.ERROR.VALIDATION.INVALID_DATA };
 
-    return await db.transaction(async (tx) => {
+    return afterCatalogChange(await db.transaction(async (tx) => {
       const result = await deviceRepository.createDevice(parsed.data, tx);
       const wasReactivated = (result as any).wasInactive;
 
@@ -72,7 +73,7 @@ export async function createDeviceAction(input: DeviceInput): Promise<ActionResu
         message: wasReactivated ? MESSAGES.SUCCESS.REACTIVATED('Equipo') : MESSAGES.SUCCESS.CREATED('Equipo'),
         data: result as DeviceDef,
       };
-    });
+    }));
   } catch (error: any) {
     return { success: false, error: handleDatabaseError(error, 'Equipo') };
   }
@@ -84,7 +85,7 @@ export async function updateDeviceAction(id: string, input: DeviceUpdateInput): 
     const parsed = deviceUpdateSchema.safeParse(input);
     if (!parsed.success) return { success: false, error: MESSAGES.ERROR.VALIDATION.INVALID_DATA };
 
-    return await db.transaction(async (tx) => {
+    return afterCatalogChange(await db.transaction(async (tx) => {
       const updated = await deviceRepository.updateDevice(id, parsed.data, tx);
       await recordAuditLog(caller.id, 'ACTUALIZAR', 'DEVICE', id, {
         name: updated.name,
@@ -94,7 +95,7 @@ export async function updateDeviceAction(id: string, input: DeviceUpdateInput): 
         message: MESSAGES.SUCCESS.UPDATED('Equipo'),
         data: updated as DeviceDef,
       };
-    });
+    }));
   } catch (error: any) {
     return { success: false, error: handleDatabaseError(error, 'Equipo') };
   }
@@ -104,7 +105,7 @@ export async function deleteDeviceAction(id: string): Promise<ActionResult> {
   try {
     const caller = await verifyAuthOrAdmin(true);
 
-    return await db.transaction(async (tx) => {
+    return afterCatalogChange(await db.transaction(async (tx) => {
       // Check relations (Business logic check before DB constraint)
       const hasProducts = await deviceRepository.checkHasRelations(id, tx);
       if (hasProducts) {
@@ -118,7 +119,7 @@ export async function deleteDeviceAction(id: string): Promise<ActionResult> {
         note: 'Eliminación permanente',
       }, tx);
       return { success: true, message: MESSAGES.SUCCESS.DELETED('Equipo') };
-    });
+    }));
   } catch (error: any) {
     return { success: false, error: handleDatabaseError(error, 'Equipo') };
   }

@@ -9,6 +9,6 @@ export default defineConfig({
     environment: 'node',
     include: ['src/features/provider/**/*.test.ts', 'src/lib/errors/**/*.test.ts'],
     exclude: [...configDefaults.exclude, 'src/**/*.int.test.ts'],
-    setupFiles: ['./src/test/setup/next-headers.setup.ts', './src/test/setup/no-database.setup.ts'],
+    setupFiles: ['./src/test/setup/next-headers.setup.ts', './src/test/setup/next-cache.setup.ts', './src/test/setup/no-database.setup.ts'],
   },
 });

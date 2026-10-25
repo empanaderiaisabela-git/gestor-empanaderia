@@ -305,7 +305,15 @@ export class ProductosPage {
     await this.btnSincronizar.click();
   }
 
-  async inyectarProductoEfimero(): Promise<{ descripcion: string; equipo: string; proveedor: string; stock: number; purchasePrice: string; salePrice: string }> {
+  async mostrarEnLanding(equipo: string, proveedor: string, descActual: string) {
+    await this.buscarProducto(descActual || equipo);
+    const fila = this.obtenerFila(equipo, proveedor, descActual);
+    await fila.getByRole('button', { name: ProductosPage.UI.BTN_MOSTRAR, exact: true }).click();
+    await expect(fila.getByRole('button', { name: ProductosPage.UI.BTN_OCULTAR, exact: true })).toBeVisible({ timeout: 30_000 });
+    await this.borrarBusqueda();
+  }
+
+  async inyectarProductoEfimero({ visibleEnLanding = true } = {}): Promise<{ descripcion: string; equipo: string; proveedor: string; stock: number; purchasePrice: string; salePrice: string }> {
     const hash = Math.random().toString(36).substring(2, 8);
     const equipo = `Eq Efim ${hash}`;
     const proveedor = {
@@ -330,6 +338,7 @@ export class ProductosPage {
       purchasePrice,
       salePrice,
       stock: stock,
+      showOnLanding: visibleEnLanding,
     });
 
     await this.sincronizar();
