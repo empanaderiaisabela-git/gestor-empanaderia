@@ -2,7 +2,7 @@ import { pgTable, uuid, varchar, timestamp, pgEnum, numeric, integer, jsonb, ind
 import { sql, relations } from 'drizzle-orm';
 
 export const roleEnum = pgEnum('role', ['admin', 'vendedor']);
-export const paymentTypeEnum = pgEnum('payment_type', ['efectivo', 'transferencia']);
+export const paymentTypeEnum = pgEnum('payment_type', ['efectivo', 'transferencia', 'debito', 'credito']);
 
 export const users = pgTable('users', {
   id: uuid('id')
@@ -105,6 +105,7 @@ export const sales = pgTable(
     total: numeric('total', { precision: 10, scale: 2 }).notNull(),
     discountAmount: numeric('discount_amount', { precision: 10, scale: 2 }).default('0').notNull(),
     discountPercentage: numeric('discount_percentage', { precision: 5, scale: 2 }).default('0').notNull(),
+    buyerName: varchar('buyer_name', { length: 60 }),
     createdAt: timestamp('created_at').defaultNow().notNull(),
   },
   (table) => [index('sales_customer_id_idx').on(table.customerId), index('sales_vendor_id_idx').on(table.vendorId)]

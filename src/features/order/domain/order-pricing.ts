@@ -4,7 +4,7 @@ import { isHalfAndHalf, type OrderLine, presentationOf } from './order-line';
 export type Prices = Partial<Record<PriceField, number | null>>;
 export type PriceBook = { item(menuItemId: string): Prices | undefined; group(group: MenuGroup): Prices | undefined };
 
-const round2 = (value: number): number => Math.round((value + Number.EPSILON) * 100) / 100;
+export const round2 = (value: number): number => Math.round((value + Number.EPSILON) * 100) / 100;
 
 function flavorPrices(line: OrderLine, book: PriceBook, field: PriceField): number[] | null {
   const prices = line.flavors.map((flavor) => book.item(flavor.menuItemId)?.[field] ?? null);

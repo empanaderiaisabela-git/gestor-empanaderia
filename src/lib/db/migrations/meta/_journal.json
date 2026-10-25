@@ -57,6 +57,13 @@
       "when": 1792942427560,
       "tag": "0007_stock-entries-and-losses",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1792950421420,
+      "tag": "0008_sales-lines-and-payments",
+      "breakpoints": true
     }
   ]
 }

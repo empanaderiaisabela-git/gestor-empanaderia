@@ -1,9 +1,12 @@
 import { db } from '..';
 import { menuGroupPrices, menuItems } from '../menu-schema';
+import { saleLineItems, saleLines } from '../order-schema';
 import { stockEntries, stockLosses } from '../stock-schema';
 import { SEED_GROUP_PRICES, SEED_MENU_ITEMS } from './menu-seed-data';
 
 export async function clearMenu(): Promise<void> {
+  await db.delete(saleLineItems);
+  await db.delete(saleLines);
   await db.delete(stockEntries);
   await db.delete(stockLosses);
   await db.delete(menuGroupPrices);

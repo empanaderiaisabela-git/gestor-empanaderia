@@ -933,7 +933,7 @@ retira cuando la reemplaza su ítem, y T-12 borra el resto. `main` recibe el spr
 | 6   | [US-3](#us-3--alta-de-productos-gustos-y-bebidas-con-precio-por-presentación)   | Alta de productos: gustos y bebidas con precio por presentación | En revisión | US-2       | 4 h 45 min      |
 | 7   | [US-4](#us-4--stock-grilla-ingresar-stock-y-mermas)                             | Stock: grilla, ingresar stock y mermas                         | En revisión | US-3       | 3 h 30 min      |
 | 8   | [US-5](#us-5--ventas-tablero-por-comida-y-pedido-actual)                        | Ventas: tablero por comida y pedido actual                     | En revisión | US-4       | 4 h 40 min      |
-| 9   | [US-6](#us-6--ventas-cobrar-con-4-medios-de-pago-y-precios-del-servidor)        | Ventas: cobrar con 4 medios de pago y precios del servidor     | Pendiente   | US-5       | 3 h 50 min      |
+| 9   | [US-6](#us-6--ventas-cobrar-con-4-medios-de-pago-y-precios-del-servidor)        | Ventas: cobrar con 4 medios de pago y precios del servidor     | En revisión | US-5       | 3 h 50 min      |
 | 10  | [US-7](#us-7--ventas-historial-comprobante-y-anulación)                         | Ventas: historial, comprobante y anulación                     | Pendiente   | US-6       | 2 h 30 min      |
 | 11  | [T-12](#t-12--retirar-el-modelo-heredado-de-la-casa-de-celulares)               | Retirar el modelo heredado de la casa de celulares             | Pendiente   | US-7, T-11 | 3 h 30 min      |
 | 12  | [T-13](#t-13--cierre-del-sprint-1)                                              | Cierre del Sprint 1                                            | Pendiente   | todos      | 1 h             |
@@ -1514,9 +1514,9 @@ de forma que cargar una venta me lleve pocos clics.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
-| Dueño        | —         |
-| Inicio       | —         |
+| Estado       | En revisión |
+| Dueño        | Ignacio Tomas |
+| Inicio       | 2026-10-25 |
 | Tamaño       | L         |
 | Depende de   | US-5      |
 | Plan         | —         |
@@ -1528,17 +1528,17 @@ venta quede registrada con su comprador y descuente el stock.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · Medios de pago Efectivo, Transferencia, Débito y Crédito (enum y migración); se mantiene el máximo de 2 pagos con medios distintos · Estimación: 30 min · Completado: —
+- [x] **CA-1** · Medios de pago Efectivo, Transferencia, Débito y Crédito (enum y migración); se mantiene el máximo de 2 pagos con medios distintos · Estimación: 30 min · Completado: 2026-10-25 15:13
 
-- [ ] **CA-2** · El servidor recalcula precios (incluido el proporcional de las surtidas), costos y total desde la base: un valor adulterado desde el navegador se ignora (test de contrato); si los pagos no suman el total o hay una línea incompleta → `VALIDATION` · Estimación: 1 h · Completado: —
+- [x] **CA-2** · El servidor recalcula precios (incluido el proporcional de las surtidas), costos y total desde la base: un valor adulterado desde el navegador se ignora (test de contrato); si los pagos no suman el total o hay una línea incompleta → `VALIDATION` · Estimación: 1 h · Completado: 2026-10-25 15:13
 
-- [ ] **CA-3** · La venta guarda vendedor, fecha y hora en UTC, comprador (o vacío), las líneas con lo cobrado y lo que consume de cada gusto con su costo congelado (mitad y mitad: ½ del costo de cada uno) · Estimación: 45 min · Completado: —
+- [x] **CA-3** · La venta guarda vendedor, fecha y hora en UTC, comprador (o vacío), las líneas con lo cobrado y lo que consume de cada gusto con su costo congelado (mitad y mitad: ½ del costo de cada uno) · Estimación: 45 min · Completado: 2026-10-25 15:13
 
-- [ ] **CA-4** · Descuenta el stock de forma atómica; si un gusto no alcanza → `INSUFFICIENT_STOCK` con el nombre del gusto y no se registra nada (test de integración con dos ventas simultáneas) · Estimación: 45 min · Completado: —
+- [x] **CA-4** · Descuenta el stock de forma atómica; si un gusto no alcanza → `INSUFFICIENT_STOCK` con el nombre del gusto y no se registra nada (test de integración con dos ventas simultáneas) · Estimación: 45 min · Completado: 2026-10-25 15:13
 
-- [ ] **CA-5** · Se mantienen los descuentos actuales (porcentaje y monto) sobre el total · Estimación: 20 min · Completado: —
+- [x] **CA-5** · Se mantienen los descuentos actuales (porcentaje y monto) sobre el total · Estimación: 20 min · Completado: 2026-10-25 15:13
 
-- [ ] **CA-6** · Auditoría, `docs/features/<f>/README.md` y E2E del flujo crítico: armar el pedido, cobrar y ver el stock descontado · Estimación: 30 min · Completado: —
+- [x] **CA-6** · Auditoría, `docs/features/<f>/README.md` y E2E del flujo crítico: armar el pedido, cobrar y ver el stock descontado · Estimación: 30 min · Completado: 2026-10-25 15:13
 
 **Detalle**
 
@@ -1546,6 +1546,39 @@ venta quede registrada con su comprador y descuente el stock.
   pagos sumen el total. CA-2 lo corrige para el POS nuevo.
 - La venta deja de exigir un cliente de Clientes ("Mostrador"): el comprador es un nombre libre y opcional.
 - En Crédito sólo se registra el medio. La tarjeta, las cuotas y el recargo llegan con US-11.
+
+**Cierre** (2026-10-25) · [README del feature](docs/features/order/README.md)
+
+- **CA-1**:
+  - El enum `payment_type` suma `debito` y `credito` (migración `0008_sales-lines-and-payments`).
+  - El modal de cobro ofrece Efectivo, Transferencia, Débito y Crédito, hasta 2 y distintos. Con dos medios, el
+    segundo se lleva el resto.
+- **CA-2**:
+  - El navegador manda sólo el pedido, el comprador, el descuento y los pagos: `checkoutSchema` es `strictObject` y
+    rechaza precios, costos o total.
+  - El servidor recalcula los precios desde la base con las mismas funciones del tablero (`unitLinePrice`,
+    `linePrice`, incluido el proporcional de las surtidas).
+  - Pagos que no suman, una línea incompleta, un gusto de otro grupo o dado de baja, y un grupo sin precio →
+    `VALIDATION`.
+  - Tests de contrato en `checkout.contract.test.ts`, con fuzz.
+- **CA-3**:
+  - `sales` suma `buyer_name`; la venta ya no exige un cliente.
+  - Tablas nuevas `sale_lines` (lo cobrado por línea y la descripción de sus gustos) y `sale_line_items` (lo que
+    consume de cada gusto con el costo congelado; la mitad y mitad guarda 0,5 de cada uno).
+- **CA-4**:
+  - Se bloquean los gustos con `FOR UPDATE`, de a uno y ordenados por id.
+  - Se controla todo el stock antes de descontar, y se guarda por `id` y `version`.
+  - Si un gusto no alcanza → `INSUFFICIENT_STOCK` con su nombre, y no se registra nada.
+  - Test de integración con dos cobros simultáneos de la última unidad: uno gana y el otro recibe el error.
+- **CA-5**: primero el porcentaje y después el monto, en la pantalla y en el servidor (`applyDiscount`).
+- **CA-6**:
+  - Auditoría `CREAR` / `SALE`.
+  - README del feature con la tabla de errores.
+  - E2E `tests/cobro.spec.ts`: ½ docena surtida + pizza mitad y mitad ($20.500), cobro con efectivo y débito, y el
+    stock descontado en `/stock` (46, 44, 3,5 y 3,5).
+- **Desvío temporal, hasta US-7**: las ventas nuevas aparecen en el historial viejo de `/ventas` sin el detalle de
+  las líneas, y anularlas desde ahí no repone el stock nuevo. US-7 reemplaza ese historial.
+- Al terminar un cobro, o si falla, el tablero vuelve a leer precios y stock.
 
 ### US-7 · Ventas: historial, comprobante y anulación
 

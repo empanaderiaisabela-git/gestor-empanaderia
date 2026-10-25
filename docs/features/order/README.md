@@ -1,9 +1,11 @@
-# Feature: pedido (tablero de ventas)
+# Feature: pedido (tablero de ventas y cobro)
 
-- **US relacionadas**: US-5 (tablero y pedido actual). US-6 (cobro) y US-7 (historial) lo extienden.
-- **Código**: `src/features/order/` (domain, store, ui, testing). Pantalla en `src/app/(main)/ventas/nueva/`.
+- **US relacionadas**: US-5 (tablero y pedido actual) y US-6 (cobro). US-7 (historial) lo extiende.
+- **Código**: `src/features/order/` (domain, store, actions, services, repository, ui, testing). Pantalla en
+  `src/app/(main)/ventas/nueva/`.
 - **Datos que usa**: gustos, bebidas, precios del grupo y stock del feature `menu` (`fetchMenuItems`,
-  `fetchMenuGroupPrices`).
+  `fetchMenuGroupPrices`). Al cobrar escribe en `sales`, `sale_lines`, `sale_line_items`, `sale_payments` y
+  `audit_logs`, y descuenta `menu_items.stock` (tablas en `src/lib/db/order-schema.ts` y `schema.ts`).
 
 ## Qué hace
 
@@ -30,8 +32,11 @@ unidades e importe, el total y el comprador (opcional; vacío = "Sin nombre"). U
 | Pizza de 2 sabores: el precio del sabor más caro; consume ½ de cada gusto | `specs.md` y dev |
 | Costo de una mitad y mitad: ½ del costo de cada gusto | dev, 2026-10-25 |
 | No se ofrece un gusto si no alcanza el stock, contando lo que ya está en el pedido | US-5 CA-5 |
-| Una línea incompleta bloquea el cobro | dev, 2026-10-25 |
+| Una línea incompleta bloquea el cobro, en la pantalla y en el servidor | dev, 2026-10-25 |
 | Dos líneas iguales y completas se juntan con cantidad 2 | US-5 |
+| Medios de pago: Efectivo, Transferencia, Débito y Crédito; hasta 2 por venta y distintos | `specs.md` y US-6 |
+| Descuento: primero el porcentaje y después el monto, como el POS de siempre | US-6 CA-5 |
+| En Crédito sólo se registra el medio; tarjeta, cuotas y recargo llegan con US-11 | US-6 |
 
 Las reglas son funciones puras de `domain/`:
 
@@ -39,14 +44,54 @@ Las reglas son funciones puras de `domain/`:
 - `order-pricing.ts`: `unitLinePrice`, `linePrice` y `orderTotal`.
 - `order-usage.ts`: consumo de stock, stock disponible y `lineCost`.
 - `order-describe.ts`: textos del pedido.
+- `order-validation.ts`: `isValidLine`, `applyDiscount`, `paymentsCover` y los medios de pago.
 
-Corren en el navegador y el servidor las reutiliza al cobrar (US-6).
+Corren en el navegador y el servidor las reutiliza al cobrar.
+
+## Cobro (US-6)
+
+"Cobrar" abre un modal con el comprador, el descuento en % y en $, y los 4 medios de pago. Se eligen hasta 2: con
+dos, se carga el monto del primero y el segundo se lleva el resto. El navegador manda **sólo** el pedido (grupo,
+presentación, gustos con sus unidades y cantidad), el comprador, el descuento y los pagos. Nunca manda precios,
+costos ni total: `checkoutSchema` es `strictObject` y rechaza cualquier campo de más.
+
+`checkout.service` hace todo en una transacción:
+
+1. Bloquea los gustos con `SELECT … FOR UPDATE`, de a uno y ordenados por id, para que dos cobros no se traben.
+2. Valida cada línea (`isValidLine`) y que cada gusto esté activo y sea de su grupo.
+3. Recalcula los precios con la base, aplica el descuento y controla que los pagos sumen el total.
+4. Controla el stock de todos los gustos y recién después lo descuenta, filtrando por `id` y `version`.
+5. Guarda la venta (vendedor = quien cobra; comprador o `null`), cada línea con lo cobrado y la descripción de sus
+   gustos, lo que consume de cada gusto con el **costo congelado** (mitad y mitad: 0,5 de cada uno) y los pagos.
+6. Audita `CREAR` / `SALE`.
+
+Si el cobro sale bien, el pedido se vacía y el tablero vuelve a leer gustos y stock. Si falla, el pedido queda como
+estaba, se muestra el motivo y también se recargan precios y stock, porque pueden haber cambiado.
+
+Mientras exista el historial viejo de `/ventas` (hasta US-7), las ventas nuevas aparecen ahí sin el detalle de las
+líneas, y anularlas desde esa pantalla no repone el stock nuevo.
+
+## Errores
+
+| Situación | Código | Mensaje | Test |
+|---|---|---|---|
+| Sin sesión | `UNAUTHENTICATED` | No autorizado (Token faltante) | `checkout.contract.test.ts` |
+| Entrada mal formada o con precios, costos o total | `VALIDATION` | Los datos proporcionados no son válidos. | `checkout.contract.test.ts` |
+| Línea incompleta, gusto de otro grupo o dado de baja, grupo sin precio, descuento mayor al total o pagos que no suman | `VALIDATION` | idem | `checkout-errors.test.ts` |
+| Un gusto que ya no existe | `NOT_FOUND` | El/la producto seleccionado ya no existe. | `checkout-errors.test.ts` |
+| Un gusto no alcanza | `INSUFFICIENT_STOCK` | No hay stock suficiente de {gusto}. | `checkout-errors.test.ts` y `checkout.service.int.test.ts` |
+| Otro movimiento cambió el gusto entre el bloqueo y el guardado | `STALE_VERSION` | mensaje de concurrencia | `checkout-errors.test.ts` |
+
+En el modal, antes de llegar al servidor (`ui/checkout-form.ts`): "El descuento va de 0 a 100 %", "El descuento no
+puede ser negativo", "El descuento no puede dejar el total en $0", "Elegí un medio de pago" y "Los pagos tienen
+que sumar el total".
 
 ## Roles y permisos
 
 | Acción | admin | vendedor |
 |---|---|---|
 | Usar el tablero (`/ventas/nueva`) | Sí | Sí |
+| Cobrar (`checkoutAction`) | Sí | Sí |
 
 ## Pantallas
 
@@ -55,14 +100,21 @@ Corren en el navegador y el servidor las reutiliza al cobrar (US-6).
 - `GroupCard` por grupo, con ícono, "N en pedido" y botones de presentación con el precio (del grupo) o "desde $X".
   Avisa si el grupo no tiene gustos o si falta el precio del grupo, y deshabilita los botones.
 - `FlavorPicker` / `FlavorRow`: gustos con precio y stock disponible, y los botones según la presentación.
-- `CurrentOrder` / `OrderTable`: el pedido, con el total, Vaciar y Cobrar (el cobro llega con US-6).
+- `CurrentOrder` / `OrderTable`: el pedido, con el total, Vaciar y Cobrar.
+- `CheckoutModal` / `PaymentPicker` (`use-checkout.ts`): el cobro.
 
-En US-5 se entra desde "Tablero de ventas", en la lista de Ventas. "Nueva Venta" sigue abriendo el POS viejo hasta
-que US-6 lo reemplace por el tablero.
+Por ahora se entra desde "Tablero de ventas", en la lista de Ventas. "Nueva Venta" sigue abriendo el POS viejo hasta
+que US-7 lo reemplace por el tablero.
 
 ## Tests
 
 - Unit y fuzz: `domain/*.test.ts` (la suma de unidades nunca supera la presentación; con precios iguales, la surtida
-  cuesta lo mismo que la entera) y `store/order.store.test.ts`.
-- Componente: `ui/*.test.tsx` (tarjeta de grupo, lista de gustos, pedido actual y tablero).
-- E2E: `tests/tablero-ventas.spec.ts`.
+  cuesta lo mismo que la entera; el schema del cobro nunca lanza), `store/order.store.test.ts` y
+  `ui/checkout-form.test.ts`.
+- Servicio con el fake: `services/checkout.service.test.ts` y `services/checkout-errors.test.ts`.
+- Contrato: `actions/checkout.contract.test.ts` (un valor adulterado no cambia lo que se guarda; fuzz).
+- Integración: `services/checkout.service.int.test.ts` (lo guardado en Postgres; dos cobros simultáneos de la última
+  unidad; un gusto que no alcanza no deja nada a medias).
+- Componente: `ui/*.test.tsx` (tarjeta de grupo, lista de gustos, pedido actual, tablero y cobro).
+- E2E: `tests/tablero-ventas.spec.ts` y `tests/cobro.spec.ts` (armar, cobrar con efectivo y débito, y ver el stock
+  descontado en `/stock`).
