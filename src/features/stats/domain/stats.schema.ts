@@ -41,5 +41,3 @@ export type DashboardStats = {
   cashRevenue: number;
   transferRevenue: number;
 };
-
-export type DashboardStatsResult = { success: true; data: DashboardStats } | { success: false; message: string };

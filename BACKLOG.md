@@ -925,7 +925,7 @@ retira cuando la reemplaza su ítem, y T-12 borra el resto. `main` recibe el spr
 | #   | ID                                                                              | Título                                                         | Estado      | Depende de | Estimación      |
 | --- | ------------------------------------------------------------------------------- | -------------------------------------------------------------- | ----------- | ---------- | --------------- |
 | 0   | [T-10](#t-10--backlog-de-los-sprints-1-y-2-desde-specsmd)                       | Backlog de los Sprints 1 y 2 desde `specs.md`                  | En revisión | —          | 30 min          |
-| 1   | [BUG-12](#bug-12--el-vendedor-puede-pedir-las-estadísticas-del-dashboard)       | El vendedor puede pedir las estadísticas                       | Pendiente   | T-4        | 25 min          |
+| 1   | [BUG-12](#bug-12--el-vendedor-puede-pedir-las-estadísticas-del-dashboard)       | El vendedor puede pedir las estadísticas                       | En revisión | T-4        | 25 min          |
 | 2   | [BUG-10](#bug-10--scripts-destructivos-que-quedaron-fuera-de-bug-3)             | Scripts destructivos que quedaron fuera de BUG-3               | Pendiente   | BUG-3      | 40 min          |
 | 3   | [T-11](#t-11--el-catálogo-público-se-regenera-sólo-cuando-cambia)               | El catálogo público se regenera sólo cuando cambia             | Pendiente   | —          | 1 h 5 min       |
 | 4   | [US-1](#us-1--la-app-con-la-marca-empanadería-isabela)                          | La app con la marca Empanadería Isabela                        | Pendiente   | —          | 1 h 50 min      |
@@ -1004,9 +1004,9 @@ planificar e implementar sin volver a interpretar `specs.md`.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
-| Dueño        | —         |
-| Inicio       | —         |
+| Estado       | En revisión |
+| Dueño        | Ignacio Tomas |
+| Inicio       | 2026-10-25 |
 | Tamaño       | S         |
 | Depende de   | T-4       |
 | Plan         | —         |
@@ -1021,13 +1021,21 @@ en vez del campo `error` de `ActionResult`.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · Test de contrato `regression BUG-12`: el vendedor recibe `FORBIDDEN` y el admin recibe los datos · Estimación: 15 min · Completado: —
+- [x] **CA-1** · Test de contrato `regression BUG-12`: el vendedor recibe `FORBIDDEN` y el admin recibe los datos · Estimación: 15 min · Completado: 2026-10-25 02:55
 
-- [ ] **CA-2** · El error de `fetchDashboardStats` tiene la forma de `ActionResult` · Estimación: 10 min · Completado: —
+- [x] **CA-2** · El error de `fetchDashboardStats` tiene la forma de `ActionResult` · Estimación: 10 min · Completado: 2026-10-25 02:55
 
 **Preguntas resueltas** (`specs.md`, 2026-10-25)
 
 - El vendedor no tiene Estadísticas: sólo el admin ve ingresos, costos y ganancia.
+
+**Notas**
+
+- **CA-1**: `src/features/stats/actions/stats.contract.test.ts`. Antes del fix, el vendedor recibía las estadísticas
+  (el test falló); ahora recibe `FORBIDDEN` sin que se lea la base. Sin sesión, `UNAUTHENTICATED`.
+- **CA-2**: `fetchDashboardStats` devuelve `ActionResult<DashboardStats>` y arma el error con `toActionFailure`. Un
+  error inesperado da `UNEXPECTED` con el mensaje del catálogo, en vez del `message` suelto de antes.
+- La pantalla no cambia: ya leía `success` y `data`. `DashboardStatsResult` se borró.
 
 ### BUG-10 · Scripts destructivos que quedaron fuera de BUG-3
 
