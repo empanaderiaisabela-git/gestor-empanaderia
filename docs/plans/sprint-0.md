@@ -319,7 +319,7 @@ sin parsear, y `verifyAuthOrAdmin` devuelve la fila entera. **Esperado**: ningun
 - `architecture.md` y `testing.md` sin "(a crear)" en lo que ya existe, y la "Matriz de pruebas · Sprint 0".
 - `initial_prompt.md` al día.
 - `npm run verify` en verde sobre `develop`. Con el OK del dev: merge local `--no-ff` de `develop` a `main`
-  ("release: sprint 0"), tag `sprint-0` y push.
+  ("chore(release): sprint 0"), tag `sprint-0` y push.
 
 ## Verificación de todo el sprint
 

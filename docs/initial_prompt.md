@@ -63,9 +63,10 @@ Hacer preguntas de más es mejor que inventar.
 
 ## 4. Estado actual del repo (al 2026-10-24)
 
-- **Sprint 0 en curso** (base técnica, ver `BACKLOG.md`). No se implementa ninguna US hasta que esté `Hecho`;
-  las US sí se pueden ir cargando en el Sprint 1.
-- Git: `main` y `develop` parten del commit inicial (T-1). El trabajo nuevo sale de `develop`. El repo de GitHub
+- **Sprint 0 terminado** (base técnica): todos sus ítems están integrados y en `En revisión` en `BACKLOG.md`,
+  esperando que el dev los pase a `Hecho`. `main` tiene el tag `sprint-0`. Lo próximo es el Sprint 1, que **no se
+  arranca sin el OK del dev**.
+- Git: `main` recibe un merge de `develop` al cierre de cada sprint. El trabajo nuevo sale de `develop`. El repo de GitHub
   es **público**: todo lo que se pushea queda publicado.
 - **No existe todavía**: `docs/conventions/`.
 - **Sí existen**:
@@ -77,20 +78,22 @@ Hacer preguntas de más es mejor que inventar.
   - El archivo de requerimientos `docs/requerimientos/specs.md`.
   - `.env.example` y `.env.test` (versionado: sólo apunta a `db-test`).
 - Tests:
-  - Vitest 5 con los proyectos `unit` e `integration`, y fast-check (T-2, ADR 0001).
+  - Vitest 5 con los proyectos `unit`, `component` (jsdom y Testing Library) e `integration`, y fast-check (T-2,
+    T-5, ADR 0001).
   - Integración contra `db-test` (postgres:15 en el 5434, `tmpfs`), con una guarda que aborta si la URL no es esa.
   - E2E con Playwright (`tests/`, con Page Objects) contra `db-test`, con `next build` + `next start` en el 3100 y la carpeta
     `.next-e2e` (T-6, ver `tests/readme.md`). Nunca toca la base de desarrollo.
-  - Testing Library y Stryker **no están instalados** (T-5).
-- Scripts pendientes: `test:mutation` y `verify` (T-5).
+  - Mutación con Stryker (`stryker.config.mjs`, `npm run test:mutation`) sobre `provider` y `src/lib/errors` (T-5).
+- `provider` es el **feature molde** (T-5, `docs/features/provider/README.md`): los demás features se migran
+  copiando su estructura.
 - Gates (T-3, ADR 0003):
   - ESLint aplica las reglas duras (`eslint.config.mjs` + `eslint/`), salvo en los archivos heredados de
     `eslint-legacy.json`. Esa lista sólo se achica (`npm run lint:legacy`).
   - lefthook: `pre-commit` bloquea los `.env` reales y corre ESLint, el tope de los `.css` y el typecheck;
     `commit-msg` corre commitlint; `pre-push` corre `test:coverage` y `skills:check`.
 - CI: `.github/workflows/ci.yml` en cada push a `develop` y `main` (lint, lista legacy, typecheck, skills,
-  cobertura, integración y build contra `db-test`), más `keep-alive.yml`, que hace un ping diario a Supabase.
-- `README.md` todavía describe ArgenStock.
+  cobertura, mutación, integración, build y E2E contra `db-test`), más `keep-alive.yml`, que hace un ping diario a Supabase.
+- `README.md` en español con el setup real (T-7).
 - Skills: la fuente es `.agents/skills/`. Se copian a `.claude/skills/` con `npm run skills:sync`, y
   `npm run skills:check` verifica que estén iguales. **Nunca edites `.claude/skills/` directo.**
 
@@ -281,7 +284,8 @@ Requerimiento → Ítem de backlog → Descubrimiento → Plan aprobado → Rama
 | Tests de integración | `docker compose up -d --wait db-test` → `npm run test:int` |
 | E2E | `docker compose up -d --wait db-test` → `npm run test:e2e` (Chromium) o `npm run test:e2e:all` (tres navegadores) |
 | Skills | `npm run skills:sync` · `npm run skills:check` |
-| Planeados (no existen aún) | `test:mutation`, `verify` (T-5) |
+| Mutación | `npm run test:mutation` (Stryker, score ≥ 70) |
+| Antes de integrar a `develop` | `npm run verify` (lint, tipos, cobertura, integración, mutación y build) |
 
 La configuración local va en `.env.local` (plantilla: `.env.example`): `LOCAL_DATABASE_URL`, `JWT_SECRET`
 (**obligatoria**) y `CLOUDINARY_URL`. Usuarios del seed: `admin`/`admin` y `vendedor`/`vendedor`. Son temporales: después se crean

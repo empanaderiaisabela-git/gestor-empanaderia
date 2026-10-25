@@ -8,7 +8,7 @@ Cómo está armado el sistema, qué puede depender de qué y por qué. Las regla
 > ciabattas) ítem por ítem del backlog. Mientras tanto conviven nombres heredados: por ejemplo, la tabla
 > `devices` ("equipos") cumple el rol de **categoría** de producto.
 >
-> Lo marcado **(a crear)** es la arquitectura objetivo que todavía no existe en el código. La sección
+> `provider` es el feature molde (T-5): ya cumple toda la arquitectura objetivo. La sección
 > [Brechas](#brechas-entre-el-código-actual-y-estas-reglas) lista lo heredado que no cumple las reglas.
 
 ## Vista general
@@ -44,7 +44,7 @@ flowchart LR
     PX["proxy.ts<br/>sesión + RBAC por ruta"]
     RSC["Server Components<br/>catálogo público"]
     SA["Server Actions"]
-    SV["Services (a crear)"]
+    SV["Services"]
     RP["Repositories<br/>Drizzle"]
   end
   PG[("PostgreSQL")]
@@ -114,12 +114,12 @@ Por qué:
 ```
 src/features/<feature>/
   domain/       <feature>.schema.ts      Zod: entrada (create/update) y fila (row) + tipos inferidos
-  repository/   <feature>.repository.ts  Drizzle; recibe `tx` opcional
-  services/     <feature>.service.ts     reglas de negocio y transacción          (a crear)
-  actions/      <feature>.actions.ts     'use server': auth → validación → service → ActionResult
+  repository/   <feature>.repository.ts  interfaz + Drizzle; unidad de trabajo con la transacción
+  services/     <feature>.service.ts     reglas de negocio; recibe la unidad de trabajo
+  actions/      <operación>.ts           'use server': auth → validación → service → ActionResult
   store/        <feature>.store.ts       Zustand: lista cacheada + isLoaded
   ui/           components/, hooks/      componentes propios del feature
-  testing/      fake y builders          sólo para tests                          (a crear)
+  testing/      fake y suite de comportamiento   sólo para tests
 ```
 
 Con el tope de 100 líneas, cuando un archivo crece se parte por operación (`create-customer.action.ts`,
@@ -131,7 +131,7 @@ Con el tope de 100 líneas, cuando un archivo crece se parte por operación (`cr
 |---|---|
 | `src/proxy.ts` | Next 16 renombró `middleware.ts` a `proxy.ts`. Corre en cada request: valida la cookie `session`, redirige a `/home` si no hay sesión y aplica RBAC por ruta (el `vendedor` sólo entra a `/productos`, `/ventas` y `/clientes`). Las rutas públicas están en `publicPaths`. |
 | `src/features/<f>/actions/` | Server Actions. Única puerta del cliente al servidor: sesión y rol, validación Zod, service y `ActionResult`. |
-| `src/features/<f>/services/` | Reglas de negocio y orquestación. Abren la transacción y la pasan a los repositorios. Hoy existe sólo en `stats` (BUG-5); en el resto de los features la lógica sigue repartida entre actions y repositorios **(a crear)**. |
+| `src/features/<f>/services/` | Reglas de negocio y orquestación. Abren la transacción y la pasan a los repositorios. Existe en `stats` (BUG-5) y en `provider` (T-5, con unidad de trabajo: el service nunca ve `tx`); en el resto de los features la lógica sigue repartida entre actions y repositorios, y se migra copiando `provider`. |
 | `src/features/<f>/repository/` | Acceso a datos con Drizzle. Reciben `tx` opcional para participar de una transacción y traducen "0 filas afectadas" a error de concurrencia. |
 | `src/lib/db/schema.ts` | Schema Drizzle: tablas, enums, índices, FKs y relaciones. Fuente de verdad de la base. |
 | `src/lib/db/migrations/` | Migraciones SQL generadas por `drizzle-kit`. No se editan a mano. |

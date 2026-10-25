@@ -201,3 +201,18 @@ criterio de aceptación y por cada fila de la tabla de errores de los ítems del
 | ID | Descripción | Test de regresión | Estado |
 |---|---|---|---|
 | BUG-N | … | `regression BUG-N: …` en `…` | Corregido / Abierto |
+
+## Matriz de pruebas · Sprint 0
+
+| Qué | Unit / contrato / fuzz | Componente | Integración (`db-test`) | E2E | Mutación |
+|---|---|---|---|---|---|
+| Guarda de `db-test` y de scripts destructivos (T-2, BUG-3) | Sí | — | Sí | — | — |
+| Elección de base con `APP_ENV` (T-8) | Sí | — | — | — | — |
+| `JWT_SECRET` (BUG-2) | Sí | — | — | — | — |
+| Reglas de ESLint (T-3) | Sí | — | — | — | — |
+| Dashboard secuencial (BUG-5) | Sí | — | Sí | Sí | — |
+| Datos sensibles: logs, lecturas, `password_hash` (BUG-6, BUG-7) | Sí | — | Sí | — | — |
+| Errores de base traducidos (BUG-9) | Sí | — | Sí | Sí | — |
+| Catálogo de errores, `asUser`, `formatDateTime` (T-4) | Sí | — | — | — | Sí (`src/lib/errors`) |
+| Sesión en fotos y lecturas (BUG-1, BUG-8) | Sí | — | — | Sí | — |
+| Proveedores, feature molde (T-5) | Sí | Sí | Sí | Sí | Sí |

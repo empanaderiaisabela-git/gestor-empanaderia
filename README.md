@@ -1,257 +1,106 @@
-# ArgenStock — Stock Management & POS System
+# Gestor de stock — empanadería
 
-> A high-performance, full-stack web application engineered for technology retail and mobile phone businesses. It seamlessly manages inventory, point-of-sale (POS) operations, clients, providers, user credentials, and exhaustive audit logging. Built with strict adherence to Clean Architecture, SOLID principles, and modern Next.js paradigms.
+Sistema web de gestión de stock, ventas, clientes, proveedores, usuarios y auditoría para la empanadería de un
+cliente. Next.js 16 (App Router), React 19, TypeScript estricto, Drizzle ORM sobre PostgreSQL 15, Zod 4 y Zustand.
 
----
+- **Contexto completo para arrancar**: [`docs/initial_prompt.md`](docs/initial_prompt.md).
+- **Reglas del repo** (humanos y agentes): [`AGENTS.md`](AGENTS.md).
+- **Backlog vigente**: [`BACKLOG.md`](BACKLOG.md). Requerimientos del cliente: [`docs/requerimientos/specs.md`](docs/requerimientos/specs.md).
+- **Arquitectura**: [`docs/architecture.md`](docs/architecture.md). **Tests**: [`docs/testing.md`](docs/testing.md).
+  **Flujo de trabajo**: [`docs/workflow.md`](docs/workflow.md) y [`docs/git.md`](docs/git.md).
 
-## 📖 Developer Onboarding & Documentation
+## Módulos
 
-Welcome to the ArgenStock project. This document is your single source of truth for understanding the system's architecture, business rules, technologies, and local setup. Whether you are adding a new feature or debugging a production issue, this guide will provide the context you need to start coding immediately.
+| Ruta | Qué hace |
+|---|---|
+| `/login` | Acceso con bcrypt y JWT en cookie HttpOnly |
+| `/home` | Dashboard: ingresos, valor del stock y más vendidos |
+| `/categorias` | Dispositivos o categorías de producto |
+| `/productos` | Inventario: productos, proveedor, stock, precios y fotos |
+| `/ventas` | Punto de venta con descuento automático de stock |
+| `/clientes` | Directorio de clientes |
+| `/proveedores` | Proveedores (feature molde de la arquitectura: [`docs/features/provider/`](docs/features/provider/README.md)) |
+| `/usuarios` | Usuarios internos (sólo admin) |
+| `/logs` | Auditoría de todas las escrituras |
 
----
+Roles: `admin` y `vendedor`. Cada Server Action verifica sesión y rol en el servidor.
 
-## 🛠 Technology Stack
+## Puesta en marcha local
 
-This project leverages the bleeding edge of the JavaScript/TypeScript ecosystem to deliver uncompromising performance and type safety.
-
-### Core Frameworks & UI
-
-- **[Next.js 16 (App Router)](https://nextjs.org/)**: The backbone of the application. We use React Server Components (RSC) and **Server Actions** to unify the backend and frontend execution models, explicitly avoiding standalone API routes.
-- **[React 19](https://react.dev/)**: Utilizing concurrent rendering features and hooks (`useTransition`, `useActionState`).
-- **[Tailwind CSS v4](https://tailwindcss.com/)**: Utility-first CSS engine handling layout constraints and responsive design.
-- **[Lucide React](https://lucide.dev/)**: Scalable vector iconography.
-- **[Playwright](https://playwright.dev/)**: End-to-End (E2E) testing framework guaranteeing critical business flows.
-
-### State Management & Forms
-
-- **[Zustand](https://github.com/pmndrs/zustand)**: Lightweight global state management. Used primarily for client-side entity synchronization (e.g., `useSaleStore`, `useProductStore`) avoiding deeply nested React Contexts.
-- **[React Hook Form](https://react-hook-form.com/) & [Zod](https://zod.dev/)**: End-to-end type safety. Zod schemas bridge the client payload into backend Server Actions with rigorous validation.
-
-### Back-End Engine & Infrastructure
-
-- **[PostgreSQL](https://www.postgresql.org/)**: Relational database orchestrating transactional integrity.
-- **[Drizzle ORM](https://orm.drizzle.team/)**: High-performance, edge-ready Object Relational Mapper bridging TypeScript schemas with Postgres.
-- **[jose](https://github.com/panva/jose) & [bcrypt](https://www.npmjs.com/package/bcrypt)**: Cryptographically secure password hashing and Edge-compatible JSON Web Tokens (JWT) for authentication.
-
----
-
-## 🏗 Architecture & Conventions
-
-The project strictly follows a **Feature-Oriented Clean Architecture**. Code is grouped by business capability (feature) rather than technical role.
-
-### Directory Structure
-
-```text
-src/
-  app/              # Next.js App Router (Pages, Layouts, Routing)
-  features/         # Core business logic organized by feature
-    [feature_name]/ # e.g., auth, product, sale, customer, audit
-      actions/      # Server Actions (Application Layer / Use Cases)
-      domain/       # Zod Schemas & Types (Domain Layer)
-      repository/   # Drizzle DB interactions (Infrastructure Layer)
-      store/        # Zustand State (Client State Management)
-      ui/           # Feature-specific React Components
-  components/       # Shared, generic UI components (Buttons, Modals, Tables)
-  lib/              # Shared utilities, DB connection, constants
-```
-
-### Strict Layer Separation
-
-- **Domain Layer (`domain/`)**: Pure business logic and data shapes (Zod schemas). Zero external dependencies.
-- **Infrastructure Layer (`repository/`)**: Database access via Drizzle. **Repositories never handle HTTP or UI logic.**
-- **Application Layer (`actions/`)**: Thin Server Actions that validate input (via Zod), call the repository, and return a typed `ActionResult`. **Business logic never lives in UI components.**
-- **Presentation Layer (`app/` & `ui/`)**: React components. They consume Server Actions and Zustand stores. They never query the database directly.
-
-### Coding Standards
-
-1. **SOLID Principles**: Single Responsibility (functions do one thing), Dependency Inversion (depend on abstractions).
-2. **Type-Safety (Zod)**: We use a dual-schema pattern.
-   - `InputSchema` (e.g., `userSchema`): Validates incoming data from forms.
-   - `DefSchema` (e.g., `userDefSchema`): The Source of Truth representing the database record.
-3. **Action Results**: All Server Actions must return a standardized `ActionResult<T>` type instead of throwing raw errors to the client:
-   ```typescript
-   type ActionResult<T = void> = { success: true; data: T } | { success: false; error: string };
-   ```
-4. **Zustand Naming**: Store hooks must use singular naming conventions (e.g., `useCustomerStore` instead of `useCustomersStore`).
-5. **Concurrency**: Assume operations run concurrently. Use `Promise.all` for independent async operations.
-
----
-
-## 📜 Business Rules
-
-### 1. Dual-Layer Security & RBAC
-
-Security enforces Strict Role-Based Access Control (`admin` vs `vendedor`).
-
-- **Edge Middleware (`middleware.ts`)**: Evaluates HttpOnly Session Cookies. Unauthenticated users are redirected to `/login`.
-- **Action Authorization**: Every mutation validates permissions (`verifyAuthOrAdmin`). `vendedor` roles cannot mock backend payloads to execute admin-only actions.
-
-### 2. Relational Integrity & Soft Deletes
-
-To preserve Foreign Key (FK) integrity and historical audit data, the system relies on **Conditional Soft Deletes**.
-If an entity (Provider, Device, Customer) has been part of a transaction, it is restricted to a Soft Delete (`isActive: false`). It is removed from operational views but kept intact for the database.
-
-### 3. Point of Sale (POS) & Stock Automation
-
-When a sale is confirmed via the POS interface, the system processes a database transaction that:
-
-1. Records the sale and associates it with the vendor and customer.
-2. Automatically decrements `stock` for all purchased products.
-3. Registers the sale revenue in the dashboard analytics.
-
-### 4. High-Fidelity Audit Logging
-
-Every critical operation (`CREAR`, `ACTUALIZAR`, `ELIMINAR`, `LOGIN`, `PÉRDIDA`) is recorded in the Audit Log.
-
-- The log captures the User ID, Entity ID, timestamp, and a JSON payload of the affected data.
-- **Filtered Search Mechanism**: 
-  - **Frontend Normalization**: The UI is designed to be user-friendly. Users can search using natural language terms to filter specific entities or actions.
-    - **Actions**: `creación`, `edición`, `borrado`, `baja`, `pérdida`
-    - **Entities**: `usuario`, `proveedor`, `producto`, `cliente`, `equipo`, `venta`
-  - **Backend Unaccent**: The backend queries the database using the Postgres `unaccent` extension paired with `ILIKE`. This ensures that searches are completely accent-insensitive (e.g., searching for "pérdida", "perdida", or "PERDIDA" all match the same logs).
-  - **IMPORTANT**: The `unaccent` extension is **not activated by default** in standard Postgres installations. To guarantee this search mechanism functions properly, you **must** manually activate the `unaccent` extension in your database (e.g. running `CREATE EXTENSION IF NOT EXISTS unaccent;`).
-
-### 5. Product Image Management
-
-To ensure a consistent and premium visual experience across the application (especially on the landing page and product details), the frontend displays product images in a strict `1:1` (square) container to maintain layout uniformity.
-- **Client Recommendation:** Always take and upload product photos in a **1:1 aspect ratio** (e.g., using the "Square" mode on a smartphone camera).
-- **Fallback Behavior:** If non-square (rectangular) images are uploaded, the system utilizes an intelligent "zoom-to-fill" strategy (via CSS `object-cover` and Cloudinary's AI-driven `crop: 'fill'`). This guarantees that there are no empty gaps/letterboxing in the UI, but it may result in the edges of the image being cropped.
-
----
-
-## 📦 System Modules
-
-- 💻 **Authentication (`/login`)**: Secure access using bcrypt and HttpOnly JWTs.
-- 📊 **Dashboard (`/`)**: Business intelligence aggregating revenue, stock value, and top sellers.
-- 📱 **Devices (`/categorias`)**: Administrative ledger defining hardware models (e.g., iPhone 15 Pro).
-- 📦 **Products/Inventory (`/productos`)**: Core inventory management tying devices to physical stock and providers.
-- 🛒 **Point of Sale (`/ventas`)**: Synchronized cart checkout, customer association, and automated stock decrement.
-- 👥 **Customers (`/clientes`)**: CRM directory preserving purchaser identities.
-- 🏢 **Providers (`/proveedores`)**: B2B directory of external hardware suppliers.
-- 🛡 **Users (`/usuarios`)**: Internal administrative panel for employee credentials.
-- 📜 **Audit Logs (`/logs`)**: High-fidelity tracing of all system mutations.
-
----
-
-## 🚀 Local Development Setup
-
-### Prerequisites
-
-- Node.js >= 18
-- Docker & Docker Compose (for PostgreSQL)
-
-### 1. Clone & Setup from Template
-
-If you are using this as a template, follow these steps to initialize your new project:
+Requisitos: Node 22.12 o más, Docker y npm.
 
 ```bash
-# 1. Copy the template content to your new project directory
-cp -r . your-new-project-name
-cd your-new-project-name
-
-# 2. Clean up template artifacts
-rm -rf node_modules package-lock.json .next
-
-# 3. Install dependencies
-npm install
-
-# 4. Install Playwright browsers (required for E2E tests)
-npx playwright install
+npm install                      # instala dependencias y los hooks de lefthook
+npx playwright install chromium  # navegador para el E2E
+cp .env.example .env.local       # completar los valores (ver abajo)
+docker compose up -d --wait db   # Postgres de desarrollo en 127.0.0.1:5433
+npm run db:migrate               # aplica las migraciones (incluye la extensión unaccent)
+npm run db:seed-users            # usuario admin
+npm run dev                      # http://localhost:3000
 ```
 
-### 2. Environment Configuration
+Credenciales del seed: usuario `admin`, contraseña `admin`.
 
-The project uses a standard `.env` hierarchy. The database is chosen by the `APP_ENV` variable, never by `NODE_ENV` (see `docs/adr/0002-la-base-se-elige-con-app-env.md`):
+### Entornos y variables
 
-- **Local Development**: Run commands without prefixes (defaults to `.env.local`).
-- **Production**: Prefix commands with `APP_ENV=production` to use `.env.prod`.
+| Archivo | Uso | Versionado |
+|---|---|---|
+| `.env.local` | Desarrollo: `LOCAL_DATABASE_URL`, `JWT_SECRET`, `CLOUDINARY_URL` | No |
+| `.env.test` | Tests de integración y E2E: apunta a `db-test` (127.0.0.1:5434) | Sí (sin secretos reales) |
+| `.env.prod` | Producción: `DATABASE_URL`, `JWT_SECRET`, `CLOUDINARY_URL` | **Nunca** |
+| `.env.example` | Plantilla de todas las variables | Sí |
 
-#### A. Local Development (`.env.local`)
-Create a `.env.local` file at the root.
+La base se elige **sólo** con `APP_ENV`, nunca con `NODE_ENV` ([ADR 0002](docs/adr/0002-la-base-se-elige-con-app-env.md)):
+sin `APP_ENV` se usa `.env.local`; con `APP_ENV=production` se usa `.env.prod` con SSL. **Quien despliegue la app
+tiene que definir `APP_ENV=production`.** Los scripts destructivos (`db:seed`, `db:reset-data`, `db:reset-full`) se
+niegan a correr contra una base que no sea local.
 
-```env
-LOCAL_DATABASE_URL=postgresql://postgres:password@localhost:5433/stock_db
-JWT_SECRET=super_secret_dev_key
-CLOUDINARY_URL=cloudinary://your_dev_key...
-```
+### Puertos
 
-#### B. Production (`.env.prod`)
-Create a `.env.prod` file for production-specific settings or when running scripts against the production DB.
+| Servicio | Puerto |
+|---|---|
+| App en desarrollo (`npm run dev`) | 3000 |
+| App del E2E (`next build` + `next start`, carpeta `.next-e2e`) | 3100 |
+| Postgres de desarrollo (`db`) | 5433 |
+| Postgres de tests (`db-test`, en memoria, perfil `test`) | 5434 |
 
-```env
-DATABASE_URL=postgresql://postgres.your_project:password@aws-0-sa-east-1.pooler.supabase.com:6543/postgres
-JWT_SECRET=your_production_secret
-CLOUDINARY_URL=cloudinary://your_prod_key...
-```
-
-**How to run scripts:**
-```bash
-# Local (uses .env.local)
-npm run db:migrate
-
-# Production (uses .env.prod)
-APP_ENV=production npm run db:migrate
-```
-
-### 3. Spawn Database Infrastructure
-
-Start the PostgreSQL container (binds to port `5433` to prevent clashes with local DBs):
+## Tests y calidad
 
 ```bash
-docker compose up -d
+docker compose up -d --wait db-test   # requerido por test:int y test:e2e
+npm run test:watch                    # mientras desarrollás
+npm run lint && npm run typecheck
+npm run test:coverage                 # unit, contrato, fuzz y componentes; cobertura ≥ 90/85
+npm run test:int                      # integración de repositorios sobre db-test
+npm run test:e2e                      # Playwright en Chromium sobre db-test
+npm run test:mutation                 # Stryker, score ≥ 70
+npm run verify                        # todo lo anterior salvo E2E, más el build. Antes de integrar a develop
 ```
 
-### 4. Database Setup & Seeding
+- **Hooks** (lefthook): `pre-commit` bloquea `.env` reales y corre ESLint y tipos; `commit-msg` corre commitlint;
+  `pre-push` corre la cobertura y `skills:check`.
+- **CI** (GitHub Actions, en cada push a `develop` y `main`): calidad, unit, mutación, integración, build y E2E.
+  Firefox y WebKit sólo en `main`.
+- **Reglas duras** (ESLint): 100 líneas por archivo, funciones de 40 líneas y 3 parámetros, cero comentarios
+  (salvo `Por qué:`), sin `any`/`!`/`as`, capas `ui → actions → services → repository → db` y sin SQL plano. Los
+  archivos heredados de `eslint-legacy.json` las tienen apagadas; esa lista sólo se achica ([ADR 0003](docs/adr/0003-reglas-estrictas-con-lista-legacy.md)).
 
-Generate the schema, apply migrations, enable the unaccent extension, and seed the initial data. Remember to run these for **both local and production** environments.
+## Scripts de base de datos
 
-```bash
-# 1. Push SQL schemas to the database
-npm run db:generate
-npm run db:migrate
+| Comando | Qué hace |
+|---|---|
+| `npm run db:generate` | Genera una migración a partir del schema |
+| `npm run db:migrate` | Aplica las migraciones pendientes |
+| `npm run db:seed` / `db:reset-data` | Carga o reinicia los datos base (sólo base local) |
+| `npm run db:reset-full` | Borra toda la base local y la recrea (destructivo) |
+| `npm run db:seed-users` | Crea los usuarios iniciales |
+| `npm run db:stress-test` | Llena la base con datos de prueba de volumen |
 
-# 2. Enable 'unaccent' extension (CRITICAL for search functionality)
-npm run db:enable-unaccent
+Contra producción, sólo con `APP_ENV=production` delante y sabiendo lo que se hace (por ejemplo
+`APP_ENV=production npm run db:migrate`).
 
-# 3. Seed the foundation (creates the initial admin user)
-npm run db:seed-users
-```
+## Flujo de trabajo
 
-*Note: For production, prefix these with `APP_ENV=production`.*
-
-### 5. Start the Development Server
-
-```bash
-npm run dev
-```
-
-Navigate to `http://localhost:3000`.
-
-**Default Administrative Credentials:**
-
-- **User:** `admin`
-- **Pass:** `admin`
-
----
-
-## 🛠 Useful Scripts & Commands
-
-The `package.json` includes several utility scripts to streamline your workflow:
-
-| Command                  | Description                                                           |
-| ------------------------ | --------------------------------------------------------------------- |
-| `npm run dev`            | Starts the Next.js development server with Turbopack.                 |
-| `npm run build`          | Creates an optimized production build.                                |
-| `npm run lint`           | Runs ESLint to verify code quality.                                   |
-| `npm run db:generate`    | Generates Drizzle SQL migration files based on schema changes.        |
-| `npm run db:migrate`     | Applies pending Drizzle migrations to the database.                   |
-| `npm run db:seed`        | Injects foundational data (like the master admin account).            |
-| `npm run db:reset-data`  | Clears and resets standard operational data (useful for dev testing). |
-| `npm run db:reset-full`     | Wipes the entire database completely (Warning: Destructive).          |
-| `npm run db:stress-test`    | Runs a script to flood the DB with mock data for performance testing. |
-| `npm run db:enable-unaccent`| Enables the unaccent extension in the database (Required for search). |
-| `npx playwright test`       | Executes the End-to-End (E2E) test suite via Playwright.              |
-
----
-
-_Code is meant to be read by humans, and occasionally compiled by machines. Prioritize the clean code lifecycle._
+Sin pull requests: cada ítem del backlog va en su rama, se integra con `git merge --squash` a `develop` (un commit
+por ítem, Conventional Commits en español) con el OK del dev, y cada sprint se cierra con un merge de `develop` a
+`main` y un tag. Detalle en [`docs/git.md`](docs/git.md).

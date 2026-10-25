@@ -24,7 +24,7 @@ Reglas:
 ## Flujo
 
 ```
-feat/us-20-…  ── (merge --squash local)──▶  develop  ── "release: sprint N" (merge --no-ff local)──▶  main  (tag sprint-N)
+feat/us-20-…  ── (merge --squash local)──▶  develop  ── "chore(release): sprint N" (merge --no-ff local)──▶  main  (tag sprint-N)
 ```
 
 1. **Integrar un ítem.** Con el OK del dev sobre la lista simple de lo que entra (ver `AGENTS.md`):
@@ -41,7 +41,7 @@ feat/us-20-…  ── (merge --squash local)──▶  develop  ── "release
 
    ```bash
    git switch main && git pull
-   git merge --no-ff develop -m "release: sprint N"
+   git merge --no-ff develop -m "chore(release): sprint N"
    git tag -a sprint-N -m "Demo sprint N"
    git push && git push --tags
    ```

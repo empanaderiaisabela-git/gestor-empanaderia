@@ -125,7 +125,7 @@ cargando en el Sprint 1 en paralelo.
 | 12  | [BUG-8](#bug-8--lecturas-de-productos-y-proveedores-sin-sesión)                | Lecturas de productos y proveedores sin sesión | En revisión | T-4                | 30 min          |
 | 13  | [T-6](#t-6--e2e-sobre-db-test)                                                 | E2E sobre `db-test`                          | En revisión | T-4, T-8           | 1 h 25 min      |
 | 14  | [T-5](#t-5--proveedores-como-feature-molde)                                    | Proveedores como feature molde               | En revisión | T-6                | 5 h             |
-| 15  | [T-7](#t-7--cierre-del-sprint-0)                                               | Cierre del Sprint 0                          | Pendiente   | T-5, BUG-1 a BUG-9 | 1 h             |
+| 15  | [T-7](#t-7--cierre-del-sprint-0)                                               | Cierre del Sprint 0                          | En revisión | T-5, BUG-1 a BUG-9 | 1 h             |
 |     |                                                                                | **Total del sprint**                         |             |                    | **22 h 32 min** |
 
 ### T-1 · Backlog, specs y base inicial del repo
@@ -430,7 +430,7 @@ forma que sirva de molde para las demás y demuestre el flujo de punta a punta.
 
 - [x] **CA-7** · `docs/features/provider/README.md` desde la plantilla · Estimación: 15 min · Completado: 2026-10-24 21:32
 
-- [x] **CA-8** · Recorrió `start-task` → `finish-task` → merge squash local a `develop` con CI verde en el push · Estimación: 30 min · Completado: 2026-10-24 21:45
+- [x] **CA-8** · Recorrió `start-task` → `finish-task` → merge squash local a `develop` con CI verde en el push · Estimación: 30 min · Completado: 2026-10-24 21:33
 
 **Detalle**
 
@@ -448,7 +448,7 @@ forma que sirva de molde para las demás y demuestre el flujo de punta a punta.
   - Activar/desactivar y borrar exigen `version` (CA-5).
   - 184 unit y 27 de integración en verde; lint y cobertura en verde.
 
-**Cierre (2026-10-24 21:45)**:
+**Cierre (2026-10-24 21:33)**:
 
 - CA-1: `tests/proveedores.spec.ts` 24/24 en verde sobre `db-test` después del refactor.
 - CA-6: `stryker.config.mjs` (con `vitest.mutation.config.mts`, sólo los tests de `provider` y `src/lib/errors`),
@@ -879,27 +879,27 @@ desarrollo.
 
 | Campo        | Valor              |
 | ------------ | ------------------ |
-| Estado       | Pendiente          |
-| Dueño        | —                  |
-| Inicio       | —                  |
+| Estado       | En revisión        |
+| Dueño        | Ignacio Tomas      |
+| Inicio       | 2026-10-24         |
 | Tamaño       | S                  |
 | Depende de   | T-5, BUG-1 a BUG-9 |
 | Plan         | —                  |
-| Merge        | —                  |
-| Horas reales | —                  |
+| Merge        | squash en `develop`, `chore(release): sprint 0` en `main`, tag `sprint-0` |
+| Horas reales | ≈ 40 min           |
 
 **Historia**: Como dev quiero la documentación al día con lo construido, de forma que el próximo agente arranque
 con un contexto verdadero.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · `README.md` describe el setup real: puertos, `.env`, scripts y tests · Estimación: 20 min · Completado: —
+- [x] **CA-1** · `README.md` describe el setup real: puertos, `.env`, scripts y tests · Estimación: 20 min · Completado: 2026-10-24 21:40
 
-- [ ] **CA-2** · `docs/architecture.md` y `docs/testing.md` sin marcas "(a crear)" para lo que ya existe · Estimación: 10 min · Completado: —
+- [x] **CA-2** · `docs/architecture.md` y `docs/testing.md` sin marcas "(a crear)" para lo que ya existe · Estimación: 10 min · Completado: 2026-10-24 21:40
 
-- [ ] **CA-3** · `docs/initial_prompt.md` actualizado · Estimación: 10 min · Completado: —
+- [x] **CA-3** · `docs/initial_prompt.md` actualizado · Estimación: 10 min · Completado: 2026-10-24 21:40
 
-- [ ] **CA-4** · `npm run verify` en verde sobre `develop`; merge local `develop → main` ("release: sprint 0") con el tag `sprint-0` · Estimación: 20 min · Completado: —
+- [x] **CA-4** · `npm run verify` en verde sobre `develop`; merge local `develop → main` ("chore(release): sprint 0") con el tag `sprint-0` · Estimación: 20 min · Completado: 2026-10-24 21:40
 
 ------------------------------------------------------------------------------------------------------------------------
 
