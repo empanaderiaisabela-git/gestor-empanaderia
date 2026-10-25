@@ -27,29 +27,30 @@ Sistema de **gestión de stock y punto de venta + catálogo web** para la rotise
 | Cara | Rutas | Quién |
 |---|---|---|
 | Catálogo público | `/home`, `/product/[id]` | Clientes del local, sin login. Consultan por WhatsApp o Instagram; no hay pedidos online. **Por ahora no se publica**: sólo se despliega el gestor y el catálogo queda en el código. |
-| Panel de gestión | `/` (Estadísticas), `/stock`, `/ventas` (Ventas/Pedidos, el POS), `/clientes`, `/proveedores`, `/alta-de-productos`, `/categorias`, `/usuarios`, `/logs` (Auditoría). `/productos` (panel viejo) sigue sólo por URL para el admin hasta T-12 | `admin`: todo. `vendedor`: sólo Ventas/Pedidos, Stock y Clientes, y entra a Ventas/Pedidos. El menú y `proxy.ts` salen de `src/config/navigation.ts` (US-2). |
+| Panel de gestión | `/` (Estadísticas), `/ventas` (Ventas/Pedidos: historial, comprobante y anulación), `/ventas/nueva` (tablero de pedidos y cobro), `/stock`, `/alta-de-productos`, `/clientes`, `/proveedores`, `/usuarios`, `/logs` (Auditoría) | `admin`: todo. `vendedor`: sólo Ventas/Pedidos, Stock y Clientes, y entra a Ventas/Pedidos. El menú y `proxy.ts` salen de `src/config/navigation.ts` (US-2). |
 
-Funciones que ya existen:
-- ABM de productos, categorías, proveedores, clientes y usuarios.
-- Stock y mermas.
-- POS con carrito, descuentos y pagos en efectivo o transferencia; anulación de ventas con reposición de stock.
-- Dashboard de ingresos y costos.
-- Auditoría de toda operación.
-- Fotos de producto en Cloudinary.
+Funciones que ya existen (Sprint 1):
+- Alta de gustos y bebidas por grupo fijo, con precio del grupo (Empanadas, Ciabattas) o por gusto, fotos y
+  visibilidad en el catálogo.
+- Stock por gusto: ingresos con costo y proveedor, mermas e historial.
+- Tablero de pedidos con colores y emojis por grupo, surtidas ("Agregar uno" / "Completar") y pizzas mitad y mitad.
+- Cobro con efectivo, transferencia, débito o crédito (hasta 2 medios) y descuentos, con precios recalculados en el
+  servidor. Historial en Ventas/Pedidos, comprobante imprimible y anulación con reposición de stock.
+- Estadísticas sobre el modelo nuevo, ABM de clientes, proveedores y usuarios, y auditoría de toda operación.
+- Catálogo público que se regenera a demanda.
 
 ## 3. Origen: código heredado en remodelación
 
-El código **no se escribió para este negocio**. Es una copia de *ArgenStock*, un sistema que funcionaba para una
-casa de celulares y accesorios Apple. Se conserva la infraestructura y **el dominio se adapta de a un ítem del
-backlog**. Mientras tanto vas a encontrar:
+El código **no se escribió para este negocio**. Es una copia de *ArgenStock*, un sistema para una casa de celulares.
+Se conservó la infraestructura y **el dominio se adaptó en el Sprint 1**: T-12 retiró las tablas, pantallas y datos
+del modelo viejo, y `src/test/no-legacy-words.test.ts` falla si vuelve un texto de esa época. Lo que sigue heredado
+es código que todavía no se migró al molde (clientes, usuarios, auditoría, el dashboard y el catálogo público): está
+en `eslint-legacy.json`.
 
 | Lo que ves en el código | Qué significa hoy |
 |---|---|
-| Tabla `devices`, "equipos", "modelos", ruta `/categorias`, `device.*` | **Categoría** de producto |
-| Nombres de tablas y pantallas de celulares (`devices`, "equipo", "lote") y el seed con iPhones | Restos del modelo viejo: los reemplazan US-3 a US-7 y los borra T-12. La marca, la metadata y la paleta ya son de Empanadería Isabela (US-1) |
 | `src/lib/contact/contact.config.ts` | Vacío: falta que el cliente pase su WhatsApp e Instagram; sin datos, el catálogo no muestra botones de contacto |
-| Seed con iPhones y proveedores de tecnología | Datos de demo viejos |
-| `product_losses` | Mermas |
+| Nombres en inglés del modelo: `menu_items` (gustos y bebidas), `sale_lines` (líneas del pedido), `stock_losses` (mermas) | Ver el [glosario](#12-glosario) |
 
 **Las reglas de venta del rubro ya están definidas** (dev, 2026-10-25) en las
 [decisiones del Sprint 1](plans/sprint-1.md#decisiones-del-dev-2026-10-25). En resumen:
@@ -57,11 +58,11 @@ backlog**. Mientras tanto vas a encontrar:
 - Grupos fijos: Empanadas, Pizzas, Sanguches, Ciabattas, Coca-Cola y Pepsi.
 - Presentaciones fijas, con precio por gusto y presentación.
 - Pizza de 2 sabores al precio del más caro.
-- Surtidas como varias líneas.
+- Surtidas dentro de la misma presentación ("Agregar uno" y "Completar"), con precio proporcional en Sanguches.
 - Stock por gusto.
 - Promos con los gustos elegidos al vender.
 
-El código todavía no las implementa: lo hacen los ítems de los Sprints 1 y 2.
+El Sprint 1 implementó las de vender. Promos, tarjetas en cuotas, gastos y las estadísticas nuevas son del Sprint 2.
 
 **Lo que no está ahí no se decide.** Siguen sin definir y se preguntan cuando un ítem los toque, nunca se asumen:
 
@@ -76,12 +77,13 @@ Hacer preguntas de más es mejor que inventar.
 
 - **Sprint 0 terminado** (base técnica): todos sus ítems están integrados y en `En revisión` en `BACKLOG.md`,
   esperando que el dev los pase a `Hecho`. `main` tiene el tag `sprint-0`.
-- **Sprints 1 y 2 cargados** desde `specs.md` (T-10):
-  - Sprint 1, "Vender con el modelo de la empanadería": BUG-12, BUG-10, T-11, US-1 a US-7, T-12 y T-13.
-  - Sprint 2, en borrador: US-8 a US-14, BUG-11 y T-14.
+- **Sprint 1 terminado** ("Vender con el modelo de la empanadería"): BUG-12, BUG-10, T-11, US-1 a US-7, US-15, T-12
+  y T-13 están integrados en `develop` y en `En revisión`. El merge `develop → main` con el tag `sprint-1` espera
+  el OK del dev.
+- **Sprint 2 en borrador**: US-8 a US-14, BUG-11 (ya cubierto en parte por T-12) y T-14.
   - Planes maestros en `docs/plans/sprint-1.md` y `docs/plans/sprint-2.md`: decisiones del dev, enfoque de cada
     ítem, trazabilidad con `specs.md` y las preguntas pendientes para el cliente.
-  - Ningún ítem del Sprint 1 se arranca sin el OK del dev.
+  - Ningún ítem del Sprint 2 se arranca sin el OK del dev.
 - Git: `main` recibe un merge de `develop` al cierre de cada sprint. El trabajo nuevo sale de `develop`. El repo de GitHub
   es **público**: todo lo que se pushea queda publicado.
 - **No existe todavía**: `docs/conventions/`.
@@ -92,7 +94,7 @@ Hacer preguntas de más es mejor que inventar.
   - Las plantillas en `docs/templates/` (`plan.md`, `feature.md`, `adr.md`), los planes en `docs/plans/` y los
     ADR en `docs/adr/`.
   - El archivo de requerimientos `docs/requerimientos/specs.md` (texto del cliente, no se edita), y los wireframes
-    del POS y el logo en `docs/wireframes-ventas-gestor/`.
+    del tablero de ventas y el logo en `docs/wireframes-ventas-gestor/`.
   - `.env.example` y `.env.test` (versionado: sólo apunta a `db-test`).
 - Tests:
   - Vitest 5 con los proyectos `unit`, `component` (jsdom y Testing Library) e `integration`, y fast-check (T-2,
@@ -100,10 +102,13 @@ Hacer preguntas de más es mejor que inventar.
   - Integración contra `db-test` (postgres:15 en el 5434, `tmpfs`), con una guarda que aborta si la URL no es esa.
   - E2E con Playwright (`tests/`, con Page Objects) contra `db-test`, con `next build` + `next start` en el 3100 y la carpeta
     `.next-e2e` (T-6, ver `tests/readme.md`). Nunca toca la base de desarrollo.
-  - Mutación con Stryker (`stryker.config.mjs`, `npm run test:mutation`) sobre `provider` y `src/lib/errors` (T-5).
-- `menu` (US-3, `docs/features/menu/README.md`, ADR 0005) es el **modelo nuevo de productos**: gustos y bebidas por
-  grupo fijo, precio del grupo (Empanadas, Ciabattas) o por gusto (Sanguches, Pizzas, bebidas). Convive con el
-  modelo heredado (`devices`/`products`) hasta T-12.
+  - Mutación con Stryker (`stryker.config.mjs`, `npm run test:mutation`) sobre el dominio y los services de
+    `provider`, `menu`, `stock` y `order`, y `src/lib/errors`.
+- Features del dominio, cada uno con su README en `docs/features/`:
+  - `menu` (US-3, T-12, ADR 0005): gustos y bebidas por grupo fijo, precios, fotos y catálogo público.
+  - `stock` (US-4): ingresos, mermas e historial por gusto.
+  - `order` (US-5 a US-7 y US-15): tablero, cobro, historial, comprobante y anulación.
+  - `stats`: estadísticas sobre el modelo nuevo.
 - `provider` es el **feature molde** (T-5, `docs/features/provider/README.md`): los demás features se migran
   copiando su estructura.
 - Gates (T-3, ADR 0003):
@@ -125,14 +130,15 @@ Detalle en [`docs/architecture.md`](architecture.md).
   Form + Zod, Tailwind v4 y Cloudinary. Postgres corre en Docker en local y en Supabase en producción.
 - **En ejecución es cliente-servidor y en despliegue es un monolito modular.** El navegador habla con el
   servidor por **Server Actions** (`'use server'`), no por una API REST.
-- Capas: `ui → actions → service → repository → db`. **La capa `service` existe sólo en `stats`** (BUG-5): en el
-  resto, la lógica está repartida entre actions y repositorios. El código nuevo la crea.
+- Capas: `ui → actions → service → repository → db`. La capa `service`, con unidad de trabajo, existe en `provider`,
+  `menu`, `stock`, `order` y `stats`. En `customer`, `user` y `audit` la lógica sigue repartida entre actions y
+  repositorios: el código nuevo copia `provider`.
 - Cada feature vive en `src/features/<feature>/` con estas carpetas:
   - `domain/`: schemas Zod de entrada y de fila.
   - `repository/`: Drizzle.
-  - `services/`: hoy sólo en `stats`.
+  - `services/`: reglas de negocio; abren la transacción con la unidad de trabajo.
   - `actions/`, `store/` (Zustand) y `ui/`.
-  - `testing/`: fakes y builders; hoy sólo `stats/testing/seed-dashboard.ts`.
+  - `testing/`: fakes, fixtures y suites de comportamiento (contra el fake y contra Drizzle).
 - Helpers de test en `src/test/`:
   - La guarda de `db-test`, el `globalSetup` de integración y `truncateAll()`.
   - `asUser({ role })`, que simula la sesión, y los setups que simulan `next/headers` y bloquean la base en unit.
@@ -143,7 +149,7 @@ Detalle en [`docs/architecture.md`](architecture.md).
   `--conditions=react-server`, ya configurado en `package.json`. Si agregás un script que importe `@/lib/db`, sumale
   esa condición.
 - Doc por feature en `docs/features/<f>/README.md`: hoy `provider`, `stats`, `menu`, `stock` y `order`.
-- Schema de la base en `src/lib/db/schema.ts`.
+- Schema de la base en `src/lib/db/schema.ts`, `menu-schema.ts`, `stock-schema.ts` y `order-schema.ts`.
 - **Seguridad**:
   - JWT en la cookie `session`.
   - `src/proxy.ts` filtra por ruta y rol, pero es sólo una barrera de navegación.
@@ -151,7 +157,8 @@ Detalle en [`docs/architecture.md`](architecture.md).
     `SESSION_EXPIRED`, `INACTIVE_USER` o `FORBIDDEN`).
 - **Concurrencia optimista**: toda tabla que recibe `UPDATE` tiene `version`. El update filtra por `id` y
   `version`; si afecta 0 filas, hay conflicto y el usuario tiene que sincronizar. El stock se descuenta con un
-  `UPDATE` condicional atómico.
+  bloqueo `SELECT … FOR UPDATE` de cada gusto y un guardado por `id` y `version` (cobro, ingresos, mermas y
+  anulaciones).
 - **Auditoría**: toda mutación escribe en `audit_logs` dentro de la misma transacción.
 - Las actions **no lanzan errores al cliente**: devuelven `ActionResult`.
 
@@ -175,8 +182,8 @@ los commits van en español aunque la skill `conventional-commit` diga inglés.
 
 ## 7. Código heredado: no es un ejemplo a seguir
 
-El código actual **viola muchas de esas reglas**: más de 100 `any`, SQL dentro de queries, 50 archivos de más
-de 100 líneas, comentarios por todos lados y errores como textos sueltos. La lista completa está en
+El código heredado que queda **viola varias de esas reglas**: `any`, SQL dentro de queries, 28 archivos de más
+de 100 líneas, comentarios y errores como textos sueltos. La lista completa está en
 [`architecture.md` → Brechas](architecture.md#brechas-entre-el-código-actual-y-estas-reglas), y el inventario
 exacto de archivos es `eslint-legacy.json`. Si tu ítem corrige un archivo heredado, sacalo de esa lista.
 
@@ -184,14 +191,15 @@ exacto de archivos es `eslint-legacy.json`. Si tu ítem corrige un archivo hered
 - **No lo arregles "de paso".** Cada brecha se corrige cuando un ítem del backlog toca ese código, o con un ítem
   propio.
 - **Seguridad:**
-  - Las acciones de fotos de producto exigen sesión; las usan `admin` y `vendedor` (BUG-1).
+  - Las fotos de los gustos se manejan desde Alta de productos: sólo el admin, con tipo y tamaño validados antes de
+    subir a Cloudinary (T-12).
   - `JWT_SECRET` ya no tiene valor por defecto: es obligatoria y sin ella falla el login (BUG-2, con su test de
     regresión).
   - En desarrollo, Next ya no imprime los argumentos de las Server Actions (`logging.serverFunctions: false`), y
     Drizzle loguea el SQL sin parámetros. Fuera de `auth`, las lecturas no traen `password_hash` (BUG-6).
   - Ninguna respuesta al navegador ni el usuario de `verifyAuthOrAdmin` llevan el `password_hash` (BUG-7).
-  - `fetchProducts` y `fetchSelectorData` exigen sesión (BUG-8). Sigue abierta la pregunta de si el vendedor debe
-    ver precios de compra y el contacto de los proveedores.
+  - `fetchMenuItems` exige sesión y al vendedor no le manda el costo. Sigue abierta la pregunta al cliente de si el
+    vendedor debe ver costos y proveedores.
   - `handleDatabaseError` lee el error original de Postgres (también en `error.cause` de Drizzle): un duplicado,
     una referencia inexistente y un borrado de algo referenciado tienen cada uno su mensaje (BUG-9).
 - **Qué base se usa** (T-8, ADR 0002): la de producción, **sólo** con `APP_ENV=production` (`.env.prod`, con
@@ -340,3 +348,7 @@ las cuentas reales y se borran esas.
 | ADR | Registro de una decisión de arquitectura (`docs/adr/NNNN-titulo.md`). |
 | Brecha | Código heredado que no cumple las reglas actuales. |
 | Habilitador | Trabajo técnico sin valor directo para el usuario, como instalar Vitest o crear `db-test`. |
+| Gusto | Cada variedad que se vende de un grupo (Carne, Muzza, Coca-Cola 500 ml). En el código, `menu_items`. |
+| Grupo y presentación | Grupo fijo (Empanadas, Pizzas, Sanguches, Ciabattas, Coca-Cola, Pepsi) y cantidad en que se vende (1, 3, 6, 12 u; pizza de 1 o 2 sabores). |
+| Línea del pedido | Una presentación con sus gustos y su cantidad. En el código, `sale_lines` y `sale_line_items`. |
+| Surtida | Una presentación de varias unidades con gustos distintos, armada con "Agregar uno" y "Completar". |

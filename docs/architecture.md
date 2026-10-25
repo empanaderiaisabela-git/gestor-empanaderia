@@ -4,9 +4,8 @@ Cómo está armado el sistema, qué puede depender de qué y por qué. Las regla
 [`AGENTS.md`](../AGENTS.md); acá está el detalle.
 
 > **Origen del código.** La base es *ArgenStock*, un sistema de stock y punto de venta para una casa de
-> celulares. La arquitectura se conserva y el dominio se adapta a la rotisería (empanadas, pizzas, sándwiches y
-> ciabattas) ítem por ítem del backlog. Mientras tanto conviven nombres heredados: por ejemplo, la tabla
-> `devices` ("equipos") cumple el rol de **categoría** de producto.
+> celulares. La arquitectura se conserva; el dominio ya es el de Empanadería Isabela: desde T-12 (Sprint 1) no
+> quedan tablas, pantallas ni datos del modelo viejo, y un test (`src/test/no-legacy-words.test.ts`) lo vigila.
 >
 > `provider` es el feature molde (T-5): ya cumple toda la arquitectura objetivo. La sección
 > [Brechas](#brechas-entre-el-código-actual-y-estas-reglas) lista lo heredado que no cumple las reglas.
@@ -19,7 +18,7 @@ Una sola aplicación **Next.js 16 (App Router)** con dos caras:
 |---|---|---|---|
 | Catálogo público | `/home`, `/product/[id]` | Clientes del local, sin login | Server Components: `/home` estática con revalidación a demanda ([ADR 0004](adr/0004-revalidacion-a-demanda-del-catalogo.md)); `/product/[id]` dinámica |
 | Login | `/login` | Personal | Client Component + Server Action |
-| Panel de gestión | `/` (Estadísticas), `/productos`, `/ventas`, `/clientes`, `/proveedores`, `/categorias`, `/usuarios`, `/logs` | `admin` y `vendedor` | Client Components + Server Actions |
+| Panel de gestión | `/` (Estadísticas), `/ventas` (Ventas/Pedidos), `/ventas/nueva` (tablero), `/stock`, `/alta-de-productos`, `/clientes`, `/proveedores`, `/usuarios`, `/logs` | `admin` y `vendedor` | Client Components + Server Actions |
 
 **Estilo arquitectónico.** Son dos ejes distintos y valen los dos:
 
@@ -70,7 +69,7 @@ flowchart LR
 | Formularios y validación | React Hook Form + Zod 4; `drizzle-zod` deriva los schemas de las tablas |
 | Datos | PostgreSQL 15 + Drizzle ORM (`node-postgres`), migraciones con `drizzle-kit` |
 | Autenticación | JWT HS256 (`jose`) en cookie `httpOnly`, contraseñas con `bcrypt` |
-| Archivos | Cloudinary (fotos de producto recortadas a 1:1 al subir) |
+| Archivos | Cloudinary (fotos de cada gusto, recortadas a 1:1 al subir) |
 | Comprobantes | `window.print()` sobre una vista de impresión |
 | Calidad | ESLint 9 (`eslint-config-next` + reglas duras en `eslint/`, con la lista `eslint-legacy.json`), Prettier, lefthook, commitlint y GitHub Actions (ADR 0003) |
 | Tests | Vitest 5 (unit e integración), fast-check y Playwright (E2E). Testing Library y Stryker **(a instalar, T-5)**. Ver [`testing.md`](testing.md) |
@@ -123,17 +122,17 @@ src/features/<feature>/
 ```
 
 Con el tope de 100 líneas, cuando un archivo crece se parte por operación (`create-customer.action.ts`,
-`update-customer.action.ts`), como ya pasa con las fotos de producto.
+`update-customer.action.ts`), como en las actions de `menu`, `stock` y `order`.
 
 ## Servidor
 
 | Ruta | Contenido |
 |---|---|
-| `src/proxy.ts` | Next 16 renombró `middleware.ts` a `proxy.ts`. Corre en cada request: valida la cookie `session`, redirige a `/home` si no hay sesión y aplica RBAC por ruta con **la misma lista que el menú** (`src/config/navigation.ts`, US-2): el `vendedor` sólo entra a Ventas/Pedidos, Productos y Clientes, y si pide otra sección va a `/ventas`. Con sesión, `/login` lleva al inicio de cada rol (admin: Estadísticas; vendedor: Ventas/Pedidos). Las rutas públicas están en `PUBLIC_PATHS`. |
+| `src/proxy.ts` | Next 16 renombró `middleware.ts` a `proxy.ts`. Corre en cada request: valida la cookie `session`, redirige a `/home` si no hay sesión y aplica RBAC por ruta con **la misma lista que el menú** (`src/config/navigation.ts`, US-2): el `vendedor` sólo entra a Ventas/Pedidos, Stock y Clientes, y si pide otra sección va a `/ventas`. Con sesión, `/login` lleva al inicio de cada rol (admin: Estadísticas; vendedor: Ventas/Pedidos). Las rutas públicas están en `PUBLIC_PATHS`. |
 | `src/features/<f>/actions/` | Server Actions. Única puerta del cliente al servidor: sesión y rol, validación Zod, service y `ActionResult`. |
-| `src/features/<f>/services/` | Reglas de negocio y orquestación. Abren la transacción y la pasan a los repositorios. Existe en `stats` (BUG-5) y en `provider` (T-5, con unidad de trabajo: el service nunca ve `tx`); en el resto de los features la lógica sigue repartida entre actions y repositorios, y se migra copiando `provider`. |
+| `src/features/<f>/services/` | Reglas de negocio y orquestación. Abren la transacción y la pasan a los repositorios. Existe en `stats`, `provider` (T-5, el molde), `menu`, `stock` y `order`, con unidad de trabajo: el service nunca ve `tx`. En `customer`, `user` y `audit` la lógica sigue repartida entre actions y repositorios, y se migra copiando `provider`. |
 | `src/features/<f>/repository/` | Acceso a datos con Drizzle. Reciben `tx` opcional para participar de una transacción y traducen "0 filas afectadas" a error de concurrencia. |
-| `src/lib/db/schema.ts` | Schema Drizzle: tablas, enums, índices, FKs y relaciones. Fuente de verdad de la base. |
+| `src/lib/db/schema.ts`, `menu-schema.ts`, `stock-schema.ts`, `order-schema.ts` | Schema Drizzle: tablas, enums, índices, FKs, `CHECK` y relaciones. Fuente de verdad de la base. |
 | `src/lib/db/migrations/` | Migraciones SQL generadas por `drizzle-kit`. No se editan a mano. |
 | `src/lib/db/index.ts` | Pool de conexión y cliente `db`. La configuración sale de `database-config.ts`: `.env.prod` sólo con `APP_ENV=production`; si no, `.env.local`. |
 | `src/lib/db/scripts/` | Seeds, reset, stress test y backfills (`npm run db:*`). |
@@ -153,7 +152,7 @@ Con el tope de 100 líneas, cuando un archivo crece se parte por operación (`cr
 | `src/app/(auth)/` | Pantalla de login. |
 | `src/app/(main)/` | Panel de gestión: layout con el sidebar de 240 px (`xl:w-[240px]`) (`sidebar-nav.tsx` arma el menú de cada rol con `navigationFor`) y una carpeta por pantalla (`page.tsx` + `*-panel.tsx`). |
 | `src/app/home/`, `src/app/product/` | Catálogo público y ficha de producto. Las páginas son Server Components; los filtros y la paginación son componentes cliente. |
-| `src/features/<f>/ui/` | Componentes y hooks del feature: modales de formulario, POS, carrito, pagos, descuentos. |
+| `src/features/<f>/ui/` | Componentes y hooks del feature: modales de formulario, tablero de pedidos, cobro, comprobante. |
 | `src/features/<f>/store/` | Store Zustand del feature, con nombre en singular (`useCustomerStore`). |
 | `src/stores/index.ts` | `invalidateAllCaches()` marca todos los stores como no cargados después de una mutación. |
 | `src/hooks/` | `useEntityManager` (modales, búsqueda, mensajes) y `useEntityActions` (CRUD genérico con `useTransition`, refetch e invalidación). |
@@ -245,7 +244,7 @@ Problema que resuelve: dos personas editan lo mismo y la segunda pisa los cambio
 
 | Pieza | Cómo funciona |
 |---|---|
-| Columna | `version integer not null default 1` en toda tabla que recibe `UPDATE`: `users`, `devices`, `providers`, `customers`, `products`. |
+| Columna | `version integer not null default 1` en toda tabla que recibe `UPDATE`: `users`, `providers`, `customers`, `menu_items`, `menu_group_prices`. |
 | Lectura | El `*RowSchema` incluye `version` y el cliente la guarda con la fila. |
 | Escritura | El `*UpdateSchema` exige `version`. El repositorio filtra `WHERE id = :id AND version = :version` y suma 1 a `version`. |
 | Conflicto | 0 filas afectadas ⇒ `ConcurrencyError` (objetivo: `AppError('STALE_VERSION')`) ⇒ "Los datos en el servidor han cambiado. Por favor, sincroniza la lista e intenta nuevamente." |
@@ -253,18 +252,19 @@ Problema que resuelve: dos personas editan lo mismo y la segunda pisa los cambio
 
 Casos especiales:
 
-- **Stock.** La venta descuenta con un `UPDATE` atómico condicional (`stock = stock - q` sólo si
-  `stock >= q`), sin depender de la versión que tenga el cliente: dos vendedores pueden vender el mismo producto
-  a la vez mientras alcance. La venta también incrementa la `version` del producto, así que quien lo estaba
-  editando recibe conflicto (test E2E "Venta vs Edición de Producto").
+- **Cobro** (US-6). Bloquea los gustos del pedido con `SELECT … FOR UPDATE`, de a uno y ordenados por id, controla
+  el stock de todos y recién después lo descuenta filtrando por `id` y `version`, en la misma transacción que la
+  venta, sus líneas, los pagos y la auditoría. De dos cobros simultáneos de la última unidad, uno gana y el otro
+  recibe `INSUFFICIENT_STOCK` (`checkout.service.int.test.ts`).
 - **Stock del modelo nuevo** (US-4). Un ingreso o una merma bloquea la fila del gusto con `SELECT … FOR UPDATE`
   (`.for('update')` de Drizzle), calcula el stock nuevo en el service y lo guarda filtrando por `id` y `version`, en la
   misma transacción que el historial y la auditoría. No usa `sql` plano. Dos operaciones simultáneas sobre el mismo
   gusto se hacen una después de la otra (test de integración `stock.service.int.test.ts`).
-- **Anulación de una venta.** Bloquea la fila con `SELECT … FOR UPDATE` para evitar una doble anulación y
-  repone el stock.
-- **Tablas append-only** (`sales`, `sale_items`, `sale_payments`, `product_losses`, `product_images`,
-  `audit_logs`). No llevan `version`: se insertan y, a lo sumo, se borran enteras.
+- **Anulación de una venta** (US-7). Bloquea la venta con `SELECT … FOR UPDATE`, repone el stock de cada gusto con
+  lo que guardó el cobro (`sale_line_items`, también las medias pizzas) y la borra. La segunda de dos anulaciones
+  simultáneas recibe `NOT_FOUND` (`sale-history.service.int.test.ts`).
+- **Tablas append-only** (`sales`, `sale_lines`, `sale_line_items`, `sale_payments`, `stock_entries`,
+  `stock_losses`, `menu_item_images`, `audit_logs`). No llevan `version`: se insertan y, a lo sumo, se borran enteras.
 - **Bajas.** Si una entidad participó de una venta, no se borra: se desactiva (`is_active = false`). Las FKs
   sin `onDelete` hacen que Postgres rechace el borrado físico (23503) como red de seguridad.
 
@@ -274,7 +274,7 @@ Casos especiales:
 |---|---|
 | Autenticación | Usuario y contraseña (`bcrypt`). Token JWT HS256 de 24 h en la cookie `session` (`httpOnly`, `secure`, `sameSite=lax`). |
 | Fuerza bruta | 5 intentos fallidos por usuario ⇒ bloqueo de 15 minutos. El contador vive en la memoria del proceso: se pierde al reiniciar y no se comparte entre instancias. |
-| Roles | `admin` (todo) y `vendedor` (productos, ventas y clientes). Se aplican dos veces: por ruta en `proxy.ts` y por operación en cada Server Action. |
+| Roles | `admin` (todo) y `vendedor` (Ventas/Pedidos, Stock y Clientes). Se aplican dos veces: por ruta en `proxy.ts` y por operación en cada Server Action. |
 | Sesiones viejas | `verifyAuthOrAdmin` vuelve a leer al usuario: si lo desactivaron, la sesión deja de servir aunque el JWT siga vigente. |
 | Entrada | Toda action valida con Zod antes de tocar datos. Objetivo: `z.strictObject`, que rechaza campos de más. |
 | Salida | Las lecturas se parsean con `*RowSchema`. `password_hash` nunca sale del servidor. |
@@ -286,18 +286,16 @@ Casos especiales:
 | Tabla | Qué guarda | `version` | Baja |
 |---|---|---|---|
 | `users` | Personal con rol `admin` o `vendedor` | Sí | Lógica (`is_active`) |
-| `devices` | Categorías de producto (nombre heredado) | Sí | Lógica |
-| `providers` | Proveedores | Sí | Lógica |
+| `providers` | Proveedores | Sí | Lógica; física si no tiene ingresos de stock |
 | `customers` | Clientes; DNI único, comparado sin puntos ni guiones | Sí | Lógica |
-| `products` | Categoría, proveedor, precio de compra y de venta, stock y visibilidad en el catálogo | Sí | Física si no tiene ventas |
-| `product_images` | Fotos en Cloudinary | No | Física |
-| `product_losses` | Mermas: cantidad y motivo | No | — |
-| `sales`, `sale_items`, `sale_payments` | Venta; renglones con el costo unitario congelado al vender; pagos en `efectivo` o `transferencia` | No | Anulación (borrado y reposición de stock) |
+| `sales`, `sale_payments` | Venta: vendedor, comprador opcional, descuentos y total; pagos en `efectivo`, `transferencia`, `debito` o `credito` (hasta 2 por venta) | No | Anulación (borrado y reposición de stock) |
+| `sale_lines`, `sale_line_items` (`order-schema.ts`) | Cada línea del pedido con lo cobrado, su orden y la descripción de sus gustos; lo que consumió de cada gusto con el costo congelado (US-6) | No | En cascada con la venta |
 | `audit_logs` | Bitácora de operaciones | No | — |
-| `menu_items` (`src/lib/db/menu-schema.ts`) | Gustos y bebidas del modelo nuevo (US-3): grupo, nombre, costo, stock con medias para pizzas y precios por gusto según el grupo ([ADR 0005](adr/0005-grupos-fijos-y-precio-del-grupo-o-por-gusto.md)) | Sí | Lógica; física si no tiene movimientos |
+| `menu_items` (`src/lib/db/menu-schema.ts`) | Gustos y bebidas (US-3): grupo, nombre, costo, stock con medias para pizzas, precios por gusto según el grupo y visibilidad en el catálogo ([ADR 0005](adr/0005-grupos-fijos-y-precio-del-grupo-o-por-gusto.md)) | Sí | Lógica; física si no tiene movimientos |
 | `menu_group_prices` | Precio único por presentación de Empanadas y Ciabattas | Sí | — |
+| `menu_item_images` | Fotos de cada gusto en Cloudinary (T-12) | No | Física; en cascada con el gusto |
 | `stock_entries` (`src/lib/db/stock-schema.ts`) | Ingresos de stock (US-4): gusto, cantidad entera, costo unitario, proveedor opcional y usuario | No | — |
-| `stock_losses` | Mermas del modelo nuevo: cantidad (media pizza incluida), costo unitario del momento, motivo y usuario | No | — |
+| `stock_losses` | Mermas: cantidad (media pizza incluida), costo unitario del momento, motivo y usuario | No | — |
 
 Convenciones:
 
@@ -342,7 +340,7 @@ uso sin conexión), se decide con un ADR que evalúe primero una PWA y después 
 El código heredado **no se copia como ejemplo**. Cada brecha se corrige cuando un ítem del backlog toca ese
 código, o con un ítem propio. Nunca "de paso" dentro de otra tarea.
 
-El inventario exacto de archivos que violan las reglas duras es `eslint-legacy.json` (143 al activarlas en T-3).
+El inventario exacto de archivos que violan las reglas duras es `eslint-legacy.json` (143 al activarlas en T-3, 88 al cerrar el Sprint 1).
 Cuando un ítem corrige uno, lo saca de la lista, y la lista nunca crece (ADR 0003).
 
 | Brecha | Dónde | Regla de `AGENTS.md` |
@@ -353,7 +351,6 @@ Cuando un ítem corrige uno, lo saca de la lista, y la lista nunca crece (ADR 00
 | `any` / `as any`: unos 116 usos | Repositorios, actions, stats | Tipado |
 | Errores como textos (`MESSAGES` + `handleDatabaseError`), sin catálogo `AppError(code)` | `lib/`, actions | Errores |
 | Activar/desactivar y borrar no filtran por `version` | `updateActiveStatus`, `delete*` de los repositorios | Concurrencia |
-| 50 de 142 archivos de `src/` superan las 100 líneas, y hay comentarios en todo el código | POS, dashboard, schema, paneles… | Tope de líneas, Comentarios |
+| 28 de 372 archivos de `src/` superan las 100 líneas, y el código heredado tiene comentarios | Dashboard, catálogo público, schema, paneles de Clientes, Usuarios y Auditoría | Tope de líneas, Comentarios |
 | Fechas como `timestamp` sin zona; se formatean con `toLocaleString('es-AR')` sin fijar la zona; el dashboard arma los rangos con la hora local del servidor | `schema.ts`, `stats.actions.ts`, paneles | Fechas |
 | Dependencias sin uso: `pino`, `jsonwebtoken`, `@supabase/supabase-js`, `jspdf`, `html2canvas` | `package.json` | — |
-| Datos de demo de la casa de celulares (iPhones, proveedores de tecnología). La marca, la metadata y el contacto ya son de Empanadería Isabela (US-1) | seed (`setup-initial-data.ts`, `seed-stress-test.ts`), hasta US-3 y T-12 | — |

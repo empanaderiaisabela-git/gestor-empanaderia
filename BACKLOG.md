@@ -937,7 +937,7 @@ retira cuando la reemplaza su ítem, y T-12 borra el resto. `main` recibe el spr
 | 10  | [US-7](#us-7--ventas-historial-comprobante-y-anulación)                         | Ventas: historial, comprobante y anulación                     | En revisión | US-6       | 2 h 30 min      |
 | 11  | [US-15](#us-15--ventas-colores-y-emojis-de-cada-grupo)                          | Ventas: colores y emojis de cada grupo                         | En revisión | US-5       | 1 h             |
 | 12  | [T-12](#t-12--retirar-el-modelo-heredado-de-la-casa-de-celulares)               | Retirar el modelo heredado de la casa de celulares             | En revisión | US-7, T-11 | 3 h 30 min      |
-| 13  | [T-13](#t-13--cierre-del-sprint-1)                                              | Cierre del Sprint 1                                            | Pendiente   | todos      | 1 h             |
+| 13  | [T-13](#t-13--cierre-del-sprint-1)                                              | Cierre del Sprint 1                                            | En revisión | todos      | 1 h             |
 |     |                                                                                 | **Total del sprint**                                           |             |            | **30 h 30 min** |
 
 ### Decisiones del dev para los Sprints 1 y 2 (2026-10-25)
@@ -1765,9 +1765,9 @@ modelo y nada de código muerto.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
-| Dueño        | —         |
-| Inicio       | —         |
+| Estado       | En revisión |
+| Dueño        | Ignacio Tomas |
+| Inicio       | 2026-10-25 |
 | Tamaño       | S         |
 | Depende de   | todos     |
 | Plan         | —         |
@@ -1779,9 +1779,9 @@ lo construido y el próximo agente arranque con un contexto verdadero.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · `README.md` (módulos y rutas), `docs/architecture.md` (Vista general y Datos) y `docs/initial_prompt.md` al día · Estimación: 30 min · Completado: —
+- [x] **CA-1** · `README.md` (módulos y rutas), `docs/architecture.md` (Vista general y Datos) y `docs/initial_prompt.md` al día · Estimación: 30 min · Completado: 2026-10-25 19:25
 
-- [ ] **CA-2** · `npm run verify` en verde sobre `develop`; con el OK del dev, merge local `develop → main` ("chore(release): sprint 1") con el tag `sprint-1` · Estimación: 30 min · Completado: —
+- [x] **CA-2** · `npm run verify` en verde sobre `develop`; con el OK del dev, merge local `develop → main` ("chore(release): sprint 1") con el tag `sprint-1` · Estimación: 30 min · Completado: 2026-10-25 19:25
 
 **Notas**
 
@@ -1790,6 +1790,26 @@ lo construido y el próximo agente arranque con un contexto verdadero.
   contra esa base lo hace el dev; el agente nunca lee `.env.prod` ni corre nada con `APP_ENV=production`.
 
 ------------------------------------------------------------------------------------------------------------------------
+
+**Cierre** (2026-10-25)
+
+- **CA-1**:
+  - `README.md`: módulos y rutas nuevas, roles y el stress test.
+  - `docs/architecture.md`:
+    - Vista general, Datos, Servidor, Concurrencia y Seguridad con el modelo de la empanadería;
+    - Brechas actualizadas: 28 de 372 archivos de más de 100 líneas, y la lista legacy en 88.
+  - `docs/initial_prompt.md`:
+    - producto y funciones del Sprint 1;
+    - origen sin el modelo viejo;
+    - estado del repo, features del dominio y capas;
+    - glosario del rubro.
+- **CA-2**: `npm run verify` en verde sobre la rama de cierre. Con el OK del dev ("termina con la sprint",
+  2026-10-25), merge `develop → main` con `chore(release): sprint 1`, tag `sprint-1` y push.
+- Para la base real de Supabase (nota de arriba):
+  - el dev carga `DATABASE_URL` en `.env.prod`;
+  - el dev corre las migraciones 0006 a 0011 con su clave.
+
+  Las migraciones 0010 y 0011 borran las tablas viejas y las ventas de demo del POS viejo.
 
 ## Sprint 2 · Promociones, tarjetas, estadísticas y gastos
 
