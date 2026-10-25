@@ -930,14 +930,14 @@ retira cuando la reemplaza su ítem, y T-12 borra el resto. `main` recibe el spr
 | 3   | [T-11](#t-11--el-catálogo-público-se-regenera-sólo-cuando-cambia)               | El catálogo público se regenera sólo cuando cambia             | En revisión | —          | 1 h 5 min       |
 | 4   | [US-1](#us-1--la-app-con-la-marca-empanadería-isabela)                          | La app con la marca Empanadería Isabela                        | Pendiente   | —          | 1 h 50 min      |
 | 5   | [US-2](#us-2--menú-por-rol-y-sidebar-más-angosto)                               | Menú por rol y sidebar más angosto                             | Pendiente   | —          | 1 h 15 min      |
-| 6   | [US-3](#us-3--alta-de-productos-gustos-y-bebidas-con-precio-por-presentación)   | Alta de productos: gustos y bebidas con precio por presentación | Pendiente   | US-2       | 4 h             |
+| 6   | [US-3](#us-3--alta-de-productos-gustos-y-bebidas-con-precio-por-presentación)   | Alta de productos: gustos y bebidas con precio por presentación | Pendiente   | US-2       | 4 h 45 min      |
 | 7   | [US-4](#us-4--stock-grilla-ingresar-stock-y-mermas)                             | Stock: grilla, ingresar stock y mermas                         | Pendiente   | US-3       | 3 h 30 min      |
-| 8   | [US-5](#us-5--ventas-tablero-por-comida-y-pedido-actual)                        | Ventas: tablero por comida y pedido actual                     | Pendiente   | US-4       | 4 h 25 min      |
+| 8   | [US-5](#us-5--ventas-tablero-por-comida-y-pedido-actual)                        | Ventas: tablero por comida y pedido actual                     | Pendiente   | US-4       | 4 h 40 min      |
 | 9   | [US-6](#us-6--ventas-cobrar-con-4-medios-de-pago-y-precios-del-servidor)        | Ventas: cobrar con 4 medios de pago y precios del servidor     | Pendiente   | US-5       | 3 h 50 min      |
 | 10  | [US-7](#us-7--ventas-historial-comprobante-y-anulación)                         | Ventas: historial, comprobante y anulación                     | Pendiente   | US-6       | 2 h 30 min      |
 | 11  | [T-12](#t-12--retirar-el-modelo-heredado-de-la-casa-de-celulares)               | Retirar el modelo heredado de la casa de celulares             | Pendiente   | US-7, T-11 | 3 h 30 min      |
 | 12  | [T-13](#t-13--cierre-del-sprint-1)                                              | Cierre del Sprint 1                                            | Pendiente   | todos      | 1 h             |
-|     |                                                                                 | **Total del sprint**                                           |             |            | **28 h 30 min** |
+|     |                                                                                 | **Total del sprint**                                           |             |            | **29 h 30 min** |
 
 ### Decisiones del dev para los Sprints 1 y 2 (2026-10-25)
 
@@ -948,9 +948,11 @@ Respuestas a las preguntas de descubrimiento sobre `specs.md`. El detalle y el p
 | --- | --- |
 | Grupos | **Fijos en el código**: Empanadas, Pizzas, Sanguches (de miga), Ciabattas, Coca-Cola y Pepsi. Desaparece Categorías |
 | Presentaciones | **Fijas**: Empanadas y Sanguches 1, 3, 6 y 12 u; Pizzas de 1 o 2 sabores (siempre entera); Ciabattas y bebidas, por unidad |
-| Precio | Por gusto **y** presentación. La pizza de 2 sabores cuesta lo que el sabor más caro |
-| Surtidas | Una línea por gusto: "6" + carne y después "6" + pollo |
-| Stock | Por gusto. La pizza mitad y mitad descuenta ½ de cada gusto |
+| Precio | Empanadas y Ciabattas: **un precio por presentación para todo el grupo**. Sanguches, Pizzas y bebidas: **por gusto** ("Aclaración de precios" de `specs.md`). La pizza de 2 sabores cuesta lo que el sabor más caro |
+| Surtidas | Dentro de la misma presentación, con "Agregar uno" y "Completar" (AGREGADO de `specs.md`). En Sanguches se cobra la parte proporcional del precio de cada gusto. Una línea incompleta no se puede cobrar |
+| Stock | Por gusto. La pizza mitad y mitad descuenta ½ de cada gusto, y su costo es ½ del costo de cada uno |
+| Inicio del vendedor | Ventas/Pedidos |
+| Push | Después de cada ítem integrado a `develop`; el merge a `main` espera el OK del dev |
 | Comprador | Nombre libre y opcional; vacío se muestra "Sin nombre". La venta deja de exigir un cliente de Clientes |
 | Turno | Mañana o tarde según una hora de corte en hora de Argentina. **La hora la consulta el dev con el cliente** |
 | Ingresar stock | Cantidad, costo unitario (actualiza el costo del gusto) y proveedor opcional, con historial |
@@ -968,7 +970,7 @@ Respuestas a las preguntas de descubrimiento sobre `specs.md`. El detalle y el p
 
 | Campo        | Valor                                              |
 | ------------ | -------------------------------------------------- |
-| Estado       | En revisión                                        |
+| Estado       | En revisión |
 | Dueño        | Ignacio Tomas                                      |
 | Inicio       | 2026-10-25                                         |
 | Tamaño       | S                                                  |
@@ -999,6 +1001,12 @@ planificar e implementar sin volver a interpretar `specs.md`.
   - El stock no tiene `CHECK` en la base y puede quedar negativo: va en US-3 CA-1.
   - Estadísticas arranca con todo el historial y arma el día con la hora del servidor: va en US-12 CA-1.
 - BUG-11 pasó al Sprint 2: las fotos son del catálogo público, que hoy no es prioridad.
+
+**Actualización** (2026-10-25): el dev sumó a `specs.md` el AGREGADO de surtidas, la regla de Sanguches y Ciabatta,
+los gustos del local y la aclaración de precios. Se incorporaron a US-3 (precios del grupo para Empanadas y
+Ciabattas, CA-7 nuevo y seed real), US-5 ("Agregar uno" / "Completar", precio proporcional, línea incompleta) y
+US-6 (recalcula el proporcional y rechaza líneas incompletas; costo de la mitad y mitad ½ + ½). El Sprint 1 pasa de
+28 h 30 min a 29 h 30 min.
 
 ### BUG-12 · El vendedor puede pedir las estadísticas del dashboard
 
@@ -1223,7 +1231,7 @@ angosto, de forma que el área de trabajo sea más grande.
 **Decisiones del dev** (2026-10-25)
 
 - El vendedor **no** tiene Auditoría, aunque la lista de `specs.md` la incluya: el dev la corrigió.
-- Que el vendedor aterrice en Ventas/Pedidos es una propuesta; se confirma en `start-task`.
+- El vendedor aterriza en Ventas/Pedidos (dev, 2026-10-25).
 
 ### US-3 · Alta de productos: gustos y bebidas con precio por presentación
 
@@ -1243,9 +1251,9 @@ costo y su precio para cada presentación, de forma que el POS y las estadístic
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · Schema nuevo, en paralelo al heredado: gusto o bebida con grupo, nombre, costo unitario, stock (admite medias), activo y `version`, más sus precios por presentación; Postgres garantiza `unique(grupo, nombre)`, precio > 0, costo ≥ 0, stock ≥ 0 y sólo las presentaciones de su grupo (tests de tipos e integración) · Estimación: 1 h · Completado: —
+- [ ] **CA-1** · Schema nuevo, en paralelo al heredado: gusto o bebida con grupo, nombre, costo unitario, stock (admite medias), activo y `version`, más sus precios por presentación sólo en Sanguches, Pizzas y bebidas; Postgres garantiza `unique(grupo, nombre)`, precio > 0, costo ≥ 0, stock ≥ 0 y los precios que corresponden a cada grupo (tests de tipos e integración) · Estimación: 1 h · Completado: —
 
-- [ ] **CA-2** · El admin crea un gusto o bebida; nombre vacío o de más de 60 caracteres, un precio faltante de su grupo o un precio ≤ 0 → `VALIDATION`; nombre repetido en el grupo → `DUPLICATE`; un test de contrato por fila · Estimación: 45 min · Completado: —
+- [ ] **CA-2** · El admin crea un gusto o bebida; nombre vacío o de más de 60 caracteres, un precio faltante, de más o ≤ 0 según el grupo → `VALIDATION`; nombre repetido en el grupo → `DUPLICATE`; un test de contrato por fila · Estimación: 45 min · Completado: —
 
 - [ ] **CA-3** · Edita nombre, costo y precios con `version` (`STALE_VERSION`), desactiva y reactiva; borrar uno con ventas → `HAS_RELATIONS` · Estimación: 45 min · Completado: —
 
@@ -1253,18 +1261,20 @@ costo y su precio para cada presentación, de forma que el POS y las estadístic
 
 - [ ] **CA-5** · Pantalla agrupada por grupo, con búsqueda y estados de carga, vacío y error, con tests de componente · Estimación: 45 min · Completado: —
 
-- [ ] **CA-6** · Auditoría de cada alta, edición y baja; `docs/features/<f>/README.md` con la tabla de errores; ADR "Grupos y presentaciones fijos, precio por gusto y presentación"; seed de demo con gustos y bebidas del rubro; mutación ≥ 70 · Estimación: 25 min · Completado: —
+- [ ] **CA-6** · Auditoría de cada alta, edición y baja; `docs/features/<f>/README.md` con la tabla de errores; ADR "Grupos y presentaciones fijos, precio del grupo o por gusto"; seed con los gustos reales de `specs.md` y bebidas de demo; mutación ≥ 70 · Estimación: 25 min · Completado: —
+
+- [ ] **CA-7** · El admin edita los precios del grupo de Empanadas (1, 3, 6 y 12 u) y de Ciabattas (unidad), con `version` y auditoría; mientras un grupo no tiene precio cargado, sus gustos no se pueden vender · Estimación: 45 min · Completado: —
 
 **Detalle**
 
-| Grupo | Presentaciones (con precio propio por gusto) | Stock |
-| --- | --- | --- |
-| Empanadas | 1, 3, 6 y 12 u | Unidades |
-| Sanguches (de miga) | 1, 3, 6 y 12 u | Unidades |
-| Pizzas | Entera (se vende de 1 o 2 sabores) | Pizzas; admite medias |
-| Ciabattas | Unidad | Unidades |
-| Coca-Cola | Unidad (cada bebida: Coca-Cola 1,5 L, Sprite 500 ml…) | Unidades |
-| Pepsi | Unidad | Unidades |
+| Grupo | Presentaciones | Precio | Stock |
+| --- | --- | --- | --- |
+| Empanadas | 1, 3, 6 y 12 u | Del grupo: todos los gustos igual | Unidades |
+| Sanguches (de miga) | 1, 3, 6 y 12 u | Por gusto (Primavera ≠ Jamón y queso) | Unidades |
+| Pizzas | Entera (se vende de 1 o 2 sabores) | Por gusto | Pizzas; admite medias |
+| Ciabattas | Unidad | Del grupo: todos los gustos igual | Unidades |
+| Coca-Cola | Unidad (cada bebida: Coca-Cola 1,5 L, Sprite 500 ml…) | Por bebida | Unidades |
+| Pepsi | Unidad | Por bebida | Unidades |
 
 - Los grupos y las presentaciones son fijos en el código: cada grupo tiene reglas propias en el POS.
 - Nombres de tablas, feature y ruta: propuestas que se confirman en el plan del ítem. Se copia el molde de
@@ -1332,13 +1342,13 @@ de forma que cargar una venta me lleve pocos clics.
 
 - [ ] **CA-1** · "Nueva venta" muestra el tablero del wireframe: una subdivisión por grupo (Empanadas, Pizzas, Sanguches, Ciabattas, Coca-Cola y Pepsi), cada una con su ícono, el contador "N en pedido" y un botón por presentación · Estimación: 1 h · Completado: —
 
-- [ ] **CA-2** · Empanadas y Sanguches: tocar 1, 3, 6 o 12 despliega los gustos con el precio de esa presentación, y elegir uno agrega una línea con esa cantidad de ese gusto; una surtida se arma con varias líneas · Estimación: 45 min · Completado: —
+- [ ] **CA-2** · Empanadas y Sanguches: tocar 1, 3, 6 o 12 despliega los gustos, y cada uno tiene "Agregar uno" (+1 de ese gusto) y "Completar" (llena lo que falta); la línea se cobra al precio de la presentación (en Empanadas, el del grupo; en Sanguches, la parte proporcional del precio de cada gusto, redondeada a 2 decimales) · Estimación: 1 h · Completado: —
 
 - [ ] **CA-3** · Pizzas: "1 sabor" pide un gusto; "2 sabores" pide dos gustos distintos, cobra el más caro (mozzarella $10 + J&Q $5 = $10) y consume ½ de cada uno · Estimación: 45 min · Completado: —
 
-- [ ] **CA-4** · Ciabattas suma de a una unidad; Coca-Cola y Pepsi despliegan con un clic las bebidas de esa marca con stock y suman 1 u · Estimación: 30 min · Completado: —
+- [ ] **CA-4** · Ciabattas: se elige 1 sabor y suma 1 unidad, al precio del grupo; Coca-Cola y Pepsi despliegan con un clic las bebidas de esa marca con stock y suman 1 u · Estimación: 30 min · Completado: —
 
-- [ ] **CA-5** · "Pedido actual" muestra comida, cantidad, unidades e importe, con quitar línea, vaciar y total; no se ofrece un gusto sin stock suficiente, contando lo que ya está en el pedido · Estimación: 45 min · Completado: —
+- [ ] **CA-5** · "Pedido actual" muestra comida, cantidad, unidades e importe, con quitar línea, vaciar y total; una línea incompleta muestra "faltan N" y deshabilita Cobrar; no se ofrece un gusto sin stock suficiente, contando lo que ya está en el pedido · Estimación: 45 min · Completado: —
 
 - [ ] **CA-6** · Campo "Comprador" opcional, de hasta 60 caracteres; vacío se muestra "Sin nombre" · Estimación: 10 min · Completado: —
 
@@ -1353,10 +1363,13 @@ de forma que cargar una venta me lleve pocos clics.
 - Regla del cliente: en una presentación de más de 1 unidad, el gusto elegido se aplica a toda la cantidad.
 - Este ítem no cobra ni guarda nada: lo hace US-6. La subdivisión Promos llega con US-9.
 
-**A confirmar en `start-task`** (con el dev)
+**Decisiones del dev** (2026-10-25)
 
-- Los Sanguches de 3, 6 y 12 u llevan un solo gusto, igual que las empanadas.
-- El costo de una pizza mitad y mitad es ½ del costo de cada gusto.
+- Surtidas con "Agregar uno" y "Completar" (AGREGADO de `specs.md`): ½ docena → +1 carne, +1 carne y completar
+  con pollo = 2 carne + 4 pollo.
+- Precio proporcional de una surtida: Σ (unidades del gusto ÷ unidades de la presentación × precio de esa
+  presentación del gusto). En Empanadas da siempre el precio del grupo.
+- La pizza mitad y mitad cuesta ½ del costo de cada gusto (ejemplo: $2.000 + $1.500 = $3.500).
 
 ### US-6 · Ventas: cobrar con 4 medios de pago y precios del servidor
 
@@ -1378,9 +1391,9 @@ venta quede registrada con su comprador y descuente el stock.
 
 - [ ] **CA-1** · Medios de pago Efectivo, Transferencia, Débito y Crédito (enum y migración); se mantiene el máximo de 2 pagos con medios distintos · Estimación: 30 min · Completado: —
 
-- [ ] **CA-2** · El servidor recalcula precios, costos y total desde la base: un precio, costo o total adulterado desde el navegador se ignora (test de contrato), y si los pagos no suman el total → `VALIDATION` · Estimación: 1 h · Completado: —
+- [ ] **CA-2** · El servidor recalcula precios (incluido el proporcional de las surtidas), costos y total desde la base: un valor adulterado desde el navegador se ignora (test de contrato); si los pagos no suman el total o hay una línea incompleta → `VALIDATION` · Estimación: 1 h · Completado: —
 
-- [ ] **CA-3** · La venta guarda vendedor, fecha y hora en UTC, comprador (o vacío), las líneas con lo cobrado y lo que consume de cada gusto con su costo congelado · Estimación: 45 min · Completado: —
+- [ ] **CA-3** · La venta guarda vendedor, fecha y hora en UTC, comprador (o vacío), las líneas con lo cobrado y lo que consume de cada gusto con su costo congelado (mitad y mitad: ½ del costo de cada uno) · Estimación: 45 min · Completado: —
 
 - [ ] **CA-4** · Descuenta el stock de forma atómica; si un gusto no alcanza → `INSUFFICIENT_STOCK` con el nombre del gusto y no se registra nada (test de integración con dos ventas simultáneas) · Estimación: 45 min · Completado: —
 

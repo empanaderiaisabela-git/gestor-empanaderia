@@ -38,10 +38,14 @@ Respuestas del dev a las preguntas de descubrimiento (`workflow.md` §2) sobre `
 |---|---|---|
 | Grupos | **Fijos en el código**: Empanadas, Pizzas, Sanguches (de miga), Ciabattas, Coca-Cola, Pepsi | Cada grupo tiene reglas propias en el POS, así que no se pueden crear desde la UI. Desaparece Categorías (`devices`) |
 | Presentaciones | **Fijas**: Empanadas y Sanguches 1, 3, 6 y 12 u · Pizzas de 1 o 2 sabores (siempre entera) · Ciabattas, unidad · Bebidas, unidad | Reemplazan a las del wireframe (porciones, "Combo + bebida"). El combo lo cubren las promos |
-| Precio | **Por gusto y presentación** | Cubre el desplegable del wireframe (cada gusto, su precio) y la regla de pizza (sabores con precios distintos) |
+| Precio | Empanadas y Ciabattas: **un precio por presentación para todo el grupo**. Sanguches, Pizzas y bebidas: **por gusto** | "Aclaración de precios" del cliente en `specs.md` (reemplaza a la decisión inicial de precio por gusto para todos). Evita cargar 16 veces el mismo precio de empanada |
 | Pizza de 2 sabores | Precio del sabor más caro | Regla textual del cliente |
-| Surtidas | Una línea por gusto ("6" + carne, "6" + pollo) | Respeta la regla del cliente: en una presentación de más de 1 u, el gusto se aplica a toda la cantidad |
+| Surtidas | Dentro de la misma presentación, con "Agregar uno" (+1 de un gusto) y "Completar" (llena lo que falta) | AGREGADO de `specs.md`, para Empanadas y Sanguches |
+| Precio de una surtida | Proporcional: Σ (unidades del gusto ÷ unidades de la presentación × precio de esa presentación del gusto), redondeado a 2 decimales | En Empanadas da siempre el precio del grupo; sólo cambia algo en Sanguches |
+| Línea incompleta | No se puede cobrar: muestra "faltan N" y deshabilita Cobrar; el servidor la rechaza (`VALIDATION`) | Evita cobrar media docena con 2 empanadas |
 | Stock | Por gusto. Pizza mitad y mitad descuenta ½ de cada gusto | El stock de pizzas admite medias |
+| Costo de la mitad y mitad | ½ del costo de cada gusto | Ejemplo del dev: $2.000 + $1.500 = $3.500 de costo, $6.500 de ganancia |
+| Ciabatta | Se elige 1 sabor por unidad | `specs.md` |
 | Comprador | Nombre libre y opcional; vacío = "Sin nombre" | La venta deja de exigir un cliente de Clientes ("Mostrador"). Clientes sigue existiendo |
 | Turno | Mañana o tarde según una hora de corte, en hora de Argentina | La hora la consulta el dev con el cliente (bloquea US-13, Sprint 2) |
 | Ingresar stock | Cantidad + costo unitario (actualiza el costo del gusto) + proveedor opcional, con historial | El costo alimenta la ganancia en limpio |
@@ -54,6 +58,9 @@ Respuestas del dev a las preguntas de descubrimiento (`workflow.md` §2) sobre `
 | ISR | Revalidación a demanda | El catálogo se regenera sólo cuando cambia algo que muestra |
 | Datos de producción | Sólo demo | El modelo viejo se borra sin migrar datos; se conservan los usuarios |
 | Marca | Empanadería Isabela, con `logo-empanaderia.jpeg` | Paleta del logo: negro, ámbar y crema |
+| Gustos del local | Los de "gustos que disponen" de `specs.md` son el seed | Las bebidas no están en la lista: van de demo |
+| Inicio del vendedor | Ventas/Pedidos | — |
+| Push | Después de cada ítem integrado a `develop`; el merge a `main` espera el OK del dev | El CI verifica cada ítem |
 | Sprints | Sprint 1: vender. Sprint 2: promos, tarjetas, estadísticas y gastos | — |
 
 ## Hallazgos del código
@@ -202,10 +209,11 @@ Los criterios y estimaciones de cada ítem están en [`BACKLOG.md`](../../BACKLO
   - Enum `menu_group`: `empanadas`, `pizzas`, `sanguches`, `ciabattas`, `coca_cola`, `pepsi`.
   - Tabla `menu_items` con `id`, `group`, `name varchar(60)`, `unit_cost numeric(10,2)`, `stock`, `is_active`,
     `version` y timestamps.
-  - **Precios como columnas** `price_1`, `price_3`, `price_6` y `price_12`. Así Postgres garantiza, con un `CHECK`
-    por grupo, que Empanadas y Sanguches tengan las cuatro y el resto sólo `price_1`. Con una tabla aparte, esa regla
-    necesitaría un trigger.
-  - En Pizzas, `price_1` es la pizza entera.
+  - **Precios por gusto como columnas** `price_1`, `price_3`, `price_6` y `price_12`, nulos en Empanadas y Ciabattas.
+    Un `CHECK` por grupo garantiza que Sanguches tenga las cuatro, Pizzas y bebidas sólo `price_1`, y los grupos de
+    precio único ninguna. En Pizzas, `price_1` es la pizza entera.
+  - **Precios del grupo** en otra tabla (propuesta: `menu_group_prices`, una fila por grupo con `version`), sólo para
+    Empanadas (1, 3, 6 y 12 u) y Ciabattas (unidad). Sin fila, el grupo no se puede vender.
   - `unique(group, name)`, `CHECK price_* > 0`, `CHECK unit_cost >= 0` y `CHECK stock >= 0`.
   - **Stock con medias**: `numeric(10,1)` con un `CHECK` de que sólo Pizzas admite decimales, o un entero en medias
     unidades. Se decide en el plan, con un test de tipos.
@@ -214,14 +222,14 @@ Los criterios y estimaciones de cada ítem están en [`BACKLOG.md`](../../BACKLO
 - **Errores**: `VALIDATION`, `DUPLICATE`, `STALE_VERSION`, `HAS_RELATIONS`, `FORBIDDEN` y `UNAUTHENTICATED`, todos ya
   en el catálogo.
 - **Ruta y menú**: `/alta-de-productos`, sólo para el admin, en el menú de US-2 y en `proxy.ts`.
-- **Seed de demo** (`db:seed` y el seed del E2E):
-  - Empanadas: carne, pollo, jamón y queso, humita, caprese y verdura.
-  - Pizzas: mozzarella, napolitana, jamón y morrones, fugazzeta.
-  - Sanguches de miga: jamón y queso, jamón, queso y tomate.
-  - Ciabattas: dos o tres variedades.
-  - Coca-Cola: Coca-Cola, Sprite y Fanta, en dos tamaños.
-  - Pepsi: Pepsi, 7up y Mirinda.
-  - Los precios son de demo; no se inventan reglas.
+- **Seed** (`db:seed` y el seed del E2E), con los gustos de `specs.md`:
+  - Empanadas (16): Carne suave, Carne, Carne picante, Carne cheddar, Pollo, Pollo a mostaza, Bondiola mostaza y
+    miel, Bondiola barbacoa, Jamón y muzza, Capresse, Muzza y cebolla, Muzza y pepperoni, Muzza, cebolla y
+    roquefort, Verdura y Humita.
+  - Pizzas (6): Muzza, Muzza y jamón, Napolitana, Napolitana con jamón, Pepperoni y Roquefort.
+  - Sanguches de miga: Primavera y Jamón y queso. Ciabattas: Carne, Capresse, Bondiola y Pollo.
+  - Bebidas de demo: Coca-Cola, Sprite y Fanta; Pepsi, 7up y Mirinda.
+  - Los precios y costos son de demo.
 - **ADR**: "Grupos y presentaciones fijos en el código; precio por gusto y presentación".
 - **Mutación**: Stryker suma el `domain` y los `services` del feature nuevo (`stryker.config.mjs`).
 
@@ -254,12 +262,15 @@ Los criterios y estimaciones de cada ítem están en [`BACKLOG.md`](../../BACKLO
   - Se reemplazan las presentaciones del wireframe por las decididas.
   - No entra "Combo + bebida".
 - **Dominio** (funciones puras, compartidas con el servidor en US-6):
-  - `buildLine({ group, presentation, flavors })` arma la línea con sus unidades, su precio y lo que consume de
-    cada gusto (mitad y mitad: ½ y ½).
+  - `addOne` y `complete` sobre una línea abierta: +1 de un gusto o lo que falta, sin superar la presentación.
+  - `linePrice(line, prices)`: el precio del grupo (Empanadas, Ciabattas), el proporcional por gusto (Sanguches), el
+    del gusto (bebidas) o el más caro de los dos sabores (Pizzas). `lineUsage(line)`: lo que consume de cada gusto
+    (mitad y mitad: ½ y ½). `isComplete(line)`.
   - `orderTotal(lines)`.
   - `availableStock(item, lines)`: stock menos lo que ya está en el pedido.
-  - Unit con valores frontera y fuzz con fast-check: el precio de una mitad y mitad es siempre el máximo, y las
-    unidades nunca superan el stock.
+  - Unit con valores frontera y fuzz con fast-check: la suma de unidades nunca supera la presentación, el
+    proporcional con precios iguales da el precio del pack, la mitad y mitad cobra el máximo y las unidades nunca
+    superan el stock.
 - **Estado del pedido**: store de Zustand del feature (líneas y comprador), con tests.
 - **UI**:
   - Una `GroupBoard` por grupo, con ícono de lucide, "N en pedido" y botones de presentación.
@@ -267,7 +278,8 @@ Los criterios y estimaciones de cada ítem están en [`BACKLOG.md`](../../BACKLO
   - `CurrentOrderTable`.
   - Componentes chicos (tope de 100 líneas) y tests de componente.
 - **Fuera de alcance**: cobrar (US-6) y la subdivisión Promos (US-9).
-- **A confirmar en `start-task`**: Sanguches de 3, 6 y 12 u con un solo gusto, y costo de la mitad y mitad = ½ + ½.
+- **Decidido** (2026-10-25): surtidas con "Agregar uno" y "Completar", proporcional, línea incompleta bloquea Cobrar,
+  costo de la mitad y mitad = ½ + ½.
 - **Si queda grande**, se parte en dos: empanadas y sanguches; pizzas, ciabattas y bebidas.
 
 ## 9 · US-6 Cobrar con 4 medios de pago (L, 3 h 50 min)
@@ -342,22 +354,25 @@ Los criterios y estimaciones de cada ítem están en [`BACKLOG.md`](../../BACKLO
 | 12-20 | Empanadas, Pizzas, Sanguches, Ciabatta, Coca-Cola y Pepsi | US-3, US-5 |
 | 22 | Subdivisión de promos en Ventas | US-9 (Sprint 2) |
 | 24 | Un botón por cantidad; sidebar más chico | US-5, US-2 CA-3 |
-| 26 | Regla de empanadas (un gusto por presentación) | US-5 CA-2 |
-| 28 | Pizza de 1 o 2 sabores, precio del más caro | US-5 CA-3, US-6 CA-3 |
-| 30-32 | Sándwich y ciabatta por unidades | US-5 CA-2 y CA-4 (el dev definió Sanguches de 1, 3, 6 y 12 u) |
-| 34 | Coca-Cola y Pepsi por unidad, con la lista de bebidas en stock | US-5 CA-4 |
-| 36-40 | Efectivo, Transferencia, Débito y Crédito | US-6 CA-1; tarjeta y cuotas en US-11 |
-| 44-45 | Stock con grilla, "Ingresar stock" y bebidas | US-3, US-4 |
-| 47-53 | KPI de dinero por comida, ganancia en limpio y ventas registradas | US-12 (Sprint 2) |
-| 55-67 | Cuadros de vendedores (turno) y de ventas (comprador) | US-13 (Sprint 2) |
-| 69 | Estadísticas del día por defecto | US-12 CA-1 |
-| 71-76 | Botones del vendedor | US-2 (sin Auditoría, por decisión del dev) |
-| 78-89 | Botones del admin | US-2 + la entrada de menú de cada ítem |
-| 91-97 | Promociones | US-8 (Sprint 2) |
-| 101 | Consultar por los botones nuevos | Decisiones del dev: Gastos, Pedidos, Tarjetas |
-| 103 | App tematizada, sin placeholders ni tecnología | US-1, T-12 CA-5 |
-| 105 | Quitar el `revalidate = 30` | T-11 |
-| 107 | Tarjetas con 1, 3, 6 o 12 cuotas | US-10, US-11 (Sprint 2) |
+| 26-27 | Regla de empanadas y AGREGADO ("Agregar uno" / "Completar") | US-5 CA-2 y CA-5 |
+| 29 | Pizza de 1 o 2 sabores, precio del más caro | US-5 CA-3, US-6 CA-3 |
+| 31-32 | Sándwich de 1, 3, 6 o 12, misma regla y AGREGADO | US-5 CA-2 y CA-5 |
+| 34 | Ciabatta: 1 sabor por unidad | US-5 CA-4 |
+| 36 | Coca-Cola y Pepsi por unidad, con la lista de bebidas en stock | US-5 CA-4 |
+| 38-42 | Efectivo, Transferencia, Débito y Crédito | US-6 CA-1; tarjeta y cuotas en US-11 |
+| 46-47 | Stock con grilla, "Ingresar stock" y bebidas | US-3, US-4 |
+| 49-55 | KPI de dinero por comida, ganancia en limpio y ventas registradas | US-12 (Sprint 2) |
+| 57-69 | Cuadros de vendedores (turno) y de ventas (comprador) | US-13 (Sprint 2) |
+| 71 | Estadísticas del día por defecto | US-12 CA-1 |
+| 73-78 | Botones del vendedor | US-2 (sin Auditoría, por decisión del dev) |
+| 80-91 | Botones del admin | US-2 + la entrada de menú de cada ítem |
+| 93-99 | Promociones | US-8 (Sprint 2) |
+| 103 | Consultar por los botones nuevos | Decisiones del dev: Gastos, Pedidos, Tarjetas |
+| 105 | App tematizada, sin placeholders ni tecnología | US-1, T-12 CA-5 |
+| 107 | Quitar el `revalidate = 30` | T-11 |
+| 109 | Tarjetas con 1, 3, 6 o 12 cuotas | US-10, US-11 (Sprint 2) |
+| 111-126 | Gustos que disponen | US-3 CA-6 (seed) |
+| 128-135 | Aclaración de precios: empanadas y ciabattas iguales; sanguches y pizzas por gusto | US-3 CA-1, CA-2 y CA-7; US-5 CA-2 |
 
 ## Preguntas para el cliente
 
@@ -376,8 +391,6 @@ Para llevarlas en una sola charla. Las respuestas pasan al ítem en `BACKLOG.md`
 
 ## Para confirmar con el dev en `start-task`
 
-- **US-2**: el vendedor aterriza en Ventas/Pedidos.
-- **US-5**: los Sanguches de 3, 6 y 12 u llevan un solo gusto; el costo de una mitad y mitad es ½ + ½.
 - **US-8**: "una vez agregada, va seleccionada" significa que la promo queda activa en Ventas.
 
 ## Riesgos

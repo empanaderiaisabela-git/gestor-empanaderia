@@ -24,12 +24,14 @@ y por último, uno dedicado a promos, donde con un click, se despliegan las prom
 Necesita botones en cada subdivision. El sidebar de la izquierda debe ser un poco mas chico, y que ahora, donde va cada KPI, ahora irán subdivisiones donde cada subdivision representa una comida diferente que la empanaderia ofrece, y que dentro de esa subdivision, exista 1 botón por cada cantidad que venden, poder elegirlas con un click ( por ejemplo, las empanadas se ofrecen de a 1 docena, ½ docena, 1 unidad, …, etc). Ver carpeta de wireframes: venta_vista_panel_desplegable_gustos.
 
 Regla de negocio para elegir sabores EMPANADAS: si se hace click en el botón “1 docena”, o sea de media docena, o de otra cantidad mayor a 1, entonces al hacer click en 1 solo gusto, toda esa cantidad de comida seleccionada se carga en la compra con ese solo gusto. Ahora, si se selecciona 1 unidad, al hacerle click a un gusto, ya se guarda ese pedido con el solo gusto ese.
+AGREGADO: Se tendrá tener un botón que diga "agregar uno", o "completar" que basicamente agregue un solo gusto del elegido, o complete todo lo que falta para llegar a la cantidad seleccionada, por ejemplo, si un cliente quiere 6 empanadas tal que son 2 de jamon y queso, y 4 de carne, se toca la opcion de 1/2 docena, con una de carne, una de carne, y  comlpetar con el de pollo
 
 Regla de negocio para elegir sabores PIZZAS: debe tener solo la opción de 1 gusto de  pizza o 2 gustos de  pizzas PARA LA MISMA PIZZA; de elegir una venta de pizza con un solo gusto, se despliega la lista de gustos y se elije 1; de elegir una venta de pizza de 2 gustos, se despliega la lista de gustos y se eligen 2. Si se eligen 2, el precio final de esa pizza de doble gusto, es el precio del sabor de pizza mas caro, ej: mozzarella y J&Q, mozzarella sale 10, J&Q sale 5, precio final de una pizza mitad mozzarella y mitad J&Q = 10.
 
-Regla de negocio para elegir sabores SANDWICH: se suman de a unidades 
+Regla de negocio para elegir sabores SANDWICH: se suman de a unidades, de a 3, 6 o 12, y si se hace click en el botón “1 docena”, o sea de media docena, o de otra cantidad mayor a 1, entonces al hacer click en 1 solo gusto, toda esa cantidad de comida seleccionada se carga en la compra con ese solo gusto. Ahora, si se selecciona 1 unidad, al hacerle click a un gusto, ya se guarda ese pedido con el solo gusto ese.
+AGREGADO: Se tendrá tener un botón que diga "agregar uno", o "completar" que basicamente agregue un solo gusto del elegido, o complete todo lo que falta para llegar a la cantidad seleccionada, por ejemplo, si un cliente quiere 6 empanadas tal que son 2 de jamon y queso, y 4 de carne, se toca la opcion de 1/2 docena, con una de carne, una de carne, y  comlpetar con el de pollo
 
-Regla de negocio para elegir sabores Ciabatta: se suman de a unidades 
+Regla de negocio para elegir sabores Ciabatta: se suman de a unidades, se elije 1 sabor y se carga eso en la compra 
 
 Para coca cola y pepsi, solo ofrecer de a unidades: el solo click despliega su lista de opciones de bebidas en stock de tal empresa (sea cocacola o pepsi).
 
@@ -122,3 +124,12 @@ Muzza   Muzza y jamón   Napolitana (con o sin jamón)   Pepperoni   Roquefort
 Empanadas:
 
 Carne suave, Carne, Carne picante, Carne cheddar   Pollo, Pollo a mostaza   Bondiola mostaza y miel, Bondiola barbacoa   Jamón y muzza   Capresse   Muzza y cebolla, Muzza y pepperoni, Muzza, cebolla y roquefort   Verdura   Humita
+
+**ACLARACIÓN DE PRECIOS:** 
+-el precio de las empanadas, sea una docena, media docena, tres o una unidad, salen todos los gustos lo mismo.
+
+-los ciabatta salen todos lo mismo
+
+-los sanguche de primavera y los de jamon y queso difieren en el precio
+
+-las pizzas dependiendo de su gusto difieren en el precio
