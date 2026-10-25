@@ -114,7 +114,6 @@
   "src/lib/db/scripts/wipe-db.ts",
   "src/lib/utils.ts",
   "src/lib/zod-helpers.ts",
-  "src/proxy.ts",
   "src/scripts/enable-unaccent.ts",
   "src/stores/index.ts",
   "tests/clientes.spec.ts",

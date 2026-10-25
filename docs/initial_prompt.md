@@ -27,7 +27,7 @@ Sistema de **gestión de stock y punto de venta + catálogo web** para la rotise
 | Cara | Rutas | Quién |
 |---|---|---|
 | Catálogo público | `/home`, `/product/[id]` | Clientes del local, sin login. Consultan por WhatsApp o Instagram; no hay pedidos online. **Por ahora no se publica**: sólo se despliega el gestor y el catálogo queda en el código. |
-| Panel de gestión | `/` (dashboard), `/productos`, `/ventas` (POS), `/clientes`, `/proveedores`, `/categorias`, `/usuarios`, `/logs` (auditoría) | `admin`: todo. `vendedor`: sólo productos, ventas y clientes. |
+| Panel de gestión | `/` (Estadísticas), `/productos`, `/ventas` (Ventas/Pedidos, el POS), `/clientes`, `/proveedores`, `/categorias`, `/usuarios`, `/logs` (Auditoría) | `admin`: todo. `vendedor`: sólo Ventas/Pedidos, productos y clientes, y entra a Ventas/Pedidos. El menú y `proxy.ts` salen de `src/config/navigation.ts` (US-2). |
 
 Funciones que ya existen:
 - ABM de productos, categorías, proveedores, clientes y usuarios.

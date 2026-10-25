@@ -99,9 +99,7 @@ button:focus,
   header,
   aside,
   footer,
-  button:not(.print-only),
-  .lg\:flex.lg\:shrink-0.lg\:w-80 {
-    /* This is the sidebar from layout.tsx */
+  button:not(.print-only) {
     display: none !important;
   }
 

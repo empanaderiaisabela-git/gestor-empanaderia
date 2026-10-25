@@ -19,7 +19,7 @@ Una sola aplicación **Next.js 16 (App Router)** con dos caras:
 |---|---|---|---|
 | Catálogo público | `/home`, `/product/[id]` | Clientes del local, sin login | Server Components: `/home` estática con revalidación a demanda ([ADR 0004](adr/0004-revalidacion-a-demanda-del-catalogo.md)); `/product/[id]` dinámica |
 | Login | `/login` | Personal | Client Component + Server Action |
-| Panel de gestión | `/` (dashboard), `/productos`, `/ventas`, `/clientes`, `/proveedores`, `/categorias`, `/usuarios`, `/logs` | `admin` y `vendedor` | Client Components + Server Actions |
+| Panel de gestión | `/` (Estadísticas), `/productos`, `/ventas`, `/clientes`, `/proveedores`, `/categorias`, `/usuarios`, `/logs` | `admin` y `vendedor` | Client Components + Server Actions |
 
 **Estilo arquitectónico.** Son dos ejes distintos y valen los dos:
 
@@ -129,7 +129,7 @@ Con el tope de 100 líneas, cuando un archivo crece se parte por operación (`cr
 
 | Ruta | Contenido |
 |---|---|
-| `src/proxy.ts` | Next 16 renombró `middleware.ts` a `proxy.ts`. Corre en cada request: valida la cookie `session`, redirige a `/home` si no hay sesión y aplica RBAC por ruta (el `vendedor` sólo entra a `/productos`, `/ventas` y `/clientes`). Las rutas públicas están en `publicPaths`. |
+| `src/proxy.ts` | Next 16 renombró `middleware.ts` a `proxy.ts`. Corre en cada request: valida la cookie `session`, redirige a `/home` si no hay sesión y aplica RBAC por ruta con **la misma lista que el menú** (`src/config/navigation.ts`, US-2): el `vendedor` sólo entra a Ventas/Pedidos, Productos y Clientes, y si pide otra sección va a `/ventas`. Con sesión, `/login` lleva al inicio de cada rol (admin: Estadísticas; vendedor: Ventas/Pedidos). Las rutas públicas están en `PUBLIC_PATHS`. |
 | `src/features/<f>/actions/` | Server Actions. Única puerta del cliente al servidor: sesión y rol, validación Zod, service y `ActionResult`. |
 | `src/features/<f>/services/` | Reglas de negocio y orquestación. Abren la transacción y la pasan a los repositorios. Existe en `stats` (BUG-5) y en `provider` (T-5, con unidad de trabajo: el service nunca ve `tx`); en el resto de los features la lógica sigue repartida entre actions y repositorios, y se migra copiando `provider`. |
 | `src/features/<f>/repository/` | Acceso a datos con Drizzle. Reciben `tx` opcional para participar de una transacción y traducen "0 filas afectadas" a error de concurrencia. |
@@ -151,7 +151,7 @@ Con el tope de 100 líneas, cuando un archivo crece se parte por operación (`cr
 |---|---|
 | `src/app/layout.tsx`, `src/app/providers.tsx` | Layout raíz, fuente, tema claro/oscuro (next-themes) e inicializador de sesión. |
 | `src/app/(auth)/` | Pantalla de login. |
-| `src/app/(main)/` | Panel de gestión: layout con menú según el rol y una carpeta por pantalla (`page.tsx` + `*-panel.tsx`). |
+| `src/app/(main)/` | Panel de gestión: layout con el sidebar de 240 px (`xl:w-[240px]`) (`sidebar-nav.tsx` arma el menú de cada rol con `navigationFor`) y una carpeta por pantalla (`page.tsx` + `*-panel.tsx`). |
 | `src/app/home/`, `src/app/product/` | Catálogo público y ficha de producto. Las páginas son Server Components; los filtros y la paginación son componentes cliente. |
 | `src/features/<f>/ui/` | Componentes y hooks del feature: modales de formulario, POS, carrito, pagos, descuentos. |
 | `src/features/<f>/store/` | Store Zustand del feature, con nombre en singular (`useCustomerStore`). |

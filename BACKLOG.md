@@ -929,7 +929,7 @@ retira cuando la reemplaza su ítem, y T-12 borra el resto. `main` recibe el spr
 | 2   | [BUG-10](#bug-10--scripts-destructivos-que-quedaron-fuera-de-bug-3)             | Scripts destructivos que quedaron fuera de BUG-3               | En revisión | BUG-3      | 40 min          |
 | 3   | [T-11](#t-11--el-catálogo-público-se-regenera-sólo-cuando-cambia)               | El catálogo público se regenera sólo cuando cambia             | En revisión | —          | 1 h 5 min       |
 | 4   | [US-1](#us-1--la-app-con-la-marca-empanadería-isabela)                          | La app con la marca Empanadería Isabela                        | En revisión | —          | 1 h 50 min      |
-| 5   | [US-2](#us-2--menú-por-rol-y-sidebar-más-angosto)                               | Menú por rol y sidebar más angosto                             | Pendiente   | —          | 1 h 15 min      |
+| 5   | [US-2](#us-2--menú-por-rol-y-sidebar-más-angosto)                               | Menú por rol y sidebar más angosto                             | En revisión | —          | 1 h 15 min      |
 | 6   | [US-3](#us-3--alta-de-productos-gustos-y-bebidas-con-precio-por-presentación)   | Alta de productos: gustos y bebidas con precio por presentación | Pendiente   | US-2       | 4 h 45 min      |
 | 7   | [US-4](#us-4--stock-grilla-ingresar-stock-y-mermas)                             | Stock: grilla, ingresar stock y mermas                         | Pendiente   | US-3       | 3 h 30 min      |
 | 8   | [US-5](#us-5--ventas-tablero-por-comida-y-pedido-actual)                        | Ventas: tablero por comida y pedido actual                     | Pendiente   | US-4       | 4 h 40 min      |
@@ -1227,9 +1227,9 @@ textos de la casa de celulares.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
-| Dueño        | —         |
-| Inicio       | —         |
+| Estado       | En revisión |
+| Dueño        | Ignacio Tomas |
+| Inicio       | 2026-10-25 |
 | Tamaño       | S         |
 | Depende de   | —         |
 | Plan         | —         |
@@ -1241,13 +1241,13 @@ angosto, de forma que el área de trabajo sea más grande.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · El menú y `proxy.ts` salen de una sola lista (ruta, nombre y roles); un test unit verifica que el vendedor ve exactamente Ventas/Pedidos, Stock y Clientes, y el admin, en orden, Estadísticas, Gastos, Stock, Ventas/Pedidos, Promociones, Clientes, Proveedores, Alta de productos, Tarjetas, Usuarios y Auditoría (las que existan) · Estimación: 30 min · Completado: —
+- [x] **CA-1** · El menú y `proxy.ts` salen de una sola lista (ruta, nombre y roles); un test unit verifica que el vendedor ve exactamente Ventas/Pedidos, Stock y Clientes, y el admin, en orden, Estadísticas, Gastos, Stock, Ventas/Pedidos, Promociones, Clientes, Proveedores, Alta de productos, Tarjetas, Usuarios y Auditoría (las que existan) · Estimación: 30 min · Completado: 2026-10-25 11:55
 
-- [ ] **CA-2** · "Dashboard" pasa a llamarse "Estadísticas" en el menú y en el título de la página · Estimación: 10 min · Completado: —
+- [x] **CA-2** · "Dashboard" pasa a llamarse "Estadísticas" en el menú y en el título de la página · Estimación: 10 min · Completado: 2026-10-25 11:55
 
-- [ ] **CA-3** · El sidebar de escritorio mide 240 px (antes, 320 px), sin textos cortados · Estimación: 15 min · Completado: —
+- [x] **CA-3** · El sidebar de escritorio mide 240 px (antes, 320 px), sin textos cortados · Estimación: 15 min · Completado: 2026-10-25 11:55
 
-- [ ] **CA-4** · Después del login, el admin va a Estadísticas y el vendedor a Ventas/Pedidos; un vendedor que entra por URL a una sección ajena va a Ventas/Pedidos; el E2E de navegación por rol se actualiza · Estimación: 20 min · Completado: —
+- [x] **CA-4** · Después del login, el admin va a Estadísticas y el vendedor a Ventas/Pedidos; un vendedor que entra por URL a una sección ajena va a Ventas/Pedidos; el E2E de navegación por rol se actualiza · Estimación: 20 min · Completado: 2026-10-25 11:55
 
 **Detalle**
 
@@ -1259,6 +1259,27 @@ angosto, de forma que el área de trabajo sea más grande.
 
 - El vendedor **no** tiene Auditoría, aunque la lista de `specs.md` la incluya: el dev la corrigió.
 - El vendedor aterriza en Ventas/Pedidos (dev, 2026-10-25).
+
+**Cierre** (2026-10-25)
+
+- **CA-1**:
+  - `src/config/navigation.ts` tiene las secciones y el **orden por rol**: el admin ve Stock antes que Ventas/Pedidos y
+    el vendedor al revés, como en `specs.md`. Expone `navigationFor`, `homeFor` y `canVisit`.
+  - La usan el sidebar (`sidebar-nav.tsx`, extraído del layout heredado) y `proxy.ts`. `proxy.ts` se reescribió con
+    las reglas duras y salió de `eslint-legacy.json` (131 → 130).
+  - Tests: `navigation.test.ts` (orden por rol y rutas permitidas), `sidebar-nav.test.tsx` y `proxy.test.ts`, que
+    arma pedidos reales con la cookie de sesión.
+  - Productos y Categorías siguen en el menú hasta US-4 y T-12.
+- **CA-2**: "Dashboard" → "Estadísticas" en el menú y en el título de la pantalla. "Ventas" → "Ventas/Pedidos".
+- **CA-3**: sidebar de escritorio `xl:w-[240px]` (antes `xl:w-80`, 320 px en rem: con la fuente base de 17 px, `w-60` daba 255 px) y drawer mobile de 240 px. Se borró el
+  selector de impresión viejo (`.lg:w-80`) de `globals.css`. El E2E mide 240 px.
+- **CA-4**:
+  - El login lleva a `homeFor(rol)`: el admin a Estadísticas y el vendedor a Ventas/Pedidos, igual que `proxy.ts`
+    con sesión en `/login`.
+  - El vendedor que pide `/`, `/usuarios` o `/logs` va a `/ventas`.
+  - E2E nuevo `tests/navegacion.spec.ts`.
+- Los íconos de lucide de celulares (`MonitorSmartphone`) se reemplazaron.
+- **E2E**: `npm run test:e2e` en verde (81 tests, con `navegacion.spec.ts`).
 
 ### US-3 · Alta de productos: gustos y bebidas con precio por presentación
 

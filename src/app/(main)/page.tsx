@@ -44,7 +44,7 @@ export default function DashboardPage() {
       <div className='flex flex-col xl:flex-row justify-between items-start xl:items-center gap-6 shrink-0'>
         <div>
           <h1 className='text-3xl font-black text-zinc-900 dark:text-zinc-100 flex items-center gap-3'>
-            <Activity className='text-brand-600' /> Resumen de Actividad
+            <Activity className='text-brand-600' /> Estadísticas
           </h1>
           <p className='text-zinc-500 text-sm font-medium mt-1'>Panel de Control e Inteligencia de Negocio.</p>
         </div>

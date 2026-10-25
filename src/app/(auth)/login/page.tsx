@@ -9,6 +9,7 @@ import { loginAction } from '@/features/auth/actions/auth.actions';
 import { useAuthStore } from '@/features/auth/store/auth.store';
 import { BrandLogo } from '@/components/brand/brand-logo';
 import { BRAND } from '@/config/brand';
+import { homeFor } from '@/config/navigation';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -29,7 +30,7 @@ export default function LoginPage() {
 
     if (result.success && result.user) {
       loginState(result.user);
-      router.push('/');
+      router.push(homeFor(result.user.role));
     } else {
       setGlobalError(result.message || 'Error al iniciar sesión');
     }
