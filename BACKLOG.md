@@ -932,7 +932,7 @@ retira cuando la reemplaza su ítem, y T-12 borra el resto. `main` recibe el spr
 | 5   | [US-2](#us-2--menú-por-rol-y-sidebar-más-angosto)                               | Menú por rol y sidebar más angosto                             | En revisión | —          | 1 h 15 min      |
 | 6   | [US-3](#us-3--alta-de-productos-gustos-y-bebidas-con-precio-por-presentación)   | Alta de productos: gustos y bebidas con precio por presentación | En revisión | US-2       | 4 h 45 min      |
 | 7   | [US-4](#us-4--stock-grilla-ingresar-stock-y-mermas)                             | Stock: grilla, ingresar stock y mermas                         | En revisión | US-3       | 3 h 30 min      |
-| 8   | [US-5](#us-5--ventas-tablero-por-comida-y-pedido-actual)                        | Ventas: tablero por comida y pedido actual                     | Pendiente   | US-4       | 4 h 40 min      |
+| 8   | [US-5](#us-5--ventas-tablero-por-comida-y-pedido-actual)                        | Ventas: tablero por comida y pedido actual                     | En revisión | US-4       | 4 h 40 min      |
 | 9   | [US-6](#us-6--ventas-cobrar-con-4-medios-de-pago-y-precios-del-servidor)        | Ventas: cobrar con 4 medios de pago y precios del servidor     | Pendiente   | US-5       | 3 h 50 min      |
 | 10  | [US-7](#us-7--ventas-historial-comprobante-y-anulación)                         | Ventas: historial, comprobante y anulación                     | Pendiente   | US-6       | 2 h 30 min      |
 | 11  | [T-12](#t-12--retirar-el-modelo-heredado-de-la-casa-de-celulares)               | Retirar el modelo heredado de la casa de celulares             | Pendiente   | US-7, T-11 | 3 h 30 min      |
@@ -1440,9 +1440,9 @@ el POS sólo ofrezca lo que hay.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
-| Dueño        | —         |
-| Inicio       | —         |
+| Estado       | En revisión |
+| Dueño        | Ignacio Tomas |
+| Inicio       | 2026-10-25 |
 | Tamaño       | L         |
 | Depende de   | US-4      |
 | Plan         | —         |
@@ -1454,19 +1454,19 @@ de forma que cargar una venta me lleve pocos clics.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · "Nueva venta" muestra el tablero del wireframe: una subdivisión por grupo (Empanadas, Pizzas, Sanguches, Ciabattas, Coca-Cola y Pepsi), cada una con su ícono, el contador "N en pedido" y un botón por presentación · Estimación: 1 h · Completado: —
+- [x] **CA-1** · "Nueva venta" muestra el tablero del wireframe: una subdivisión por grupo (Empanadas, Pizzas, Sanguches, Ciabattas, Coca-Cola y Pepsi), cada una con su ícono, el contador "N en pedido" y un botón por presentación · Estimación: 1 h · Completado: 2026-10-25 13:18
 
-- [ ] **CA-2** · Empanadas y Sanguches: tocar 1, 3, 6 o 12 despliega los gustos, y cada uno tiene "Agregar uno" (+1 de ese gusto) y "Completar" (llena lo que falta); la línea se cobra al precio de la presentación (en Empanadas, el del grupo; en Sanguches, la parte proporcional del precio de cada gusto, redondeada a 2 decimales) · Estimación: 1 h · Completado: —
+- [x] **CA-2** · Empanadas y Sanguches: tocar 1, 3, 6 o 12 despliega los gustos, y cada uno tiene "Agregar uno" (+1 de ese gusto) y "Completar" (llena lo que falta); la línea se cobra al precio de la presentación (en Empanadas, el del grupo; en Sanguches, la parte proporcional del precio de cada gusto, redondeada a 2 decimales) · Estimación: 1 h · Completado: 2026-10-25 13:18
 
-- [ ] **CA-3** · Pizzas: "1 sabor" pide un gusto; "2 sabores" pide dos gustos distintos, cobra el más caro (mozzarella $10 + J&Q $5 = $10) y consume ½ de cada uno · Estimación: 45 min · Completado: —
+- [x] **CA-3** · Pizzas: "1 sabor" pide un gusto; "2 sabores" pide dos gustos distintos, cobra el más caro (mozzarella $10 + J&Q $5 = $10) y consume ½ de cada uno · Estimación: 45 min · Completado: 2026-10-25 13:18
 
-- [ ] **CA-4** · Ciabattas: se elige 1 sabor y suma 1 unidad, al precio del grupo; Coca-Cola y Pepsi despliegan con un clic las bebidas de esa marca con stock y suman 1 u · Estimación: 30 min · Completado: —
+- [x] **CA-4** · Ciabattas: se elige 1 sabor y suma 1 unidad, al precio del grupo; Coca-Cola y Pepsi despliegan con un clic las bebidas de esa marca con stock y suman 1 u · Estimación: 30 min · Completado: 2026-10-25 13:18
 
-- [ ] **CA-5** · "Pedido actual" muestra comida, cantidad, unidades e importe, con quitar línea, vaciar y total; una línea incompleta muestra "faltan N" y deshabilita Cobrar; no se ofrece un gusto sin stock suficiente, contando lo que ya está en el pedido · Estimación: 45 min · Completado: —
+- [x] **CA-5** · "Pedido actual" muestra comida, cantidad, unidades e importe, con quitar línea, vaciar y total; una línea incompleta muestra "faltan N" y deshabilita Cobrar; no se ofrece un gusto sin stock suficiente, contando lo que ya está en el pedido · Estimación: 45 min · Completado: 2026-10-25 13:18
 
-- [ ] **CA-6** · Campo "Comprador" opcional, de hasta 60 caracteres; vacío se muestra "Sin nombre" · Estimación: 10 min · Completado: —
+- [x] **CA-6** · Campo "Comprador" opcional, de hasta 60 caracteres; vacío se muestra "Sin nombre" · Estimación: 10 min · Completado: 2026-10-25 13:18
 
-- [ ] **CA-7** · Las reglas del pedido son funciones puras del `domain` con tests unit y fuzz (mitad y mitad = el más caro, unidades por presentación, stock disponible), más tests de componente del tablero · Estimación: 30 min · Completado: —
+- [x] **CA-7** · Las reglas del pedido son funciones puras del `domain` con tests unit y fuzz (mitad y mitad = el más caro, unidades por presentación, stock disponible), más tests de componente del tablero · Estimación: 30 min · Completado: 2026-10-25 13:18
 
 **Detalle**
 
@@ -1484,6 +1484,31 @@ de forma que cargar una venta me lleve pocos clics.
 - Precio proporcional de una surtida: Σ (unidades del gusto ÷ unidades de la presentación × precio de esa
   presentación del gusto). En Empanadas da siempre el precio del grupo.
 - La pizza mitad y mitad cuesta ½ del costo de cada gusto (ejemplo: $2.000 + $1.500 = $3.500).
+
+**Cierre** (2026-10-25) · [README del feature](docs/features/order/README.md)
+
+- **CA-1**: `/ventas/nueva` muestra el tablero del wireframe.
+  - Una subdivisión por grupo con ícono, "N en pedido" y un botón por presentación, con el precio del grupo o
+    "desde $X".
+  - Avisa si el grupo no tiene gustos o le falta el precio del grupo.
+  - **Desvío**: en US-5 se entra desde "Tablero de ventas", en la lista de Ventas. "Nueva Venta" sigue abriendo el
+    POS viejo hasta que US-6 lo reemplace, porque el cobro llega en US-6.
+- **CA-2**: Empanadas y Sanguches con "Agregar uno" y "Completar" (AGREGADO de `specs.md`).
+  - Las surtidas se arman dentro de la misma presentación.
+  - Precio: el del grupo en Empanadas y el proporcional por gusto en Sanguches.
+- **CA-3**: pizza de 1 sabor, o de 2 sabores distintos al precio del más caro, consumiendo ½ de cada uno.
+- **CA-4**: Ciabattas y bebidas de Coca-Cola y Pepsi de a una unidad.
+- **CA-5**:
+  - El pedido actual muestra comida, cantidad, unidades, importe y total; se puede quitar una línea o vaciar.
+  - Las líneas iguales se suman.
+  - Una línea a medio armar muestra "faltan N" (o "falta el segundo sabor") y bloquea Cobrar.
+  - La lista de gustos descuenta del stock lo que ya está en el pedido.
+- **CA-6**: comprador opcional, de hasta 60 caracteres, con "Sin nombre" de placeholder.
+- **CA-7**: reglas puras en `order/domain` con unit y fuzz, store con tests y componentes con tests.
+  - E2E `tests/tablero-ventas.spec.ts`: ½ docena surtida ($6.500) + pizza Muzza/Napolitana ($12.000) = $18.500,
+    con el seed real.
+- Mutación 91,48 en total (89,49 en `order`).
+- `npm run test:e2e` en verde (85 passed).
 
 ### US-6 · Ventas: cobrar con 4 medios de pago y precios del servidor
 

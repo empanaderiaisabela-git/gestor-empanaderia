@@ -142,7 +142,7 @@ Detalle en [`docs/architecture.md`](architecture.md).
 - `src/lib/db/index.ts` lleva `import 'server-only'`. Los scripts `db:*` y el E2E corren con
   `--conditions=react-server`, ya configurado en `package.json`. Si agregás un script que importe `@/lib/db`, sumale
   esa condición.
-- Doc por feature en `docs/features/<f>/README.md`: hoy `provider`, `stats`, `menu` y `stock`.
+- Doc por feature en `docs/features/<f>/README.md`: hoy `provider`, `stats`, `menu`, `stock` y `order`.
 - Schema de la base en `src/lib/db/schema.ts`.
 - **Seguridad**:
   - JWT en la cookie `session`.

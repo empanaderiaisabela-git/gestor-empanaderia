@@ -69,10 +69,15 @@ export function SalesListView({ sales, isPending, searchTerm, setSearchTerm, sta
           </Button>
         }
         actions={
-          <Button variant='primary' onClick={onNewSale} leftIcon={<Plus className='w-5 h-5' />} className='h-11 w-full sm:w-auto text-sm font-medium shrink-0 shadow-sm xl:text-base' data-testid={TEST_IDS.general.btnAgregar}>
-            <span className='hidden sm:inline'>Nueva Venta</span>
-            <span className='sm:hidden'>Nueva</span>
-          </Button>
+          <>
+            <a href='/ventas/nueva' className='h-11 inline-flex items-center justify-center px-4 rounded-lg border border-brand-600 text-brand-700 dark:text-brand-300 text-sm font-medium shrink-0'>
+              Tablero de ventas
+            </a>
+            <Button variant='primary' onClick={onNewSale} leftIcon={<Plus className='w-5 h-5' />} className='h-11 w-full sm:w-auto text-sm font-medium shrink-0 shadow-sm xl:text-base' data-testid={TEST_IDS.general.btnAgregar}>
+              <span className='hidden sm:inline'>Nueva Venta</span>
+              <span className='sm:hidden'>Nueva</span>
+            </Button>
+          </>
         }
       />
 
