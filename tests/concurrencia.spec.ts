@@ -90,7 +90,8 @@ test.describe.parallel('Pruebas de Concurrencia', () => {
     await ventasPage2.agregarMetodoEfectivo();
     await ventasPage2.finalizarFactura();
 
-    await expect(page2.getByText('Venta realizada con éxito')).toBeVisible();
+    await ventasPage2.buscarVenta(cliente.nombre);
+    await expect(ventasPage2.obtenerFilaPorNombre(cliente.nombre)).toBeVisible({ timeout: 30_000 });
 
     // Usuario 1 Finaliza edicion
     await productosPage1.confirmarFormularioEdicion();
@@ -106,7 +107,7 @@ test.describe.parallel('Pruebas de Concurrencia', () => {
     const context1 = await browser.newContext();
     const context2 = await browser.newContext();
 
-    const errorMessage = 'Los datos en el servidor han cambiado. Por favor, sincroniza la lista e intenta nuevamente.';
+    const errorMessage = 'Una de las entidades relacionadas ya no existe. Por favor, sincroniza los datos.';
 
     const page1 = await context1.newPage();
     const page2 = await context2.newPage();

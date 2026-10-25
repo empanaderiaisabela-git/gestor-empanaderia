@@ -1,10 +1,13 @@
 import nextConfig from 'eslint-config-next';
 import prettierConfig from 'eslint-config-prettier';
+import { CODE_FILES, TEST_FILES, TS_FILES, codeRules, legacyConfig, typescriptRules } from './eslint/hard-rules.mjs';
+import { layerConfigs } from './eslint/layers.mjs';
+import { localPlugin } from './eslint/rules/no-comments.mjs';
 
 const eslintConfig = [
   ...nextConfig,
   {
-    ignores: ['**/node_modules/**', '.next/**', 'dist/**', 'build/**', 'public/**', '**/playwright-report/**', '**/test-results/**'],
+    ignores: ['**/node_modules/**', '.next/**', '.next-e2e/**', 'dist/**', 'build/**', 'public/**', '**/playwright-report/**', '**/test-results/**', 'coverage/**', '.vitest/**', '.agents/**', '.claude/**', 'next-env.d.ts'],
   },
   {
     files: ['**/*.{js,mjs,cjs,jsx}'],
@@ -28,6 +31,11 @@ const eslintConfig = [
       '@next/next/no-img-element': 'off',
     },
   },
+  { files: CODE_FILES, plugins: { local: localPlugin }, rules: codeRules },
+  { files: TS_FILES, rules: typescriptRules },
+  { files: TEST_FILES, rules: { 'max-lines-per-function': 'off' } },
+  ...layerConfigs,
+  ...legacyConfig('./eslint-legacy.json'),
   prettierConfig,
 ];
 

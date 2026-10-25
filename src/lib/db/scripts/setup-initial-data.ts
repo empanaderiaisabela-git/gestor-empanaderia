@@ -1,8 +1,10 @@
 import * as bcrypt from 'bcrypt';
 import { db } from '..';
 import { providers, customers, devices, products, sales, saleItems, auditLogs, productLosses, users, salePayments, productImages } from '../schema';
+import { assertSafeToWipe } from './assert-safe-to-wipe';
 
 async function setup() {
+  assertSafeToWipe(process.env);
   console.log('--- Database Reset & Initial Data Setup ---');
   console.log('Cleaning existing data (Audit logs, sales, product images, products, devices, providers, customers)...');
 

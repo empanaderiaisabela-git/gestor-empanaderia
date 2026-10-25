@@ -1,39 +1,57 @@
-import { MESSAGES } from '@/config/messages';
+import type { ActionFailure } from './action-result';
+import { AppError, type ErrorCode, errorMessage } from './errors';
 
-/**
- * User-friendly messages for common Database errors
- */
-export function handleDatabaseError(error: any, entityName: string): string {
-  // Extraemos toda la información posible del error de Drizzle/Postgres
-  const code = error.code || error.originalError?.code || '';
-  const message = (error.message || '').toLowerCase();
-  const detail = (error.detail || error.originalError?.detail || '').toLowerCase();
+const FOREIGN_KEY = '23503';
+const UNIQUE = '23505';
 
-  // El código 23503 es el estándar de Postgres para Foreign Key Violation
-  const isForeignKey = code === '23503' || message.includes('23503') || message.includes('foreign key') || message.includes('violates foreign key constraint') || detail.includes('foreign key') || detail.includes('violates foreign key constraint');
+type ErrorFacts = { code: string; detail: string; message: string; name: string };
 
-  if (isForeignKey) {
-    return MESSAGES.ERROR.DATABASE.RELATION_NOT_FOUND;
-  }
+function property(source: unknown, key: string): unknown {
+  return typeof source === 'object' && source !== null ? Reflect.get(source, key) : undefined;
+}
 
-  // 23505: Unique Violation
-  const isUnique = code === '23505' || message.includes('unique constraint') || message.includes('already exists');
-  if (isUnique) {
-    return MESSAGES.ERROR.DATABASE.UNIQUE_VIOLATION;
-  }
+function text(source: unknown, key: string): string {
+  const value = property(source, key);
+  return typeof value === 'string' ? value : '';
+}
 
-  // Si llegamos aquí y es un error de "Failed query", devolvemos algo genérico pero amigable
-  if (message.includes('failed query')) {
-    return MESSAGES.ERROR.DATABASE.CONCURRENCY;
-  }
+function factsOf(error: unknown): ErrorFacts {
+  const sources = [error, property(error, 'originalError'), property(error, 'cause')];
+  const first = (key: string): string => sources.map((source) => text(source, key)).find(Boolean) ?? '';
+  return {
+    code: first('code'),
+    detail: first('detail').toLowerCase(),
+    message: sources.map((source) => text(source, 'message')).join(' ').toLowerCase(),
+    name: text(error, 'name'),
+  };
+}
 
-  if (error.name === 'ConcurrencyError') {
-    return MESSAGES.ERROR.DATABASE.CONCURRENCY;
-  }
+function isForeignKey({ code, detail, message }: ErrorFacts): boolean {
+  return code === FOREIGN_KEY || message.includes('foreign key') || detail.includes('foreign key');
+}
 
-  if (error.name === 'DuplicateEntityError') {
-    return MESSAGES.ERROR.DATABASE.UNIQUE_VIOLATION;
-  }
+function isUnique({ code, message }: ErrorFacts): boolean {
+  return code === UNIQUE || message.includes('unique constraint') || message.includes('already exists');
+}
 
-  return error.message || MESSAGES.ERROR.DATABASE.GENERIC(entityName);
+export function databaseErrorCode(error: unknown): ErrorCode | null {
+  if (error instanceof AppError) return error.code;
+  const facts = factsOf(error);
+  if (isForeignKey(facts)) return facts.detail.includes('is still referenced') ? 'HAS_RELATIONS' : 'RELATION_NOT_FOUND';
+  if (isUnique(facts) || facts.name === 'DuplicateEntityError') return 'DUPLICATE';
+  if (facts.message.includes('failed query') || facts.name === 'ConcurrencyError') return 'STALE_VERSION';
+  return null;
+}
+
+export function handleDatabaseError(error: unknown, entityName: string): string {
+  if (error instanceof AppError) return error.message;
+  const code = databaseErrorCode(error);
+  if (code !== null) return errorMessage(code, entityName);
+  return text(error, 'message') || errorMessage('UNEXPECTED', entityName);
+}
+
+export function toActionFailure(error: unknown, entityName: string): ActionFailure {
+  if (error instanceof AppError) return { success: false, code: error.code, error: error.message };
+  const code = databaseErrorCode(error) ?? 'UNEXPECTED';
+  return { success: false, code, error: errorMessage(code, entityName) };
 }

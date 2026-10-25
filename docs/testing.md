@@ -3,9 +3,10 @@
 Todo cambio de comportamiento viene con tests. Se escriben **antes** del código (TDD, skill
 `test-driven-development`): test que falla → código mínimo → refactor.
 
-> **Estado actual.** Hoy sólo existe la suite E2E de Playwright (`tests/`). Vitest, Testing Library,
-> fast-check y Stryker **no están instalados** y los scripts `test:*`, `typecheck` y `verify` no existen en
-> `package.json`. Este documento define cómo tiene que quedar. La puesta en marcha es un habilitador del backlog.
+> **Estado actual.** Desde T-2 y T-5 existen Vitest 5 (proyectos `unit`, `component` con jsdom e `integration`), fast-check, la base
+> `db-test` y los scripts `typecheck`, `test`, `test:watch`, `test:coverage`, `test:int` y `test:e2e`
+> ([ADR 0001](adr/0001-vitest-como-runner-de-tests.md)). Testing Library, Stryker (`stryker.config.mjs`),
+> `test:mutation` y `verify` existen desde T-5.
 
 ## Tipos de test
 
@@ -28,7 +29,13 @@ Herramientas: Vitest para unit, tipos, contrato, fuzz, integración y componente
 
 Una Server Action depende de `next/headers` (cookies) y de los repositorios. En el test de contrato:
 
-- La sesión se simula con un helper `asUser({ role })` que mockea `cookies()` con un JWT firmado para ese rol.
+- La sesión se simula con `asUser({ role, isActive?, username? })` (`src/test/as-user.ts`). El helper firma un JWT
+  para ese rol, lo guarda en la cookie `session` y hace un `vi.spyOn` de `userRepository.getUserById` para que
+  `verifyAuthOrAdmin` encuentre al usuario. `next/headers` está simulado para todos los tests por
+  `src/test/setup/next-headers.setup.ts`, que además limpia cookies, spies y variables después de cada test. Los
+  ids de los usuarios de test están en `TEST_USER_IDS`, por si un test de integración necesita insertarlos.
+- En el proyecto unit, `src/test/setup/no-database.setup.ts` reemplaza `@/lib/db` por un objeto que falla al
+  usarse: un test unit nunca toca la base.
 - Los repositorios del feature, y el de usuarios que usa `verifyAuthOrAdmin`, se reemplazan por sus fakes en
   memoria con `vi.mock`.
 - Se llama a la action exportada como lo haría el cliente y se verifica sólo lo observable: `success`, el código
@@ -117,20 +124,20 @@ Reglas:
 | `git push` (hook) | `npm run test:coverage` | Unit, tipos, contrato, fuzz y componente, con umbrales de cobertura |
 | Si tocaste un repositorio o el schema | `npm run test:int` | Integración contra `db-test` |
 | Si tocaste un flujo cubierto por E2E | `npm run test:e2e` | Playwright en Chromium |
-| Antes de abrir el PR | `npm run verify` | Lint, tipos, cobertura, integración, mutación y `next build` |
-| PR y push a `develop` o `main` | GitHub Actions | Lo mismo que `verify` más E2E, en jobs paralelos |
+| Antes de integrar a `develop` | `npm run verify` | Lint, tipos, cobertura, integración, mutación y `next build` |
+| Push a `develop` o `main` | GitHub Actions | Lo mismo que `verify` más E2E, en jobs paralelos |
 
-Scripts a agregar en `package.json` (`dotenv-cli` ya está instalado):
+Scripts de `package.json`:
 
 ```jsonc
 "typecheck": "tsc --noEmit",
-"test": "vitest run --project unit",
-"test:watch": "vitest --project unit",
-"test:coverage": "vitest run --project unit --coverage",
+"test": "vitest run --project unit --project component",
+"test:watch": "vitest --project unit --project component",
+"test:coverage": "vitest run --project unit --project component --coverage",
 "test:int": "dotenv -e .env.test -- vitest run --project integration",
-"test:e2e": "playwright test --project=chromium",
+"test:e2e": "dotenv -e .env.test -v NODE_OPTIONS=--conditions=react-server -- playwright test --project=chromium",
 "test:mutation": "stryker run",
-"verify": "npm run lint && npm run typecheck && npm run test:coverage && npm run test:int && npm run test:mutation && npm run build"
+"verify": "npm run lint && npm run typecheck && npm run test:coverage && npm run test:int && npm run test:mutation && dotenv -v NEXT_DIST_DIR=.next-e2e -- next build"
 ```
 
 ## Velocidad de la suite
@@ -142,27 +149,23 @@ Scripts a agregar en `package.json` (`dotenv-cli` ya está instalado):
 | E2E | < 5 min en Chromium | Datos efímeros en vez de resetear la base, login una sola vez (`storageState`). Los tres navegadores sólo en el CI de `main`. |
 | Mutación | < 10 min | Sólo `domain/`, `services/` y `lib/` puro, con el modo incremental de Stryker. |
 
-Reintentos: hoy Playwright reintenta 2 veces siempre. Un test que pasa al segundo intento es un test inestable.
-Objetivo: 0 reintentos local y 1 en CI, e investigar todo test que pase reintentando. Ningún test espera con
-`sleep`: espera una condición.
+Reintentos (desde T-6): 0 en local y 1 en el CI. Un test que pasa al segundo intento es un test inestable y se
+investiga. Ningún test espera con `sleep`: espera una condición. Los Page Objects heredados todavía tienen algunos
+`waitForTimeout` cortos al tipear; se sacan cuando un ítem los toque.
 
 ## Bases de datos
 
 - Desarrollo: servicio `db`.
 - Tests: servicio `db-test`. Nunca se testea contra la base de desarrollo, y **jamás** contra producción.
 
-Cómo tiene que quedar:
+Cómo está armado (desde T-6):
 
 | Uso | Detalle |
 |---|---|
-| `db-test` | **(a crear)** postgres:15 en otro puerto, con `tmpfs` (los datos no sobreviven al contenedor y es más rápido). Se configura en `.env.test`. Se levanta con `docker compose up -d db-test`. |
-| Integración | `globalSetup` aplica las migraciones y habilita `unaccent`. Cada test arranca con las tablas vacías. |
-| E2E | Playwright levanta la app con `webServer` apuntando a `db-test`, y un proyecto `setup` carga el seed mínimo (usuario `admin` y datos base). |
-| Scripts destructivos | `db:seed`, `db:reset-*` y similares se niegan a correr si la URL no es local o de test. |
-
-Hoy no es así: el E2E corre contra la base de desarrollo (los Page Objects importan `db` de `src/lib/db`),
-`tests/db.setup.ts` está deshabilitado en `playwright.config.ts`, y el script `db:reset-data-hard` que mencionan
-`tests/readme.md` y `db.setup.ts` no existe en `package.json`.
+| `db-test` | postgres:15 en `127.0.0.1:5434`, base `stock_test`, con `tmpfs` (los datos no sobreviven al contenedor y es más rápido) y perfil `test` (`docker compose up -d` no lo levanta). Se configura en `.env.test`, que está versionado. Se levanta con `docker compose up -d --wait db-test`. |
+| Integración | `src/test/integration.global-setup.ts` aborta si `NODE_ENV=production`, si `APP_ENV=production` o si `LOCAL_DATABASE_URL` no es la de `db-test`, y aplica las migraciones (incluida `0005_enable-unaccent`). Cada test arranca con las tablas vacías (`truncateAll()`, T-4). |
+| E2E | `npm run test:e2e` carga `.env.test`, y `playwright.config.ts` aborta si la URL no es la de `db-test`. El `webServer` (`npm run e2e:server`) vuelve a verificarla, aplica las migraciones, carga el seed (`db:seed`: `admin`, `vendedor` y datos de demo) y levanta la app con `next build` + `next start` en el puerto 3100, con la carpeta `.next-e2e`. El proyecto `setup` inicia sesión y abre cada pantalla del panel (prueba de humo). Detalle en [`tests/readme.md`](../tests/readme.md). |
+| Scripts destructivos | `db:seed`, `db:reset-data` y `db:reset-full` se niegan a correr si la URL no es local o si `APP_ENV=production` (BUG-3); `wipe-db` y `seed-users`, todavía no (BUG-10). |
 
 ## Reportes
 
@@ -175,6 +178,14 @@ Hoy no es así: el E2E corre contra la base de desarrollo (los Page Objects impo
 
 Fuera de la cobertura: migraciones, `src/lib/db/scripts/`, `src/scripts/`, archivos de configuración y lo que
 sólo se prueba por E2E (`proxy.ts`, layouts). `reports/` se agrega al `.gitignore` al instalar Stryker.
+
+Cómo se mide hoy (`vitest.config.mts`):
+
+- Sólo cuentan los archivos que importan los tests unit (comportamiento de Vitest 5).
+- Se excluyen `eslint/`, `scripts/` y `src/config/` (textos y columnas de tablas); los repositorios y
+  `src/lib/db/schema.ts`, que se prueban con integración; y los helpers de test (`src/test/`, `testing/`).
+- Se excluyen los archivos de `eslint-legacy.json`: el umbral es un gate para el código nuevo, igual que las reglas
+  duras (ADR 0003). Cuando un archivo sale de la lista, entra solo a la medición.
 
 ## Matriz de pruebas del incremento: Sprint N
 
@@ -190,3 +201,18 @@ criterio de aceptación y por cada fila de la tabla de errores de los ítems del
 | ID | Descripción | Test de regresión | Estado |
 |---|---|---|---|
 | BUG-N | … | `regression BUG-N: …` en `…` | Corregido / Abierto |
+
+## Matriz de pruebas · Sprint 0
+
+| Qué | Unit / contrato / fuzz | Componente | Integración (`db-test`) | E2E | Mutación |
+|---|---|---|---|---|---|
+| Guarda de `db-test` y de scripts destructivos (T-2, BUG-3) | Sí | — | Sí | — | — |
+| Elección de base con `APP_ENV` (T-8) | Sí | — | — | — | — |
+| `JWT_SECRET` (BUG-2) | Sí | — | — | — | — |
+| Reglas de ESLint (T-3) | Sí | — | — | — | — |
+| Dashboard secuencial (BUG-5) | Sí | — | Sí | Sí | — |
+| Datos sensibles: logs, lecturas, `password_hash` (BUG-6, BUG-7) | Sí | — | Sí | — | — |
+| Errores de base traducidos (BUG-9) | Sí | — | Sí | Sí | — |
+| Catálogo de errores, `asUser`, `formatDateTime` (T-4) | Sí | — | — | — | Sí (`src/lib/errors`) |
+| Sesión en fotos y lecturas (BUG-1, BUG-8) | Sí | — | — | Sí | — |
+| Proveedores, feature molde (T-5) | Sí | Sí | Sí | Sí | Sí |

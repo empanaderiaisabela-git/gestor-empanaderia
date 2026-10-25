@@ -1,11 +1,25 @@
-import { test as setup, expect } from '@playwright/test';
-const authFile = 'playwright/.auth/user.json';
-setup('Autenticarse', async ({ page }) => {
-  await page.goto('http://localhost:3000/login');
+import { expect, test as setup } from '@playwright/test';
+
+const AUTH_FILE = 'playwright/.auth/user.json';
+const SCREENS = ['/productos', '/ventas', '/clientes', '/proveedores', '/categorias', '/usuarios', '/logs', '/home'];
+
+setup.describe.configure({ mode: 'serial' });
+
+setup('autenticarse como admin', async ({ page }) => {
+  setup.setTimeout(180_000);
+  await page.goto('/login', { waitUntil: 'networkidle' });
   await page.getByRole('textbox', { name: 'Usuario' }).fill('admin');
   await page.getByRole('textbox', { name: 'Contraseña' }).fill('admin');
   await page.getByRole('button', { name: 'Iniciar Sesión' }).click();
+  await expect(page).not.toHaveURL(/login/, { timeout: 120_000 });
+  await page.context().storageState({ path: AUTH_FILE });
+});
 
-  await expect(page).not.toHaveURL(/login/);
-  await page.context().storageState({ path: authFile });
+setup('todas las pantallas del panel responden', async ({ browser }) => {
+  setup.setTimeout(300_000);
+  const page = await browser.newPage({ storageState: AUTH_FILE });
+  for (const screen of SCREENS) {
+    await page.goto(screen);
+  }
+  await page.close();
 });

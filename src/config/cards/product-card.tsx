@@ -2,6 +2,7 @@
 import { PackageX, Edit, Trash2, Eye, EyeOff, Camera } from 'lucide-react';
 import { EntityCard, CardAction } from '@/components/ui/entity-card';
 import { type ProductDef } from '@/features/product/domain/product.schema';
+import { canManagePhotos } from '@/features/product/domain/product-permissions';
 
 interface ProductCardActionsProps {
   role?: string;
@@ -89,7 +90,7 @@ export function renderProductCard(actions: ProductCardActionsProps) {
                 onClick={() => actions.onEdit(product)}
               />
             )}
-            {actions.role === 'admin' && (
+            {canManagePhotos(actions.role) && (
               <CardAction
                 icon={<Camera className='w-4 h-4' />}
                 label='Gestionar Fotos'

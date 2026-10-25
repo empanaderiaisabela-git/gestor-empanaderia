@@ -8,7 +8,7 @@ Cómo está armado el sistema, qué puede depender de qué y por qué. Las regla
 > ciabattas) ítem por ítem del backlog. Mientras tanto conviven nombres heredados: por ejemplo, la tabla
 > `devices` ("equipos") cumple el rol de **categoría** de producto.
 >
-> Lo marcado **(a crear)** es la arquitectura objetivo que todavía no existe en el código. La sección
+> `provider` es el feature molde (T-5): ya cumple toda la arquitectura objetivo. La sección
 > [Brechas](#brechas-entre-el-código-actual-y-estas-reglas) lista lo heredado que no cumple las reglas.
 
 ## Vista general
@@ -44,7 +44,7 @@ flowchart LR
     PX["proxy.ts<br/>sesión + RBAC por ruta"]
     RSC["Server Components<br/>catálogo público"]
     SA["Server Actions"]
-    SV["Services (a crear)"]
+    SV["Services"]
     RP["Repositories<br/>Drizzle"]
   end
   PG[("PostgreSQL")]
@@ -72,8 +72,8 @@ flowchart LR
 | Autenticación | JWT HS256 (`jose`) en cookie `httpOnly`, contraseñas con `bcrypt` |
 | Archivos | Cloudinary (fotos de producto recortadas a 1:1 al subir) |
 | Comprobantes | `window.print()` sobre una vista de impresión |
-| Calidad | ESLint 9 (`eslint-config-next`) + Prettier |
-| Tests | Playwright (E2E). Vitest, Testing Library, fast-check y Stryker **(a instalar)**, ver [`testing.md`](testing.md) |
+| Calidad | ESLint 9 (`eslint-config-next` + reglas duras en `eslint/`, con la lista `eslint-legacy.json`), Prettier, lefthook, commitlint y GitHub Actions (ADR 0003) |
+| Tests | Vitest 5 (unit e integración), fast-check y Playwright (E2E). Testing Library y Stryker **(a instalar, T-5)**. Ver [`testing.md`](testing.md) |
 
 ## Reglas de dependencia
 
@@ -99,8 +99,10 @@ ui (src/app, features/*/ui) → actions → services → repository → db
 Por qué:
 
 - **El navegador nunca importa código con acceso a datos.** `@/lib/db` abre un pool de `pg` con credenciales.
-  Los archivos de servidor (`lib/db/index.ts`, repositorios, services) llevan `import 'server-only'` para que el
-  build falle si un Client Component los importa **(a agregar)**.
+  `lib/db/index.ts` lleva `import 'server-only'` (T-4) para que el build falle si un Client Component lo importa, y
+  con él cualquier repositorio o service que lo use. Los scripts `db:*` y el E2E, que corren fuera de Next, usan la
+  condición `--conditions=react-server`, que resuelve `server-only` a un módulo vacío (ya configurada en los scripts
+  de `package.json`). En Vitest, un alias lo reemplaza por `src/test/empty-module.ts`.
 - **Las actions no llaman al repositorio.** Las reglas de negocio (stock suficiente, permisos finos,
   reactivación por DNI duplicado) tienen que poder testearse sin Next.js ni base de datos: viven en el service y
   se prueban con un repositorio fake.
@@ -112,12 +114,12 @@ Por qué:
 ```
 src/features/<feature>/
   domain/       <feature>.schema.ts      Zod: entrada (create/update) y fila (row) + tipos inferidos
-  repository/   <feature>.repository.ts  Drizzle; recibe `tx` opcional
-  services/     <feature>.service.ts     reglas de negocio y transacción          (a crear)
-  actions/      <feature>.actions.ts     'use server': auth → validación → service → ActionResult
+  repository/   <feature>.repository.ts  interfaz + Drizzle; unidad de trabajo con la transacción
+  services/     <feature>.service.ts     reglas de negocio; recibe la unidad de trabajo
+  actions/      <operación>.ts           'use server': auth → validación → service → ActionResult
   store/        <feature>.store.ts       Zustand: lista cacheada + isLoaded
   ui/           components/, hooks/      componentes propios del feature
-  testing/      fake y builders          sólo para tests                          (a crear)
+  testing/      fake y suite de comportamiento   sólo para tests
 ```
 
 Con el tope de 100 líneas, cuando un archivo crece se parte por operación (`create-customer.action.ts`,
@@ -129,15 +131,17 @@ Con el tope de 100 líneas, cuando un archivo crece se parte por operación (`cr
 |---|---|
 | `src/proxy.ts` | Next 16 renombró `middleware.ts` a `proxy.ts`. Corre en cada request: valida la cookie `session`, redirige a `/home` si no hay sesión y aplica RBAC por ruta (el `vendedor` sólo entra a `/productos`, `/ventas` y `/clientes`). Las rutas públicas están en `publicPaths`. |
 | `src/features/<f>/actions/` | Server Actions. Única puerta del cliente al servidor: sesión y rol, validación Zod, service y `ActionResult`. |
-| `src/features/<f>/services/` | **(a crear)** Reglas de negocio y orquestación. Abren la transacción y la pasan a los repositorios. Hoy esa lógica está repartida entre actions y repositorios. |
+| `src/features/<f>/services/` | Reglas de negocio y orquestación. Abren la transacción y la pasan a los repositorios. Existe en `stats` (BUG-5) y en `provider` (T-5, con unidad de trabajo: el service nunca ve `tx`); en el resto de los features la lógica sigue repartida entre actions y repositorios, y se migra copiando `provider`. |
 | `src/features/<f>/repository/` | Acceso a datos con Drizzle. Reciben `tx` opcional para participar de una transacción y traducen "0 filas afectadas" a error de concurrencia. |
 | `src/lib/db/schema.ts` | Schema Drizzle: tablas, enums, índices, FKs y relaciones. Fuente de verdad de la base. |
 | `src/lib/db/migrations/` | Migraciones SQL generadas por `drizzle-kit`. No se editan a mano. |
-| `src/lib/db/index.ts` | Pool de conexión y cliente `db`. Lee `.env.local` o `.env.prod` según `NODE_ENV`. |
+| `src/lib/db/index.ts` | Pool de conexión y cliente `db`. La configuración sale de `database-config.ts`: `.env.prod` sólo con `APP_ENV=production`; si no, `.env.local`. |
 | `src/lib/db/scripts/` | Seeds, reset, stress test y backfills (`npm run db:*`). |
 | `src/lib/auth/` | `jwt.ts` firma y verifica tokens con `jose`. `utils.ts` expone `verifyAuthOrAdmin`, que valida el token, vuelve a leer al usuario de la base (tiene que seguir activo) y controla el rol. |
 | `src/lib/audit-logs.ts` | `recordAuditLog`: registra cada mutación dentro de la misma transacción. |
-| `src/lib/errors.ts`, `src/lib/db-errors.ts` | Errores de dominio (`ConcurrencyError`, `DuplicateEntityError`) y traducción de errores de Postgres (23505 unique, 23503 FK) a mensajes en español. |
+| `src/lib/db-errors.ts` | Traducción de errores a código y mensaje: `databaseErrorCode` (23505 → `DUPLICATE`; 23503 → `RELATION_NOT_FOUND` al insertar o `HAS_RELATIONS` al borrar; `Failed query` → `STALE_VERSION`), `handleDatabaseError` (texto, para el código heredado) y `toActionFailure` (`ActionResult` con `code`, para el código nuevo; nunca filtra el mensaje de un error desconocido). Lee el error original también en `error.cause`, donde lo deja Drizzle 0.45 (BUG-9). |
+| `src/lib/db/transaction.ts` | `withTransaction(work)` y el tipo `DbTransaction`: el único acceso a la transacción que pueden usar los services. |
+| `src/lib/format-date-time.ts` | `formatDateTime(fecha)`: `DD/MM/AAAA, HH:mm` en `America/Argentina/Buenos_Aires`; "—" si la fecha no es válida. |
 | `src/lib/cloudinary.ts` | Subida y borrado de fotos. |
 | `src/scripts/` | Mantenimiento de la base (`enable-unaccent`). |
 
@@ -164,9 +168,9 @@ Con el tope de 100 líneas, cuando un archivo crece se parte por operación (`cr
 | Ruta | Contenido |
 |---|---|
 | `src/features/<f>/domain/` | Schemas Zod y tipos inferidos: `*CreateSchema` (entrada), `*UpdateSchema` (parcial + `version`) y `*RowSchema` (lo que devuelve el servidor). El formulario y la action validan con el **mismo** schema. |
-| `src/lib/action-result.ts` | `ActionResult<T>`: resultado tipado de toda action. Éxito con `data` y `message`, o fallo con `error`. |
+| `src/lib/action-result.ts` | `ActionResult<T>`: resultado tipado de toda action. Éxito con `data` y `message`, o fallo con `error` (texto en español) y `code` del catálogo. `code` es opcional para no romper el código heredado; el código nuevo arma el fallo con `fail(code)` o `toActionFailure(error)`. |
 | `src/lib/utils.ts`, `src/lib/zod-helpers.ts` | Utilidades puras: normalización para búsqueda, slugs, helpers de Zod. |
-| `src/lib/errors/` | **(a crear)** Catálogo `AppError(code)` con su mensaje en español. Reemplaza a `MESSAGES.ERROR` + `handleDatabaseError`, y el cliente puede reaccionar por `code` en vez de comparar textos. |
+| `src/lib/errors/` | Catálogo de códigos (`codes.ts`: `VALIDATION`, `UNAUTHENTICATED`, `SESSION_EXPIRED`, `INACTIVE_USER`, `FORBIDDEN`, `NOT_FOUND`, `DUPLICATE`, `HAS_RELATIONS`, `RELATION_NOT_FOUND`, `STALE_VERSION`, `UNEXPECTED`), `AppError(code)` con su mensaje en español (los mismos textos que ya veía el usuario) y los errores heredados `ConcurrencyError` y `DuplicateEntityError`. `verifyAuthOrAdmin` lanza `AppError` (T-4). El cliente puede reaccionar por `code` en vez de comparar textos. |
 
 ## Flujo de una petición
 
@@ -262,7 +266,7 @@ Casos especiales:
 | Entrada | Toda action valida con Zod antes de tocar datos. Objetivo: `z.strictObject`, que rechaza campos de más. |
 | Salida | Las lecturas se parsean con `*RowSchema`. `password_hash` nunca sale del servidor. |
 | Auditoría | Cada mutación y cada login quedan en `audit_logs` con usuario, entidad, id y detalle en JSON. |
-| Secretos | Viven en `.env.local` y `.env.prod`, ignorados por git. Toda variable nueva va a `.env.example` **(a crear)**. `JWT_SECRET` es obligatoria: sin ella no se firman ni se verifican sesiones (BUG-2). |
+| Secretos | Viven en `.env.local` y `.env.prod`, ignorados por git. Toda variable nueva va a `.env.example`. `JWT_SECRET` es obligatoria: sin ella no se firman ni se verifican sesiones (BUG-2). |
 
 ## Datos
 
@@ -282,10 +286,11 @@ Convenciones:
 
 - Claves `uuid` generadas por Postgres (`gen_random_uuid()`), con `created_at` y `updated_at`.
 - Dinero en `numeric(10,2)`. Drizzle lo devuelve como string y el `*RowSchema` lo convierte a número.
-- Búsquedas sin distinguir acentos con la extensión `unaccent`, que hay que habilitar una vez por base
-  (`npm run db:enable-unaccent`).
+- Búsquedas sin distinguir acentos con la extensión `unaccent`, que la migración `0005_enable-unaccent` habilita en
+  toda base que migre (`npm run db:enable-unaccent` queda como alternativa manual).
 - Fechas: se guardan y viajan en UTC y se muestran en `America/Argentina/Buenos_Aires` con un único
-  `formatDateTime` **(a crear)**.
+  `formatDateTime` (`src/lib/format-date-time.ts`, T-4). El código heredado todavía usa `toLocaleString('es-AR')` sin
+  zona (brecha de fechas).
 - Cambio de schema: editar `schema.ts` → `npm run db:generate -- --name <descripcion>` → revisar el SQL generado
   → `npm run db:migrate`.
 
@@ -294,11 +299,19 @@ Convenciones:
 | Entorno | Base | Configuración | Notas |
 |---|---|---|---|
 | Desarrollo | Docker `db` (postgres:15, puerto 5433 en el host, para no chocar con otros Postgres locales) | `.env.local`: `LOCAL_DATABASE_URL`, `JWT_SECRET`, `CLOUDINARY_URL` | `next.config.ts` fija `turbopack.root` en la carpeta del proyecto, para que un lockfile suelto en una carpeta superior no cambie la raíz (BUG-4). Si el repo está dentro de OneDrive, la sincronización de `node_modules` y `.next` hace lento el primer compilado de cada página. |
-| Tests | Docker `db-test` **(a crear)** | `.env.test` **(a crear)** | Base descartable. Nunca la de desarrollo. Ver [`testing.md`](testing.md#bases-de-datos). |
-| Producción | Supabase (pooler, SSL) | `.env.prod` + `NODE_ENV=production` | Un workflow de GitHub Actions la consulta a diario para que Supabase no la suspenda. El hosting de la app está a definir. |
+| Tests | Docker `db-test` (postgres:15, puerto 5434 en el host, `tmpfs`, perfil `test`) | `.env.test` (versionado: sólo apunta a `db-test`) | Base descartable. Nunca la de desarrollo. Ver [`testing.md`](testing.md#bases-de-datos). |
+| Producción | Supabase (pooler, SSL) | `APP_ENV=production` + `.env.prod` (`DATABASE_URL`) | Un workflow de GitHub Actions la consulta a diario para que Supabase no la suspenda. El hosting de la app está a definir: tiene que definir `APP_ENV=production` y `DATABASE_URL`. |
 
-> **Cuidado.** Los scripts `db:*` usan `.env.prod` si `NODE_ENV=production`, y `db:seed` / `db:reset-data`
-> **borran todas las tablas, usuarios incluidos**. Ningún script se niega hoy a correr contra producción.
+**Qué base se usa** ([ADR 0002](adr/0002-la-base-se-elige-con-app-env.md)). `src/lib/db/database-config.ts` decide
+en función de `APP_ENV`, nunca de `NODE_ENV`. Con `APP_ENV=production` carga `.env.prod`, usa `DATABASE_URL` y
+activa SSL. Con cualquier otro valor (vacío, `development` o `test`) carga `.env.local` y usa `LOCAL_DATABASE_URL`,
+que es obligatoria y no tiene valor por defecto. Un valor desconocido de `APP_ENV` es un error. Así, `next build`
+y `next start`, que corren con `NODE_ENV=production`, usan la base local o la que indique `LOCAL_DATABASE_URL`.
+
+> **Cuidado.** Los scripts `db:*` usan `.env.prod` si `APP_ENV=production`, y `db:seed` / `db:reset-data`
+> **borran todas las tablas, usuarios incluidos**. Desde BUG-3, `db:seed`, `db:reset-data` y `db:reset-full` se
+> niegan a correr con `APP_ENV=production` o contra una base que no sea local (`assert-safe-to-wipe.ts`). `wipe-db.ts`
+> y `db:seed-users` todavía no tienen esa guarda (BUG-10).
 
 ## Mobile (Capacitor)
 
@@ -311,9 +324,11 @@ uso sin conexión), se decide con un ADR que evalúe primero una PWA y después 
 El código heredado **no se copia como ejemplo**. Cada brecha se corrige cuando un ítem del backlog toca ese
 código, o con un ítem propio. Nunca "de paso" dentro de otra tarea.
 
+El inventario exacto de archivos que violan las reglas duras es `eslint-legacy.json` (143 al activarlas en T-3).
+Cuando un ítem corrige uno, lo saca de la lista, y la lista nunca crece (ADR 0003).
+
 | Brecha | Dónde | Regla de `AGENTS.md` |
 |---|---|---|
-| Las acciones de fotos no verifican sesión ni rol: cualquiera puede subir, listar o borrar fotos | `features/product/actions/{upload,delete}-product-photo.ts`, `get-product-photos.ts` | Seguridad |
 | No existe la capa `services`: la lógica de negocio está en actions y repositorios | Todos los features | Capas |
 | `lib/` importa de `features/` | `lib/auth/utils.ts`, `lib/audit-logs.ts` | Capas |
 | `sql` de Drizzle dentro de queries (unaccent, normalización de DNI, `version + 1`, `NOW()`): unas 54 líneas | Repositorios | SQL |

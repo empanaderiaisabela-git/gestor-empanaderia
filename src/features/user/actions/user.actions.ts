@@ -76,7 +76,7 @@ export async function createUserAction(input: UserInput): Promise<ActionResult<U
       return {
         success: true,
         message: wasReactivated ? MESSAGES.SUCCESS.REACTIVATED('Usuario') : MESSAGES.SUCCESS.CREATED('Usuario'),
-        data: result as UserDef,
+        data: userRowSchema.parse(result),
       };
     });
   } catch (error: any) {
@@ -107,7 +107,7 @@ export async function updateUserAction(id: string, input: UserUpdateInput): Prom
       return {
         success: true,
         message: MESSAGES.SUCCESS.UPDATED('Usuario'),
-        data: updated as UserDef,
+        data: userRowSchema.parse(updated),
       };
     });
   } catch (error: any) {

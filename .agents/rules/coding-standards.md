@@ -7,7 +7,8 @@ trigger: always_on
 ## Language
 
 - Code (variables, functions, types, file names) is written in **English**
-- Docs, commits, PRs and UI strings are written in **Spanish**
+- Docs, commits and UI strings are written in **Spanish**
+- The only allowed comment is a Spanish *why* that starts with `Por qué:` (enforced by ESLint, see `AGENTS.md`)
 - Zero comments. Only exception: a *why* the code cannot express, written in Spanish
 - If anything here contradicts `AGENTS.md`, `AGENTS.md` wins
 

@@ -1,7 +1,8 @@
-# Git: ramas, commits y pull requests
+# Git: ramas, commits e integración
 
 Estas reglas son **convención del equipo**: GitHub no bloquea pushes a `main` ni a `develop` (por comodidad),
-pero se espera que todos las sigan. El CI corre en cada PR y en cada push a `develop` y `main`.
+pero se espera que todos las sigan. **No se usan pull requests** (regla general): la integración es local y con
+el OK del dev. El CI corre en cada push a `develop` y `main`.
 
 ## Ramas
 
@@ -17,18 +18,33 @@ pero se espera que todos las sigan. El CI corre en cada PR y en cada push a `dev
 Reglas:
 
 - Una rama = un ítem del backlog. Ramas cortas (idealmente ≤ 3 días). Borrarla después del merge.
-- Antes de abrir el PR: `git fetch && git rebase origin/develop` y `npm run verify`.
+- Antes de integrar: `git fetch && git rebase origin/develop` y `npm run verify`.
 - Nunca se reescribe la historia de `main` ni de `develop` (`push --force` prohibido ahí).
 
 ## Flujo
 
 ```
-feat/us-20-…  ── (squash)──▶  develop  ── "release: sprint N" (merge commit)──▶  main  (tag sprint-N)
+feat/us-20-…  ── (merge --squash local)──▶  develop  ── "chore(release): sprint N" (merge --no-ff local)──▶  main  (tag sprint-N)
 ```
 
-1. PR de la feature a `develop` con **squash merge**: un commit por ítem, con mensaje Conventional Commit.
-2. Antes de cada demo: PR `develop → main` titulado `release: sprint N`, merge commit y tag
-   `git tag -a sprint-N -m "Demo sprint N" && git push --tags`.
+1. **Integrar un ítem.** Con el OK del dev sobre la lista simple de lo que entra (ver `AGENTS.md`):
+
+   ```bash
+   git switch develop && git pull
+   git merge --squash feat/us-20-…
+   git commit                     # un commit por ítem: Conventional Commit con "Refs: <ID>"
+   git push
+   git branch -D feat/us-20-…     # -D: el squash no marca la rama como mergeada
+   ```
+
+2. **Cerrar el sprint.** Antes de la demo, con el OK del dev:
+
+   ```bash
+   git switch main && git pull
+   git merge --no-ff develop -m "chore(release): sprint N"
+   git tag -a sprint-N -m "Demo sprint N"
+   git push && git push --tags
+   ```
 
 ## Commits: Conventional Commits en español
 
@@ -56,7 +72,7 @@ Refs: US-20
 - Breaking change: `feat(sale)!: …` y un párrafo `BREAKING CHANGE: …` en el cuerpo.
 - Ejemplos: `feat(sale): registrar el medio de pago de cada venta`,
   `fix(customer): avisar del conflicto al editar con una versión vieja`, `docs(backlog): marcar US-3 en progreso`.
-- commitlint lo valida en el hook `commit-msg` y en CI (los dos a configurar).
+- commitlint (`commitlint.config.mjs`, Conventional Commits) lo valida en el hook `commit-msg` de lefthook.
 
 Commits hechos con asistencia de IA: se agrega el trailer que indique la herramienta
 (p. ej. `Co-Authored-By: Claude …`). 

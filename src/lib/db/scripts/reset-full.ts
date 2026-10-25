@@ -1,8 +1,19 @@
 import { execSync } from 'child_process';
+import * as dotenv from 'dotenv';
+import { envFileFor } from '../database-config';
+import { assertSafeToWipe } from './assert-safe-to-wipe';
+
+function assertResetIsSafe(): void {
+  const env = { ...process.env };
+  dotenv.config({ path: envFileFor(process.env), processEnv: env, quiet: true });
+  assertSafeToWipe(env);
+}
 
 console.log('🚀 Starting Full Database Reset...');
 
 try {
+  assertResetIsSafe();
+
   console.log('Step 1: Wiping database...');
   execSync('npx tsx src/lib/db/scripts/wipe-db.ts', { stdio: 'inherit' });
 
@@ -13,7 +24,7 @@ try {
   execSync('npm run db:migrate', { stdio: 'inherit' });
 
   console.log('Step 4: Seeding initial data (setup-initial-data.ts)...');
-  execSync('npx tsx src/lib/db/scripts/setup-initial-data.ts', { stdio: 'inherit' });
+  execSync('npx tsx --conditions=react-server src/lib/db/scripts/setup-initial-data.ts', { stdio: 'inherit' });
 
   console.log('✅ Full Database Reset completed successfully!');
 } catch (error) {

@@ -1,4 +1,5 @@
 import { type ProductDef } from '@/features/product/domain/product.schema';
+import { canManagePhotos } from '@/features/product/domain/product-permissions';
 import { type ColumnDef } from '@/components/ui/virtualized-data-table';
 import { PackageX, Edit, Trash2, Eye, EyeOff, Camera } from 'lucide-react';
 
@@ -93,7 +94,7 @@ export function getProductColumns({ role, onLoss, onEdit, onDelete, onToggleVisi
               <Edit className='w-4 h-4' />
             </button>
           ) : null}
-          {role === 'admin' ? (
+          {canManagePhotos(role) ? (
             <button
               onClick={() => onManagePhotos(p)}
               className='p-1.5 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-500/10 rounded-lg transition'

@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { db } from '@/lib/db';
 import { productRepository } from '@/features/product/repository/product.repository';
 import { deviceRepository } from '@/features/device/repository/device.repository';
-import { providerRepository } from '@/features/provider/repository/provider.repository';
+import { providerService } from '@/features/provider/services/provider.service';
 import { productCreateSchema, productRowSchema, ProductInput, type ProductDef, productUpdateSchema, type ProductUpdateInput } from '@/features/product/domain/product.schema';
 import { providerRowSchema, type ProviderDef } from '@/features/provider/domain/provider.schema';
 import { deviceRowSchema, type DeviceDef } from '@/features/device/domain/device.schema';
@@ -18,6 +18,7 @@ import { ActionResult } from '@/lib/action-result';
 
 export async function fetchProducts(): Promise<ProductDef[]> {
   try {
+    await verifyAuthOrAdmin(false);
     const products = await productRepository.getAllProducts();
     return z.array(productRowSchema).parse(products);
   } catch (error) {
@@ -28,8 +29,9 @@ export async function fetchProducts(): Promise<ProductDef[]> {
 
 export async function fetchSelectorData(): Promise<{ devices: DeviceDef[]; providers: ProviderDef[] }> {
   try {
+    await verifyAuthOrAdmin(false);
     const devicesList = await deviceRepository.getAllDevices();
-    const providersList = await providerRepository.getAllProviders();
+    const providersList = await providerService.list();
 
     return {
       devices: z.array(deviceRowSchema).parse(devicesList),

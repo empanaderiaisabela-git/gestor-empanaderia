@@ -4,12 +4,16 @@ import { db } from '@/lib/db';
 import { productImages } from '@/lib/db/schema';
 import { cloudinaryService } from '@/lib/cloudinary';
 import { ActionResult } from '@/lib/action-result';
+import { verifyAuthOrAdmin } from '@/lib/auth/utils';
+import { toActionFailure } from '@/lib/db-errors';
+import { isAppError } from '@/lib/errors';
 
 export async function uploadProductPhoto(
   productId: string,
   base64Image: string
 ): Promise<ActionResult<{ url: string; publicId: string }>> {
   try {
+    await verifyAuthOrAdmin(false);
     if (!productId || !base64Image) {
       return { success: false, error: 'El ID del producto y la imagen son obligatorios' };
     }
@@ -29,6 +33,7 @@ export async function uploadProductPhoto(
 
     return { success: true, data: inserted };
   } catch (error) {
+    if (isAppError(error)) return toActionFailure(error, 'foto');
     console.error('Error in uploadProductPhoto:', error);
     return { success: false, error: 'No se pudo subir la foto del producto' };
   }

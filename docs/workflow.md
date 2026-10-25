@@ -85,22 +85,26 @@ Ciclo por comportamiento: test que falla → código mínimo → refactor. Detal
 | `git commit` | bloqueo de `.env`, ESLint (incluye tope de 100 líneas en **todos** los archivos), typecheck | lefthook |
 | Mensaje de commit | commitlint (Conventional Commits) | lefthook |
 | `git push` | unit + contrato + fuzz + cobertura | lefthook |
-| Antes de abrir el PR | `npm run verify` (todo + integración + mutación + build) | manual, **obligatorio** |
-| PR / push a `develop` o `main` | lo mismo que `npm run verify` + E2E, en jobs paralelos | GitHub Actions |
+| Antes de integrar a `develop` | `npm run verify` (todo + integración + mutación + build) | manual, **obligatorio** |
+| Push a `develop` o `main` | lo mismo que `npm run verify` + E2E, en jobs paralelos | GitHub Actions |
 
 Nunca `--no-verify`. Si un gate falla, se arregla la causa.
 
-> Todavía no están instalados lefthook ni commitlint, no están los scripts de test y no hay workflow de CI (sólo
-> `keep-alive.yml`). Detalle de los scripts en [`testing.md`](testing.md#cuándo-se-corre-cada-cosa).
+> Desde T-3 están lefthook (`lefthook.yml`), commitlint y el CI (`.github/workflows/ci.yml`: lint, lista legacy,
+> typecheck, `skills:check`, cobertura, integración y build). Faltan `test:mutation` y `verify` (T-5), y los jobs
+> de mutación (T-5) y E2E (T-6). Detalle de los scripts en
+> [`testing.md`](testing.md#cuándo-se-corre-cada-cosa) y de las reglas en el ADR 0003.
 
 ## 7. Cierre (skill `finish-task`)
 
 1. Recorré la [Definition of Done](definition-of-done.md) completa.
 2. Actualizá `docs/features/<feature>/README.md` (comportamiento vigente + tabla de errores) y, si hubo una
    decisión de arquitectura, un ADR.
-3. `BACKLOG.md`: fecha y hora de cierre de cada criterio, horas reales del ítem, estado `En revisión` y link al
-   PR.
-4. Abrí el PR a `develop` con la plantilla completa. Otro integrante revisa; al mergear, el ítem pasa a `Hecho`.
+3. `BACKLOG.md`: fecha y hora de cierre de cada criterio y estado `En revisión`. Las horas reales las carga el dev.
+4. **No se abren PR** (regla general). Mostrale al dev la lista simple de lo que entra; con su OK, `git merge
+   --squash` de la rama a `develop` (un commit por ítem), push y borrado de la rama ([`git.md`](git.md#flujo)).
+   El dev revisa lo integrado; cuando lo aprueba, el ítem pasa a `Hecho` y el campo `Merge` del backlog lleva el
+   hash del commit.
 
 ## 8. Skills
 

@@ -1,7 +1,7 @@
 # Prompt inicial: contexto completo de gestor-empanaderia
 
 > **Uso.** Al empezar una sesión nueva de Claude Code: `Leé @docs/initial_prompt.md y seguilo.`
-> Foto del proyecto al **2026-10-23**. Se adapta en cada avance significativo
+> Foto del proyecto al **2026-10-24**. Se adapta en cada avance significativo
 > ([criterios](how-to-document.md#mantener-al-día-docsinitial_promptmd)). Si algo de acá contradice a
 > [`AGENTS.md`](../AGENTS.md) o a los docs que enlaza, **ganan ellos**: avisale al dev que este archivo quedó
 > desactualizado.
@@ -14,7 +14,7 @@ Sos el agente de ingeniería de software del repo **gestor-empanaderia**. Trabaj
 persona que programa, decide y aprueba. El **cliente** es el dueño de una rotisería que vende empanadas, pizzas,
 sándwiches y ciabattas. Con el cliente no hablás vos: sus pedidos te llegan a través del dev.
 
-- Idioma: **docs, commits, PRs, UI y tus respuestas en español** (rioplatense neutro). **Código en inglés.**
+- Idioma: **docs, commits, UI y tus respuestas en español** (rioplatense neutro). **Código en inglés.**
 - El dev quiere prácticas de ingeniería serias: procesos explícitos, tests primero, evidencia antes de decir
   "listo" y nada inventado.
 - El dev viene de Java/JUnit: [`docs/testing.md`](testing.md) tiene una tabla de equivalencias.
@@ -61,26 +61,39 @@ preguntan cuando un ítem los toque, nunca se asumen:
 
 Hacer preguntas de más es mejor que inventar.
 
-## 4. Estado actual del repo (al 2026-10-23)
+## 4. Estado actual del repo (al 2026-10-24)
 
-- **Sprint 0 en curso** (base técnica, ver `BACKLOG.md`). No se implementa ninguna US hasta que esté `Hecho`;
-  las US sí se pueden ir cargando en el Sprint 1.
-- Git: `main` y `develop` parten del commit inicial (T-1). El trabajo nuevo sale de `develop`. El repo de GitHub
+- **Sprint 0 terminado** (base técnica): todos sus ítems están integrados y en `En revisión` en `BACKLOG.md`,
+  esperando que el dev los pase a `Hecho`. `main` tiene el tag `sprint-0`. Lo próximo es el Sprint 1, que **no se
+  arranca sin el OK del dev**.
+- Git: `main` recibe un merge de `develop` al cierre de cada sprint. El trabajo nuevo sale de `develop`. El repo de GitHub
   es **público**: todo lo que se pushea queda publicado.
-- **No existen todavía**:
-  - `docs/features/` y `docs/conventions/`
-  - `.env.example` (T-2)
+- **No existe todavía**: `docs/conventions/`.
 - **Sí existen**:
-  - `BACKLOG.md`, con el Sprint 0 (T-1 a T-7 y BUG-1 a BUG-6).
-  - Las plantillas en `docs/templates/` (`plan.md`, `feature.md`, `adr.md`), los planes en `docs/plans/` y el
-    índice `docs/adr/README.md`, todavía sin ADRs.
+  - `BACKLOG.md`, con el Sprint 0 (T-1 a T-9 y BUG-1 a BUG-9) en orden de ejecución, y el Sprint 1 con BUG-10
+    a BUG-12.
+  - El plan del sprint completo en `docs/plans/sprint-0.md`: orden, decisiones del dev y enfoque de cada ítem.
+  - Las plantillas en `docs/templates/` (`plan.md`, `feature.md`, `adr.md`), los planes en `docs/plans/` y los
+    ADR en `docs/adr/`.
   - El archivo de requerimientos `docs/requerimientos/specs.md`.
-- Tests: **sólo E2E con Playwright** (`tests/`, con Page Objects). Vitest, Testing Library, fast-check,
-  Stryker, lefthook y commitlint **no están instalados**.
-- Scripts pendientes: `test:*`, `typecheck` y `verify` no existen. Hay que crearlos según
-  [`testing.md`](testing.md).
-- CI: sólo `.github/workflows/keep-alive.yml`, que hace un ping diario a Supabase.
-- `README.md` todavía describe ArgenStock.
+  - `.env.example` y `.env.test` (versionado: sólo apunta a `db-test`).
+- Tests:
+  - Vitest 5 con los proyectos `unit`, `component` (jsdom y Testing Library) e `integration`, y fast-check (T-2,
+    T-5, ADR 0001).
+  - Integración contra `db-test` (postgres:15 en el 5434, `tmpfs`), con una guarda que aborta si la URL no es esa.
+  - E2E con Playwright (`tests/`, con Page Objects) contra `db-test`, con `next build` + `next start` en el 3100 y la carpeta
+    `.next-e2e` (T-6, ver `tests/readme.md`). Nunca toca la base de desarrollo.
+  - Mutación con Stryker (`stryker.config.mjs`, `npm run test:mutation`) sobre `provider` y `src/lib/errors` (T-5).
+- `provider` es el **feature molde** (T-5, `docs/features/provider/README.md`): los demás features se migran
+  copiando su estructura.
+- Gates (T-3, ADR 0003):
+  - ESLint aplica las reglas duras (`eslint.config.mjs` + `eslint/`), salvo en los archivos heredados de
+    `eslint-legacy.json`. Esa lista sólo se achica (`npm run lint:legacy`).
+  - lefthook: `pre-commit` bloquea los `.env` reales y corre ESLint, el tope de los `.css` y el typecheck;
+    `commit-msg` corre commitlint; `pre-push` corre `test:coverage` y `skills:check`.
+- CI: `.github/workflows/ci.yml` en cada push a `develop` y `main` (lint, lista legacy, typecheck, skills,
+  cobertura, mutación, integración, build y E2E contra `db-test`), más `keep-alive.yml`, que hace un ping diario a Supabase.
+- `README.md` en español con el setup real (T-7).
 - Skills: la fuente es `.agents/skills/`. Se copian a `.claude/skills/` con `npm run skills:sync`, y
   `npm run skills:check` verifica que estén iguales. **Nunca edites `.claude/skills/` directo.**
 
@@ -92,19 +105,30 @@ Detalle en [`docs/architecture.md`](architecture.md).
   Form + Zod, Tailwind v4 y Cloudinary. Postgres corre en Docker en local y en Supabase en producción.
 - **En ejecución es cliente-servidor y en despliegue es un monolito modular.** El navegador habla con el
   servidor por **Server Actions** (`'use server'`), no por una API REST.
-- Capas: `ui → actions → service → repository → db`. **La capa `service` todavía no existe**: hoy la lógica
-  está repartida entre actions y repositorios. El código nuevo la crea.
+- Capas: `ui → actions → service → repository → db`. **La capa `service` existe sólo en `stats`** (BUG-5): en el
+  resto, la lógica está repartida entre actions y repositorios. El código nuevo la crea.
 - Cada feature vive en `src/features/<feature>/` con estas carpetas:
   - `domain/`: schemas Zod de entrada y de fila.
   - `repository/`: Drizzle.
-  - `services/`: a crear.
+  - `services/`: hoy sólo en `stats`.
   - `actions/`, `store/` (Zustand) y `ui/`.
-  - `testing/`: fakes y builders, a crear.
+  - `testing/`: fakes y builders; hoy sólo `stats/testing/seed-dashboard.ts`.
+- Helpers de test en `src/test/`:
+  - La guarda de `db-test`, el `globalSetup` de integración y `truncateAll()`.
+  - `asUser({ role })`, que simula la sesión, y los setups que simulan `next/headers` y bloquean la base en unit.
+- Piezas transversales (T-4): el catálogo `AppError(code)` en `src/lib/errors/`, `fail(code)` en
+  `src/lib/action-result.ts`, `toActionFailure(error)` en `src/lib/db-errors.ts`, `withTransaction` en
+  `src/lib/db/transaction.ts` y `formatDateTime` en `src/lib/format-date-time.ts`.
+- `src/lib/db/index.ts` lleva `import 'server-only'`. Los scripts `db:*` y el E2E corren con
+  `--conditions=react-server`, ya configurado en `package.json`. Si agregás un script que importe `@/lib/db`, sumale
+  esa condición.
+- Doc por feature en `docs/features/<f>/README.md`; hoy sólo `stats`.
 - Schema de la base en `src/lib/db/schema.ts`.
 - **Seguridad**:
   - JWT en la cookie `session`.
   - `src/proxy.ts` filtra por ruta y rol, pero es sólo una barrera de navegación.
-  - La barrera real está en cada Server Action, con `verifyAuthOrAdmin`.
+  - La barrera real está en cada Server Action, con `verifyAuthOrAdmin`, que lanza `AppError` (`UNAUTHENTICATED`,
+    `SESSION_EXPIRED`, `INACTIVE_USER` o `FORBIDDEN`).
 - **Concurrencia optimista**: toda tabla que recibe `UPDATE` tiene `version`. El update filtra por `id` y
   `version`; si afecta 0 filas, hay conflicto y el usuario tiene que sincronizar. El stock se descuenta con un
   `UPDATE` condicional atómico.
@@ -116,12 +140,12 @@ Detalle en [`docs/architecture.md`](architecture.md).
 | Regla | Resumen |
 |---|---|
 | Tamaño | ≤ 100 líneas por archivo de código (tests incluidos); funciones de ≤ 40 líneas y ≤ 3 parámetros |
-| Comentarios | Cero. Única excepción: un *por qué* en español que el código no puede expresar |
+| Comentarios | Cero. Única excepción: un *por qué* en español que el código no puede expresar, empezando con `Por qué:` |
 | Tipado | Sin `any`, sin `!` y sin `as` salvo en fronteras ya validadas; retornos explícitos en lo exportado |
 | Capas | `ui → actions → service → repository → db`. Sólo el repositorio toca Drizzle |
 | SQL | Sin SQL plano. `sql` de Drizzle sólo dentro de `check()` del schema |
 | Restricciones | Todo lo que Postgres pueda garantizar va en el schema (`notNull`, `unique`, `check`, FKs) |
-| Errores | `AppError(code)` de un catálogo (`src/lib/errors`, a crear) con mensaje en español |
+| Errores | `AppError(code)` del catálogo (`src/lib/errors`) con mensaje en español; `fail(code)` / `toActionFailure(error)` arman el `ActionResult` |
 | Seguridad | Sesión y rol verificados en el servidor; Zod `strictObject` en la entrada; respuesta validada con `RowSchema` |
 | Fechas | UTC al guardar y transmitir; se muestran en `America/Argentina/Buenos_Aires` |
 | Secretos | Nunca se commitea un `.env`; toda variable nueva va a `.env.example` |
@@ -133,28 +157,38 @@ los commits van en español aunque la skill `conventional-commit` diga inglés.
 
 El código actual **viola muchas de esas reglas**: más de 100 `any`, SQL dentro de queries, 50 archivos de más
 de 100 líneas, comentarios por todos lados y errores como textos sueltos. La lista completa está en
-[`architecture.md` → Brechas](architecture.md#brechas-entre-el-código-actual-y-estas-reglas).
+[`architecture.md` → Brechas](architecture.md#brechas-entre-el-código-actual-y-estas-reglas), y el inventario
+exacto de archivos es `eslint-legacy.json`. Si tu ítem corrige un archivo heredado, sacalo de esa lista.
 
 - **No lo copies como patrón.** El código nuevo sigue las reglas.
 - **No lo arregles "de paso".** Cada brecha se corrige cuando un ítem del backlog toca ese código, o con un ítem
   propio.
 - **Seguridad:**
-  - Las acciones de fotos de producto no verifican sesión (BUG-1, sin corregir).
-  - `JWT_SECRET` ya no tiene valor por defecto: es obligatoria y sin ella falla el login (BUG-2; falta su test
-    de regresión).
-  - En desarrollo, la contraseña del login aparece en los logs de la terminal y el dashboard lee el
-    `password_hash` de los vendedores (BUG-6, sin corregir).
+  - Las acciones de fotos de producto exigen sesión; las usan `admin` y `vendedor` (BUG-1).
+  - `JWT_SECRET` ya no tiene valor por defecto: es obligatoria y sin ella falla el login (BUG-2, con su test de
+    regresión).
+  - En desarrollo, Next ya no imprime los argumentos de las Server Actions (`logging.serverFunctions: false`), y
+    Drizzle loguea el SQL sin parámetros. Fuera de `auth`, las lecturas no traen `password_hash` (BUG-6).
+  - Ninguna respuesta al navegador ni el usuario de `verifyAuthOrAdmin` llevan el `password_hash` (BUG-7).
+  - `fetchProducts` y `fetchSelectorData` exigen sesión (BUG-8). Sigue abierta la pregunta de si el vendedor debe
+    ver precios de compra y el contacto de los proveedores.
+  - `handleDatabaseError` lee el error original de Postgres (también en `error.cause` de Drizzle): un duplicado,
+    una referencia inexistente y un borrado de algo referenciado tienen cada uno su mensaje (BUG-9).
+- **Qué base se usa** (T-8, ADR 0002): la de producción, **sólo** con `APP_ENV=production` (`.env.prod`, con
+  `DATABASE_URL` y SSL). Con cualquier otro valor se usa `.env.local` y `LOCAL_DATABASE_URL`, que es obligatoria.
+  `NODE_ENV` ya no elige la base: `next build` y `next start` usan la base local.
 - **Peligro con datos reales:**
   - `db:seed`, `db:reset-data` y `db:reset-full` **borran todas las tablas**.
-  - Con `NODE_ENV=production` apuntan a la base de producción en Supabase, y ningún script lo impide.
-  - **Nunca los corras con `NODE_ENV=production`**, y nunca leas ni modifiques `.env.prod`.
+  - Desde BUG-3 se niegan a correr con `APP_ENV=production` o contra una base que no sea local. `wipe-db.ts` y
+    `db:seed-users` todavía no tienen esa guarda (BUG-10, Sprint 1).
+  - **Nunca corras nada con `APP_ENV=production`**, y nunca leas ni modifiques `.env.prod`.
 
 ## 8. Cómo se trabaja
 
 Detalle en [`docs/workflow.md`](workflow.md). Las skills `start-task` y `finish-task` lo automatizan.
 
 ```
-Requerimiento → Ítem de backlog → Descubrimiento → Plan aprobado → Rama → TDD → Gates → Docs → PR → Hecho
+Requerimiento → Ítem de backlog → Descubrimiento → Plan aprobado → Rama → TDD → Gates → Docs → Merge squash → Hecho
 ```
 
 ### 8.1 Entrada de requerimientos
@@ -215,7 +249,9 @@ Requerimiento → Ítem de backlog → Descubrimiento → Plan aprobado → Rama
      técnico) de todo lo esencial que entra: qué es, por qué importa, adónde va y qué no entra. **Esperá su OK**
      sobre esa lista.
    - Nunca `--no-verify` ni `push --force` a `main` o `develop`.
-7. **PR** a `develop` con squash merge. Al cerrar el sprint: `develop → main` con el tag `sprint-N`.
+7. **Sin PR, como regla general.** Con el OK del dev: `git merge --squash` de la rama a `develop` (un commit por
+   ítem), push y borrado de la rama. Al cerrar el sprint: merge local `develop → main` con el tag `sprint-N`.
+   Detalle en [`docs/git.md`](git.md#flujo).
 
 ## 9. Cómo comportarte
 
@@ -241,21 +277,28 @@ Requerimiento → Ítem de backlog → Descubrimiento → Plan aprobado → Rama
 | Para | Comando |
 |---|---|
 | Levantar la base local | `docker compose up -d` (servicio `db`, postgres:15, puerto 5433 en el host) |
-| Migrar y preparar la base | `npm run db:migrate` → `npm run db:enable-unaccent` → `npm run db:seed-users` (usuario `admin` / `admin`) |
+| Migrar y preparar la base | `npm run db:migrate` (incluye `unaccent` desde la migración 0005) → `npm run db:seed-users` (usuario `admin` / `admin`) |
 | Desarrollo | `npm run dev` → http://localhost:3000 |
-| Lint / build | `npm run lint` · `npm run build` |
-| E2E | `npx playwright test --project=chromium`; hoy corre contra la base de desarrollo |
+| Lint / tipos / build | `npm run lint` · `npm run lint:legacy` · `npm run typecheck` · `npm run build` |
+| Tests unit | `npm test` · `npm run test:watch` · `npm run test:coverage` |
+| Tests de integración | `docker compose up -d --wait db-test` → `npm run test:int` |
+| E2E | `docker compose up -d --wait db-test` → `npm run test:e2e` (Chromium) o `npm run test:e2e:all` (tres navegadores) |
 | Skills | `npm run skills:sync` · `npm run skills:check` |
-| Planeados (no existen aún) | `typecheck`, `test`, `test:watch`, `test:coverage`, `test:int`, `test:e2e`, `test:mutation`, `verify` |
+| Mutación | `npm run test:mutation` (Stryker, score ≥ 70) |
+| Antes de integrar a `develop` | `npm run verify` (lint, tipos, cobertura, integración, mutación y build) |
 
-La configuración local va en `.env.local`: `LOCAL_DATABASE_URL`, `JWT_SECRET` (**obligatoria**) y
-`CLOUDINARY_URL`. Usuarios del seed: `admin`/`admin` y `vendedor`/`vendedor`. Son temporales: después se crean
+La configuración local va en `.env.local` (plantilla: `.env.example`): `LOCAL_DATABASE_URL`, `JWT_SECRET`
+(**obligatoria**) y `CLOUDINARY_URL`. Usuarios del seed: `admin`/`admin` y `vendedor`/`vendedor`. Son temporales: después se crean
 las cuentas reales y se borran esas.
 
 > **Si levantás `npm run dev` para verificar algo**, al terminar detené el servidor y **borrá `.next`**. Next 16
 > guarda una caché persistente de Turbopack en `.next/dev/cache`. Si cortás el proceso de golpe (`taskkill /F`),
 > la caché puede quedar corrupta y el servidor que levante después el dev puede dar 404 en rutas que existen
 > (pasó con `/login`, ver BUG-4). Además, verificá siempre en el servidor del dev, no sólo en el tuyo.
+>
+> **Lo mismo después de `npm run build`.** Un `next dev` levantado después de un build local dio 404 en `/login`
+> hasta que se borró `.next` (2026-10-24, BUG-6). Si corrés un build, borrá `.next` al terminar. El E2E (T-6)
+> compila en una carpeta aparte para no pisar la del dev.
 
 ## 11. Qué leer y en qué orden
 

@@ -1,21 +1,19 @@
+import 'server-only';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
-import * as schema from './schema';
 import * as dotenv from 'dotenv';
+import * as schema from './schema';
+import { envFileFor, resolveDatabaseConfig } from './database-config';
+import { sqlOnlyLogger } from './query-logger';
 
-const isProd = process.env.NODE_ENV === 'production';
+dotenv.config({ path: envFileFor(process.env) });
 
-// Carga el archivo de entorno correspondiente
-dotenv.config({ path: isProd ? '.env.prod' : '.env.local' });
-
-const connectionString = isProd 
-  ? process.env.DATABASE_URL! 
-  : process.env.LOCAL_DATABASE_URL || 'postgresql://postgres:password@127.0.0.1:5433/stock_db';
+const config = resolveDatabaseConfig(process.env);
 
 const pool = new Pool({
-  connectionString,
-  ssl: isProd ? { rejectUnauthorized: false } : false,
-  max: isProd ? 10 : undefined, // Increased for better concurrency in production
+  connectionString: config.url,
+  ssl: config.ssl ? { rejectUnauthorized: false } : false,
+  max: config.maxConnections,
 });
 
-export const db = drizzle(pool, { schema, logger: !isProd });
+export const db = drizzle(pool, { schema, logger: config.logQueries ? sqlOnlyLogger : false });

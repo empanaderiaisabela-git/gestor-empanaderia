@@ -1,61 +1,55 @@
-# Playwright Tests - Guía de Ejecución
+# Tests E2E (Playwright)
 
-## Instalación
+Los tests E2E corren contra la base descartable **`db-test`**, nunca contra la de desarrollo. La estrategia general
+está en [`docs/testing.md`](../docs/testing.md).
 
-Si Playwright no está instalado, ejecutar el siguiente comando en la carpeta raíz del proyecto:
-
-```bash
-npm init playwright@latest
-```
-
-## Comandos de Ejecución
-
-Correr antes de cada prueba, no todas lo necesitan, pero es mejor prevenir.
+## Cómo se corren
 
 ```bash
-npm run db:reset-data-hard
+docker compose up -d --wait db-test   # base de tests (postgres:15 en el 5434, tmpfs)
+npm run test:e2e                      # Chromium
+npm run test:e2e:all                  # Chromium, Firefox y WebKit
+npx playwright show-report            # reporte HTML de la última corrida
 ```
 
-Tambien se puede correr una version menos agresiva de este comando, que no reinicia la tabla de usuarios para evitar la sesion inválida.
+`npm run test:e2e` hace todo lo demás:
 
-```bash
-npm run db:reset-data
-```
+1. Carga `.env.test` y corre Playwright con `--conditions=react-server`, porque los Page Objects importan
+   `src/lib/db`, que lleva `import 'server-only'`.
+2. `playwright.config.ts` aborta si `LOCAL_DATABASE_URL` no es la de `db-test`. Por eso un `npx playwright test`
+   sin `.env.test` no corre.
+3. El `webServer` corre `npm run e2e:server`:
+   - `scripts/e2e-prepare.ts` vuelve a verificar la URL;
+   - borra `.next-e2e`, aplica las migraciones y carga el seed (`db:seed`: usuarios `admin` y `vendedor`, más datos
+     de demo);
+   - compila la app con `next build` y la levanta con `next start` en el puerto **3100**, con su propia carpeta
+     `.next-e2e`, así no choca con el `npm run dev` del dev (3000, `.next`). Como `APP_ENV` está vacío, la app usa
+     `db-test` (ADR 0002).
+4. El proyecto `setup` (`auth.setup.ts`) inicia sesión como `admin`, guarda la sesión en
+   `playwright/.auth/user.json` y abre cada pantalla del panel una vez, como prueba de humo.
 
-Ejecuta un archivo de pruebas específico en todos los navegadores configurados:
+## Reglas
 
-```bash
-npx playwright test tests/nombre_del_archivo.spec.ts
-```
+- Cada test inyecta sus propios datos con sufijo único (`inyectarProductoEfimero()`, etc.). No hay datos fijos
+  compartidos entre tests.
+- Reintentos: 0 en local y 1 en el CI. Un test que pasa sólo al reintentar es inestable y se investiga.
+- Por qué `next build` + `next start` y no `next dev`: con `next dev` cada pantalla y cada Server Action compila
+  en frío, y con varios workers en paralelo los tests se cortaban por tiempo (en esta PC, sobre OneDrive). El build
+  de producción es estable y se parece a lo que corre en producción.
+- El catálogo (`/home`) usa ISR de 30 s: un cambio de producto aparece en el catálogo recién después de la
+  revalidación. `landing.spec.ts` lo espera recargando hasta 90 s (`esperarQueElCatalogoMuestre`).
+- Selectores por rol y texto visible; `data-testid` (de `src/constants/test-ids.ts`) sólo cuando no hay otro.
+- Grabar un flujo nuevo: con `npm run e2e:server` levantado en otra terminal (con `.env.test` cargado),
+  `npx playwright codegen http://localhost:3100`.
 
-Ejecuta todos los archivos de pruebas en el directorio:
+## Archivos
 
-```bash
-npx playwright test tests
-```
-
-Limita la ejecución de la prueba únicamente al motor de Google Chrome:
-
-```bash
-npx playwright test tests/nombre_del_archivo.spec.ts --project=chromium
-```
-
-Ejecuta la prueba abriendo la ventana del navegador de forma visible (Modo Headed) para ver qué está pasando:
-
-```bash
-npx playwright test tests/nombre_del_archivo.spec.ts --headed
-```
-
-## Reportes y Herramientas (Codegen)
-
-Muestra el reporte final en caso de éxito o fallo:
-
-```bash
-npx playwright show-report
-```
-
-Abre el navegador y la herramienta que graba tus clics y tipeos, transformándolos en código TypeScript:
-
-```bash
-npx playwright codegen http://localhost:3000
-```
+| Archivo | Qué cubre |
+|---|---|
+| `auth.setup.ts` | Login de admin y prueba de humo de las pantallas del panel |
+| `clientes.spec.ts`, `equipos.spec.ts`, `proveedores.spec.ts`, `productos.spec.ts`, `usuarios.spec.ts` | ABM, validaciones, activar/desactivar y borrar |
+| `ventas.spec.ts` | Venta completa con descuento y pago |
+| `concurrencia.spec.ts` | Dos sesiones a la vez: edición perdida, venta contra edición, borrado de una entidad relacionada |
+| `landing.spec.ts` | Visibilidad de un producto en el catálogo público, respetando la revalidación de ISR |
+| `pruebasCompuestas.spec.ts` | Borrados bloqueados por registros relacionados |
+| `pages/` | Page Objects |

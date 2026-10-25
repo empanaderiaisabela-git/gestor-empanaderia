@@ -5,7 +5,7 @@ Fuente **canónica** de reglas del repo. `CLAUDE.md` (Claude Code). Si una regla
 ## Contexto
 
 Sistema de gestión de stock de comida para la empanadería de mi cliente. El backlog vigente está en [`BACKLOG.md`](BACKLOG.md) y los
-requerimientos del cliente, textuales, en [`docs/requerimientos/specs.md`](docs/requerimientos/specs.md). Idioma: **docs, commits, PRs y UI en español; código en inglés**.
+requerimientos del cliente, textuales, en [`docs/requerimientos/specs.md`](docs/requerimientos/specs.md). Idioma: **docs, commits y UI en español; código en inglés**.
 
 ## Antes de tocar código (obligatorio)
 
@@ -17,11 +17,14 @@ requerimientos del cliente, textuales, en [`docs/requerimientos/specs.md`](docs/
 
 ## Reglas duras (el lint/CI las hace cumplir)
 
+ESLint (`eslint.config.mjs` + `eslint/`), lefthook y el CI las aplican. Los archivos heredados listados en
+`eslint-legacy.json` las tienen apagadas, y esa lista **sólo se achica** (ADR 0003).
+
 | Regla | Detalle |
 |---|---|
 | Tope de líneas | **100 líneas físicas por archivo de código** (`.ts/.tsx/.js/.mjs/.css`, tests incluidos). Funciones ≤ 40 líneas, ≤ 3 parámetros (usar objeto). No aplica a `.md`/JSON/YAML. |
-| Comentarios | **Cero**. El código se explica solo. Única excepción: en español y sólo cuando el código no puede expresar el *por qué*. |
-| Tipado | Sin `any`, sin `!` (non-null), sin `as` salvo en fronteras ya validadas. Tipos de retorno explícitos en exports. Ausencia = `T \| null` explícito. |
+| Comentarios | **Cero**. El código se explica solo. Única excepción: en español, sólo cuando el código no puede expresar el *por qué*, y empezando con `Por qué:` (así lo reconoce el lint). |
+| Tipado | Sin `any`, sin `!` (non-null), sin `as` salvo en fronteras ya validadas (`as const` sí; la excepción se declara por archivo en la config de ESLint, nunca con un comentario). Tipos de retorno explícitos en exports. Ausencia = `T \| null` explícito. |
 | Capas | `ui → actions → service → repository → db`. Nunca saltear ni invertir. Sólo el repositorio toca Drizzle. Detalle en `docs/architecture.md`. |
 | SQL | **Prohibido SQL plano** (`sql\`\``, `pg` directo). Siempre el query builder de Drizzle. `sql` sólo en `check()` del schema. |
 | Tipos compartidos | Viven **sólo** en `src/features/<f>/domain` (schemas Zod + tipos inferidos). El código de cliente nunca importa `repository`, `services` ni `@/lib/db`. |
@@ -34,15 +37,14 @@ requerimientos del cliente, textuales, en [`docs/requerimientos/specs.md`](docs/
 
 ## Comandos
 
-Los scripts `test:*`, `typecheck` y `verify` y el servicio `db-test` todavía no existen: ver `docs/testing.md`.
-
 ```bash
 npm run test:watch       # mientras desarrollás
 npm run lint && npm run typecheck
-npm run test:coverage    # unit + contrato + fuzz + cobertura (lo corre pre-push)
-npm run test:int         # integración de repositorios (requiere `docker compose up -d db-test`)
+npm run test:coverage    # unit + contrato + fuzz + componentes + cobertura (lo corre pre-push)
+npm run test:int         # integración de repositorios (requiere `docker compose up -d --wait db-test`)
 npm run test:e2e         # Playwright en Chromium
-npm run verify           # TODO: lint, tipos, cobertura, integración, mutación y build. Obligatorio antes de un PR.
+npm run test:mutation    # Stryker (score ≥ 70)
+npm run verify           # lint, tipos, cobertura, integración, mutación y build. Obligatorio antes de integrar a develop.
 ```
 
 ## Definition of Done (resumen — completo en `docs/definition-of-done.md`)
@@ -56,6 +58,8 @@ npm run verify           # TODO: lint, tipos, cobertura, integración, mutación
 - [ ] Commits Conventional Commits en español. ANTES de commitear, mostrarle al dev una **lista breve y en
       lenguaje simple** (para alguien que no sabe nada técnico) de todo lo esencial que entra en el commit. Esa
       lista es lo que el dev aprueba; sin su OK no se commitea ni se pushea.
+- [ ] **Sin PR** (regla general): cada ítem va en su rama y se integra con `git merge --squash` a `develop` (un
+      commit por ítem), con el OK del dev, push y borrado de la rama. Detalle en `docs/git.md`.
 
 ## Mapa de documentación
 

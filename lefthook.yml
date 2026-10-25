@@ -1,0 +1,26 @@
+pre-commit:
+  piped: true
+  jobs:
+    - name: bloquear .env reales
+      run: node scripts/block-env.mjs {staged_files}
+    - name: eslint
+      glob: "*.{ts,tsx,mts,js,mjs}"
+      run: npx eslint --max-warnings=0 {staged_files}
+    - name: tope de 100 líneas en css
+      glob: "*.css"
+      run: node scripts/line-limit.mjs
+    - name: typecheck
+      run: npm run typecheck
+
+commit-msg:
+  jobs:
+    - name: commitlint
+      run: npx commitlint --edit {1}
+
+pre-push:
+  piped: true
+  jobs:
+    - name: test:coverage
+      run: npm run test:coverage
+    - name: skills:check
+      run: npm run skills:check
