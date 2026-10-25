@@ -1,11 +1,12 @@
 'use client';
 
 import { useState, useMemo, useEffect, useDeferredValue } from 'react';
-import { type ProductDef } from '@/features/product/domain/product.schema';
+import { type CatalogItemDef, fromPrice } from '@/features/menu/domain/catalog';
+import { GROUPS } from '@/features/menu/domain/menu-groups';
 import { normalizeForSearch } from '@/lib/utils';
 
 interface UseCatalogFiltersProps {
-  products: ProductDef[];
+  products: CatalogItemDef[];
   itemsPerPage: number;
 }
 
@@ -29,14 +30,14 @@ export function useCatalogFilters({ products, itemsPerPage }: UseCatalogFiltersP
       // 1. Search filter (Fuzzy)
       const searchTerms = normalizeForSearch(deferredSearch).split(/\s+/).filter(Boolean);
 
-      const combinedText = normalizeForSearch(`${p.device?.name || ''} ${p.description || ''}`);
+      const combinedText = normalizeForSearch(`${p.name} ${GROUPS[p.group].label}`);
       const matchesSearch = searchTerms.every((term) => combinedText.includes(term));
 
       // 2. Category filter
-      const matchesCategory = selectedCategory ? p.deviceId === selectedCategory : true;
+      const matchesCategory = selectedCategory ? p.group === selectedCategory : true;
 
       // 3. Price range filter
-      const price = p.salePrice;
+      const price = fromPrice(p) ?? 0;
       const min = minPrice ? parseFloat(minPrice) : 0;
       const max = maxPrice ? parseFloat(maxPrice) : Infinity;
       const matchesPrice = price >= min && price <= max;
@@ -47,8 +48,8 @@ export function useCatalogFilters({ products, itemsPerPage }: UseCatalogFiltersP
 
   const sortedProducts = useMemo(() => {
     return [...filteredProducts].sort((a, b) => {
-      if (a.stock > 0 && b.stock <= 0) return -1;
-      if (a.stock <= 0 && b.stock > 0) return 1;
+      if (a.inStock && !b.inStock) return -1;
+      if (!a.inStock && b.inStock) return 1;
       return 0;
     });
   }, [filteredProducts]);

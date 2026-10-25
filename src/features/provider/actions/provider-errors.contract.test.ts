@@ -65,9 +65,9 @@ describe('tabla de errores de proveedores (T-5 CA-4)', () => {
     expect(await toggleProviderActiveAction({ id, isActive: false, version: 7 })).toMatchObject({ code: 'STALE_VERSION' });
   });
 
-  it('HAS_RELATIONS: no deja borrar un proveedor con productos', async () => {
+  it('HAS_RELATIONS: no deja borrar un proveedor con ingresos de stock', async () => {
     const id = await existingProvider();
-    fakeProviders.state.withProducts.add(id);
+    fakeProviders.state.withStockEntries.add(id);
     await asUser({ role: 'admin' });
     expect(await deleteProviderAction({ id, version: 1 })).toEqual({ success: false, code: 'HAS_RELATIONS', error: DATABASE.FOREIGN_KEY_VIOLATION });
   });

@@ -2,11 +2,11 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { PackageSearch } from 'lucide-react';
-import { type ProductDef } from '@/features/product/domain/product.schema';
+import { type CatalogItemDef } from '@/features/menu/domain/catalog';
 import { ProductCard } from '../product-card';
 
 interface CatalogGridProps {
-  products: ProductDef[];
+  products: CatalogItemDef[];
   onResetFilters: () => void;
 }
 

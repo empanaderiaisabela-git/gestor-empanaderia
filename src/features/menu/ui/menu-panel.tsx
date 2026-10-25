@@ -11,7 +11,9 @@ import { GroupPriceCard } from './group-price-card';
 import { renderMenuItemCard } from './menu-item-card';
 import { getMenuItemColumns, type MenuItemRowActions } from './menu-item-columns';
 import { MenuItemFormModal } from './menu-item-form-modal';
+import { MenuPhotosModal } from './menu-photos-modal';
 import { MenuToolbar } from './menu-toolbar';
+import { useMenuCatalog } from './use-menu-catalog';
 import { type MenuPanelModel, useMenuPanel } from './use-menu-panel';
 
 function GroupPrices({ model }: { model: MenuPanelModel }): JSX.Element {
@@ -25,9 +27,24 @@ function GroupPrices({ model }: { model: MenuPanelModel }): JSX.Element {
   );
 }
 
+function DeleteConfirm({ model: { manager, actions } }: { model: MenuPanelModel }): JSX.Element {
+  return (
+    <ConfirmModal
+      isOpen={Boolean(manager.itemToDelete)}
+      onClose={() => manager.setItemToDelete(null)}
+      onConfirm={() => actions.handleDelete(manager.itemToDelete ?? '')}
+      title='Eliminar producto'
+      description='Se borra para siempre. Si ya tiene ventas o movimientos de stock no se puede borrar: desactivalo.'
+      submitLabel='Eliminar'
+      isPending={actions.isPending}
+    />
+  );
+}
+
 export function MenuPanel(): JSX.Element {
   const model = useMenuPanel();
   const { manager, actions } = model;
+  const catalog = useMenuCatalog(manager.showGlobalMessage);
 
   if (model.initialLoading) {
     return (
@@ -37,7 +54,7 @@ export function MenuPanel(): JSX.Element {
     );
   }
 
-  const rowActions: MenuItemRowActions = { onEdit: (item) => manager.openFormModal(item), onToggleActive: actions.handleToggleActive, onDelete: manager.setItemToDelete };
+  const rowActions: MenuItemRowActions = { onEdit: (item) => manager.openFormModal(item), onToggleActive: actions.handleToggleActive, onDelete: manager.setItemToDelete, onToggleVisible: (item) => void catalog.toggleVisible(item), onPhotos: catalog.setPhotosOf };
 
   return (
     <div className='flex flex-col flex-1 h-full overflow-y-auto'>
@@ -52,15 +69,8 @@ export function MenuPanel(): JSX.Element {
         renderCard={renderMenuItemCard(rowActions)}
       />
       <MenuItemFormModal model={model} />
-      <ConfirmModal
-        isOpen={Boolean(manager.itemToDelete)}
-        onClose={() => manager.setItemToDelete(null)}
-        onConfirm={() => actions.handleDelete(manager.itemToDelete ?? '')}
-        title='Eliminar producto'
-        description='Se borra para siempre. Si ya tiene ventas o movimientos de stock no se puede borrar: desactivalo.'
-        submitLabel='Eliminar'
-        isPending={actions.isPending}
-      />
+      <MenuPhotosModal item={catalog.photosOf} onClose={() => catalog.setPhotosOf(null)} />
+      <DeleteConfirm model={model} />
     </div>
   );
 }

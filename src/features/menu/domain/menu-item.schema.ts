@@ -20,6 +20,9 @@ export type MenuItemUpdateInput = z.infer<typeof menuItemUpdateSchema>;
 export const menuItemToggleSchema = z.strictObject({ id: z.uuid(), isActive: z.boolean(), version });
 export type MenuItemToggleInput = z.infer<typeof menuItemToggleSchema>;
 
+export const menuItemVisibilitySchema = z.strictObject({ id: z.uuid(), isVisible: z.boolean(), version });
+export type MenuItemVisibilityInput = z.infer<typeof menuItemVisibilitySchema>;
+
 export const menuItemDeleteSchema = z.strictObject({ id: z.uuid(), version });
 export type MenuItemDeleteInput = z.infer<typeof menuItemDeleteSchema>;
 
@@ -37,6 +40,7 @@ export const menuItemRowSchema = z.object({
   price6: amountSchema.nullable(),
   price12: amountSchema.nullable(),
   isActive: z.boolean(),
+  isVisible: z.boolean(),
   version: z.number(),
   createdAt: timestampSchema,
   updatedAt: timestampSchema,

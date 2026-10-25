@@ -2,20 +2,21 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { type ProductDef } from '@/features/product/domain/product.schema';
+import { type CatalogItemDef, catalogPriceLabel, catalogPriceSummary } from '@/features/menu/domain/catalog';
 import { Package, ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { ContactButtons } from '@/components/contact/contact-buttons';
 
 interface ProductCardProps {
-  product: ProductDef & { images?: { publicId: string; url: string }[] };
+  product: CatalogItemDef;
 }
 
 export function ProductCard({ product }: ProductCardProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [direction, setDirection] = useState(0);
-  const deviceName = product.device?.name || 'Producto';
-  const isOutOfStock = product.stock <= 0;
+  const deviceName = product.name;
+  const isOutOfStock = !product.inStock;
+  const summary = catalogPriceSummary(product);
   
   const images = product.images || [];
   const hasImages = images.length > 0;
@@ -141,9 +142,9 @@ export function ProductCard({ product }: ProductCardProps) {
 
         <div className='flex flex-col flex-1 p-3 sm:p-4 text-center'>
           <h3 className='text-xs sm:text-base font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight mb-1 sm:mb-1.5 line-clamp-1'>{deviceName}</h3>
-          <p className='text-[11px] sm:text-sm text-zinc-500 dark:text-zinc-400 line-clamp-2 mb-2 sm:mb-3 leading-relaxed flex-1'>{product.description || 'Elaborado en el día por Empanadería Isabela.'}</p>
+          <p className='text-[11px] sm:text-sm text-zinc-500 dark:text-zinc-400 line-clamp-2 mb-2 sm:mb-3 leading-relaxed flex-1'>{summary || 'Elaborado en el día por Empanadería Isabela.'}</p>
           <div className='mb-3'>
-            <span className='text-sm sm:text-lg font-medium tracking-tight text-zinc-900 dark:text-zinc-100'>${product.salePrice.toLocaleString('es-AR')}</span>
+            <span className='text-sm sm:text-lg font-medium tracking-tight text-zinc-900 dark:text-zinc-100'>{catalogPriceLabel(product)}</span>
           </div>
         </div>
       </Link>
@@ -151,7 +152,7 @@ export function ProductCard({ product }: ProductCardProps) {
       {!isOutOfStock && (
         <div className='px-3 pb-4 pt-0 mt-auto'>
           <ContactButtons
-            product={{ name: deviceName, description: product.description }}
+            product={{ name: deviceName, description: summary }}
             size='sm'
             showLabels={false}
           />

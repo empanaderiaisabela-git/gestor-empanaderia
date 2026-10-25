@@ -1,6 +1,7 @@
 import { desc, or, and, eq, gte, lte, sql, exists } from 'drizzle-orm';
 import { db } from '@/lib/db';
-import { auditLogs, users, products, customers, providers, devices } from '@/lib/db/schema';
+import { menuItems } from '@/lib/db/menu-schema';
+import { auditLogs, users, customers, providers } from '@/lib/db/schema';
 import { type AuditLogInput } from '@/features/audit/domain/audit-log.schema';
 import { normalizeForSearch } from '@/lib/utils';
 
@@ -18,9 +19,11 @@ export class AuditLogRepository {
           const entityMapping = [
             { label: 'usuario', value: 'USER' },
             { label: 'proveedor', value: 'PROVIDER' },
-            { label: 'producto', value: 'PRODUCT' },
+            { label: 'producto', value: 'MENU_ITEM' },
+            { label: 'precios', value: 'MENU_GROUP_PRICES' },
+            { label: 'stock', value: 'STOCK_ENTRY' },
+            { label: 'merma', value: 'STOCK_LOSS' },
             { label: 'cliente', value: 'CUSTOMER' },
-            { label: 'equipo', value: 'DEVICE' },
             { label: 'venta', value: 'SALE' },
           ];
 
@@ -53,13 +56,12 @@ export class AuditLogRepository {
                 .from(users)
                 .where(and(eq(users.id, logs.userId), sql`unaccent(${users.username}) ilike unaccent(${s})`))
             ),
-            // Match Product Name via Device
+            // Match Menu Item Name
             exists(
               db
-                .select({ id: products.id })
-                .from(products)
-                .innerJoin(devices, eq(products.deviceId, devices.id))
-                .where(and(eq(products.id, logs.entityId), or(sql`unaccent(${devices.name}) ilike unaccent(${s})`, sql`unaccent(${products.description}) ilike unaccent(${s})`)))
+                .select({ id: menuItems.id })
+                .from(menuItems)
+                .where(and(eq(menuItems.id, logs.entityId), sql`unaccent(${menuItems.name}) ilike unaccent(${s})`))
             ),
             // Match Customer Name
             exists(
@@ -74,13 +76,6 @@ export class AuditLogRepository {
                 .select({ id: providers.id })
                 .from(providers)
                 .where(and(eq(providers.id, logs.entityId), sql`unaccent(${providers.name}) ilike unaccent(${s})`))
-            ),
-            // Match Device Name
-            exists(
-              db
-                .select({ id: devices.id })
-                .from(devices)
-                .where(and(eq(devices.id, logs.entityId), sql`unaccent(${devices.name}) ilike unaccent(${s})`))
             ),
             // Match Target User Name
             exists(
@@ -117,10 +112,8 @@ export class AuditLogRepository {
       orderBy: [desc(auditLogs.createdAt)],
       with: {
         user: { columns: { id: true, username: true } },
-        product: { with: { device: { columns: { name: true } } }, columns: { id: true } },
         customer: { columns: { id: true, name: true } },
         provider: { columns: { id: true, name: true } },
-        device: { columns: { id: true, name: true } },
         sale: { columns: { id: true, total: true } },
         targetUser: { columns: { id: true, username: true } },
       },
@@ -135,10 +128,8 @@ export class AuditLogRepository {
       orderBy: [desc(auditLogs.createdAt)],
       with: {
         user: { columns: { id: true, username: true } },
-        product: { with: { device: { columns: { name: true } } }, columns: { id: true } },
         customer: { columns: { id: true, name: true } },
         provider: { columns: { id: true, name: true } },
-        device: { columns: { id: true, name: true } },
         sale: { columns: { id: true, total: true } },
         targetUser: { columns: { id: true, username: true } },
       },

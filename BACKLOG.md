@@ -936,7 +936,7 @@ retira cuando la reemplaza su ítem, y T-12 borra el resto. `main` recibe el spr
 | 9   | [US-6](#us-6--ventas-cobrar-con-4-medios-de-pago-y-precios-del-servidor)        | Ventas: cobrar con 4 medios de pago y precios del servidor     | En revisión | US-5       | 3 h 50 min      |
 | 10  | [US-7](#us-7--ventas-historial-comprobante-y-anulación)                         | Ventas: historial, comprobante y anulación                     | En revisión | US-6       | 2 h 30 min      |
 | 11  | [US-15](#us-15--ventas-colores-y-emojis-de-cada-grupo)                          | Ventas: colores y emojis de cada grupo                         | En revisión | US-5       | 1 h             |
-| 12  | [T-12](#t-12--retirar-el-modelo-heredado-de-la-casa-de-celulares)               | Retirar el modelo heredado de la casa de celulares             | Pendiente   | US-7, T-11 | 3 h 30 min      |
+| 12  | [T-12](#t-12--retirar-el-modelo-heredado-de-la-casa-de-celulares)               | Retirar el modelo heredado de la casa de celulares             | En revisión | US-7, T-11 | 3 h 30 min      |
 | 13  | [T-13](#t-13--cierre-del-sprint-1)                                              | Cierre del Sprint 1                                            | Pendiente   | todos      | 1 h             |
 |     |                                                                                 | **Total del sprint**                                           |             |            | **30 h 30 min** |
 
@@ -1688,9 +1688,9 @@ un vistazo.
 
 | Campo        | Valor      |
 | ------------ | ---------- |
-| Estado       | Pendiente  |
-| Dueño        | —          |
-| Inicio       | —          |
+| Estado       | En revisión |
+| Dueño        | Ignacio Tomas |
+| Inicio       | 2026-10-25 |
 | Tamaño       | L          |
 | Depende de   | US-7, T-11 |
 | Plan         | —          |
@@ -1702,22 +1702,64 @@ modelo y nada de código muerto.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · Una migración elimina `devices`, el `products` viejo y `sale_items`; las fotos (y las mermas, si quedaran) apuntan al modelo nuevo · Estimación: 45 min · Completado: —
+- [x] **CA-1** · Una migración elimina `devices`, el `products` viejo y `sale_items`; las fotos (y las mermas, si quedaran) apuntan al modelo nuevo · Estimación: 45 min · Completado: 2026-10-25 16:53
 
-- [ ] **CA-2** · Se borran la pantalla Categorías, el feature `device`, el POS viejo y el panel viejo de productos; `eslint-legacy.json` se achica · Estimación: 45 min · Completado: —
+- [x] **CA-2** · Se borran la pantalla Categorías, el feature `device`, el POS viejo y el panel viejo de productos; `eslint-legacy.json` se achica · Estimación: 45 min · Completado: 2026-10-25 16:53
 
-- [ ] **CA-3** · Las estadísticas actuales calculan con el modelo nuevo, con los mismos totales sobre datos sembrados · Estimación: 30 min · Completado: —
+- [x] **CA-3** · Las estadísticas actuales calculan con el modelo nuevo, con los mismos totales sobre datos sembrados · Estimación: 30 min · Completado: 2026-10-25 16:53
 
-- [ ] **CA-4** · El catálogo público muestra los gustos y bebidas visibles del modelo nuevo, y Alta de productos y Stock invalidan su caché (T-11) · Estimación: 45 min · Completado: —
+- [x] **CA-4** · El catálogo público muestra los gustos y bebidas visibles del modelo nuevo, y Alta de productos y Stock invalidan su caché (T-11) · Estimación: 45 min · Completado: 2026-10-25 16:53
 
-- [ ] **CA-5** · `db:seed`, el stress test y el seed del E2E sólo tienen datos de la empanadería; un test falla si aparecen "ArgenStock", "iPhone", "Apple", "accesorio", "celular" o "equipo" como texto en `src/` · Estimación: 30 min · Completado: —
+- [x] **CA-5** · `db:seed`, el stress test y el seed del E2E sólo tienen datos de la empanadería; un test falla si aparecen "ArgenStock", "iPhone", "Apple", "accesorio", "celular" o "equipo" como texto en `src/` · Estimación: 30 min · Completado: 2026-10-25 16:53
 
-- [ ] **CA-6** · `npm run verify` y `npm run test:e2e` en verde · Estimación: 15 min · Completado: —
+- [x] **CA-6** · `npm run verify` y `npm run test:e2e` en verde · Estimación: 15 min · Completado: 2026-10-25 16:53
 
 **Notas**
 
 - Producción sólo tiene datos de demo (dev, 2026-10-25): el modelo viejo se borra sin migrar datos. Los usuarios se
   conservan.
+
+**Cierre** (2026-10-25) · READMEs de [menu](docs/features/menu/README.md) y [stats](docs/features/stats/README.md)
+
+- **CA-1**:
+  - La migración `0010_drop-legacy-catalog` borra `devices`, `products`, `sale_items`, `product_losses` y
+    `product_images`, y las ventas de demo del POS viejo, que no tienen líneas.
+  - La migración `0011_menu-item-photos-and-visibility` suma `menu_items.is_visible` y `menu_item_images`, con borrado
+    en cascada.
+  - Las mermas ya vivían en `stock_losses` desde US-4.
+- **CA-2**:
+  - Se borraron los features `product` y `device`, `/productos`, `/categorias`, sus grillas y tarjetas, sus stores,
+    Categorías del menú y el script `backfill-sale-item-cost`.
+  - `eslint-legacy.json` bajó de 116 a 88 archivos.
+  - Proveedores y Usuarios controlan sus relaciones contra los ingresos y mermas de stock.
+  - Auditoría busca y nombra los gustos y deja de mostrar "equipos".
+- **CA-3**:
+  - Estadísticas lee `menu_items`, `sale_line_items` (costo congelado), `sale_payments` (los 4 medios) y
+    `stock_losses`.
+  - `seed-dashboard` se rehizo con el modelo nuevo y da los mismos totales: ingreso 500, ganancia 200, mermas 100,
+    stock 10 y valor 1.000.
+  - El dashboard muestra débito y crédito, y "unidades en stock" entre gustos y bebidas.
+- **CA-4**:
+  - El catálogo público (`/home`, `/product/[id]`) muestra los gustos activos y visibles, por grupo, con sus precios
+    ("desde $X"), fotos y stock.
+  - `fetchCatalog` y `fetchCatalogItem` son las únicas lecturas públicas.
+  - En Alta de productos cada gusto tiene "Mostrar/Ocultar del catálogo" y "Fotos" (sólo admin).
+  - Alta, precios del grupo, Stock, el cobro y la anulación revalidan el catálogo.
+  - E2E `landing.spec.ts`: ocultar y mostrar un gusto desde Alta se refleja en `/home`.
+- **CA-5**:
+  - `db:seed` carga sólo datos de la empanadería: usuarios, proveedores, clientes y el menú visible.
+  - `db:stress-test` genera 300 ventas de bebidas para probar el scroll de Ventas/Pedidos.
+  - `src/test/no-legacy-words.test.ts` falla si el código de `src/` nombra "ArgenStock", "iPhone", "Apple" (salvo la
+    fuente `Apple Color Emoji`), "accesorio", "celular" o "equipo".
+- **CA-6**: `npm run verify` y `npm run test:e2e` en verde. Los E2E de productos y equipos se borraron. Proveedores,
+  pruebas compuestas (un gusto vendido no se borra) y concurrencia (un proveedor borrado mientras otro carga stock)
+  se rehicieron.
+- **BUG-11 adelantado**: la subida nueva de fotos ya cumple sus 3 CA:
+  - valida el gusto, el tipo y el tamaño antes de subir;
+  - borra la imagen si falla el guardado;
+  - audita subir y borrar.
+
+  Falta que confirmes el tamaño y los formatos (hoy JPG, PNG o WEBP, hasta 5 MB).
 
 ### T-13 · Cierre del Sprint 1
 
@@ -2019,6 +2061,13 @@ subir y borrar quedan auditados.
 **Preguntas abiertas**
 
 - ¿Qué tamaño máximo y qué formatos se aceptan?
+
+**Notas**
+
+- T-12 (2026-10-25) reescribió la subida de fotos sobre los gustos y ya cumple los tres CA: valida gusto, tipo y
+  tamaño antes de llamar a Cloudinary, borra la imagen si falla el guardado y audita subir y borrar. Mientras no
+  respondas la pregunta, acepta JPG, PNG o WEBP de hasta 5 MB. Al confirmar, este ítem se cierra sin código nuevo
+  o con el ajuste de esos límites.
 
 ### T-14 · Cierre del Sprint 2
 

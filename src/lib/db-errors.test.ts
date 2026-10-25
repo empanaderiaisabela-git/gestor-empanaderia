@@ -6,7 +6,7 @@ import { AppError, ConcurrencyError, DuplicateEntityError } from './errors';
 
 const { DATABASE } = MESSAGES.ERROR;
 const NOT_PRESENT = 'Key (provider_id)=(1) is not present in table "providers".';
-const STILL_REFERENCED = 'Key (id)=(1) is still referenced from table "products".';
+const STILL_REFERENCED = 'Key (id)=(1) is still referenced from table "stock_entries".';
 
 describe('handleDatabaseError', () => {
   it.each([

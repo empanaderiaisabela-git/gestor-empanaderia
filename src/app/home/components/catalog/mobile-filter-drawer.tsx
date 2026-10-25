@@ -2,14 +2,14 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { SlidersHorizontal, X, Tag, ChevronRight } from 'lucide-react';
-import { type DeviceDef } from '@/features/device/domain/device.schema';
+import { type CatalogGroupDef } from '@/features/menu/domain/catalog';
 import { toSentenceCase } from '@/lib/utils';
 import { useEffect } from 'react';
 
 interface MobileFilterDrawerProps {
   isOpen: boolean;
   onClose: () => void;
-  categories: DeviceDef[];
+  categories: readonly CatalogGroupDef[];
   selectedCategory: string | null;
   onSelectCategory: (id: string | null) => void;
   minPrice: string;

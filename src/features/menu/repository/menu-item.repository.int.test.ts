@@ -2,7 +2,7 @@ import { afterAll } from 'vitest';
 import { db } from '@/lib/db';
 import { stockEntries } from '@/lib/db/stock-schema';
 import { TEST_USER_IDS } from '@/test/as-user';
-import { seedTestUser } from '@/test/seed-legacy-catalog';
+import { seedTestUser } from '@/test/seed-test-user';
 import { truncateAll } from '@/test/truncate-all';
 import { describeMenuItemRepository } from '../testing/menu-item-repository.behavior';
 import { drizzleMenuItemRepository } from './menu-item.repository';

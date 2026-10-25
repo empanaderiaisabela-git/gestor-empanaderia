@@ -1,11 +1,11 @@
 'use client';
 
-import { type DeviceDef } from '@/features/device/domain/device.schema';
+import { type CatalogGroupDef } from '@/features/menu/domain/catalog';
 import { Tag, ChevronRight } from 'lucide-react';
 import { toSentenceCase } from '@/lib/utils';
 
 interface CatalogSidebarProps {
-  categories: DeviceDef[];
+  categories: readonly CatalogGroupDef[];
   selectedCategory: string | null;
   onSelectCategory: (id: string | null) => void;
 }

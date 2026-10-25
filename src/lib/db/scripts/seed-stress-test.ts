@@ -1,58 +1,37 @@
 import 'dotenv/config';
-import { devices, products, providers } from '../schema';
+import { eq } from 'drizzle-orm';
 import { db } from '..';
+import { menuItems } from '../menu-schema';
+import { saleLineItems, saleLines } from '../order-schema';
+import { salePayments, sales, users } from '../schema';
 
-async function seedStressTest() {
-  console.log('--- TEST DE ESTRÉS: GENERANDO 250 PRODUCTOS ---');
+const SALES = 300;
+const BUYERS = ['Marta', 'Rocío', 'Juan', null, 'Familia Pérez', null, 'Oficina del centro'];
 
-  try {
-    // 1. Obtener un equipo y un proveedor aleatorios para asociar
-    const [device] = await db.select().from(devices).limit(1);
-    const [provider] = await db.select().from(providers).limit(1);
+const pick = <T>(list: readonly T[]): T => list[Math.floor(Math.random() * list.length)];
 
-    if (!device || !provider) {
-      console.error('Error: Asegúrate de tener al menos un equipo y un proveedor en la DB antes de correr este test.');
-      process.exit(1);
-    }
-
-    console.log(`Usando Equipo: ${device.name} y Proveedor: ${provider.name}`);
-
-    const colors = ['Negro', 'Blanco', 'Gris Espacial', 'Azul Profundo', 'Oro', 'Plata'];
-    const storage = ['64GB', '128GB', '256GB', '512GB', '1TB'];
-    const conditions = ['Nuevo', 'Refurbished', 'Exhibición', 'Caja Abierta'];
-
-    const newProducts = [];
-
-    for (let i = 1; i <= 250; i++) {
-      const color = colors[Math.floor(Math.random() * colors.length)];
-      const cap = storage[Math.floor(Math.random() * storage.length)];
-      const cond = conditions[Math.floor(Math.random() * conditions.length)];
-
-      const purchasePrice = Math.floor(Math.random() * 500) + 200;
-      const salePrice = Math.floor(purchasePrice * 1.3);
-      const stock = Math.floor(Math.random() * 50) + 1;
-
-      newProducts.push({
-        deviceId: device.id,
-        providerId: provider.id,
-        description: `${color}, ${cap} (${cond}) - Lote #${i}`,
-        purchasePrice: purchasePrice.toString(),
-        salePrice: salePrice.toString(),
-        stock: stock,
-      });
-    }
-
-    console.log('Insertando 250 registros en la tabla de productos...');
-    await db.insert(products).values(newProducts);
-
-    console.log('--- TEST COMPLETADO CON ÉXITO ---');
-    console.log('Ahora puedes entrar al panel de Productos y verificar la fluidez del scroll virtualizado.');
-
-    process.exit(0);
-  } catch (error) {
-    console.error('Error durante el seed:', error);
-    process.exit(1);
-  }
+async function insertSale(vendorId: string, drink: typeof menuItems.$inferSelect): Promise<void> {
+  const quantity = Math.floor(Math.random() * 4) + 1;
+  const total = (Number(drink.price1) * quantity).toFixed(2);
+  const createdAt = new Date(Date.now() - Math.floor(Math.random() * 30) * 86_400_000);
+  const [sale] = await db.insert(sales).values({ vendorId, total, buyerName: pick(BUYERS), createdAt }).returning({ id: sales.id });
+  const line = { saleId: sale.id, group: drink.group, presentationKey: 'u1', quantity, unitPrice: drink.price1 ?? '0', subtotal: total, description: drink.name };
+  const [saleLine] = await db.insert(saleLines).values(line).returning({ id: saleLines.id });
+  await db.insert(saleLineItems).values({ saleLineId: saleLine.id, menuItemId: drink.id, units: String(quantity), unitCost: drink.unitCost });
+  await db.insert(salePayments).values({ saleId: sale.id, type: pick(['efectivo', 'transferencia', 'debito', 'credito'] as const), amount: total });
 }
 
-seedStressTest();
+async function seedStressTest(): Promise<void> {
+  const [vendor] = await db.select().from(users).where(eq(users.username, 'vendedor')).limit(1);
+  const drinks = (await db.select().from(menuItems)).filter((item) => item.group === 'coca_cola' || item.group === 'pepsi');
+  if (!vendor || drinks.length === 0) throw new Error('Primero corré npm run db:seed: hacen falta el vendedor y las bebidas.');
+  for (let index = 0; index < SALES; index += 1) await insertSale(vendor.id, pick(drinks));
+  console.log(`Listo: ${SALES} ventas de bebidas en los últimos 30 días, para probar el scroll de Ventas/Pedidos.`);
+}
+
+seedStressTest()
+  .then(() => process.exit(0))
+  .catch((error: unknown) => {
+    console.error('Falló el test de estrés:', error);
+    process.exit(1);
+  });

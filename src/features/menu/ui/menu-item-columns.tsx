@@ -1,4 +1,4 @@
-import { Edit, Plus, Trash2 } from 'lucide-react';
+import { Camera, Edit, Eye, EyeOff, Plus, Trash2 } from 'lucide-react';
 import type { JSX } from 'react';
 import type { ColumnDef } from '@/components/ui/virtualized-data-table';
 import { GROUPS } from '@/features/menu/domain/menu-groups';
@@ -10,6 +10,8 @@ export type MenuItemRowActions = {
   onEdit: (item: MenuItemDef) => void;
   onToggleActive: (item: MenuItemDef) => void;
   onDelete: (id: string) => void;
+  onToggleVisible: (item: MenuItemDef) => void;
+  onPhotos: (item: MenuItemDef) => void;
 };
 
 function NameCell({ item }: { item: MenuItemDef }): JSX.Element {
@@ -17,14 +19,22 @@ function NameCell({ item }: { item: MenuItemDef }): JSX.Element {
     <div className='flex items-center gap-2 font-bold text-zinc-900 dark:text-zinc-100 truncate min-w-0' title={item.name}>
       <span className='truncate'>{item.name}</span>
       {!item.isActive && <span className='shrink-0 px-1.5 py-0.5 bg-zinc-100 text-zinc-500 dark:bg-zinc-800 text-[10px] font-bold rounded uppercase'>Inactivo</span>}
+      {item.isVisible && <span className='shrink-0 px-1.5 py-0.5 bg-brand-50 text-brand-700 dark:bg-brand-500/10 dark:text-brand-300 text-[10px] font-bold rounded uppercase'>En catálogo</span>}
     </div>
   );
 }
 
 export function MenuItemRowButtons({ item, actions }: { item: MenuItemDef; actions: MenuItemRowActions }): JSX.Element {
   const toggleClass = item.isActive ? 'text-amber-700 hover:bg-amber-50 dark:text-amber-400' : 'text-emerald-700 hover:bg-emerald-50 dark:text-emerald-400';
+  const button = 'p-1.5 rounded-lg transition text-brand-600 dark:text-brand-400 hover:bg-brand-50 dark:hover:bg-brand-500/10';
   return (
     <>
+      <button onClick={() => actions.onToggleVisible(item)} className={button} title={item.isVisible ? 'Ocultar del catálogo' : 'Mostrar en el catálogo'}>
+        {item.isVisible ? <EyeOff className='w-4 h-4' /> : <Eye className='w-4 h-4' />}
+      </button>
+      <button onClick={() => actions.onPhotos(item)} className={button} title='Fotos'>
+        <Camera className='w-4 h-4' />
+      </button>
       <button onClick={() => actions.onToggleActive(item)} className={`p-1.5 rounded-lg transition ${toggleClass}`} title={item.isActive ? 'Desactivar' : 'Activar'}>
         <Plus className={`w-4 h-4 ${item.isActive ? 'rotate-45' : ''}`} />
       </button>

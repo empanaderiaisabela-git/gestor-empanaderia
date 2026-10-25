@@ -1,4 +1,5 @@
 import { type AuditLogDef } from '@/features/audit/domain/audit-log.schema';
+import { auditReference, entityLabel } from '@/features/audit/domain/audit-reference';
 import { type ColumnDef } from '@/components/ui/virtualized-data-table';
 import { Eye } from 'lucide-react';
 
@@ -69,14 +70,7 @@ export function getAuditColumns({ onView }: ColumnActions): ColumnDef<AuditLogDe
       cellClassName: 'font-black uppercase text-zinc-400 tracking-widest text-[14px] max-w-[100px] truncate',
       cell: (log) => (
         <span title={log.entity}>
-          {{
-            USER: 'USUARIO',
-            PROVIDER: 'PROVEEDOR',
-            PRODUCT: 'PRODUCTO',
-            CUSTOMER: 'CLIENTE',
-            DEVICE: 'EQUIPO',
-            SALE: 'VENTA',
-          }[log.entity] || log.entity}
+          {entityLabel(log.entity)}
         </span>
       ),
     },
@@ -85,7 +79,7 @@ export function getAuditColumns({ onView }: ColumnActions): ColumnDef<AuditLogDe
       headerClassName: 'w-[280px] font-bold',
       cellClassName: 'w-[280px] font-bold text-[15px] truncate',
       cell: (log) => {
-        const name = log.product?.device?.name || log.customer?.name || log.provider?.name || log.device?.name || log.targetUser?.username || (log.sale ? `$${Number(log.sale.total).toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : null);
+        const name = auditReference(log);
 
         const displayName = name || log.entityId?.substring(0, 8).toUpperCase() || '--';
         const fullTitle = name ? `${name} (${log.entityId})` : log.entityId || '--';

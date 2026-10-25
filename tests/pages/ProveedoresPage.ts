@@ -1,6 +1,9 @@
 import { Page, Locator, expect } from '@playwright/test';
 import { db } from '../../src/lib/db';
-import { providers } from '../../src/lib/db/schema';
+import { menuItems } from '../../src/lib/db/menu-schema';
+import { providers, users } from '../../src/lib/db/schema';
+import { stockEntries } from '../../src/lib/db/stock-schema';
+import { eq } from 'drizzle-orm';
 import { TEST_IDS } from '@/constants/test-ids';
 
 export class ProveedoresPage {
@@ -148,6 +151,13 @@ export class ProveedoresPage {
 
   async sincronizar() {
     await this.btnSincronizar.click();
+  }
+
+  async vincularIngresoDeStock(nombre: string): Promise<void> {
+    const [provider] = await db.select({ id: providers.id }).from(providers).where(eq(providers.name, nombre));
+    const [admin] = await db.select({ id: users.id }).from(users).where(eq(users.username, 'admin'));
+    const [item] = await db.select({ id: menuItems.id, unitCost: menuItems.unitCost }).from(menuItems).limit(1);
+    await db.insert(stockEntries).values({ menuItemId: item.id, providerId: provider.id, userId: admin.id, quantity: 1, unitCost: item.unitCost });
   }
 
   async inyectarProveedorEfimero(): Promise<string> {

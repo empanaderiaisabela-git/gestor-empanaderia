@@ -4,6 +4,7 @@ import { type StockEntryInput, stockEntrySchema } from '@/features/stock/domain/
 import { stockService } from '@/features/stock/services/stock.service';
 import { type ActionResult, fail } from '@/lib/action-result';
 import { verifyAuthOrAdmin } from '@/lib/auth/utils';
+import { afterCatalogChange } from '@/lib/catalog-cache';
 import { toActionFailure } from '@/lib/db-errors';
 
 export type StockMovementResult = { menuItemId: string; stock: number; version: number };
@@ -17,7 +18,7 @@ export async function registerStockEntryAction(input: StockEntryInput): Promise<
     if (setsCost && caller.role !== 'admin') return fail('FORBIDDEN');
     const { item } = await stockService.registerEntry(caller, parsed.data);
     const stock = Number(item.stock);
-    return { success: true, message: `Stock ingresado: ${item.name} queda con ${stock.toLocaleString('es-AR')}`, data: { menuItemId: item.id, stock, version: item.version } };
+    return afterCatalogChange({ success: true, message: `Stock ingresado: ${item.name} queda con ${stock.toLocaleString('es-AR')}`, data: { menuItemId: item.id, stock, version: item.version } });
   } catch (error) {
     return toActionFailure(error, 'producto');
   }

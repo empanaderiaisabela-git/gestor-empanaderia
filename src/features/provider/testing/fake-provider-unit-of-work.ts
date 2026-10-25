@@ -2,7 +2,7 @@ import type { ProviderInput } from '@/features/provider/domain/provider.schema';
 import type { Provider, ProviderRepository } from '@/features/provider/repository/provider.repository';
 import type { ProviderAuditEntry, ProviderUnitOfWork } from '@/features/provider/repository/provider-unit-of-work';
 
-type FakeState = { rows: Provider[]; withProducts: Set<string>; audits: ProviderAuditEntry[]; clock: number };
+type FakeState = { rows: Provider[]; withStockEntries: Set<string>; audits: ProviderAuditEntry[]; clock: number };
 
 const pgError = (code: string, detail: string): Error => Object.assign(new Error(`Failed query (${code})`), { cause: { code, detail } });
 
@@ -31,25 +31,25 @@ export function fakeProviderRepository(state: FakeState): ProviderRepository {
       return { ...row };
     },
     remove: async ({ id, version }) => {
-      if (state.withProducts.has(id)) throw pgError('23503', 'Key (id) is still referenced from table "products".');
+      if (state.withStockEntries.has(id)) throw pgError('23503', 'Key (id) is still referenced from table "stock_entries".');
       const before = state.rows.length;
       state.rows = state.rows.filter((row) => !(row.id === id && row.version === version));
       return state.rows.length < before;
     },
-    hasProducts: async (id) => state.withProducts.has(id),
+    hasStockEntries: async (id) => state.withStockEntries.has(id),
   };
 }
 
 export type FakeProviderUnitOfWork = ProviderUnitOfWork & { state: FakeState; reset(): void };
 
 export function createFakeProviderUnitOfWork(): FakeProviderUnitOfWork {
-  const state: FakeState = { rows: [], withProducts: new Set(), audits: [], clock: 0 };
+  const state: FakeState = { rows: [], withStockEntries: new Set(), audits: [], clock: 0 };
   const repository = fakeProviderRepository(state);
   return {
     state,
     read: repository,
     run: (work) => work({ providers: repository, audit: async (entry) => void state.audits.push(entry) }),
-    reset: () => Object.assign(state, { rows: [], withProducts: new Set(), audits: [], clock: 0 }),
+    reset: () => Object.assign(state, { rows: [], withStockEntries: new Set(), audits: [], clock: 0 }),
   };
 }
 

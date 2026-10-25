@@ -13,7 +13,7 @@ vi.mock('@/features/stock/actions/register-stock-entry', () => ({ registerStockE
 vi.mock('@/features/stock/actions/register-stock-loss', () => ({ registerStockLossAction: vi.fn() }));
 vi.mock('@/features/stock/actions/fetch-stock-entries', () => ({ fetchStockEntries: vi.fn(async () => []) }));
 
-const ITEM: MenuItemDef = { id: '11111111-1111-4111-8111-111111111111', group: 'empanadas', name: 'Humita', unitCost: null, stock: 5, price1: null, price3: null, price6: null, price12: null, isActive: true, version: 1, createdAt: '', updatedAt: '' };
+const ITEM: MenuItemDef = { id: '11111111-1111-4111-8111-111111111111', group: 'empanadas', name: 'Humita', unitCost: null, stock: 5, price1: null, price3: null, price6: null, price12: null, isActive: true, isVisible: false, version: 1, createdAt: '', updatedAt: '' };
 
 function as(role: 'admin' | 'vendedor'): void {
   useAuthStore.setState({ user: { id: 'u', username: role, role }, isAuthenticated: true });

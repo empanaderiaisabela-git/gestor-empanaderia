@@ -9,7 +9,7 @@ describe('menú por rol (US-2 CA-1)', () => {
   });
 
   it('el admin ve las secciones que ya existen en el orden del local', () => {
-    expect(labels('admin')).toEqual(['Estadísticas', 'Stock', 'Ventas/Pedidos', 'Clientes', 'Proveedores', 'Alta de productos', 'Categorías', 'Usuarios', 'Auditoría']);
+    expect(labels('admin')).toEqual(['Estadísticas', 'Stock', 'Ventas/Pedidos', 'Clientes', 'Proveedores', 'Alta de productos', 'Usuarios', 'Auditoría']);
   });
 
   it('"Dashboard" pasó a llamarse "Estadísticas" (CA-2)', () => {

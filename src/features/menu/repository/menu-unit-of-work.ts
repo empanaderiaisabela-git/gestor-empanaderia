@@ -3,6 +3,7 @@ import { auditLogs } from '@/lib/db/schema';
 import { type DbTransaction, withTransaction } from '@/lib/db/transaction';
 import { drizzleMenuGroupPriceRepository, type MenuGroupPriceRepository } from './menu-group-price.repository';
 import { drizzleMenuItemRepository, type MenuItemRepository } from './menu-item.repository';
+import { drizzleMenuPhotoRepository, type MenuPhotoRepository } from './menu-photo.repository';
 
 export type MenuAuditEntry = {
   userId: string;
@@ -15,6 +16,7 @@ export type MenuAuditEntry = {
 export type MenuRepositories = {
   items: MenuItemRepository;
   groupPrices: MenuGroupPriceRepository;
+  photos: MenuPhotoRepository;
 };
 
 export type MenuScope = MenuRepositories & {
@@ -33,7 +35,7 @@ function auditIn(tx: DbTransaction): MenuScope['audit'] {
 }
 
 function repositoriesOf(executor: typeof db | DbTransaction): MenuRepositories {
-  return { items: drizzleMenuItemRepository(executor), groupPrices: drizzleMenuGroupPriceRepository(executor) };
+  return { items: drizzleMenuItemRepository(executor), groupPrices: drizzleMenuGroupPriceRepository(executor), photos: drizzleMenuPhotoRepository(executor) };
 }
 
 export const drizzleMenuUnitOfWork: MenuUnitOfWork = {

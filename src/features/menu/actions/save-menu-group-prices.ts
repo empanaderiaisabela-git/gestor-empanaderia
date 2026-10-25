@@ -4,6 +4,7 @@ import { type MenuGroupPriceDef, type MenuGroupPricesInput, menuGroupPriceRowSch
 import { menuGroupPriceService } from '@/features/menu/services/menu-group-price.service';
 import { type ActionResult, fail } from '@/lib/action-result';
 import { verifyAuthOrAdmin } from '@/lib/auth/utils';
+import { afterCatalogChange } from '@/lib/catalog-cache';
 import { toActionFailure } from '@/lib/db-errors';
 
 export async function saveMenuGroupPricesAction(input: MenuGroupPricesInput): Promise<ActionResult<MenuGroupPriceDef>> {
@@ -12,7 +13,7 @@ export async function saveMenuGroupPricesAction(input: MenuGroupPricesInput): Pr
     const parsed = menuGroupPricesSchema.safeParse(input);
     if (!parsed.success) return fail('VALIDATION');
     const saved = await menuGroupPriceService.save(caller, parsed.data);
-    return { success: true, message: 'Precios del grupo guardados exitosamente', data: menuGroupPriceRowSchema.parse(saved) };
+    return afterCatalogChange({ success: true, message: 'Precios del grupo guardados exitosamente', data: menuGroupPriceRowSchema.parse(saved) });
   } catch (error) {
     return toActionFailure(error, 'precio del grupo');
   }

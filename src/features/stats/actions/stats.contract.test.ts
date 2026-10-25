@@ -6,7 +6,7 @@ const snapshot = vi.hoisted(() => vi.fn());
 
 vi.mock('@/features/stats/repository/stats.repository', () => ({ getDashboardSnapshot: snapshot }));
 
-const EMPTY = { products: [], sales: [], losses: [] };
+const EMPTY = { items: [], sales: [], losses: [] };
 
 describe('fetchDashboardStats (BUG-12)', () => {
   beforeEach(() => {

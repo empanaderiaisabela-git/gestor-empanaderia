@@ -5,6 +5,7 @@ import { type MenuItemDef, type MenuItemInput, menuItemCreateSchema, menuItemRow
 import { menuItemService } from '@/features/menu/services/menu-item.service';
 import { type ActionResult, fail } from '@/lib/action-result';
 import { verifyAuthOrAdmin } from '@/lib/auth/utils';
+import { afterCatalogChange } from '@/lib/catalog-cache';
 import { toActionFailure } from '@/lib/db-errors';
 
 export async function createMenuItemAction(input: MenuItemInput): Promise<ActionResult<MenuItemDef>> {
@@ -13,7 +14,7 @@ export async function createMenuItemAction(input: MenuItemInput): Promise<Action
     const parsed = menuItemCreateSchema.safeParse(input);
     if (!parsed.success) return fail('VALIDATION');
     const item = await menuItemService.create(caller, parsed.data);
-    return { success: true, message: MESSAGES.SUCCESS.CREATED('Producto'), data: menuItemRowSchema.parse(item) };
+    return afterCatalogChange({ success: true, message: MESSAGES.SUCCESS.CREATED('Producto'), data: menuItemRowSchema.parse(item) });
   } catch (error) {
     return toActionFailure(error, 'producto');
   }

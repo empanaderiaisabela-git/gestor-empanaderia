@@ -1,7 +1,7 @@
 import { expect, test as setup } from '@playwright/test';
 
 const AUTH_FILE = 'playwright/.auth/user.json';
-const SCREENS = ['/stock', '/productos', '/ventas', '/clientes', '/proveedores', '/alta-de-productos', '/categorias', '/usuarios', '/logs', '/home'];
+const SCREENS = ['/stock', '/ventas', '/ventas/nueva', '/clientes', '/proveedores', '/alta-de-productos', '/usuarios', '/logs', '/home'];
 
 setup.describe.configure({ mode: 'serial' });
 

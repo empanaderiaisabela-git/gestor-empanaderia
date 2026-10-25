@@ -71,6 +71,20 @@
       "when": 1792952882296,
       "tag": "0009_sale-lines-position",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1792955349729,
+      "tag": "0010_drop-legacy-catalog",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1792955375609,
+      "tag": "0011_menu-item-photos-and-visibility",
+      "breakpoints": true
     }
   ]
 }

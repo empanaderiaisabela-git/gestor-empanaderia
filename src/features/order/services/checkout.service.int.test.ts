@@ -5,7 +5,7 @@ import { menuGroupPrices, menuItems } from '@/lib/db/menu-schema';
 import { saleLineItems, saleLines } from '@/lib/db/order-schema';
 import { auditLogs, salePayments, sales } from '@/lib/db/schema';
 import { TEST_USER_IDS } from '@/test/as-user';
-import { seedTestUser } from '@/test/seed-legacy-catalog';
+import { seedTestUser } from '@/test/seed-test-user';
 import { truncateAll } from '@/test/truncate-all';
 import { checkoutService } from './checkout.service';
 

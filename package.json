@@ -22,7 +22,6 @@
     "db:reset-data": "tsx --conditions=react-server src/lib/db/scripts/setup-initial-data.ts",
     "db:reset-full": "tsx src/lib/db/scripts/reset-full.ts",
     "db:stress-test": "tsx --conditions=react-server src/lib/db/scripts/seed-stress-test.ts",
-    "db:backfill-cost": "tsx --conditions=react-server src/lib/db/scripts/backfill-sale-item-cost.ts",
     "db:enable-unaccent": "tsx --conditions=react-server src/scripts/enable-unaccent.ts",
     "skills:sync": "node scripts/skills.mjs sync",
     "skills:check": "node scripts/skills.mjs check",

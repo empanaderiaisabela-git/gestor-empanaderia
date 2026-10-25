@@ -1,26 +1,23 @@
-import { test, expect } from '@playwright/test';
-import { ProveedoresPage } from './pages/ProveedoresPage';
-import { EquiposPage } from './pages/EquiposPage';
-import { ProductosPage } from './pages/ProductosPage';
+import { expect, test } from '@playwright/test';
 import { MESSAGES } from '@/config/messages';
 
-test.describe.serial('Pruebas Compuestas: Restricciones de Eliminación', () => {
-  test('Debería impedir eliminar un proveedor o equipo si están vinculados a un producto', async ({ page }) => {
-    const productosPage = new ProductosPage(page);
-    await productosPage.goto();
-    const producto = await productosPage.inyectarProductoEfimero();
+const GUSTO = 'Mirinda 1,5 L';
 
-    const proveedoresPage = new ProveedoresPage(page);
-    const equiposPage = new EquiposPage(page);
+test.describe.serial('Pruebas compuestas: restricciones de eliminación', () => {
+  test('un gusto que ya se vendió no se puede eliminar: hay que desactivarlo', async ({ page }) => {
+    await page.goto('/ventas/nueva');
+    await page.getByRole('region', { name: 'Pepsi', exact: true }).getByRole('button', { name: /1 unidad/ }).click();
+    await page.getByRole('list', { name: 'Gustos' }).getByRole('listitem').filter({ hasText: GUSTO }).getByRole('button', { name: 'Agregar' }).click();
+    await page.getByRole('button', { name: 'Listo' }).click();
+    await page.getByRole('region', { name: 'Pedido actual' }).getByRole('button', { name: /Cobrar/ }).click();
+    await page.getByRole('button', { name: /Confirmar/ }).click();
+    await expect(page.getByText(/Venta registrada por/)).toBeVisible();
 
-    await proveedoresPage.goto();
-    await proveedoresPage.eliminarProveedor(producto.proveedor);
-
-    await expect(page.getByText(MESSAGES.ERROR.DATABASE.FOREIGN_KEY_VIOLATION)).toBeVisible();
-
-    await equiposPage.goto();
-    await equiposPage.eliminarEquipo(producto.equipo);
-
+    await page.goto('/alta-de-productos');
+    await page.getByPlaceholder('Buscar gusto o bebida por nombre...').filter({ visible: true }).fill(GUSTO);
+    await page.getByRole('row').filter({ hasText: GUSTO }).getByTitle('Eliminar').focus();
+    await page.keyboard.press('Enter');
+    await page.getByRole('button', { name: 'Eliminar', exact: true }).last().click();
     await expect(page.getByText(MESSAGES.ERROR.DATABASE.FOREIGN_KEY_VIOLATION)).toBeVisible();
   });
 });

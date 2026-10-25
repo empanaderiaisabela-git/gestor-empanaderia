@@ -8,6 +8,7 @@ import { PanelToolbar } from '@/components/ui/panel-toolbar';
 import { DateRangePicker } from '@/components/ui/date-range-picker';
 import { ResponsivePanelView } from '@/components/ui/responsive-panel-view';
 import { type AuditLogDef } from '@/features/audit/domain/audit-log.schema';
+import { auditReference, entityLabel } from '@/features/audit/domain/audit-reference';
 import { fetchAuditLogs } from '@/features/audit/actions/audit.actions';
 import { useAuditStore } from '@/features/audit/store/audit.store';
 import { invalidateAllCaches } from '@/stores';
@@ -16,11 +17,6 @@ import { getAuditColumns } from '@/config/tables/audit-columns';
 import { TEST_IDS } from '@/constants/test-ids';
 import { renderAuditCard } from '@/config/cards/audit-card';
 import { AuditDetailRenderer } from '@/features/audit/ui/audit-detail-renderer';
-
-const ENTITY_LABELS: Record<string, string> = {
-  USER: 'USUARIO', PROVIDER: 'PROVEEDOR', PRODUCT: 'PRODUCTO',
-  CUSTOMER: 'CLIENTE', DEVICE: 'EQUIPO', SALE: 'VENTA',
-};
 
 const PAGE_SIZE = 50;
 
@@ -34,12 +30,7 @@ function MetaField({ label, children }: { label: string; children: React.ReactNo
 }
 
 function AuditDetailModal({ log, onClose }: { log: AuditLogDef; onClose: () => void }) {
-  const entityName = log.product?.device?.name
-    ?? log.customer?.name
-    ?? log.provider?.name
-    ?? log.device?.name
-    ?? log.targetUser?.username
-    ?? (log.sale ? `Venta $${log.sale.total}` : null);
+  const entityName = auditReference(log);
 
   return (
     <div className='fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-900/60 backdrop-blur-sm animate-in fade-in duration-200'>
@@ -67,7 +58,7 @@ function AuditDetailModal({ log, onClose }: { log: AuditLogDef; onClose: () => v
               </span>
             </MetaField>
             <MetaField label='Entidad Afectada'>
-              {ENTITY_LABELS[log.entity] ?? log.entity}
+              {entityLabel(log.entity)}
             </MetaField>
             <MetaField label='Entidad Específica'>
               <span className='text-brand-600 dark:text-brand-400'>

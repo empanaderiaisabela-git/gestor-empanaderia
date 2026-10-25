@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import type { JSX } from 'react';
-import { Boxes, ChartColumn, type LucideIcon, Package, ShieldAlert, ShoppingBag, Tags, Truck, UserCog, Users, UtensilsCrossed } from 'lucide-react';
+import { Boxes, ChartColumn, type LucideIcon, Package, ShieldAlert, ShoppingBag, Truck, UserCog, Users, UtensilsCrossed } from 'lucide-react';
 import { navigationFor } from '@/config/navigation';
 import type { Role } from '@/features/auth/domain/auth.schema';
 
@@ -13,7 +13,6 @@ const ICONS: Readonly<Record<string, LucideIcon>> = {
   '/clientes': Users,
   '/proveedores': Truck,
   '/alta-de-productos': UtensilsCrossed,
-  '/categorias': Tags,
   '/usuarios': UserCog,
   '/logs': ShieldAlert,
 };

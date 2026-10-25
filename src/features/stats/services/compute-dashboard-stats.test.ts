@@ -2,35 +2,37 @@ import { describe, expect, it } from 'vitest';
 import type { DashboardSale, DashboardSnapshot } from '../domain/stats.schema';
 import { computeDashboardStats, toDashboardRange } from './compute-dashboard-stats';
 
-const EMPTY: DashboardSnapshot = { products: [], sales: [], losses: [] };
+const EMPTY: DashboardSnapshot = { items: [], sales: [], losses: [] };
+const ZERO = { totalUnits: 0, totalItems: 0, totalRevenue: 0, currentInventoryCost: 0, netProfit: 0, totalLossCost: 0, topSellers: [], salesCount: 0, cashRevenue: 0, transferRevenue: 0, debitRevenue: 0, creditRevenue: 0 };
 
 function aSale(overrides: Partial<DashboardSale> = {}): DashboardSale {
   return { total: '100.00', vendorId: 'vendedor-1', vendor: { username: 'ana' }, items: [], payments: [], ...overrides };
 }
 
-describe('computeDashboardStats', () => {
+describe('computeDashboardStats con el modelo de la empanadería (T-12 CA-3)', () => {
   it('devuelve todo en cero cuando no hay datos', () => {
-    expect(computeDashboardStats(EMPTY)).toEqual({ totalEquipos: 0, totalModels: 0, totalRevenue: 0, currentInventoryCost: 0, netProfit: 0, totalLossCost: 0, topSellers: [], salesCount: 0, cashRevenue: 0, transferRevenue: 0 });
+    expect(computeDashboardStats(EMPTY)).toEqual(ZERO);
   });
 
-  it('suma el stock y el costo del inventario', () => {
-    const products = [{ stock: 3, purchasePrice: '10.50' }, { stock: 2, purchasePrice: '5.00' }];
-    expect(computeDashboardStats({ ...EMPTY, products })).toMatchObject({ totalEquipos: 5, totalModels: 2, currentInventoryCost: 41.5 });
+  it('suma las unidades en stock (también medias pizzas) y el costo del inventario', () => {
+    const items = [{ stock: '3.0', unitCost: '10.50' }, { stock: '2.5', unitCost: '4000.00' }];
+    expect(computeDashboardStats({ ...EMPTY, items })).toMatchObject({ totalUnits: 5.5, totalItems: 2, currentInventoryCost: 10031.5 });
   });
 
-  it('descuenta del ingreso el costo de lo vendido y de las mermas', () => {
-    const sales = [aSale({ total: '300.00', items: [{ unitCost: '50.00', quantity: 2 }] })];
-    const losses = [{ quantity: 2, product: { purchasePrice: '10.00' } }];
-    expect(computeDashboardStats({ ...EMPTY, sales, losses })).toMatchObject({ totalRevenue: 300, totalLossCost: 20, netProfit: 180, salesCount: 1 });
+  it('descuenta del ingreso el costo congelado de lo vendido y el de las mermas', () => {
+    const sales = [aSale({ total: '6500.00', items: [{ units: '0.5', unitCost: '2000.00' }, { units: '0.5', unitCost: '1500.00' }] })];
+    const losses = [{ quantity: '2', unitCost: '450.00' }];
+    expect(computeDashboardStats({ ...EMPTY, sales, losses })).toMatchObject({ totalRevenue: 6500, totalLossCost: 900, netProfit: 3850, salesCount: 1 });
   });
 
-  it('una merma de un producto que ya no existe no suma costo', () => {
-    expect(computeDashboardStats({ ...EMPTY, losses: [{ quantity: 3, product: null }] }).totalLossCost).toBe(0);
-  });
-
-  it('separa lo cobrado en efectivo y por transferencia', () => {
-    const payments: DashboardSale['payments'] = [{ type: 'efectivo', amount: '70.00' }, { type: 'transferencia', amount: '30.00' }];
-    expect(computeDashboardStats({ ...EMPTY, sales: [aSale({ payments })] })).toMatchObject({ cashRevenue: 70, transferRevenue: 30 });
+  it('separa lo cobrado en efectivo, transferencia, débito y crédito', () => {
+    const payments: DashboardSale['payments'] = [
+      { type: 'efectivo', amount: '70.00' },
+      { type: 'transferencia', amount: '30.00' },
+      { type: 'debito', amount: '20.00' },
+      { type: 'credito', amount: '10.00' },
+    ];
+    expect(computeDashboardStats({ ...EMPTY, sales: [aSale({ payments })] })).toMatchObject({ cashRevenue: 70, transferRevenue: 30, debitRevenue: 20, creditRevenue: 10 });
   });
 
   it('agrupa por vendedor, ordena por total y deja los 5 primeros', () => {
@@ -40,14 +42,10 @@ describe('computeDashboardStats', () => {
     expect(top[0]).toEqual({ username: 'vendedor 6', total: 65, count: 2 });
   });
 
-  it('muestra "Sistema" cuando la venta no tiene vendedor', () => {
-    expect(computeDashboardStats({ ...EMPTY, sales: [aSale({ vendor: null })] }).topSellers[0].username).toBe('Sistema');
-  });
-
-  it('tolera valores vacíos como lo hacía el cálculo original', () => {
-    const sales = [aSale({ vendorId: '', vendor: { username: '' }, items: [{ unitCost: '', quantity: 3 }] })];
-    const stats = computeDashboardStats({ products: [{ stock: 0, purchasePrice: '' }], sales, losses: [{ quantity: 0, product: { purchasePrice: '' } }] });
-    expect(stats).toMatchObject({ totalEquipos: 0, currentInventoryCost: 0, totalLossCost: 0, netProfit: 100, topSellers: [{ username: 'Sistema', total: 100, count: 1 }] });
+  it('muestra "Sistema" cuando la venta no tiene vendedor y tolera valores vacíos', () => {
+    const sales = [aSale({ vendorId: '', vendor: null, items: [{ units: '3', unitCost: '' }] })];
+    const stats = computeDashboardStats({ items: [{ stock: '', unitCost: '' }], sales, losses: [{ quantity: '', unitCost: '' }] });
+    expect(stats).toMatchObject({ totalUnits: 0, currentInventoryCost: 0, totalLossCost: 0, netProfit: 100, topSellers: [{ username: 'Sistema', total: 100, count: 1 }] });
   });
 });
 

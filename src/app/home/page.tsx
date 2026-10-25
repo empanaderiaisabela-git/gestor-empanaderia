@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
-import { fetchLandingProducts } from '@/features/product/actions/product.actions';
-import { fetchLandingCategories } from '@/features/device/actions/device.actions';
+import { fetchCatalog } from '@/features/menu/actions/fetch-catalog';
+import { CATALOG_GROUPS } from '@/features/menu/domain/catalog';
 import { CatalogClient } from './components/catalog-client';
 import { BrandLogo } from '@/components/brand/brand-logo';
 import { BRAND } from '@/config/brand';
@@ -23,7 +23,8 @@ export const metadata: Metadata = {
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 
 export default async function HomePage() {
-  const [products, categories] = await Promise.all([fetchLandingProducts(), fetchLandingCategories()]);
+  const products = await fetchCatalog();
+  const categories = CATALOG_GROUPS.filter((group) => products.some((product) => product.group === group.id));
 
   return (
     <div className='lg:h-screen lg:overflow-hidden bg-cream dark:bg-zinc-950 selection:bg-brand-500/30 flex flex-col'>

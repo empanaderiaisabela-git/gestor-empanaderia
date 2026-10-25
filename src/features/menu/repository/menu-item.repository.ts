@@ -7,7 +7,7 @@ import type { MenuPrices } from '@/features/menu/domain/menu-prices';
 
 export type MenuItem = typeof menuItems.$inferSelect;
 export type MenuItemData = { group: MenuGroup; name: string; unitCost: number; prices?: MenuPrices };
-export type MenuItemChanges = Partial<{ name: string; unitCost: number; prices: MenuPrices; isActive: boolean }>;
+export type MenuItemChanges = Partial<{ name: string; unitCost: number; prices: MenuPrices; isActive: boolean; isVisible: boolean }>;
 export type VersionedRef = { id: string; version: number };
 
 export type MenuItemRepository = {

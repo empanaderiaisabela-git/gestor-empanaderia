@@ -21,12 +21,12 @@ function FeatureItem({ icon, title, description }: FeatureItemProps) {
 
 interface ProductInfoProps {
   deviceName: string;
-  salePrice: number;
+  priceLabel: string;
   description?: string | null;
   isOutOfStock: boolean;
 }
 
-export function ProductInfo({ deviceName, salePrice, description, isOutOfStock }: ProductInfoProps) {
+export function ProductInfo({ deviceName, priceLabel, description, isOutOfStock }: ProductInfoProps) {
   return (
     <div className='flex flex-col justify-center max-w-xl'>
       <div className='space-y-6 mb-12'>
@@ -35,7 +35,7 @@ export function ProductInfo({ deviceName, salePrice, description, isOutOfStock }
         </div>
 
         <div className='flex items-center gap-4'>
-          <span className='text-3xl font-medium tracking-tight text-zinc-900 dark:text-zinc-100'>${salePrice.toLocaleString('es-AR')}</span>
+          <span className='text-3xl font-medium tracking-tight text-zinc-900 dark:text-zinc-100'>{priceLabel}</span>
           {!isOutOfStock && <span className='text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 px-3 py-1 rounded-full uppercase tracking-wider'>En Stock</span>}
         </div>
 

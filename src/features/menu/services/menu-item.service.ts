@@ -1,5 +1,5 @@
 import { AppError } from '@/lib/errors';
-import type { MenuItemDeleteInput, MenuItemInput, MenuItemToggleInput, MenuItemUpdateInput } from '@/features/menu/domain/menu-item.schema';
+import type { MenuItemDeleteInput, MenuItemInput, MenuItemToggleInput, MenuItemUpdateInput, MenuItemVisibilityInput } from '@/features/menu/domain/menu-item.schema';
 import { itemPriceIssues } from '@/features/menu/domain/menu-prices';
 import type { MenuItem } from '@/features/menu/repository/menu-item.repository';
 import { drizzleMenuUnitOfWork, type MenuAuditEntry, type MenuScope, type MenuUnitOfWork } from '@/features/menu/repository/menu-unit-of-work';
@@ -11,6 +11,7 @@ export type MenuItemService = {
   create(caller: Caller, input: MenuItemInput): Promise<MenuItem>;
   update(caller: Caller, id: string, input: MenuItemUpdateInput): Promise<MenuItem>;
   setActive(caller: Caller, input: MenuItemToggleInput): Promise<MenuItem>;
+  setVisible(caller: Caller, input: MenuItemVisibilityInput): Promise<MenuItem>;
   remove(caller: Caller, input: MenuItemDeleteInput): Promise<void>;
 };
 
@@ -49,6 +50,12 @@ async function setItemActive({ items, audit }: MenuScope, caller: Caller, { id, 
   return item;
 }
 
+async function setItemVisible({ items, audit }: MenuScope, caller: Caller, { id, isVisible, version }: MenuItemVisibilityInput): Promise<MenuItem> {
+  const item = orStale(await items.update({ id, version }, { isVisible }));
+  await audit(entry(caller, { action: 'ACTUALIZAR', item, detail: { group: item.group, name: item.name, visible: isVisible } }));
+  return item;
+}
+
 async function removeItem({ items, audit }: MenuScope, caller: Caller, ref: MenuItemDeleteInput): Promise<void> {
   const item = orStale(await items.findById(ref.id));
   if (!(await items.remove(ref))) throw new AppError('STALE_VERSION');
@@ -61,6 +68,7 @@ export function createMenuItemService({ unitOfWork }: { unitOfWork: MenuUnitOfWo
     create: (caller, input) => unitOfWork.run((scope) => createItem(scope, caller, input)),
     update: (caller, id, input) => unitOfWork.run((scope) => updateItem(scope, caller, { id, input })),
     setActive: (caller, input) => unitOfWork.run((scope) => setItemActive(scope, caller, input)),
+    setVisible: (caller, input) => unitOfWork.run((scope) => setItemVisible(scope, caller, input)),
     remove: (caller, input) => unitOfWork.run((scope) => removeItem(scope, caller, input)),
   };
 }

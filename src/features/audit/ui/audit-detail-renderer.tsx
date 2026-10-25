@@ -18,7 +18,6 @@ const KEY_LABELS: Record<string, string> = {
   role: 'Rol',
   changes: 'Cambios aplicados',
   // Product
-  deviceName: 'Equipo',
   providerName: 'Proveedor',
   productName: 'Producto',
   description: 'Descripción',

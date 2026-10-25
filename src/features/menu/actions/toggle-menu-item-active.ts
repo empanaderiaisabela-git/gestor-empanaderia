@@ -5,6 +5,7 @@ import { type MenuItemToggleInput, menuItemToggleSchema } from '@/features/menu/
 import { menuItemService } from '@/features/menu/services/menu-item.service';
 import { type ActionResult, fail } from '@/lib/action-result';
 import { verifyAuthOrAdmin } from '@/lib/auth/utils';
+import { afterCatalogChange } from '@/lib/catalog-cache';
 import { toActionFailure } from '@/lib/db-errors';
 
 export async function toggleMenuItemActiveAction(input: MenuItemToggleInput): Promise<ActionResult> {
@@ -14,7 +15,7 @@ export async function toggleMenuItemActiveAction(input: MenuItemToggleInput): Pr
     if (!parsed.success) return fail('VALIDATION');
     await menuItemService.setActive(caller, parsed.data);
     const message = parsed.data.isActive ? MESSAGES.SUCCESS.ACTIVATED('Producto') : MESSAGES.SUCCESS.DEACTIVATED('Producto');
-    return { success: true, message };
+    return afterCatalogChange({ success: true, message });
   } catch (error) {
     return toActionFailure(error, 'producto');
   }

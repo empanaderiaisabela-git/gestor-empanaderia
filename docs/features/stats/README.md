@@ -24,7 +24,7 @@ transferencia, y los 5 vendedores que más vendieron.
   - Valor = Σ precio de compra × stock.
 - **Ventas y mermas del rango**:
   - Ganancia neta = ingresos − costo de lo vendido − costo de las mermas.
-  - El costo de lo vendido usa el costo unitario congelado al momento de la venta (`sale_items.unit_cost`).
+  - El costo de lo vendido usa el costo unitario congelado al momento de la venta (`sale_line_items.unit_cost`; en la mitad y mitad, la mitad del costo de cada gusto).
   - Una merma vale precio de compra actual × cantidad. Si el producto ya no existe, no suma.
 - **Vendedores**:
   - Se agrupan por vendedor y se muestran los 5 con más ventas en pesos.
@@ -49,8 +49,9 @@ transferencia, y los 5 vendedores que más vendieron.
 
 ## Datos
 
-Sólo lectura de `products` (stock, precio de compra), `sales` (total y vendedor), `sale_items` (costo unitario y
-cantidad), `sale_payments` (tipo y monto), `product_losses` (cantidad) y `users` (sólo `username` del vendedor).
+Sólo lectura de `menu_items` activos (stock y costo), `sales` (total y vendedor), `sale_line_items` (unidades y costo
+congelado), `sale_payments` (los 4 medios), `stock_losses` (cantidad y costo congelado) y `users` (sólo `username` del
+vendedor). Desde T-12 ya no lee el modelo de la casa de celulares.
 
 ## Errores
 

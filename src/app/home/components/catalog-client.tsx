@@ -1,8 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { type ProductDef } from '@/features/product/domain/product.schema';
-import { type DeviceDef } from '@/features/device/domain/device.schema';
+import { type CatalogGroupDef, type CatalogItemDef } from '@/features/menu/domain/catalog';
 
 import { useCatalogFilters } from './catalog/use-catalog-filters';
 import { CatalogSidebar } from './catalog/catalog-sidebar';
@@ -12,8 +11,8 @@ import { CatalogPagination } from './catalog/catalog-pagination';
 import { MobileFilterDrawer } from './catalog/mobile-filter-drawer';
 
 interface CatalogClientProps {
-  products: ProductDef[];
-  categories: DeviceDef[];
+  products: CatalogItemDef[];
+  categories: readonly CatalogGroupDef[];
 }
 
 export function CatalogClient({ products, categories }: CatalogClientProps) {

@@ -3,7 +3,7 @@ import { db } from '@/lib/db';
 import { menuItems } from '@/lib/db/menu-schema';
 import { providers } from '@/lib/db/schema';
 import { TEST_USER_IDS } from '@/test/as-user';
-import { seedTestUser } from '@/test/seed-legacy-catalog';
+import { seedTestUser } from '@/test/seed-test-user';
 import { truncateAll } from '@/test/truncate-all';
 import { describeStockRepository } from '../testing/stock-repository.behavior';
 import { drizzleStockRepository } from './stock.repository';

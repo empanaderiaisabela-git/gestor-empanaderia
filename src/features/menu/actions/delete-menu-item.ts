@@ -5,6 +5,7 @@ import { type MenuItemDeleteInput, menuItemDeleteSchema } from '@/features/menu/
 import { menuItemService } from '@/features/menu/services/menu-item.service';
 import { type ActionResult, fail } from '@/lib/action-result';
 import { verifyAuthOrAdmin } from '@/lib/auth/utils';
+import { afterCatalogChange } from '@/lib/catalog-cache';
 import { toActionFailure } from '@/lib/db-errors';
 
 export async function deleteMenuItemAction(input: MenuItemDeleteInput): Promise<ActionResult> {
@@ -13,7 +14,7 @@ export async function deleteMenuItemAction(input: MenuItemDeleteInput): Promise<
     const parsed = menuItemDeleteSchema.safeParse(input);
     if (!parsed.success) return fail('VALIDATION');
     await menuItemService.remove(caller, parsed.data);
-    return { success: true, message: MESSAGES.SUCCESS.DELETED('Producto') };
+    return afterCatalogChange({ success: true, message: MESSAGES.SUCCESS.DELETED('Producto') });
   } catch (error) {
     return toActionFailure(error, 'producto');
   }

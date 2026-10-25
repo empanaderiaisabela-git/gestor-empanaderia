@@ -61,7 +61,7 @@ describe('schemas de edición, activación, borrado y fila', () => {
   });
 
   it('la fila convierte a número los importes y el stock que Postgres devuelve como texto', () => {
-    const row = { id: ID, group: 'pizzas', name: 'Napolitana', unitCost: '3000.00', stock: '2.5', price1: '12000.00', price3: null, price6: null, price12: null, isActive: true, version: 1, createdAt: new Date(0), updatedAt: new Date(0) };
+    const row = { id: ID, group: 'pizzas', name: 'Napolitana', unitCost: '3000.00', stock: '2.5', price1: '12000.00', price3: null, price6: null, price12: null, isActive: true, isVisible: false, version: 1, createdAt: new Date(0), updatedAt: new Date(0) };
     expect(menuItemRowSchema.parse(row)).toMatchObject({ unitCost: 3000, stock: 2.5, price1: 12000, price3: null });
     expect(menuItemRowSchema.parse({ ...row, group: 'empanadas', price1: null })).toMatchObject({ price1: null });
   });

@@ -162,8 +162,8 @@ export default function DashboardPage() {
               <Activity className='w-5 h-5 text-amber-500' />
             </div>
           </div>
-          <span className='text-[10px] font-black uppercase text-zinc-400 tracking-widest'>Unidades Físicas</span>
-          <span className='text-xl font-black text-zinc-900 dark:text-zinc-100 mt-1'>{stats?.totalEquipos || '0'}</span>
+          <span className='text-[10px] font-black uppercase text-zinc-400 tracking-widest'>Unidades en stock</span>
+          <span className='text-xl font-black text-zinc-900 dark:text-zinc-100 mt-1'>{stats?.totalUnits?.toLocaleString('es-AR') || '0'}</span>
         </div>
 
         <div className='bg-white dark:bg-zinc-900 p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm flex flex-col'>
@@ -240,7 +240,7 @@ export default function DashboardPage() {
               <h4 className='font-bold text-sm'>Actividad Reciente</h4>
             </div>
             <p className='text-xs text-zinc-500 leading-relaxed font-medium'>
-              El inventario actual cuenta con <strong>{stats?.totalEquipos}</strong> unidades operativas distribuidas en <strong>{stats?.totalModels}</strong> modelos diferentes.
+              El stock actual suma <strong>{stats?.totalUnits?.toLocaleString('es-AR')}</strong> unidades entre <strong>{stats?.totalItems}</strong> gustos y bebidas.
             </p>
           </div>
 
@@ -280,7 +280,7 @@ export default function DashboardPage() {
               <h4 className='font-bold text-sm'>Flujo de Caja</h4>
             </div>
             <p className='text-xs text-zinc-500 leading-relaxed font-medium'>
-              Segmentación de cobros: <strong>${stats?.cashRevenue?.toLocaleString('es-AR')}</strong> en efectivo y <strong>${stats?.transferRevenue?.toLocaleString('es-AR')}</strong> vía transferencia.
+              Segmentación de cobros: <strong>${stats?.cashRevenue?.toLocaleString('es-AR')}</strong> en efectivo, <strong>${stats?.transferRevenue?.toLocaleString('es-AR')}</strong> por transferencia, <strong>${stats?.debitRevenue?.toLocaleString('es-AR')}</strong> con débito y <strong>${stats?.creditRevenue?.toLocaleString('es-AR')}</strong> con crédito.
             </p>
           </div>
         </div>

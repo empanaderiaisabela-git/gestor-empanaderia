@@ -228,11 +228,12 @@ que se pagina y busca en el servidor con `unaccent`.
 
 ### Catálogo público
 
-`/home` y `/product/[id]` son Server Components: leen sin sesión los productos con `show_on_landing = true`. No hay
+`/home` y `/product/[id]` son Server Components: leen sin sesión los gustos y bebidas activos con `is_visible = true`
+(`fetchCatalog` y `fetchCatalogItem` del feature `menu`, las únicas lecturas públicas; T-12). No hay
 carrito ni pedidos online: el cliente consulta por WhatsApp o Instagram.
 
-- `/home` se prerenderiza en el build y **no vence por tiempo**. Toda mutación que cambia lo que muestra (productos,
-  visibilidad, fotos, categorías, mermas, ventas y anulaciones) llama a `revalidateCatalog()`
+- `/home` se prerenderiza en el build y **no vence por tiempo**. Toda mutación que cambia lo que muestra (gustos,
+  visibilidad, fotos, precios del grupo, ingresos y mermas de stock, cobros y anulaciones) llama a `revalidateCatalog()`
   (`src/lib/catalog-cache.ts`), y la página se regenera en la próxima visita (T-11,
   [ADR 0004](adr/0004-revalidacion-a-demanda-del-catalogo.md)).
 - `/product/[id]` se renderiza en cada pedido.

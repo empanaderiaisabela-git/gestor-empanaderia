@@ -8,7 +8,7 @@ import type { StockPanelModel } from './use-stock-panel';
 const history = vi.hoisted(() => vi.fn());
 vi.mock('@/features/stock/actions/fetch-stock-entries', () => ({ fetchStockEntries: history }));
 
-const PIZZA: MenuItemDef = { id: '11111111-1111-4111-8111-111111111111', group: 'pizzas', name: 'Muzza', unitCost: 3000, stock: 2.5, price1: 11000, price3: null, price6: null, price12: null, isActive: true, version: 1, createdAt: '', updatedAt: '' };
+const PIZZA: MenuItemDef = { id: '11111111-1111-4111-8111-111111111111', group: 'pizzas', name: 'Muzza', unitCost: 3000, stock: 2.5, price1: 11000, price3: null, price6: null, price12: null, isActive: true, isVisible: false, version: 1, createdAt: '', updatedAt: '' };
 
 function model(overrides: Partial<StockPanelModel>): StockPanelModel {
   const noop = vi.fn(async () => null);

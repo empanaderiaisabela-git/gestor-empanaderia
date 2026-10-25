@@ -1,4 +1,4 @@
-import { Edit, ToggleLeft, ToggleRight, Trash2 } from 'lucide-react';
+import { Camera, Edit, Eye, EyeOff, ToggleLeft, ToggleRight, Trash2 } from 'lucide-react';
 import type { JSX } from 'react';
 import { CardAction, EntityCard } from '@/components/ui/entity-card';
 import { GROUPS } from '@/features/menu/domain/menu-groups';
@@ -23,6 +23,8 @@ function CardButtons({ item, actions }: { item: MenuItemDef; actions: MenuItemRo
   return (
     <>
       <CardAction icon={toggleIcon} label={item.isActive ? 'Desactivar' : 'Activar'} onClick={() => actions.onToggleActive(item)} variant={item.isActive ? 'warning' : 'success'} />
+      <CardAction icon={item.isVisible ? <EyeOff className='w-4 h-4' /> : <Eye className='w-4 h-4' />} label={item.isVisible ? 'Ocultar del catálogo' : 'Mostrar en el catálogo'} onClick={() => actions.onToggleVisible(item)} />
+      <CardAction icon={<Camera className='w-4 h-4' />} label='Fotos' onClick={() => actions.onPhotos(item)} />
       <CardAction icon={<Edit className='w-4 h-4' />} label='Editar' onClick={() => actions.onEdit(item)} />
       <CardAction icon={<Trash2 className='w-4 h-4' />} label='Eliminar' onClick={() => actions.onDelete(item.id)} variant='danger' />
     </>

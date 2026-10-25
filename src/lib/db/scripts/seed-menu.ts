@@ -15,6 +15,6 @@ export async function clearMenu(): Promise<void> {
 
 export async function seedMenu(): Promise<void> {
   await db.insert(menuGroupPrices).values(SEED_GROUP_PRICES);
-  await db.insert(menuItems).values(SEED_MENU_ITEMS.map(({ prices, ...item }) => ({ ...item, ...prices })));
+  await db.insert(menuItems).values(SEED_MENU_ITEMS.map(({ prices, ...item }) => ({ ...item, ...prices, isVisible: true })));
   console.log(`Menú cargado: ${SEED_MENU_ITEMS.length} gustos y bebidas, precios de Empanadas y Ciabattas.`);
 }

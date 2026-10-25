@@ -2,7 +2,7 @@
 
 import { SearchBar } from '@/components/ui/search-bar';
 import { Filter, Tag, X } from 'lucide-react';
-import { type DeviceDef } from '@/features/device/domain/device.schema';
+import { type CatalogGroupDef } from '@/features/menu/domain/catalog';
 import { toSentenceCase } from '@/lib/utils';
 import { TEST_IDS } from '@/constants/test-ids';
 
@@ -11,7 +11,7 @@ interface CatalogControlsProps {
   onSearchChange: (val: string) => void;
   onOpenFilters: () => void;
   selectedCategory: string | null;
-  categories: DeviceDef[];
+  categories: readonly CatalogGroupDef[];
   onClearCategory: () => void;
   minPrice: string;
   onMinPriceChange: (val: string) => void;

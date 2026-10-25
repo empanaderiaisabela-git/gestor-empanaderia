@@ -1,8 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { ClientesPage } from './pages/ClientesPage';
-import { ProductosPage } from './pages/ProductosPage';
 import { ProveedoresPage } from './pages/ProveedoresPage';
-import { EquiposPage } from './pages/EquiposPage';
 
 test.describe.parallel('Pruebas de Concurrencia', () => {
   test('Escenario A: Edición Concurrente de Cliente (Lost Update)', async ({ browser }) => {
@@ -53,39 +51,31 @@ test.describe.parallel('Pruebas de Concurrencia', () => {
     await context2.close();
   });
 
-  test('Escenario C: Eliminación de Entidad Relacionada', async ({ browser }) => {
+  test('Escenario C: el proveedor se borra mientras otro carga un ingreso de stock con él', async ({ browser }) => {
     const context1 = await browser.newContext();
     const context2 = await browser.newContext();
-
     const errorMessage = 'Una de las entidades relacionadas ya no existe. Por favor, sincroniza los datos.';
-
     const page1 = await context1.newPage();
     const page2 = await context2.newPage();
 
-    const equiposPage = new EquiposPage(page1);
-    await equiposPage.goto();
-    const equipo = await equiposPage.inyectarEquipoEfimero();
-
-    const productosPage1 = new ProductosPage(page1);
     const proveedoresPage2 = new ProveedoresPage(page2);
-
     await proveedoresPage2.goto();
     const proveedor = await proveedoresPage2.inyectarProveedorEfimero();
 
-    // Usuario 1 Inicia creación de producto
-    await productosPage1.goto();
-    await productosPage1.abrirFormularioCreacion();
-    await productosPage1.completarFormularioCreacion(equipo, proveedor, undefined, '1', '1', undefined);
+    // Usuario 1 empieza a cargar un ingreso de stock con ese proveedor
+    await page1.goto('/stock');
+    await page1.getByRole('button').filter({ hasText: 'Ingresar stock' }).click();
+    const gusto = await page1.getByLabel('Gusto o bebida').locator('option', { hasText: 'Fanta 1,5 L' }).getAttribute('value');
+    await page1.getByLabel('Gusto o bebida').selectOption(gusto ?? '');
+    await page1.getByLabel('Cantidad que entra').fill('6');
+    await page1.getByLabel('Proveedor (opcional)').selectOption({ label: proveedor });
 
-    // Usuario 2 Elimina proveedor
+    // Usuario 2 elimina el proveedor
     await proveedoresPage2.eliminarProveedor(proveedor);
-
     await expect(page2.getByText('Proveedor eliminado/a exitosamente')).toBeVisible();
 
-    // Usuario 1 Finaliza creación de producto
-    await productosPage1.confirmarFormularioCreacion();
-
-    // Asserts
+    // Usuario 1 confirma el ingreso
+    await page1.getByRole('button', { name: 'Ingresar', exact: true }).click();
     await expect(page1.getByText(errorMessage)).toBeVisible();
 
     await context1.close();

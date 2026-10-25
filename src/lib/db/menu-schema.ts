@@ -1,5 +1,5 @@
 import { sql } from 'drizzle-orm';
-import { boolean, check, integer, numeric, pgEnum, pgTable, timestamp, unique, uuid, varchar } from 'drizzle-orm/pg-core';
+import { boolean, check, index, integer, numeric, pgEnum, pgTable, timestamp, unique, uuid, varchar } from 'drizzle-orm/pg-core';
 
 export const menuGroupEnum = pgEnum('menu_group', ['empanadas', 'pizzas', 'sanguches', 'ciabattas', 'coca_cola', 'pepsi']);
 
@@ -20,6 +20,7 @@ export const menuItems = pgTable(
     price6: money('price_6'),
     price12: money('price_12'),
     isActive: boolean('is_active').default(true).notNull(),
+    isVisible: boolean('is_visible').default(false).notNull(),
     version: integer('version').default(1).notNull(),
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
@@ -63,4 +64,17 @@ export const menuGroupPrices = pgTable(
         else false end`
     ),
   ]
+);
+
+export const menuItemImages = pgTable(
+  'menu_item_images',
+  {
+    publicId: varchar('public_id', { length: 255 }).primaryKey(),
+    menuItemId: uuid('menu_item_id')
+      .notNull()
+      .references(() => menuItems.id, { onDelete: 'cascade' }),
+    url: varchar('url', { length: 500 }).notNull(),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+  },
+  (table) => [index('menu_item_images_menu_item_id_idx').on(table.menuItemId)]
 );
