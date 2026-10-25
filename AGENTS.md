@@ -37,15 +37,14 @@ ESLint (`eslint.config.mjs` + `eslint/`), lefthook y el CI las aplican. Los arch
 
 ## Comandos
 
-Los scripts `test:mutation` y `verify` todavía no existen (T-5): ver `docs/testing.md`.
-
 ```bash
 npm run test:watch       # mientras desarrollás
 npm run lint && npm run typecheck
-npm run test:coverage    # unit + contrato + fuzz + cobertura (lo corre pre-push)
+npm run test:coverage    # unit + contrato + fuzz + componentes + cobertura (lo corre pre-push)
 npm run test:int         # integración de repositorios (requiere `docker compose up -d --wait db-test`)
 npm run test:e2e         # Playwright en Chromium
-npm run verify           # TODO: lint, tipos, cobertura, integración, mutación y build. Obligatorio antes de integrar a develop.
+npm run test:mutation    # Stryker (score ≥ 70)
+npm run verify           # lint, tipos, cobertura, integración, mutación y build. Obligatorio antes de integrar a develop.
 ```
 
 ## Definition of Done (resumen — completo en `docs/definition-of-done.md`)

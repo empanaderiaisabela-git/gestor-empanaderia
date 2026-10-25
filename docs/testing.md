@@ -3,10 +3,10 @@
 Todo cambio de comportamiento viene con tests. Se escriben **antes** del código (TDD, skill
 `test-driven-development`): test que falla → código mínimo → refactor.
 
-> **Estado actual.** Desde T-2 existen Vitest 5 (proyectos `unit` e `integration`), fast-check, la base
+> **Estado actual.** Desde T-2 y T-5 existen Vitest 5 (proyectos `unit`, `component` con jsdom e `integration`), fast-check, la base
 > `db-test` y los scripts `typecheck`, `test`, `test:watch`, `test:coverage`, `test:int` y `test:e2e`
-> ([ADR 0001](adr/0001-vitest-como-runner-de-tests.md)). Todavía faltan Testing Library con jsdom, Stryker,
-> `test:mutation` y `verify` (T-5). Este documento define cómo tiene que quedar.
+> ([ADR 0001](adr/0001-vitest-como-runner-de-tests.md)). Testing Library, Stryker (`stryker.config.mjs`),
+> `test:mutation` y `verify` existen desde T-5.
 
 ## Tipos de test
 
@@ -127,17 +127,17 @@ Reglas:
 | Antes de integrar a `develop` | `npm run verify` | Lint, tipos, cobertura, integración, mutación y `next build` |
 | Push a `develop` o `main` | GitHub Actions | Lo mismo que `verify` más E2E, en jobs paralelos |
 
-Scripts de `package.json` (`test:mutation` y `verify` se agregan en T-5, junto con Stryker):
+Scripts de `package.json`:
 
 ```jsonc
 "typecheck": "tsc --noEmit",
-"test": "vitest run --project unit",
-"test:watch": "vitest --project unit",
-"test:coverage": "vitest run --project unit --coverage",
+"test": "vitest run --project unit --project component",
+"test:watch": "vitest --project unit --project component",
+"test:coverage": "vitest run --project unit --project component --coverage",
 "test:int": "dotenv -e .env.test -- vitest run --project integration",
-"test:e2e": "playwright test --project=chromium",
+"test:e2e": "dotenv -e .env.test -v NODE_OPTIONS=--conditions=react-server -- playwright test --project=chromium",
 "test:mutation": "stryker run",
-"verify": "npm run lint && npm run typecheck && npm run test:coverage && npm run test:int && npm run test:mutation && npm run build"
+"verify": "npm run lint && npm run typecheck && npm run test:coverage && npm run test:int && npm run test:mutation && dotenv -v NEXT_DIST_DIR=.next-e2e -- next build"
 ```
 
 ## Velocidad de la suite

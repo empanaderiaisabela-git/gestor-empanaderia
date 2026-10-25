@@ -36,6 +36,15 @@ export default defineConfig({
       {
         extends: true,
         test: {
+          name: 'component',
+          environment: 'jsdom',
+          include: ['src/**/*.test.tsx'],
+          setupFiles: ['./src/test/setup/component.setup.ts', './src/test/setup/no-database.setup.ts'],
+        },
+      },
+      {
+        extends: true,
+        test: {
           name: 'integration',
           environment: 'node',
           include: ['src/**/*.int.test.ts'],

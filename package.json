@@ -10,9 +10,9 @@
     "lint:legacy": "node scripts/legacy-check.mjs",
     "prepare": "lefthook install",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run --project unit",
-    "test:watch": "vitest --project unit",
-    "test:coverage": "vitest run --project unit --coverage",
+    "test": "vitest run --project unit --project component",
+    "test:watch": "vitest --project unit --project component",
+    "test:coverage": "vitest run --project unit --project component --coverage",
     "test:int": "dotenv -e .env.test -- vitest run --project integration",
     "test:e2e": "dotenv -e .env.test -v NODE_OPTIONS=--conditions=react-server -- playwright test --project=chromium",
     "db:generate": "drizzle-kit generate",
@@ -27,7 +27,9 @@
     "skills:sync": "node scripts/skills.mjs sync",
     "skills:check": "node scripts/skills.mjs check",
     "test:e2e:all": "dotenv -e .env.test -v NODE_OPTIONS=--conditions=react-server -- playwright test",
-    "e2e:server": "tsx scripts/e2e-prepare.ts && next build && next start -p 3100"
+    "e2e:server": "tsx scripts/e2e-prepare.ts && next build && next start -p 3100",
+    "test:mutation": "stryker run",
+    "verify": "npm run lint && npm run typecheck && npm run test:coverage && npm run test:int && npm run test:mutation && dotenv -v NEXT_DIST_DIR=.next-e2e -- next build"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

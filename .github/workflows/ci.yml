@@ -51,6 +51,23 @@ jobs:
           name: coverage
           path: coverage/
 
+  mutation:
+    name: Mutación (Stryker)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run test:mutation
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: mutation
+          path: reports/mutation/
+
   integration:
     name: Integración contra db-test
     runs-on: ubuntu-latest

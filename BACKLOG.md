@@ -124,7 +124,7 @@ cargando en el Sprint 1 en paralelo.
 | 11  | [BUG-7](#bug-7--el-password_hash-llega-al-navegador)                           | El `password_hash` llega al navegador        | En revisión | T-4                | 50 min          |
 | 12  | [BUG-8](#bug-8--lecturas-de-productos-y-proveedores-sin-sesión)                | Lecturas de productos y proveedores sin sesión | En revisión | T-4                | 30 min          |
 | 13  | [T-6](#t-6--e2e-sobre-db-test)                                                 | E2E sobre `db-test`                          | En revisión | T-4, T-8           | 1 h 25 min      |
-| 14  | [T-5](#t-5--proveedores-como-feature-molde)                                    | Proveedores como feature molde               | En progreso | T-6                | 5 h             |
+| 14  | [T-5](#t-5--proveedores-como-feature-molde)                                    | Proveedores como feature molde               | En revisión | T-6                | 5 h             |
 | 15  | [T-7](#t-7--cierre-del-sprint-0)                                               | Cierre del Sprint 0                          | Pendiente   | T-5, BUG-1 a BUG-9 | 1 h             |
 |     |                                                                                | **Total del sprint**                         |             |                    | **22 h 32 min** |
 
@@ -402,35 +402,35 @@ pueda migrarse o crearse siguiendo `docs/architecture.md`.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | En progreso |
+| Estado       | En revisión |
 | Dueño        | Ignacio Tomas |
 | Inicio       | 2026-10-24 |
 | Tamaño       | L         |
 | Depende de   | T-6       |
-| Plan         | —         |
-| Merge        | —         |
-| Horas reales | —         |
+| Plan         | [T-5-proveedores-molde](docs/plans/T-5-proveedores-molde.md) |
+| Merge        | `02996ca` (avance) y el squash del cierre |
+| Horas reales | ≈ 4 h 30 min |
 
 **Historia**: Como dev quiero una feature completa en la arquitectura objetivo y con todos los tipos de test, de
 forma que sirva de molde para las demás y demuestre el flujo de punta a punta.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · `tests/proveedores.spec.ts` pasa antes y después, sobre `db-test` (T-6): no cambia el comportamiento visible · Estimación: 20 min · Completado: —
+- [x] **CA-1** · `tests/proveedores.spec.ts` pasa antes y después, sobre `db-test` (T-6): no cambia el comportamiento visible · Estimación: 20 min · Completado: 2026-10-24 21:27
 
-- [ ] **CA-2** · `provider` tiene `domain`, `repository` (más fake), `services`, `actions` y `ui` según las reglas duras, y sale de `eslint-legacy.json` · Estimación: 2 h · Completado: —
+- [x] **CA-2** · `provider` tiene `domain`, `repository` (más fake), `services`, `actions` y `ui` según las reglas duras, y sale de `eslint-legacy.json` · Estimación: 2 h · Completado: 2026-10-24 18:55
 
-- [ ] **CA-3** · Una suite de comportamiento del repositorio corre contra el fake y contra Drizzle · Estimación: 30 min · Completado: —
+- [x] **CA-3** · Una suite de comportamiento del repositorio corre contra el fake y contra Drizzle · Estimación: 30 min · Completado: 2026-10-24 18:55
 
-- [ ] **CA-4** · Un test de contrato por fila de la tabla de errores (`DUPLICATE`, `STALE_VERSION`, `HAS_RELATIONS`, permisos) · Estimación: 30 min · Completado: —
+- [x] **CA-4** · Un test de contrato por fila de la tabla de errores (`DUPLICATE`, `STALE_VERSION`, `HAS_RELATIONS`, permisos) · Estimación: 30 min · Completado: 2026-10-24 18:55
 
-- [ ] **CA-5** · Activar/desactivar un proveedor filtra por `version`, con su test · Estimación: 15 min · Completado: —
+- [x] **CA-5** · Activar/desactivar un proveedor filtra por `version`, con su test · Estimación: 15 min · Completado: 2026-10-24 18:55
 
-- [ ] **CA-6** · Stryker configurado (`test:mutation`, `verify`); mutación ≥ 70 y cobertura ≥ 90/85 en `provider` · Estimación: 40 min · Completado: —
+- [x] **CA-6** · Stryker configurado (`test:mutation`, `verify`); mutación ≥ 70 y cobertura ≥ 90/85 en `provider` · Estimación: 40 min · Completado: 2026-10-24 21:25
 
-- [ ] **CA-7** · `docs/features/provider/README.md` desde la plantilla · Estimación: 15 min · Completado: —
+- [x] **CA-7** · `docs/features/provider/README.md` desde la plantilla · Estimación: 15 min · Completado: 2026-10-24 21:32
 
-- [ ] **CA-8** · Recorrió `start-task` → `finish-task` → merge squash local a `develop` con CI verde en el push · Estimación: 30 min · Completado: —
+- [x] **CA-8** · Recorrió `start-task` → `finish-task` → merge squash local a `develop` con CI verde en el push · Estimación: 30 min · Completado: 2026-10-24 21:45
 
 **Detalle**
 
@@ -447,11 +447,17 @@ forma que sirva de molde para las demás y demuestre el flujo de punta a punta.
     `STALE_VERSION`, `HAS_RELATIONS`) y un fuzz (CA-4).
   - Activar/desactivar y borrar exigen `version` (CA-5).
   - 184 unit y 27 de integración en verde; lint y cobertura en verde.
-- **Pendiente** (los CA quedan sin marcar):
-  - CA-1: correr `tests/proveedores.spec.ts` después del refactor.
-  - CA-6: Stryker (ya instalado, falta la config, `test:mutation` y `verify`).
-  - CA-7: `docs/features/provider/README.md`.
-  - CA-8: el proyecto `component` de Vitest con su primer test (Testing Library y jsdom ya instalados).
+
+**Cierre (2026-10-24 21:45)**:
+
+- CA-1: `tests/proveedores.spec.ts` 24/24 en verde sobre `db-test` después del refactor.
+- CA-6: `stryker.config.mjs` (con `vitest.mutation.config.mts`, sólo los tests de `provider` y `src/lib/errors`),
+  `test:mutation`, `verify` y un job `mutation` en el CI. Score **97,46** (115 muertos, 3 sobrevivientes en
+  `providerRowSchema`); cobertura 97,75 % de líneas.
+- CA-7: `docs/features/provider/README.md`.
+- Proyecto `component` de Vitest (jsdom) con su primer test, `provider-form-fields.test.tsx`. `test` y
+  `test:coverage` corren `unit` y `component`: 186 tests.
+- El commit `02996ca` del avance quedó con el título de T-6 (mensaje vacío por error); lo aclara `35868e0`.
 
 ### BUG-1 · Acciones de fotos de producto sin control de sesión
 
