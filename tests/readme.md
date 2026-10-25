@@ -49,8 +49,12 @@ npx playwright show-report            # reporte HTML de la última corrida
 |---|---|
 | `auth.setup.ts` | Login de admin y prueba de humo de las pantallas del panel |
 | `clientes.spec.ts`, `equipos.spec.ts`, `proveedores.spec.ts`, `productos.spec.ts`, `usuarios.spec.ts` | ABM, validaciones, activar/desactivar y borrar |
-| `ventas.spec.ts` | Venta completa con descuento y pago |
-| `concurrencia.spec.ts` | Dos sesiones a la vez: edición perdida, venta contra edición, borrado de una entidad relacionada |
+| `navegacion.spec.ts` | Menú y permisos de ruta por rol |
+| `stock.spec.ts` | Ingresar stock y ver el historial de ingresos |
+| `tablero-ventas.spec.ts` | Armar surtidas y pizzas mitad y mitad en el tablero; una línea incompleta no deja cobrar |
+| `cobro.spec.ts` | Cobrar con efectivo y débito y ver el stock descontado |
+| `historial-ventas.spec.ts` | "Nuevo pedido", la venta en Ventas/Pedidos, el comprobante y la anulación que repone el stock |
+| `concurrencia.spec.ts` | Dos sesiones a la vez: edición perdida y borrado de una entidad relacionada |
 | `landing.spec.ts` | Mostrar y ocultar un producto se refleja al instante en el catálogo público (revalidación a demanda) |
 | `pruebasCompuestas.spec.ts` | Borrados bloqueados por registros relacionados |
 | `pages/` | Page Objects |

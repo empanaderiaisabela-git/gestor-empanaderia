@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { formatDateTime } from './format-date-time';
+import { argentinaDay, formatDateTime } from './format-date-time';
 
 describe('formatDateTime (T-4 CA-3)', () => {
   it.each([
@@ -13,5 +13,13 @@ describe('formatDateTime (T-4 CA-3)', () => {
 
   it('muestra un guion si la fecha no es válida', () => {
     expect(formatDateTime('no-es-una-fecha')).toBe('—');
+  });
+});
+
+describe('argentinaDay (US-7 CA-1)', () => {
+  it('da el día de Buenos Aires en formato AAAA-MM-DD, aunque en UTC ya sea el día siguiente', () => {
+    expect(argentinaDay('2026-10-25T02:30:00Z')).toBe('2026-10-24');
+    expect(argentinaDay(new Date('2026-10-25T03:00:00Z'))).toBe('2026-10-25');
+    expect(argentinaDay('no-es-una-fecha')).toBe('');
   });
 });

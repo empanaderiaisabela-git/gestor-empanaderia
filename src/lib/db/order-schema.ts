@@ -20,12 +20,14 @@ export const saleLines = pgTable(
     unitPrice: money('unit_price').notNull(),
     subtotal: money('subtotal').notNull(),
     description: varchar('description', { length: 255 }).notNull(),
+    position: integer('position').notNull().default(0),
   },
   (table) => [
     index('sale_lines_sale_id_idx').on(table.saleId),
     check('sale_lines_quantity_check', sql`${table.quantity} > 0`),
     check('sale_lines_unit_price_check', sql`${table.unitPrice} >= 0`),
     check('sale_lines_subtotal_check', sql`${table.subtotal} >= 0`),
+    check('sale_lines_position_check', sql`${table.position} >= 0`),
   ]
 );
 

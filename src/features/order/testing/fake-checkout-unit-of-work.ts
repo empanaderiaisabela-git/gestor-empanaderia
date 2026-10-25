@@ -4,7 +4,7 @@ import type { NewSale, NewSaleLine, SaleWriter } from '@/features/order/reposito
 import type { Payment } from '@/features/order/domain/order-validation';
 import { createFakeStockUnitOfWork, type FakeStockUnitOfWork } from '@/features/stock/testing/fake-stock-unit-of-work';
 
-export type FakeSale = NewSale & { id: string; lines: NewSaleLine[]; payments: Payment[] };
+export type FakeSale = NewSale & { id: string; createdAt: Date; lines: NewSaleLine[]; payments: Payment[] };
 
 export type FakeCheckoutUnitOfWork = CheckoutUnitOfWork & {
   stock: FakeStockUnitOfWork;
@@ -24,7 +24,7 @@ function fakeSaleWriter(sales: FakeSale[]): SaleWriter {
   return {
     insertSale: async (sale) => {
       const id = crypto.randomUUID();
-      sales.push({ ...sale, id, lines: [], payments: [] });
+      sales.push({ ...sale, id, createdAt: new Date(Date.UTC(2026, 9, 25, 15, sales.length)), lines: [], payments: [] });
       return id;
     },
     insertLine: async (saleId, line) => {

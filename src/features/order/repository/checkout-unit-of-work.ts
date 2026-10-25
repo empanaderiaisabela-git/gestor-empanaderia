@@ -6,7 +6,7 @@ import { drizzleSaleWriter, type SaleWriter } from './sale-writer.repository';
 
 export type SaleAuditEntry = {
   userId: string;
-  action: 'CREAR';
+  action: 'CREAR' | 'ELIMINAR';
   entity: 'SALE';
   entityId: string;
   detail: Record<string, unknown>;
@@ -23,7 +23,7 @@ export type CheckoutUnitOfWork = {
   run<T>(work: (scope: CheckoutScope) => Promise<T>): Promise<T>;
 };
 
-function auditIn(tx: DbTransaction): CheckoutScope['audit'] {
+export function auditIn(tx: DbTransaction): CheckoutScope['audit'] {
   return async (entry) => {
     await tx.insert(auditLogs).values(entry);
   };

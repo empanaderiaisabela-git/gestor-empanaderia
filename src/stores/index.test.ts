@@ -5,12 +5,11 @@ import { useDeviceStore } from '@/features/device/store/device.store';
 import { useMenuStore } from '@/features/menu/store/menu.store';
 import { useProductStore } from '@/features/product/store/product.store';
 import { useProviderStore } from '@/features/provider/store/provider.store';
-import { useSaleStore } from '@/features/sale/store/sale.store';
 import { useStatsStore } from '@/features/stats/store/stats.store';
 import { useUserStore } from '@/features/user/store/user.store';
 import { invalidateAllCaches } from './index';
 
-const STORES = [useAuditStore, useCustomerStore, useDeviceStore, useMenuStore, useProductStore, useProviderStore, useSaleStore, useStatsStore, useUserStore];
+const STORES = [useAuditStore, useCustomerStore, useDeviceStore, useMenuStore, useProductStore, useProviderStore, useStatsStore, useUserStore];
 
 const FILL = [
   () => useAuditStore.getState().setLogs([]),
@@ -19,7 +18,6 @@ const FILL = [
   () => useMenuStore.getState().setItems([]),
   () => useProductStore.getState().setProducts([]),
   () => useProviderStore.getState().setProviders([]),
-  () => useSaleStore.getState().setSales([]),
   () => useStatsStore.getState().setStats(null),
   () => useUserStore.getState().setUsers([]),
 ];

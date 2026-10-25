@@ -1,8 +1,8 @@
-# Feature: pedido (tablero de ventas y cobro)
+# Feature: pedido (tablero, cobro e historial de ventas)
 
-- **US relacionadas**: US-5 (tablero y pedido actual) y US-6 (cobro). US-7 (historial) lo extiende.
-- **Código**: `src/features/order/` (domain, store, actions, services, repository, ui, testing). Pantalla en
-  `src/app/(main)/ventas/nueva/`.
+- **US relacionadas**: US-5 (tablero y pedido actual), US-6 (cobro) y US-7 (historial, comprobante y anulación).
+- **Código**: `src/features/order/` (domain, store, actions, services, repository, ui, testing). Pantallas en
+  `src/app/(main)/ventas/` (Ventas/Pedidos) y `src/app/(main)/ventas/nueva/` (tablero).
 - **Datos que usa**: gustos, bebidas, precios del grupo y stock del feature `menu` (`fetchMenuItems`,
   `fetchMenuGroupPrices`). Al cobrar escribe en `sales`, `sale_lines`, `sale_line_items`, `sale_payments` y
   `audit_logs`, y descuenta `menu_items.stock` (tablas en `src/lib/db/order-schema.ts` y `schema.ts`).
@@ -68,8 +68,23 @@ costos ni total: `checkoutSchema` es `strictObject` y rechaza cualquier campo de
 Si el cobro sale bien, el pedido se vacía y el tablero vuelve a leer gustos y stock. Si falla, el pedido queda como
 estaba, se muestra el motivo y también se recargan precios y stock, porque pueden haber cambiado.
 
-Mientras exista el historial viejo de `/ventas` (hasta US-7), las ventas nuevas aparecen ahí sin el detalle de las
-líneas, y anularlas desde esa pantalla no repone el stock nuevo.
+## Historial, comprobante y anulación (US-7)
+
+**Ventas/Pedidos** (`/ventas`) es el historial: fecha y hora de Argentina, comprador ("Sin nombre" si no hay),
+vendedor, el pedido, los medios de pago, el descuento y el total, con búsqueda por comprador o vendedor y filtro por
+fechas (días de Argentina, con `argentinaDay`). **"Nuevo pedido"** abre el tablero; reemplaza al "Nueva Venta" del
+POS viejo ("Consideraciones del primer sprint" de `specs.md`).
+
+- **Comprobante**: la marca, comprador y vendedor, cada línea con su presentación y sus gustos (también la mitad y
+  mitad), el subtotal, los descuentos, el total y cada pago. Se imprime con el navegador.
+- **Anular** (sólo admin), en `sale-history.service` y en una transacción:
+  1. Bloquea la venta con `SELECT … FOR UPDATE`. Si ya no está, `NOT_FOUND`: una venta no se anula dos veces.
+  2. Repone el stock de cada gusto con lo que guardó el cobro (`sale_line_items`): la mitad y mitad devuelve ½ de
+     cada uno. Los gustos se bloquean ordenados por id, como en el cobro.
+  3. Borra los pagos y la venta (las líneas se borran en cascada) y audita `ELIMINAR` / `SALE` con lo que tenía.
+
+El historial muestra sólo las ventas del modelo nuevo (con líneas). Las del POS viejo quedan hasta que T-12 las
+borre.
 
 ## Errores
 
@@ -81,6 +96,10 @@ líneas, y anularlas desde esa pantalla no repone el stock nuevo.
 | Un gusto que ya no existe | `NOT_FOUND` | El/la producto seleccionado ya no existe. | `checkout-errors.test.ts` |
 | Un gusto no alcanza | `INSUFFICIENT_STOCK` | No hay stock suficiente de {gusto}. | `checkout-errors.test.ts` y `checkout.service.int.test.ts` |
 | Otro movimiento cambió el gusto entre el bloqueo y el guardado | `STALE_VERSION` | mensaje de concurrencia | `checkout-errors.test.ts` |
+| Anular: el vendedor lo intenta | `FORBIDDEN` | Solo los administradores pueden realizar esta acción | `sale-history.contract.test.ts` |
+| Anular: la venta no existe o ya se anuló | `NOT_FOUND` | El/la venta seleccionado ya no existe. | `sale-history.contract.test.ts` y `sale-history.service.int.test.ts` |
+| Anular: id inválido | `VALIDATION` | Los datos proporcionados no son válidos. | `sale-history.contract.test.ts` |
+| Anular: un gusto ya no existe, o cambió en el medio | `NOT_FOUND` / `STALE_VERSION` | idem | `sale-history.service.test.ts` |
 
 En el modal, antes de llegar al servidor (`ui/checkout-form.ts`): "El descuento va de 0 a 100 %", "El descuento no
 puede ser negativo", "El descuento no puede dejar el total en $0", "Elegí un medio de pago" y "Los pagos tienen
@@ -92,8 +111,13 @@ que sumar el total".
 |---|---|---|
 | Usar el tablero (`/ventas/nueva`) | Sí | Sí |
 | Cobrar (`checkoutAction`) | Sí | Sí |
+| Ver Ventas/Pedidos y el comprobante (`fetchSaleHistory`) | Sí | Sí |
+| Anular una venta (`voidSaleAction`) | Sí | No |
 
 ## Pantallas
+
+`src/app/(main)/ventas/page.tsx` → `SaleHistoryPanel` (`use-sale-history.ts`): la grilla y las tarjetas
+(`sale-history-columns.tsx`), "Nuevo pedido", el comprobante (`sale-receipt.tsx`) y la confirmación de anulación.
 
 `src/app/(main)/ventas/nueva/page.tsx` → `OrderBoard`:
 
@@ -103,18 +127,22 @@ que sumar el total".
 - `CurrentOrder` / `OrderTable`: el pedido, con el total, Vaciar y Cobrar.
 - `CheckoutModal` / `PaymentPicker` (`use-checkout.ts`): el cobro.
 
-Por ahora se entra desde "Tablero de ventas", en la lista de Ventas. "Nueva Venta" sigue abriendo el POS viejo hasta
-que US-7 lo reemplace por el tablero.
+Al tablero se entra con "Nuevo pedido", desde Ventas/Pedidos.
 
 ## Tests
 
 - Unit y fuzz: `domain/*.test.ts` (la suma de unidades nunca supera la presentación; con precios iguales, la surtida
   cuesta lo mismo que la entera; el schema del cobro nunca lanza), `store/order.store.test.ts` y
-  `ui/checkout-form.test.ts`.
-- Servicio con el fake: `services/checkout.service.test.ts` y `services/checkout-errors.test.ts`.
-- Contrato: `actions/checkout.contract.test.ts` (un valor adulterado no cambia lo que se guarda; fuzz).
+  `ui/checkout-form.test.ts` y `ui/sale-history-filter.test.ts`.
+- Servicio con el fake: `services/checkout.service.test.ts`, `services/checkout-errors.test.ts` y
+  `services/sale-history.service.test.ts` (el fake del historial lee el mismo estado que el del cobro).
+- Contrato: `actions/checkout.contract.test.ts` (un valor adulterado no cambia lo que se guarda; fuzz) y
+  `actions/sale-history.contract.test.ts` (roles, errores y fuzz de la anulación).
 - Integración: `services/checkout.service.int.test.ts` (lo guardado en Postgres; dos cobros simultáneos de la última
-  unidad; un gusto que no alcanza no deja nada a medias).
-- Componente: `ui/*.test.tsx` (tarjeta de grupo, lista de gustos, pedido actual, tablero y cobro).
+  unidad; un gusto que no alcanza no deja nada a medias) y `services/sale-history.service.int.test.ts` (líneas en
+  orden, reposición exacta, dos anulaciones simultáneas, ventas viejas fuera del historial).
+- Componente: `ui/*.test.tsx` (tarjeta de grupo, lista de gustos, pedido actual, tablero, cobro, grilla de ventas,
+  comprobante y panel).
 - E2E: `tests/tablero-ventas.spec.ts` y `tests/cobro.spec.ts` (armar, cobrar con efectivo y débito, y ver el stock
-  descontado en `/stock`).
+  descontado en `/stock`) y `tests/historial-ventas.spec.ts` ("Nuevo pedido", la venta en la grilla, el comprobante y
+  la anulación que repone el stock).

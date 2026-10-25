@@ -70,7 +70,7 @@ export async function consumeStock(scope: CheckoutScope, items: LockedItems, lin
   }
 }
 
-export function saleLineOf({ line, unitPrice, subtotal }: PricedLine, items: LockedItems): NewSaleLine {
+export function saleLineOf({ line, unitPrice, subtotal }: PricedLine, items: LockedItems): Omit<NewSaleLine, 'position'> {
   const saleItems = [...lineUsage(line)].map(([menuItemId, units]) => ({ menuItemId, units, unitCost: Number(itemOf(items, menuItemId).unitCost) }));
   const description = describeFlavors(line, (id) => itemOf(items, id).name);
   return { group: line.group, presentationKey: line.presentationKey, quantity: line.quantity, unitPrice, subtotal, description, items: saleItems };

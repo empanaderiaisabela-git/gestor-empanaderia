@@ -934,7 +934,7 @@ retira cuando la reemplaza su ítem, y T-12 borra el resto. `main` recibe el spr
 | 7   | [US-4](#us-4--stock-grilla-ingresar-stock-y-mermas)                             | Stock: grilla, ingresar stock y mermas                         | En revisión | US-3       | 3 h 30 min      |
 | 8   | [US-5](#us-5--ventas-tablero-por-comida-y-pedido-actual)                        | Ventas: tablero por comida y pedido actual                     | En revisión | US-4       | 4 h 40 min      |
 | 9   | [US-6](#us-6--ventas-cobrar-con-4-medios-de-pago-y-precios-del-servidor)        | Ventas: cobrar con 4 medios de pago y precios del servidor     | En revisión | US-5       | 3 h 50 min      |
-| 10  | [US-7](#us-7--ventas-historial-comprobante-y-anulación)                         | Ventas: historial, comprobante y anulación                     | Pendiente   | US-6       | 2 h 30 min      |
+| 10  | [US-7](#us-7--ventas-historial-comprobante-y-anulación)                         | Ventas: historial, comprobante y anulación                     | En revisión | US-6       | 2 h 30 min      |
 | 11  | [US-15](#us-15--ventas-colores-y-emojis-de-cada-grupo)                          | Ventas: colores y emojis de cada grupo                         | Pendiente   | US-5       | 1 h             |
 | 12  | [T-12](#t-12--retirar-el-modelo-heredado-de-la-casa-de-celulares)               | Retirar el modelo heredado de la casa de celulares             | Pendiente   | US-7, T-11 | 3 h 30 min      |
 | 13  | [T-13](#t-13--cierre-del-sprint-1)                                              | Cierre del Sprint 1                                            | Pendiente   | todos      | 1 h             |
@@ -1588,9 +1588,9 @@ venta quede registrada con su comprador y descuente el stock.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
-| Dueño        | —         |
-| Inicio       | —         |
+| Estado       | En revisión |
+| Dueño        | Ignacio Tomas |
+| Inicio       | 2026-10-25 |
 | Tamaño       | M         |
 | Depende de   | US-6      |
 | Plan         | —         |
@@ -1602,13 +1602,45 @@ una venta, de forma que los errores de carga se corrijan y el stock vuelva.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · Ventas/Pedidos muestra el historial con toda la información de la grilla actual (fecha y hora de Argentina, comprador o "Sin nombre", vendedor, medios de pago, descuento e importe), con filtro por fechas y búsqueda. El botón "Nueva Venta" del POS viejo se reemplaza por **"Nuevo pedido"**, que abre el tablero del wireframe · Estimación: 45 min · Completado: —
+- [x] **CA-1** · Ventas/Pedidos muestra el historial con toda la información de la grilla actual (fecha y hora de Argentina, comprador o "Sin nombre", vendedor, medios de pago, descuento e importe), con filtro por fechas y búsqueda. El botón "Nueva Venta" del POS viejo se reemplaza por **"Nuevo pedido"**, que abre el tablero del wireframe · Estimación: 45 min · Completado: 2026-10-25 15:47
 
-- [ ] **CA-2** · Comprobante imprimible con la marca y las líneas del pedido (gustos y pizzas mitad y mitad) · Estimación: 30 min · Completado: —
+- [x] **CA-2** · Comprobante imprimible con la marca y las líneas del pedido (gustos y pizzas mitad y mitad) · Estimación: 30 min · Completado: 2026-10-25 15:47
 
-- [ ] **CA-3** · Anular (sólo admin) repone el stock exacto, también las medias pizzas, y una venta no se puede anular dos veces · Estimación: 45 min · Completado: —
+- [x] **CA-3** · Anular (sólo admin) repone el stock exacto, también las medias pizzas, y una venta no se puede anular dos veces · Estimación: 45 min · Completado: 2026-10-25 15:47
 
-- [ ] **CA-4** · Contrato: el vendedor que anula → `FORBIDDEN`; una venta inexistente → `NOT_FOUND`; README y E2E de anulación actualizados · Estimación: 30 min · Completado: —
+- [x] **CA-4** · Contrato: el vendedor que anula → `FORBIDDEN`; una venta inexistente → `NOT_FOUND`; README y E2E de anulación actualizados · Estimación: 30 min · Completado: 2026-10-25 15:47
+
+**Cierre** (2026-10-25) · [README del feature](docs/features/order/README.md)
+
+- **CA-1**:
+  - Ventas/Pedidos (`/ventas`) es el historial nuevo, con:
+    - fecha y hora de Argentina;
+    - comprador ("Sin nombre" si no hay) y vendedor;
+    - el pedido, los medios de pago, el descuento y el total;
+    - búsqueda por comprador o vendedor y filtro por días de Argentina.
+  - "Nuevo pedido" abre el tablero y reemplaza a "Nueva Venta" y al link provisorio "Tablero de ventas".
+  - Muestra sólo las ventas del modelo nuevo.
+- **CA-2**: comprobante imprimible con:
+  - la marca, comprador y vendedor;
+  - cada línea con su presentación y sus gustos (también la mitad y mitad);
+  - subtotal, descuentos, total y cada pago.
+- **CA-3**: anular (sólo admin):
+  - bloquea la venta y repone el stock exacto desde lo que guardó el cobro (la mitad y mitad devuelve ½ de cada gusto);
+  - borra la venta y audita `ELIMINAR` / `SALE`.
+  - Integración: dos anulaciones simultáneas → una anula y la otra recibe `NOT_FOUND`, sin reponer dos veces.
+- **CA-4**:
+  - Contrato: el vendedor que anula → `FORBIDDEN`; una venta inexistente → `NOT_FOUND`; un id inválido →
+    `VALIDATION`; fuzz.
+  - E2E `tests/historial-ventas.spec.ts`: "Nuevo pedido", cobro, la venta en la grilla, el comprobante y la
+    anulación con el stock repuesto en `/stock`.
+- Migración `0009_sale-lines-position`: las líneas guardan su orden para el comprobante.
+- **Retiro del POS viejo**:
+  - Se borraron el feature `sale` completo, `sales-panel.tsx`, la grilla y la tarjeta de ventas viejas, y el store de
+    ventas.
+  - También salieron los `TEST_IDS` de ventas, `ventas.spec.ts`, `VentasPage.ts`, el escenario B de
+    `concurrencia.spec.ts` y `catalog-revalidation-sales.int.test.ts`.
+  - `eslint-legacy.json` bajó de 130 a 116 archivos.
+  - La regresión de BUG-6 (sin `password_hash`) ahora cubre el historial nuevo.
 
 ### US-15 · Ventas: colores y emojis de cada grupo
 

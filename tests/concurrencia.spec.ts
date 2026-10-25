@@ -2,7 +2,6 @@ import { test, expect } from '@playwright/test';
 import { ClientesPage } from './pages/ClientesPage';
 import { ProductosPage } from './pages/ProductosPage';
 import { ProveedoresPage } from './pages/ProveedoresPage';
-import { VentasPage } from './pages/VentasPage';
 import { EquiposPage } from './pages/EquiposPage';
 
 test.describe.parallel('Pruebas de Concurrencia', () => {
@@ -49,55 +48,6 @@ test.describe.parallel('Pruebas de Concurrencia', () => {
     await fila2Sync.getByRole('button', { name: ClientesPage.UI.BTN_EDITAR, exact: true }).click();
 
     await expect(clientesPage2.inputTelefono).toHaveValue('1111111111');
-
-    await context1.close();
-    await context2.close();
-  });
-
-  test('Escenario B: Venta vs Edición de Producto', async ({ browser }) => {
-    const context1 = await browser.newContext();
-    const context2 = await browser.newContext();
-
-    const errorMessage = 'Los datos en el servidor han cambiado. Por favor, sincroniza la lista e intenta nuevamente.';
-
-    const page1 = await context1.newPage();
-    const page2 = await context2.newPage();
-
-    const productosPage1 = new ProductosPage(page1);
-
-    const clientesPage = new ClientesPage(page2);
-    await clientesPage.goto();
-    const cliente = await clientesPage.inyectarClienteEfimero();
-
-    await productosPage1.goto();
-    const producto = await productosPage1.inyectarProductoEfimero();
-
-    // Usuario 2 Inicia venta
-    const ventasPage2 = new VentasPage(page2);
-    await ventasPage2.goto();
-    await ventasPage2.abrirModalVenta();
-    await ventasPage2.elegirCliente(cliente.nombre);
-    await ventasPage2.elegirProducto(producto.equipo, producto.descripcion);
-
-    // Usuario 1 Inicia edicion
-    const nuevaDesc = producto.descripcion + 'a';
-    await productosPage1.abrirFormularioEdicion(producto.equipo, producto.proveedor, producto.descripcion);
-    await productosPage1.completarFormularioEdicion(producto.equipo, producto.proveedor, undefined, undefined, nuevaDesc);
-
-    // Usuario 2 finaliza venta
-    await ventasPage2.confirmarCarrito();
-    await ventasPage2.omitirDescuento();
-    await ventasPage2.agregarMetodoEfectivo();
-    await ventasPage2.finalizarFactura();
-
-    await ventasPage2.buscarVenta(cliente.nombre);
-    await expect(ventasPage2.obtenerFilaPorNombre(cliente.nombre)).toBeVisible({ timeout: 30_000 });
-
-    // Usuario 1 Finaliza edicion
-    await productosPage1.confirmarFormularioEdicion();
-
-    // Asserts
-    await expect(page1.getByText(errorMessage)).toBeVisible();
 
     await context1.close();
     await context2.close();

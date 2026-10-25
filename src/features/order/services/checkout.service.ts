@@ -25,7 +25,7 @@ async function checkout(scope: CheckoutScope, caller: Caller, input: CheckoutDat
   if (total < 0 || !paymentsCover(total, payments)) throw new AppError('VALIDATION');
   await consumeStock(scope, items, lines);
   const saleId = await scope.sales.insertSale({ vendorId: caller.id, buyerName, total, discountAmount, discountPercentage });
-  for (const line of priced) await scope.sales.insertLine(saleId, saleLineOf(line, items));
+  for (const [position, line] of priced.entries()) await scope.sales.insertLine(saleId, { ...saleLineOf(line, items), position });
   await scope.sales.insertPayments(saleId, payments);
   await scope.audit({ userId: caller.id, action: 'CREAR', entity: 'SALE', entityId: saleId, detail: { total, buyerName, lines: priced.length, payments } });
   return { saleId, total };
