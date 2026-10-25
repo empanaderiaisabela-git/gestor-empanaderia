@@ -110,7 +110,6 @@
   "src/lib/db/schema.ts",
   "src/lib/db/scripts/backfill-sale-item-cost.ts",
   "src/lib/db/scripts/seed-stress-test.ts",
-  "src/lib/db/scripts/seed-users.ts",
   "src/lib/db/scripts/setup-initial-data.ts",
   "src/lib/db/scripts/wipe-db.ts",
   "src/lib/utils.ts",

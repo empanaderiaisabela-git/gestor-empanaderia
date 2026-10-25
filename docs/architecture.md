@@ -310,8 +310,9 @@ y `next start`, que corren con `NODE_ENV=production`, usan la base local o la qu
 
 > **Cuidado.** Los scripts `db:*` usan `.env.prod` si `APP_ENV=production`, y `db:seed` / `db:reset-data`
 > **borran todas las tablas, usuarios incluidos**. Desde BUG-3, `db:seed`, `db:reset-data` y `db:reset-full` se
-> niegan a correr con `APP_ENV=production` o contra una base que no sea local (`assert-safe-to-wipe.ts`). `wipe-db.ts`
-> y `db:seed-users` todavía no tienen esa guarda (BUG-10).
+> niegan a correr con `APP_ENV=production` o contra una base que no sea local (`assert-safe-to-wipe.ts`); desde BUG-10
+> también `wipe-db.ts`, y `db:reset-full` ya no genera migraciones. `db:seed-users` sólo crea los usuarios iniciales que
+> faltan: nunca pisa la contraseña ni el rol de uno que ya existe.
 
 ## Mobile (Capacitor)
 

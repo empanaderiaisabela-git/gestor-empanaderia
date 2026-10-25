@@ -196,8 +196,8 @@ exacto de archivos es `eslint-legacy.json`. Si tu ítem corrige un archivo hered
   `NODE_ENV` ya no elige la base: `next build` y `next start` usan la base local.
 - **Peligro con datos reales:**
   - `db:seed`, `db:reset-data` y `db:reset-full` **borran todas las tablas**.
-  - Desde BUG-3 se niegan a correr con `APP_ENV=production` o contra una base que no sea local. `wipe-db.ts` y
-    `db:seed-users` todavía no tienen esa guarda (BUG-10, Sprint 1).
+  - Desde BUG-3 se niegan a correr con `APP_ENV=production` o contra una base que no sea local, y desde BUG-10
+    también `wipe-db.ts`. `db:seed-users` sólo crea los usuarios iniciales que faltan, sin pisar los existentes.
   - **Nunca corras nada con `APP_ENV=production`**, y nunca leas ni modifiques `.env.prod`.
 
 ## 8. Cómo se trabaja

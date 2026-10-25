@@ -926,7 +926,7 @@ retira cuando la reemplaza su ítem, y T-12 borra el resto. `main` recibe el spr
 | --- | ------------------------------------------------------------------------------- | -------------------------------------------------------------- | ----------- | ---------- | --------------- |
 | 0   | [T-10](#t-10--backlog-de-los-sprints-1-y-2-desde-specsmd)                       | Backlog de los Sprints 1 y 2 desde `specs.md`                  | En revisión | —          | 30 min          |
 | 1   | [BUG-12](#bug-12--el-vendedor-puede-pedir-las-estadísticas-del-dashboard)       | El vendedor puede pedir las estadísticas                       | En revisión | T-4        | 25 min          |
-| 2   | [BUG-10](#bug-10--scripts-destructivos-que-quedaron-fuera-de-bug-3)             | Scripts destructivos que quedaron fuera de BUG-3               | Pendiente   | BUG-3      | 40 min          |
+| 2   | [BUG-10](#bug-10--scripts-destructivos-que-quedaron-fuera-de-bug-3)             | Scripts destructivos que quedaron fuera de BUG-3               | En revisión | BUG-3      | 40 min          |
 | 3   | [T-11](#t-11--el-catálogo-público-se-regenera-sólo-cuando-cambia)               | El catálogo público se regenera sólo cuando cambia             | Pendiente   | —          | 1 h 5 min       |
 | 4   | [US-1](#us-1--la-app-con-la-marca-empanadería-isabela)                          | La app con la marca Empanadería Isabela                        | Pendiente   | —          | 1 h 50 min      |
 | 5   | [US-2](#us-2--menú-por-rol-y-sidebar-más-angosto)                               | Menú por rol y sidebar más angosto                             | Pendiente   | —          | 1 h 15 min      |
@@ -1041,9 +1041,9 @@ en vez del campo `error` de `ActionResult`.
 
 | Campo        | Valor           |
 | ------------ | --------------- |
-| Estado       | Pendiente       |
-| Dueño        | —               |
-| Inicio       | —               |
+| Estado       | En revisión |
+| Dueño        | Ignacio Tomas |
+| Inicio       | 2026-10-25 |
 | Tamaño       | S               |
 | Depende de   | BUG-3           |
 | Plan         | —               |
@@ -1062,15 +1062,31 @@ existentes.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · `wipe-db.ts` usa la guarda de BUG-3, con su test `regression BUG-10` · Estimación: 15 min · Completado: —
+- [x] **CA-1** · `wipe-db.ts` usa la guarda de BUG-3, con su test `regression BUG-10` · Estimación: 15 min · Completado: 2026-10-25 03:03
 
-- [ ] **CA-2** · `db:reset-full` no ejecuta `db:generate` · Estimación: 5 min · Completado: —
+- [x] **CA-2** · `db:reset-full` no ejecuta `db:generate` · Estimación: 5 min · Completado: 2026-10-25 03:03
 
-- [ ] **CA-3** · `db:seed-users` sólo crea los usuarios que faltan, con su test · Estimación: 20 min · Completado: —
+- [x] **CA-3** · `db:seed-users` sólo crea los usuarios que faltan, con su test · Estimación: 20 min · Completado: 2026-10-25 03:03
 
 **Preguntas abiertas**
 
 - ¿`db:seed-users` tiene que poder correr contra producción para crear la primera cuenta real?
+
+**Notas**
+
+- **CA-1**: `wipe-db.ts` carga el mismo archivo de entorno que la app (`envFileFor`; antes leía un `.env` que no
+  existe) y pide la URL a `wipeTargetUrl`, que pasa por la guarda de BUG-3. Tests `regression BUG-10` en
+  `wipe-target.test.ts`. Evidencia: con `APP_ENV=production` y con un host remoto falso sale con código 1 y
+  "Script destructivo bloqueado…", sin conectarse. Sigue en la lista legacy (usa `pg` y SQL de esquema).
+- **CA-2**: los pasos de `reset-full` viven en `reset-steps.ts` (borrar → migrar → datos), con su test.
+  Evidencia: `npx dotenv -e .env.test -- npm run db:reset-full` corrió los 3 pasos contra `db-test` y no creó
+  migraciones.
+- **CA-3**: `usersToCreate` (`seed-missing-users.ts`) devuelve sólo los usuarios iniciales que faltan, con tests y
+  un fuzz. `seed-users.ts` se reescribió con las reglas duras y salió de `eslint-legacy.json` (132 → 131).
+  Evidencia contra `db-test`: la primera corrida creó `admin` y `vendedor`; después se le cambió el rol al `admin`
+  y la segunda corrida no lo tocó ("no se modificó ninguno").
+- **Pregunta abierta, sin cambios**: `db:seed-users` no tiene guarda de producción, porque no borra ni pisa nada.
+  Si se corre contra producción y falta `admin`, lo crea con la contraseña `admin`: el dev decide si eso se quiere.
 
 ### T-11 · El catálogo público se regenera sólo cuando cambia
 
