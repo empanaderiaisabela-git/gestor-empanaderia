@@ -42,7 +42,7 @@ export function ProvidersPanel(): JSX.Element {
         onClose={() => manager.setItemToDelete(null)}
         onConfirm={() => actions.handleDelete(manager.itemToDelete ?? '')}
         title='Eliminar Firma Proveedor'
-        description='Esta acción es permanente y eliminará el registro físico de la base de datos. Solo recomendado si lo creaste por error y aún no tiene productos asociados.'
+        description='Esta acción es permanente y eliminará el registro físico de la base de datos. Solo recomendado si lo creaste por error y aún no tiene ingresos de stock asociados.'
         submitLabel='Desvincular'
         isPending={actions.isPending}
       />

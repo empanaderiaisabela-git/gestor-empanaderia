@@ -165,7 +165,7 @@ Cómo está armado (desde T-6):
 | `db-test` | postgres:15 en `127.0.0.1:5434`, base `stock_test`, con `tmpfs` (los datos no sobreviven al contenedor y es más rápido) y perfil `test` (`docker compose up -d` no lo levanta). Se configura en `.env.test`, que está versionado. Se levanta con `docker compose up -d --wait db-test`. |
 | Integración | `src/test/integration.global-setup.ts` aborta si `NODE_ENV=production`, si `APP_ENV=production` o si `LOCAL_DATABASE_URL` no es la de `db-test`, y aplica las migraciones (incluida `0005_enable-unaccent`). Cada test arranca con las tablas vacías (`truncateAll()`, T-4). |
 | E2E | `npm run test:e2e` carga `.env.test`, y `playwright.config.ts` aborta si la URL no es la de `db-test`. El `webServer` (`npm run e2e:server`) vuelve a verificarla, aplica las migraciones, carga el seed (`db:seed`: `admin`, `vendedor` y datos de demo) y levanta la app con `next build` + `next start` en el puerto 3100, con la carpeta `.next-e2e`. El proyecto `setup` inicia sesión y abre cada pantalla del panel (prueba de humo). Detalle en [`tests/readme.md`](../tests/readme.md). |
-| Scripts destructivos | `db:seed`, `db:reset-data` y `db:reset-full` se niegan a correr si la URL no es local o si `APP_ENV=production` (BUG-3); `wipe-db` y `seed-users`, todavía no (BUG-10). |
+| Scripts destructivos | `db:seed`, `db:reset-data`, `db:reset-full` y `wipe-db` se niegan a correr si la URL no es local o si `APP_ENV=production` (BUG-3 y BUG-10). `db:seed-users` sólo crea los usuarios que faltan. |
 
 ## Reportes
 

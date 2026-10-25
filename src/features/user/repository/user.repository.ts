@@ -1,6 +1,7 @@
 import { desc, eq, sql, ilike, and } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { users } from '@/lib/db/schema';
+import { stockEntries, stockLosses } from '@/lib/db/stock-schema';
 import * as bcrypt from 'bcrypt';
 import type { UserInput, UserUpdateInput } from '@/features/user/domain/user.schema';
 import { ConcurrencyError, DuplicateEntityError } from '@/lib/errors';
@@ -53,12 +54,13 @@ export class UserRepository {
   }
 
   async checkHasRelations(id: string, dbtx: any = db) {
-    const [performedLog, sale, loss] = await Promise.all([
+    const [performedLog, sale, entries, losses] = await Promise.all([
       dbtx.query.auditLogs.findFirst({ where: (l: any, { eq }: any) => eq(l.userId, id) }),
       dbtx.query.sales.findFirst({ where: (s: any, { eq }: any) => eq(s.vendorId, id) }),
-      dbtx.query.productLosses.findFirst({ where: (l: any, { eq }: any) => eq(l.userId, id) })
+      dbtx.select({ id: stockEntries.id }).from(stockEntries).where(eq(stockEntries.userId, id)).limit(1),
+      dbtx.select({ id: stockLosses.id }).from(stockLosses).where(eq(stockLosses.userId, id)).limit(1),
     ]);
-    return !!performedLog || !!sale || !!loss;
+    return !!performedLog || !!sale || entries.length > 0 || losses.length > 0;
   }
 
   async updateActiveStatus(id: string, isActive: boolean, dbtx: any = db) {

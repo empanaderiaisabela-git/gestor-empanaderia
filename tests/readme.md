@@ -36,8 +36,9 @@ npx playwright show-report            # reporte HTML de la última corrida
 - Por qué `next build` + `next start` y no `next dev`: con `next dev` cada pantalla y cada Server Action compila
   en frío, y con varios workers en paralelo los tests se cortaban por tiempo (en esta PC, sobre OneDrive). El build
   de producción es estable y se parece a lo que corre en producción.
-- El catálogo (`/home`) usa ISR de 30 s: un cambio de producto aparece en el catálogo recién después de la
-  revalidación. `landing.spec.ts` lo espera recargando hasta 90 s (`esperarQueElCatalogoMuestre`).
+- El catálogo (`/home`) se revalida a demanda (T-11, ADR 0004): un cambio hecho por la UI aparece al instante, pero
+  uno insertado directo en la base no aparece hasta la próxima mutación. Por eso `landing.spec.ts` oculta y muestra
+  el gusto desde Alta de productos, y `esperarQueElCatalogoMuestre` recarga hasta 10 s.
 - Selectores por rol y texto visible; `data-testid` (de `src/constants/test-ids.ts`) sólo cuando no hay otro.
 - Grabar un flujo nuevo: con `npm run e2e:server` levantado en otra terminal (con `.env.test` cargado),
   `npx playwright codegen http://localhost:3100`.
@@ -47,9 +48,13 @@ npx playwright show-report            # reporte HTML de la última corrida
 | Archivo | Qué cubre |
 |---|---|
 | `auth.setup.ts` | Login de admin y prueba de humo de las pantallas del panel |
-| `clientes.spec.ts`, `equipos.spec.ts`, `proveedores.spec.ts`, `productos.spec.ts`, `usuarios.spec.ts` | ABM, validaciones, activar/desactivar y borrar |
-| `ventas.spec.ts` | Venta completa con descuento y pago |
-| `concurrencia.spec.ts` | Dos sesiones a la vez: edición perdida, venta contra edición, borrado de una entidad relacionada |
-| `landing.spec.ts` | Visibilidad de un producto en el catálogo público, respetando la revalidación de ISR |
-| `pruebasCompuestas.spec.ts` | Borrados bloqueados por registros relacionados |
+| `clientes.spec.ts`, `proveedores.spec.ts`, `usuarios.spec.ts` | ABM, validaciones, activar/desactivar y borrar (un proveedor con ingresos de stock no se borra) |
+| `navegacion.spec.ts` | Menú y permisos de ruta por rol |
+| `stock.spec.ts` | Ingresar stock y ver el historial de ingresos |
+| `tablero-ventas.spec.ts` | Armar surtidas y pizzas mitad y mitad en el tablero; una línea incompleta no deja cobrar |
+| `cobro.spec.ts` | Cobrar con efectivo y débito y ver el stock descontado |
+| `historial-ventas.spec.ts` | "Nuevo pedido", la venta en Ventas/Pedidos, el comprobante y la anulación que repone el stock |
+| `concurrencia.spec.ts` | Dos sesiones a la vez: edición perdida, y un proveedor que se borra mientras otro carga un ingreso de stock con él |
+| `landing.spec.ts` | Ocultar y mostrar un gusto desde Alta de productos se refleja al instante en el catálogo público (revalidación a demanda) |
+| `pruebasCompuestas.spec.ts` | Un gusto que ya se vendió no se puede borrar |
 | `pages/` | Page Objects |

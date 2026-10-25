@@ -55,7 +55,7 @@ export function getCustomerColumns({ role, onEdit, onToggleActive }: ColumnActio
           )}
           <button
             onClick={() => onEdit(c)}
-            className='p-1.5 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 rounded-lg transition'
+            className='p-1.5 text-brand-600 dark:text-brand-400 hover:bg-brand-50 rounded-lg transition'
             title='Editar Profile'
           >
             <Edit className='w-4 h-4' />

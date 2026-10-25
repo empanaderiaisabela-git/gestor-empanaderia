@@ -1,0 +1,151 @@
+# Feature: pedido (tablero, cobro e historial de ventas)
+
+- **US relacionadas**: US-5 (tablero y pedido actual), US-6 (cobro) y US-7 (historial, comprobante y anulación).
+- **Código**: `src/features/order/` (domain, store, actions, services, repository, ui, testing). Pantallas en
+  `src/app/(main)/ventas/` (Ventas/Pedidos) y `src/app/(main)/ventas/nueva/` (tablero).
+- **Datos que usa**: gustos, bebidas, precios del grupo y stock del feature `menu` (`fetchMenuItems`,
+  `fetchMenuGroupPrices`). Al cobrar escribe en `sales`, `sale_lines`, `sale_line_items`, `sale_payments` y
+  `audit_logs`, y descuenta `menu_items.stock` (tablas en `src/lib/db/order-schema.ts` y `schema.ts`).
+
+## Qué hace
+
+El vendedor arma el pedido en un tablero con una subdivisión por grupo (Empanadas, Pizzas, Sanguches, Ciabattas,
+Coca-Cola y Pepsi). Cada subdivisión tiene un botón por presentación. Al tocarlo se abre la lista de gustos:
+
+- **Empanadas y Sanguches** (1, 3, 6 y 12): cada gusto tiene **"Agregar uno"** (+1 de ese gusto) y
+  **"Completar"** (llena lo que falta con ese gusto). Así se arman las surtidas dentro de la misma presentación.
+- **Pizzas**: "1 sabor" pide un gusto; "2 sabores" pide dos gustos distintos (mitad y mitad).
+- **Ciabattas y bebidas**: "Agregar" suma una unidad.
+
+La lista queda abierta para seguir cargando hasta tocar "Listo". El "Pedido actual" muestra comida, cantidad,
+unidades e importe, el total y el comprador (opcional; vacío = "Sin nombre"). Una línea a medio armar muestra
+"faltan N" y no deja cobrar.
+
+## Reglas de negocio
+
+| Regla | Fuente |
+|---|---|
+| En una presentación de más de 1 unidad, un gusto con "Completar" se carga para toda la cantidad que falta | `specs.md` (EMPANADAS, SANDWICH y AGREGADO) |
+| Surtidas con "Agregar uno" y "Completar" dentro de la misma presentación | `specs.md` (AGREGADO) |
+| Precio de Empanadas y Ciabattas: el del grupo para esa presentación, sea cual sea el gusto | `specs.md` (Aclaración de precios) |
+| Precio de una surtida de Sanguches: Σ (unidades del gusto ÷ unidades de la presentación × precio de esa presentación del gusto), redondeado a 2 decimales | dev, 2026-10-25 |
+| Pizza de 2 sabores: el precio del sabor más caro; consume ½ de cada gusto | `specs.md` y dev |
+| Costo de una mitad y mitad: ½ del costo de cada gusto | dev, 2026-10-25 |
+| No se ofrece un gusto si no alcanza el stock, contando lo que ya está en el pedido | US-5 CA-5 |
+| Una línea incompleta bloquea el cobro, en la pantalla y en el servidor | dev, 2026-10-25 |
+| Dos líneas iguales y completas se juntan con cantidad 2 | US-5 |
+| Medios de pago: Efectivo, Transferencia, Débito y Crédito; hasta 2 por venta y distintos | `specs.md` y US-6 |
+| Descuento: primero el porcentaje y después el monto, como el POS de siempre | US-6 CA-5 |
+| En Crédito sólo se registra el medio; tarjeta, cuotas y recargo llegan con US-11 | US-6 |
+
+Las reglas son funciones puras de `domain/`:
+
+- `order-line.ts`: `addFlavor`, `isComplete`, `remaining` y `mergeLine`.
+- `order-pricing.ts`: `unitLinePrice`, `linePrice` y `orderTotal`.
+- `order-usage.ts`: consumo de stock, stock disponible y `lineCost`.
+- `order-describe.ts`: textos del pedido.
+- `order-validation.ts`: `isValidLine`, `applyDiscount`, `paymentsCover` y los medios de pago.
+
+Corren en el navegador y el servidor las reutiliza al cobrar.
+
+## Cobro (US-6)
+
+"Cobrar" abre un modal con el comprador, el descuento en % y en $, y los 4 medios de pago. Se eligen hasta 2: con
+dos, se carga el monto del primero y el segundo se lleva el resto. El navegador manda **sólo** el pedido (grupo,
+presentación, gustos con sus unidades y cantidad), el comprador, el descuento y los pagos. Nunca manda precios,
+costos ni total: `checkoutSchema` es `strictObject` y rechaza cualquier campo de más.
+
+`checkout.service` hace todo en una transacción:
+
+1. Bloquea los gustos con `SELECT … FOR UPDATE`, de a uno y ordenados por id, para que dos cobros no se traben.
+2. Valida cada línea (`isValidLine`) y que cada gusto esté activo y sea de su grupo.
+3. Recalcula los precios con la base, aplica el descuento y controla que los pagos sumen el total.
+4. Controla el stock de todos los gustos y recién después lo descuenta, filtrando por `id` y `version`.
+5. Guarda la venta (vendedor = quien cobra; comprador o `null`), cada línea con lo cobrado y la descripción de sus
+   gustos, lo que consume de cada gusto con el **costo congelado** (mitad y mitad: 0,5 de cada uno) y los pagos.
+6. Audita `CREAR` / `SALE`.
+
+Si el cobro sale bien, el pedido se vacía y el tablero vuelve a leer gustos y stock. Si falla, el pedido queda como
+estaba, se muestra el motivo y también se recargan precios y stock, porque pueden haber cambiado.
+
+## Historial, comprobante y anulación (US-7)
+
+**Ventas/Pedidos** (`/ventas`) es el historial: fecha y hora de Argentina, comprador ("Sin nombre" si no hay),
+vendedor, el pedido, los medios de pago, el descuento y el total, con búsqueda por comprador o vendedor y filtro por
+fechas (días de Argentina, con `argentinaDay`). **"Nuevo pedido"** abre el tablero; reemplaza al "Nueva Venta" del
+POS viejo ("Consideraciones del primer sprint" de `specs.md`).
+
+- **Comprobante**: la marca, comprador y vendedor, cada línea con su presentación y sus gustos (también la mitad y
+  mitad), el subtotal, los descuentos, el total y cada pago. Se imprime con el navegador.
+- **Anular** (sólo admin), en `sale-history.service` y en una transacción:
+  1. Bloquea la venta con `SELECT … FOR UPDATE`. Si ya no está, `NOT_FOUND`: una venta no se anula dos veces.
+  2. Repone el stock de cada gusto con lo que guardó el cobro (`sale_line_items`): la mitad y mitad devuelve ½ de
+     cada uno. Los gustos se bloquean ordenados por id, como en el cobro.
+  3. Borra los pagos y la venta (las líneas se borran en cascada) y audita `ELIMINAR` / `SALE` con lo que tenía.
+
+El historial muestra sólo las ventas del modelo nuevo (con líneas). Las del POS viejo quedan hasta que T-12 las
+borre.
+
+## Errores
+
+| Situación | Código | Mensaje | Test |
+|---|---|---|---|
+| Sin sesión | `UNAUTHENTICATED` | No autorizado (Token faltante) | `checkout.contract.test.ts` |
+| Entrada mal formada o con precios, costos o total | `VALIDATION` | Los datos proporcionados no son válidos. | `checkout.contract.test.ts` |
+| Línea incompleta, gusto de otro grupo o dado de baja, grupo sin precio, descuento mayor al total o pagos que no suman | `VALIDATION` | idem | `checkout-errors.test.ts` |
+| Un gusto que ya no existe | `NOT_FOUND` | El/la producto seleccionado ya no existe. | `checkout-errors.test.ts` |
+| Un gusto no alcanza | `INSUFFICIENT_STOCK` | No hay stock suficiente de {gusto}. | `checkout-errors.test.ts` y `checkout.service.int.test.ts` |
+| Otro movimiento cambió el gusto entre el bloqueo y el guardado | `STALE_VERSION` | mensaje de concurrencia | `checkout-errors.test.ts` |
+| Anular: el vendedor lo intenta | `FORBIDDEN` | Solo los administradores pueden realizar esta acción | `sale-history.contract.test.ts` |
+| Anular: la venta no existe o ya se anuló | `NOT_FOUND` | El/la venta seleccionado ya no existe. | `sale-history.contract.test.ts` y `sale-history.service.int.test.ts` |
+| Anular: id inválido | `VALIDATION` | Los datos proporcionados no son válidos. | `sale-history.contract.test.ts` |
+| Anular: un gusto ya no existe, o cambió en el medio | `NOT_FOUND` / `STALE_VERSION` | idem | `sale-history.service.test.ts` |
+
+En el modal, antes de llegar al servidor (`ui/checkout-form.ts`): "El descuento va de 0 a 100 %", "El descuento no
+puede ser negativo", "El descuento no puede dejar el total en $0", "Elegí un medio de pago" y "Los pagos tienen
+que sumar el total".
+
+## Roles y permisos
+
+| Acción | admin | vendedor |
+|---|---|---|
+| Usar el tablero (`/ventas/nueva`) | Sí | Sí |
+| Cobrar (`checkoutAction`) | Sí | Sí |
+| Ver Ventas/Pedidos y el comprobante (`fetchSaleHistory`) | Sí | Sí |
+| Anular una venta (`voidSaleAction`) | Sí | No |
+
+## Pantallas
+
+`src/app/(main)/ventas/page.tsx` → `SaleHistoryPanel` (`use-sale-history.ts`): la grilla y las tarjetas
+(`sale-history-columns.tsx`), "Nuevo pedido", el comprobante (`sale-receipt.tsx`) y la confirmación de anulación.
+
+`src/app/(main)/ventas/nueva/page.tsx` → `OrderBoard`:
+
+- `GroupCard` por grupo, rellena con el color de su grupo y con su emoji Unicode (US-15: `src/config/group-theme.ts`
+  y `src/app/group-colors.css`, que también usará el KPI de dinero por comida), "N en pedido" y botones de presentación
+  con el precio (del grupo) o "desde $X".
+  Avisa si el grupo no tiene gustos o si falta el precio del grupo, y deshabilita los botones.
+- `FlavorPicker` / `FlavorRow`: gustos con precio y stock disponible, y los botones según la presentación.
+- `CurrentOrder` / `OrderTable`: el pedido, con el total, Vaciar y Cobrar.
+- `CheckoutModal` / `PaymentPicker` (`use-checkout.ts`): el cobro.
+
+Al tablero se entra con "Nuevo pedido", desde Ventas/Pedidos.
+
+## Tests
+
+- Unit y fuzz: `domain/*.test.ts` (la suma de unidades nunca supera la presentación; con precios iguales, la surtida
+  cuesta lo mismo que la entera; el schema del cobro nunca lanza), `store/order.store.test.ts` y
+  `ui/checkout-form.test.ts` y `ui/sale-history-filter.test.ts`.
+- Servicio con el fake: `services/checkout.service.test.ts`, `services/checkout-errors.test.ts` y
+  `services/sale-history.service.test.ts` (el fake del historial lee el mismo estado que el del cobro).
+- Contrato: `actions/checkout.contract.test.ts` (un valor adulterado no cambia lo que se guarda; fuzz) y
+  `actions/sale-history.contract.test.ts` (roles, errores y fuzz de la anulación).
+- Integración: `services/checkout.service.int.test.ts` (lo guardado en Postgres; dos cobros simultáneos de la última
+  unidad; un gusto que no alcanza no deja nada a medias) y `services/sale-history.service.int.test.ts` (líneas en
+  orden, reposición exacta, dos anulaciones simultáneas, ventas viejas fuera del historial).
+- Componente: `ui/*.test.tsx` (tarjeta de grupo, lista de gustos, pedido actual, tablero, cobro, grilla de ventas,
+  comprobante y panel).
+- Contraste WCAG AA de los textos sobre el color de cada grupo, en claro y oscuro: `src/test/group-colors-contrast.test.ts`.
+- E2E: `tests/tablero-ventas.spec.ts` (también el color real de cada grupo) y `tests/cobro.spec.ts` (armar, cobrar con efectivo y débito, y ver el stock
+  descontado en `/stock`) y `tests/historial-ventas.spec.ts` ("Nuevo pedido", la venta en la grilla, el comprobante y
+  la anulación que repone el stock).

@@ -6,7 +6,7 @@ const emptyModule = fileURLToPath(new URL('./src/test/empty-module.ts', import.m
 const legacyFiles: string[] = JSON.parse(readFileSync(new URL('./eslint-legacy.json', import.meta.url), 'utf8'));
 const literalGlob = (path: string): string => path.replace(/[[\]()*?{}!+@]/g, (char) => `\\${char}`);
 
-const NOT_COVERED = ['eslint/**', 'scripts/**', 'src/config/**', 'src/**/repository/**', 'src/lib/db/schema.ts', 'src/test/**', 'src/**/testing/**'];
+const NOT_COVERED = ['eslint/**', 'scripts/**', 'src/config/**', 'src/**/repository/**', 'src/lib/db/schema.ts', 'src/lib/db/menu-schema.ts', 'src/lib/db/stock-schema.ts', 'src/lib/db/order-schema.ts', 'src/test/**', 'src/**/testing/**'];
 
 export default defineConfig({
   resolve: {
@@ -30,7 +30,7 @@ export default defineConfig({
           environment: 'node',
           include: ['src/**/*.test.ts'],
           exclude: [...configDefaults.exclude, 'src/**/*.int.test.ts'],
-          setupFiles: ['./src/test/setup/next-headers.setup.ts', './src/test/setup/no-database.setup.ts'],
+          setupFiles: ['./src/test/setup/next-headers.setup.ts', './src/test/setup/next-cache.setup.ts', './src/test/setup/no-database.setup.ts'],
         },
       },
       {
@@ -49,7 +49,7 @@ export default defineConfig({
           environment: 'node',
           include: ['src/**/*.int.test.ts'],
           globalSetup: ['./src/test/integration.global-setup.ts'],
-          setupFiles: ['./src/test/setup/next-headers.setup.ts'],
+          setupFiles: ['./src/test/setup/next-headers.setup.ts', './src/test/setup/next-cache.setup.ts'],
           fileParallelism: false,
         },
       },

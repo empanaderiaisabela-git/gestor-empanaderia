@@ -1,24 +1,24 @@
-import type { productLosses, products, saleItems, salePayments, sales } from '@/lib/db/schema';
-
-type ProductRow = typeof products.$inferSelect;
+import type { PaymentType } from '@/features/order/domain/order-validation';
 
 export type DashboardRange = {
   start: Date;
   end: Date;
 };
 
-export type DashboardSale = Pick<typeof sales.$inferSelect, 'total' | 'vendorId'> & {
+export type DashboardItem = { stock: string; unitCost: string };
+
+export type DashboardSale = {
+  total: string;
+  vendorId: string;
   vendor: { username: string } | null;
-  items: Pick<typeof saleItems.$inferSelect, 'unitCost' | 'quantity'>[];
-  payments: Pick<typeof salePayments.$inferSelect, 'type' | 'amount'>[];
+  items: { units: string; unitCost: string }[];
+  payments: { type: PaymentType; amount: string }[];
 };
 
-export type DashboardLoss = Pick<typeof productLosses.$inferSelect, 'quantity'> & {
-  product: Pick<ProductRow, 'purchasePrice'> | null;
-};
+export type DashboardLoss = { quantity: string; unitCost: string };
 
 export type DashboardSnapshot = {
-  products: Pick<ProductRow, 'stock' | 'purchasePrice'>[];
+  items: DashboardItem[];
   sales: DashboardSale[];
   losses: DashboardLoss[];
 };
@@ -30,8 +30,8 @@ export type TopSeller = {
 };
 
 export type DashboardStats = {
-  totalEquipos: number;
-  totalModels: number;
+  totalUnits: number;
+  totalItems: number;
   totalRevenue: number;
   currentInventoryCost: number;
   netProfit: number;
@@ -40,6 +40,6 @@ export type DashboardStats = {
   salesCount: number;
   cashRevenue: number;
   transferRevenue: number;
+  debitRevenue: number;
+  creditRevenue: number;
 };
-
-export type DashboardStatsResult = { success: true; data: DashboardStats } | { success: false; message: string };

@@ -18,7 +18,6 @@ const KEY_LABELS: Record<string, string> = {
   role: 'Rol',
   changes: 'Cambios aplicados',
   // Product
-  deviceName: 'Equipo',
   providerName: 'Proveedor',
   productName: 'Producto',
   description: 'Descripción',
@@ -66,7 +65,7 @@ function BooleanBadge({ value }: { value: boolean }) {
 function PaymentBadge({ type }: { type: string }) {
   const colors: Record<string, string> = {
     efectivo: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400',
-    transferencia: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400',
+    transferencia: 'bg-brand-100 text-brand-700 dark:bg-brand-900/30 dark:text-brand-400',
   };
   return (
     <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold capitalize ${colors[type] ?? 'bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300'}`}>

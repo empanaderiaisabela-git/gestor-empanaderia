@@ -4,7 +4,7 @@ import type { ProviderRepository } from '@/features/provider/repository/provider
 
 export type ProviderRepositoryHarness = {
   repository: ProviderRepository;
-  linkProduct(providerId: string): Promise<void>;
+  linkStockEntry(providerId: string): Promise<void>;
 };
 
 const INPUT = { name: 'Molino del Sur', phone: '1155550000', email: 'ventas@molino.com' };
@@ -60,11 +60,11 @@ export function describeProviderRepository(label: string, setup: () => Promise<P
       expect(await harness.repository.findById(created.id)).toBeNull();
     });
 
-    it('sabe si tiene productos y no deja borrarlo', async () => {
+    it('sabe si tiene ingresos de stock y no deja borrarlo', async () => {
       const created = await harness.repository.insert(INPUT);
-      expect(await harness.repository.hasProducts(created.id)).toBe(false);
-      await harness.linkProduct(created.id);
-      expect(await harness.repository.hasProducts(created.id)).toBe(true);
+      expect(await harness.repository.hasStockEntries(created.id)).toBe(false);
+      await harness.linkStockEntry(created.id);
+      expect(await harness.repository.hasStockEntries(created.id)).toBe(true);
       expect(await failureCode(harness.repository.remove({ id: created.id, version: 1 }))).toBe('HAS_RELATIONS');
     });
 

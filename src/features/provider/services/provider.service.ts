@@ -45,7 +45,7 @@ async function setProviderActive({ providers, audit }: ProviderScope, caller: Ca
 }
 
 async function removeProvider({ providers, audit }: ProviderScope, caller: Caller, ref: ProviderDeleteInput): Promise<void> {
-  if (await providers.hasProducts(ref.id)) throw new AppError('HAS_RELATIONS');
+  if (await providers.hasStockEntries(ref.id)) throw new AppError('HAS_RELATIONS');
   const provider = orStale(await providers.findById(ref.id));
   if (!(await providers.remove(ref))) throw new AppError('STALE_VERSION');
   const detail = { name: provider.name, phone: provider.phone, email: provider.email, note: 'Eliminación permanente' };

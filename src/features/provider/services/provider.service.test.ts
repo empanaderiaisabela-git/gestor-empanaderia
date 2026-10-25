@@ -67,9 +67,9 @@ describe('provider.service', () => {
     expect(fake.state.audits.slice(-2).map((entry) => [entry.action, entry.detail.action])).toEqual([['ELIMINAR', 'Desactivado'], ['ACTUALIZAR', 'Reactivado']]);
   });
 
-  it('HAS_RELATIONS: no borra un proveedor con productos', async () => {
+  it('HAS_RELATIONS: no borra un proveedor con ingresos de stock', async () => {
     const { provider } = await service.create(CALLER, INPUT);
-    fake.state.withProducts.add(provider.id);
+    fake.state.withStockEntries.add(provider.id);
     await expect(service.remove(CALLER, { id: provider.id, version: 1 })).rejects.toMatchObject({ code: 'HAS_RELATIONS' });
   });
 

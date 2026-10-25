@@ -1,6 +1,6 @@
 # Feature: estadísticas del dashboard
 
-- **US relacionadas**: ninguna todavía. Lo tocó BUG-5 (consultas en paralelo).
+- **US relacionadas**: ninguna todavía. Lo tocaron BUG-5 (consultas en paralelo) y BUG-12 (sólo admin).
 - **Código**: `src/features/stats/`:
   - `domain/stats.schema.ts`: tipos del rango, la foto de datos y los totales.
   - `repository/stats.repository.ts`: `getDashboardSnapshot`.
@@ -24,7 +24,7 @@ transferencia, y los 5 vendedores que más vendieron.
   - Valor = Σ precio de compra × stock.
 - **Ventas y mermas del rango**:
   - Ganancia neta = ingresos − costo de lo vendido − costo de las mermas.
-  - El costo de lo vendido usa el costo unitario congelado al momento de la venta (`sale_items.unit_cost`).
+  - El costo de lo vendido usa el costo unitario congelado al momento de la venta (`sale_line_items.unit_cost`; en la mitad y mitad, la mitad del costo de cada gusto).
   - Una merma vale precio de compra actual × cantidad. Si el producto ya no existe, no suma.
 - **Vendedores**:
   - Se agrupan por vendedor y se muestran los 5 con más ventas en pesos.
@@ -39,24 +39,27 @@ transferencia, y los 5 vendedores que más vendieron.
 | Acción | admin | vendedor | público (sin sesión) |
 |---|---|---|---|
 | Ver el dashboard (`/`) | Sí | No: `proxy.ts` lo redirige a `/productos` | No |
-| Invocar `fetchDashboardStats` | Sí | **Sí** (BUG-12, pendiente: falta que el cliente decida) | No |
+| Invocar `fetchDashboardStats` | Sí | No: `FORBIDDEN` (BUG-12; el vendedor no tiene Estadísticas, `specs.md`) | No: `UNAUTHENTICATED` |
 
 ## Server Actions
 
 | Action | Acceso | Entrada | Respuesta |
 |---|---|---|---|
-| `fetchDashboardStats(startDate?, endDate?)` | `verifyAuthOrAdmin(false)`: cualquier usuario activo | Fechas `AAAA-MM-DD` opcionales | `{ success: true, data: DashboardStats }` o `{ success: false, message }` (todavía no es `ActionResult`, BUG-12) |
+| `fetchDashboardStats(startDate?, endDate?)` | `verifyAuthOrAdmin(true)`: sólo admin | Fechas `AAAA-MM-DD` opcionales | `ActionResult<DashboardStats>` |
 
 ## Datos
 
-Sólo lectura de `products` (stock, precio de compra), `sales` (total y vendedor), `sale_items` (costo unitario y
-cantidad), `sale_payments` (tipo y monto), `product_losses` (cantidad) y `users` (sólo `username` del vendedor).
+Sólo lectura de `menu_items` activos (stock y costo), `sales` (total y vendedor), `sale_line_items` (unidades y costo
+congelado), `sale_payments` (los 4 medios), `stock_losses` (cantidad y costo congelado) y `users` (sólo `username` del
+vendedor). Desde T-12 ya no lee el modelo de la casa de celulares.
 
 ## Errores
 
 | Acción inválida | code | Mensaje | Test |
 |---|---|---|---|
-| Sin sesión, sesión inválida o cualquier falla | — (sin catálogo todavía) | Error al obtener estadísticas | Pendiente (BUG-12, con `asUser` de T-4) |
+| Sin sesión | `UNAUTHENTICATED` | No autorizado (Token faltante) | `actions/stats.contract.test.ts` |
+| Un vendedor pide las estadísticas | `FORBIDDEN` | Solo los administradores pueden realizar esta acción | `actions/stats.contract.test.ts` (`regression BUG-12`) |
+| Falla inesperada al leer | `UNEXPECTED` | Ocurrió un error inesperado al procesar el/la panel de estadísticas. | `actions/stats.contract.test.ts` (`regression BUG-12`) |
 
 ## Pantallas
 
@@ -64,6 +67,7 @@ cantidad), `sale_payments` (tipo y monto), `product_losses` (cantidad) y `users`
 
 ## Tests
 
+- `actions/stats.contract.test.ts` (contrato): permisos por rol y forma del error (BUG-12).
 - `services/compute-dashboard-stats.test.ts` (unit): totales, mermas sin producto, cobros por tipo, ranking de
   vendedores, "Sistema" y rango de fechas.
 - `repository/stats.repository.int.test.ts` (integración contra `db-test`):

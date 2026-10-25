@@ -16,7 +16,7 @@ const roleLabel: Record<string, string> = {
 };
 
 const roleColors: Record<string, string> = {
-  admin: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-400',
+  admin: 'bg-brand-100 text-brand-700 dark:bg-brand-500/20 dark:text-brand-400',
   vendedor: 'bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400',
 };
 

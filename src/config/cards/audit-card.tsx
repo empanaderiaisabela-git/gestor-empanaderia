@@ -2,19 +2,11 @@
 import { Eye } from 'lucide-react';
 import { EntityCard, CardAction } from '@/components/ui/entity-card';
 import { type AuditLogDef } from '@/features/audit/domain/audit-log.schema';
+import { auditReference, ENTITY_LABELS } from '@/features/audit/domain/audit-reference';
 
 interface AuditCardActionsProps {
   onView: (log: AuditLogDef) => void;
 }
-
-const ENTITY_LABELS: Record<string, string> = {
-  USER: 'USUARIO',
-  PROVIDER: 'PROVEEDOR',
-  PRODUCT: 'PRODUCTO',
-  CUSTOMER: 'CLIENTE',
-  DEVICE: 'EQUIPO',
-  SALE: 'VENTA',
-};
 
 const ACTION_COLORS: Record<string, string> = {
   CREAR: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400',
@@ -26,16 +18,7 @@ const ACTION_COLORS: Record<string, string> = {
 };
 
 function getReference(log: AuditLogDef): string {
-  return (
-    log.product?.device?.name ||
-    log.customer?.name ||
-    log.provider?.name ||
-    log.device?.name ||
-    log.targetUser?.username ||
-    (log.sale ? `$${Number(log.sale.total).toLocaleString('es-AR')}` : null) ||
-    log.entityId?.substring(0, 8).toUpperCase() ||
-    '--'
-  );
+  return auditReference(log) || log.entityId?.substring(0, 8).toUpperCase() || '--';
 }
 
 export function renderAuditCard(actions: AuditCardActionsProps) {
@@ -51,7 +34,7 @@ export function renderAuditCard(actions: AuditCardActionsProps) {
         title={
           <span>
             {dateStr}{' '}
-            <span className='text-indigo-600 dark:text-indigo-400 font-bold'>{timeStr}</span>
+            <span className='text-brand-600 dark:text-brand-400 font-bold'>{timeStr}</span>
           </span>
         }
         subtitle={`Por: ${log.user?.username ?? 'SISTEMA'}`}

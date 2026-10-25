@@ -1,7 +1,7 @@
 import { TEST_IDS } from '@/constants/test-ids';
 import { Page, Locator, expect } from '@playwright/test';
 
-const ISR_WAIT = { intervals: [2_000, 5_000], timeout: 90_000 };
+const ON_DEMAND_WAIT = { intervals: [500, 1_000], timeout: 10_000 };
 
 export class LandingPage {
   static readonly URL = '/home';
@@ -40,7 +40,7 @@ export class LandingPage {
       await this.buscarProducto(nombre);
       const tarjeta = this.obtenerTarjetaProducto(nombre);
       await (visible ? expect(tarjeta).toBeVisible({ timeout: 2_000 }) : expect(tarjeta).toBeHidden({ timeout: 2_000 }));
-    }).toPass(ISR_WAIT);
+    }).toPass(ON_DEMAND_WAIT);
   }
 
   async productoEsVisible(nombre: string): Promise<boolean> {

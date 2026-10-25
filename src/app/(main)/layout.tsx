@@ -1,28 +1,16 @@
 'use client';
 
 import { ReactNode, useState, useEffect } from 'react';
-import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from 'next-themes';
-import { LayoutDashboard, Package, Users, Briefcase, MonitorSmartphone, ShieldAlert, Menu, Sun, Moon, LogOut, UserCog, X } from 'lucide-react';
+import { ShieldAlert, Menu, Sun, Moon, LogOut, X } from 'lucide-react';
 
 import { useAuthStore } from '@/features/auth/store/auth.store';
 import { logoutAction } from '@/features/auth/actions/auth.actions';
-
-const navigation = [
-  { name: 'Dashboard', href: '/', icon: LayoutDashboard, roles: ['admin'] },
-  { name: 'Productos', href: '/productos', icon: Package, roles: ['admin', 'vendedor'] },
-  { name: 'Ventas', href: '/ventas', icon: Briefcase, roles: ['admin', 'vendedor'] },
-  { name: 'Clientes', href: '/clientes', icon: Users, roles: ['admin', 'vendedor'] },
-  { name: 'Proveedores', href: '/proveedores', icon: Users, roles: ['admin'] },
-];
-
-const adminNavigation = [
-  { name: 'Categorias', href: '/categorias', icon: MonitorSmartphone, roles: ['admin'] },
-  { name: 'Usuarios', href: '/usuarios', icon: UserCog, roles: ['admin'] },
-  { name: 'Auditoría', href: '/logs', icon: ShieldAlert, roles: ['admin'] },
-];
+import { BrandLogo } from '@/components/brand/brand-logo';
+import { homeFor } from '@/config/navigation';
+import { SidebarNav } from './sidebar-nav';
 
 export default function MainLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
@@ -39,8 +27,8 @@ export default function MainLayout({ children }: { children: ReactNode }) {
   useEffect(() => setMounted(true), []);
 
   useEffect(() => {
-    if (mounted && user?.role === 'vendedor' && pathname === '/') {
-      router.push('/productos');
+    if (mounted && user && user.role !== 'admin' && pathname === '/') {
+      router.push(homeFor(user.role));
     }
   }, [mounted, user, pathname, router]);
 
@@ -50,21 +38,10 @@ export default function MainLayout({ children }: { children: ReactNode }) {
     window.location.href = '/login';
   };
 
-  const navLinks = [...navigation, ...adminNavigation].filter((item) => item.roles.includes(user?.role || 'vendedor'));
-
   const SidebarContent = () => (
     <div className='flex h-full w-full flex-col bg-white dark:bg-zinc-900 border-r border-zinc-200 dark:border-zinc-800 transition-colors relative'>
-      <div className='p-6 flex items-center justify-between shrink-0'>
-        <div className='flex items-center'>
-          <div className='w-12 h-12 bg-white border border-zinc-200 shadow-sm rounded-lg flex items-center justify-center mr-3 overflow-hidden'>
-            <img
-              src='/icon.svg'
-              alt='ArgenStock'
-              className='w-10 h-10 object-contain'
-            />
-          </div>
-          <span className='font-bold text-xl tracking-tight text-zinc-900 dark:text-zinc-100'>ArgenStock</span>
-        </div>
+      <div className='p-5 flex items-center justify-between shrink-0'>
+        <BrandLogo />
         <button
           onClick={() => setIsMobileMenuOpen(false)}
           className='xl:hidden p-2 text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100'
@@ -73,22 +50,11 @@ export default function MainLayout({ children }: { children: ReactNode }) {
         </button>
       </div>
 
-      <nav className='flex-1 space-y-1 px-4 mt-6 overflow-y-auto custom-scrollbar'>
-        {navLinks.map((item) => {
-          const isActive = pathname === item.href;
-          return (
-            <Link
-              key={item.name}
-              href={item.href}
-              onClick={() => setIsMobileMenuOpen(false)}
-              className={`flex items-center px-3 py-2.5 text-md font-medium rounded-lg transition-all focus:outline-none ${isActive ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-400' : 'text-zinc-600 hover:bg-zinc-50 dark:text-zinc-400 dark:hover:bg-zinc-800/50 dark:hover:text-zinc-200'}`}
-            >
-              <item.icon className={`shrink-0 w-5 h-5 mr-3 ${isActive ? 'text-indigo-600 dark:text-indigo-400' : 'text-zinc-400 dark:text-zinc-500'}`} />
-              {item.name}
-            </Link>
-          );
-        })}
-      </nav>
+      <SidebarNav
+        role={user?.role ?? 'vendedor'}
+        pathname={pathname}
+        onNavigate={() => setIsMobileMenuOpen(false)}
+      />
 
       <div className='p-4 border-t border-zinc-200 dark:border-zinc-800 shrink-0'>
         <button
@@ -125,7 +91,7 @@ export default function MainLayout({ children }: { children: ReactNode }) {
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
               transition={{ type: 'spring', bounce: 0, duration: 0.4 }}
-              className='fixed inset-y-0 left-0 w-[320px] z-50 xl:hidden'
+              className='fixed inset-y-0 left-0 w-[240px] z-50 xl:hidden'
             >
               <SidebarContent />
             </motion.div>
@@ -134,7 +100,7 @@ export default function MainLayout({ children }: { children: ReactNode }) {
       </AnimatePresence>
 
       {/* Desktop Sidebar */}
-      <div className='hidden xl:flex xl:shrink-0 xl:w-80 no-print'>
+      <div className='hidden xl:flex xl:shrink-0 xl:w-[240px] no-print'>
         <SidebarContent />
       </div>
 

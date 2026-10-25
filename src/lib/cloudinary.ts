@@ -10,13 +10,13 @@ export const cloudinaryService = {
   /**
    * Uploads a base64 image or a file buffer to Cloudinary
    * @param fileBase64 The file encoded as a base64 string
-   * @param productId The ID of the product to group images in its folder
+   * @param folderId The ID of the menu item to group images in its folder
    * @returns The secure URL and public ID of the uploaded image
    */
-  async uploadImage(fileBase64: string, productId: string) {
+  async uploadImage(fileBase64: string, folderId: string) {
     try {
       const result = await cloudinary.uploader.upload(fileBase64, {
-        folder: `products/${productId}`,
+        folder: `menu/${folderId}`,
         resource_type: 'image',
         transformation: [
           // 'fill' recorta lo sobrante, y 'auto' usa IA para mantener el producto centrado sin cortar lo importante (efecto zoom/cover).

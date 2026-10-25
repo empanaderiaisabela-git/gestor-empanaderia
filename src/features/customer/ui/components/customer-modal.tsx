@@ -74,7 +74,7 @@ export function CustomerModal({ isOpen, onClose, onSuccess, editingItem }: Custo
       isOpen={isOpen}
       onClose={onClose}
       title={editingItem ? 'Editar Ficha Cliente' : 'Nuevo Registro de Cliente'}
-      icon={<Users className='w-5 h-5 text-indigo-500' />}
+      icon={<Users className='w-5 h-5 text-brand-500' />}
       width='md'
       onSubmit={handleSubmit((data) => {
         if (editingItem) {
@@ -108,7 +108,7 @@ export function CustomerModal({ isOpen, onClose, onSuccess, editingItem }: Custo
             {...register('name')}
             autoFocus
             placeholder='Ej: Carlos Pérez Martínez'
-            className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-indigo-500 bg-zinc-50 dark:bg-zinc-950 dark:text-zinc-100 transition-colors ${errors.name ? 'border-red-500' : 'border-zinc-300 dark:border-zinc-700'}`}
+            className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-brand-500 bg-zinc-50 dark:bg-zinc-950 dark:text-zinc-100 transition-colors ${errors.name ? 'border-red-500' : 'border-zinc-300 dark:border-zinc-700'}`}
           />
           {errors.name && <p className='text-red-500 text-xs mt-1.5'>{errors.name.message}</p>}
         </div>
@@ -125,7 +125,7 @@ export function CustomerModal({ isOpen, onClose, onSuccess, editingItem }: Custo
               register('documentNumber').onChange(e);
             }}
             placeholder='Ej: 35.123.456 o 20-35123456-9'
-            className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-indigo-500 bg-zinc-50 dark:bg-zinc-950 dark:text-zinc-100 transition-colors text-sm ${errors.documentNumber ? 'border-red-500' : 'border-zinc-300 dark:border-zinc-700'}`}
+            className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-brand-500 bg-zinc-50 dark:bg-zinc-950 dark:text-zinc-100 transition-colors text-sm ${errors.documentNumber ? 'border-red-500' : 'border-zinc-300 dark:border-zinc-700'}`}
           />
           {errors.documentNumber && <p className='text-red-500 text-xs mt-1.5'>{errors.documentNumber.message}</p>}
         </div>
@@ -137,7 +137,7 @@ export function CustomerModal({ isOpen, onClose, onSuccess, editingItem }: Custo
               type='text'
               {...register('phone')}
               placeholder='+54 9 11 9876-5432'
-              className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-indigo-500 bg-zinc-50 dark:bg-zinc-950 dark:text-zinc-100 transition-colors text-sm ${errors.phone ? 'border-red-500' : 'border-zinc-300 dark:border-zinc-700'}`}
+              className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-brand-500 bg-zinc-50 dark:bg-zinc-950 dark:text-zinc-100 transition-colors text-sm ${errors.phone ? 'border-red-500' : 'border-zinc-300 dark:border-zinc-700'}`}
             />
             {errors.phone && <p className='text-red-500 text-xs mt-1.5'>{errors.phone.message}</p>}
           </div>
@@ -147,7 +147,7 @@ export function CustomerModal({ isOpen, onClose, onSuccess, editingItem }: Custo
               type='email'
               {...register('email')}
               placeholder='cliente@correo.com'
-              className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-indigo-500 bg-zinc-50 dark:bg-zinc-950 dark:text-zinc-100 transition-colors text-sm ${errors.email ? 'border-red-500' : 'border-zinc-300 dark:border-zinc-700'}`}
+              className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-brand-500 bg-zinc-50 dark:bg-zinc-950 dark:text-zinc-100 transition-colors text-sm ${errors.email ? 'border-red-500' : 'border-zinc-300 dark:border-zinc-700'}`}
             />
             {errors.email && <p className='text-red-500 text-xs mt-1.5'>{errors.email.message}</p>}
           </div>

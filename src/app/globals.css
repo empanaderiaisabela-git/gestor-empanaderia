@@ -1,9 +1,23 @@
 @import 'tailwindcss';
+@import './group-colors.css';
 
 @theme {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  --color-brand-50: #fff8e6;
+  --color-brand-100: #feefc3;
+  --color-brand-200: #fde08a;
+  --color-brand-300: #fbcd4f;
+  --color-brand-400: #f6b92b;
+  --color-brand-500: #f2a900;
+  --color-brand-600: #a35405;
+  --color-brand-700: #87450a;
+  --color-brand-800: #6e380d;
+  --color-brand-900: #5a2f0f;
+  --color-brand-950: #341804;
+  --color-ink: #1f1f1f;
+  --color-cream: #fbf6ea;
 }
 
 @custom-variant dark (&:is(.dark *));
@@ -86,9 +100,7 @@ button:focus,
   header,
   aside,
   footer,
-  button:not(.print-only),
-  .lg\:flex.lg\:shrink-0.lg\:w-80 {
-    /* This is the sidebar from layout.tsx */
+  button:not(.print-only) {
     display: none !important;
   }
 
@@ -129,24 +141,24 @@ button:focus,
   }
 
   /* Ensure text colors are preserved */
-  .text-indigo-600 {
-    color: #4f46e5 !important;
+  .text-brand-600 {
+    color: #a35405 !important;
   }
 
-  .text-indigo-700 {
-    color: #4338ca !important;
+  .text-brand-700 {
+    color: #87450a !important;
   }
 
   .text-emerald-600 {
     color: #059669 !important;
   }
 
-  .bg-indigo-50 {
-    background-color: #eef2ff !important;
+  .bg-brand-50 {
+    background-color: #fff8e6 !important;
   }
 
-  .border-indigo-50 {
-    border-color: #eef2ff !important;
+  .border-brand-50 {
+    border-color: #fff8e6 !important;
   }
 }
 

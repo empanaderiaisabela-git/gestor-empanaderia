@@ -14,7 +14,7 @@ function Harness({ errors }: { errors: Partial<Record<keyof ProviderInput, strin
 describe('ProviderFormFields', () => {
   it('muestra los tres campos sin errores', () => {
     render(<Harness errors={{}} />);
-    expect(screen.getByPlaceholderText('Ej: Accesorios del Sur SRL')).toBeDefined();
+    expect(screen.getByPlaceholderText('Ej: Distribuidora del Sur SRL')).toBeDefined();
     expect(screen.getByPlaceholderText('+54 9 11 1234-5678')).toBeDefined();
     expect(screen.getByPlaceholderText('ventas@distribuidora.com')).toBeDefined();
     expect(screen.queryByText(/obligatorio/)).toBeNull();

@@ -1,0 +1,49 @@
+import fc from 'fast-check';
+import { describe, expect, it } from 'vitest';
+import { checkoutSchema } from './checkout.schema';
+
+const ITEM = '11111111-1111-4111-8111-111111111111';
+const LINE = { group: 'empanadas', presentationKey: 'u1', flavors: [{ menuItemId: ITEM, units: 1 }], quantity: 2 };
+const VALID = { lines: [LINE], discountPercentage: 0, discountAmount: 0, payments: [{ type: 'efectivo', amount: 3000 }] };
+const first = (input: unknown): string | undefined => checkoutSchema.safeParse(input).error?.issues[0]?.message;
+
+describe('lo que el navegador puede mandar al cobrar (US-6 CA-1 y CA-2)', () => {
+  it('acepta un pedido y deja el comprador vacío como null', () => {
+    expect(checkoutSchema.parse(VALID)).toEqual({ ...VALID, buyerName: null });
+    expect(checkoutSchema.parse({ ...VALID, buyerName: '   ' }).buyerName).toBeNull();
+    expect(checkoutSchema.parse({ ...VALID, buyerName: '  Marta ' }).buyerName).toBe('Marta');
+  });
+
+  it('acepta los 4 medios de pago, hasta 2 y distintos', () => {
+    const payments = [{ type: 'debito', amount: 1000 }, { type: 'credito', amount: 2000 }];
+    expect(checkoutSchema.parse({ ...VALID, payments }).payments).toEqual(payments);
+    expect(checkoutSchema.parse({ ...VALID, payments: [{ type: 'transferencia', amount: 3000 }] }).payments).toHaveLength(1);
+  });
+
+  it.each([
+    { caso: 'pedido vacío', input: { ...VALID, lines: [] }, message: 'El pedido está vacío' },
+    { caso: 'sin pagos', input: { ...VALID, payments: [] }, message: 'Elegí un medio de pago' },
+    { caso: '3 pagos', input: { ...VALID, payments: [{ type: 'efectivo', amount: 1 }, { type: 'debito', amount: 1 }, { type: 'credito', amount: 1 }] }, message: 'Se aceptan hasta 2 medios de pago' },
+    { caso: 'dos pagos en efectivo', input: { ...VALID, payments: [{ type: 'efectivo', amount: 1 }, { type: 'efectivo', amount: 1 }] }, message: 'Usá medios de pago distintos' },
+    { caso: 'medio desconocido', input: { ...VALID, payments: [{ type: 'cheque', amount: 1 }] }, message: 'Elegí un medio de pago' },
+    { caso: 'pago en 0', input: { ...VALID, payments: [{ type: 'efectivo', amount: 0 }] }, message: 'El monto debe ser mayor a 0' },
+    { caso: 'descuento de 101 %', input: { ...VALID, discountPercentage: 101 }, message: 'El descuento no puede superar el 100 %' },
+    { caso: 'descuento negativo', input: { ...VALID, discountAmount: -1 }, message: 'El descuento no puede ser negativo' },
+    { caso: 'nombre de 61', input: { ...VALID, buyerName: 'a'.repeat(61) }, message: 'El nombre es demasiado largo' },
+    { caso: 'cantidad 1,5', input: { ...VALID, lines: [{ ...LINE, quantity: 1.5 }] }, message: 'La cantidad tiene que ser un número entero' },
+    { caso: 'gusto inválido', input: { ...VALID, lines: [{ ...LINE, flavors: [{ menuItemId: 'x', units: 1 }] }] }, message: 'Elegí un gusto válido' },
+    { caso: 'grupo inexistente', input: { ...VALID, lines: [{ ...LINE, group: 'helados' }] }, message: 'Elegí un grupo válido' },
+  ])('rechaza $caso con el mensaje exacto', ({ input, message }) => {
+    expect(first(input)).toBe(message);
+  });
+
+  it('no deja mandar precios, costos ni total (strictObject)', () => {
+    expect(checkoutSchema.safeParse({ ...VALID, total: 1 }).success).toBe(false);
+    expect(checkoutSchema.safeParse({ ...VALID, lines: [{ ...LINE, unitPrice: 1 }] }).success).toBe(false);
+    expect(checkoutSchema.safeParse({ ...VALID, lines: [{ ...LINE, flavors: [{ menuItemId: ITEM, units: 1, unitCost: 0 }] }] }).success).toBe(false);
+  });
+
+  it('fuzz: nunca lanza, pase lo que pase', () => {
+    fc.assert(fc.property(fc.anything(), (input) => typeof checkoutSchema.safeParse(input).success === 'boolean'));
+  });
+});

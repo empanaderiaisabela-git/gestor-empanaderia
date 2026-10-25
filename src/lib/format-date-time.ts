@@ -15,3 +15,10 @@ export function formatDateTime(value: Date | string): string {
   const date = typeof value === 'string' ? new Date(value) : value;
   return Number.isNaN(date.getTime()) ? INVALID_DATE : formatter.format(date);
 }
+
+const dayFormatter = new Intl.DateTimeFormat('sv-SE', { timeZone: DISPLAY_TIME_ZONE, year: 'numeric', month: '2-digit', day: '2-digit' });
+
+export function argentinaDay(value: Date | string): string {
+  const date = typeof value === 'string' ? new Date(value) : value;
+  return Number.isNaN(date.getTime()) ? '' : dayFormatter.format(date);
+}

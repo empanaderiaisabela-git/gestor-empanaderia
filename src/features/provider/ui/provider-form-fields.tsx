@@ -8,7 +8,7 @@ type ProviderFormFieldsProps = {
 };
 
 const inputClass = (hasError: boolean): string =>
-  `w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-indigo-500 bg-zinc-50 dark:bg-zinc-950 dark:text-zinc-100 transition-colors ${hasError ? 'border-red-500' : 'border-zinc-300 dark:border-zinc-700'}`;
+  `w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-brand-500 bg-zinc-50 dark:bg-zinc-950 dark:text-zinc-100 transition-colors ${hasError ? 'border-red-500' : 'border-zinc-300 dark:border-zinc-700'}`;
 
 function Field({ label, error, children }: { label: string; error?: string; children: ReactNode }): JSX.Element {
   return (
@@ -25,7 +25,7 @@ export function ProviderFormFields({ register, errors }: ProviderFormFieldsProps
   return (
     <div className='space-y-4'>
       <Field label='Razón Social / Identificador' error={errors.name?.message}>
-        <input type='text' {...register('name')} placeholder='Ej: Accesorios del Sur SRL' className={inputClass(Boolean(errors.name))} />
+        <input type='text' {...register('name')} placeholder='Ej: Distribuidora del Sur SRL' className={inputClass(Boolean(errors.name))} />
       </Field>
       <Field label='Línea Telefónica Directa' error={errors.phone?.message}>
         <input

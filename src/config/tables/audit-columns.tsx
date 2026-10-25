@@ -1,4 +1,5 @@
 import { type AuditLogDef } from '@/features/audit/domain/audit-log.schema';
+import { auditReference, entityLabel } from '@/features/audit/domain/audit-reference';
 import { type ColumnDef } from '@/components/ui/virtualized-data-table';
 import { Eye } from 'lucide-react';
 
@@ -39,7 +40,7 @@ export function getAuditColumns({ onView }: ColumnActions): ColumnDef<AuditLogDe
             {dateString}
             <span
               title={timeString}
-              className='text-indigo-600 dark:text-indigo-400 ml-1'
+              className='text-brand-600 dark:text-brand-400 ml-1'
             >
               {timeString}
             </span>
@@ -69,14 +70,7 @@ export function getAuditColumns({ onView }: ColumnActions): ColumnDef<AuditLogDe
       cellClassName: 'font-black uppercase text-zinc-400 tracking-widest text-[14px] max-w-[100px] truncate',
       cell: (log) => (
         <span title={log.entity}>
-          {{
-            USER: 'USUARIO',
-            PROVIDER: 'PROVEEDOR',
-            PRODUCT: 'PRODUCTO',
-            CUSTOMER: 'CLIENTE',
-            DEVICE: 'EQUIPO',
-            SALE: 'VENTA',
-          }[log.entity] || log.entity}
+          {entityLabel(log.entity)}
         </span>
       ),
     },
@@ -85,7 +79,7 @@ export function getAuditColumns({ onView }: ColumnActions): ColumnDef<AuditLogDe
       headerClassName: 'w-[280px] font-bold',
       cellClassName: 'w-[280px] font-bold text-[15px] truncate',
       cell: (log) => {
-        const name = log.product?.device?.name || log.customer?.name || log.provider?.name || log.device?.name || log.targetUser?.username || (log.sale ? `$${Number(log.sale.total).toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : null);
+        const name = auditReference(log);
 
         const displayName = name || log.entityId?.substring(0, 8).toUpperCase() || '--';
         const fullTitle = name ? `${name} (${log.entityId})` : log.entityId || '--';
@@ -103,7 +97,7 @@ export function getAuditColumns({ onView }: ColumnActions): ColumnDef<AuditLogDe
             e.stopPropagation();
             onView(log);
           }}
-          className='p-1.5 text-indigo-600 hover:bg-indigo-50 dark:text-indigo-400 dark:hover:bg-indigo-500/10 rounded-lg transition-colors shadow-sm'
+          className='p-1.5 text-brand-600 hover:bg-brand-50 dark:text-brand-400 dark:hover:bg-brand-500/10 rounded-lg transition-colors shadow-sm'
           title='Ver Detalle'
         >
           <Eye className='w-4 h-4' />

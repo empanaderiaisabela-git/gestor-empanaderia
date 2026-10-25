@@ -21,6 +21,11 @@ describe('catálogo de errores (T-4 CA-1)', () => {
     expect(errorMessage(code, 'Proveedor')).toBe(message);
   });
 
+  it('INSUFFICIENT_STOCK nombra el gusto que no alcanza (US-4)', () => {
+    expect(errorMessage('INSUFFICIENT_STOCK', 'Carne suave')).toBe('No hay stock suficiente de Carne suave.');
+    expect(new AppError('INSUFFICIENT_STOCK', { entity: 'Muzza' })).toMatchObject({ code: 'INSUFFICIENT_STOCK', message: 'No hay stock suficiente de Muzza.' });
+  });
+
   it('sin entidad usa "registro" en los mensajes que la nombran', () => {
     expect(errorMessage('NOT_FOUND')).toBe(DATABASE.NOT_FOUND('registro'));
   });

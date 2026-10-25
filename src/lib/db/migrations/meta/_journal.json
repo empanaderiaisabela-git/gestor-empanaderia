@@ -43,6 +43,48 @@
       "when": 1792869009012,
       "tag": "0005_enable-unaccent",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1792940241941,
+      "tag": "0006_menu-items",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1792942427560,
+      "tag": "0007_stock-entries-and-losses",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1792950421420,
+      "tag": "0008_sales-lines-and-payments",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1792952882296,
+      "tag": "0009_sale-lines-position",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1792955349729,
+      "tag": "0010_drop-legacy-catalog",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1792955375609,
+      "tag": "0011_menu-item-photos-and-visibility",
+      "breakpoints": true
     }
   ]
 }

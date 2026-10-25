@@ -14,16 +14,19 @@ cliente. Next.js 16 (App Router), React 19, TypeScript estricto, Drizzle ORM sob
 | Ruta | Qué hace |
 |---|---|
 | `/login` | Acceso con bcrypt y JWT en cookie HttpOnly |
-| `/home` | Dashboard: ingresos, valor del stock y más vendidos |
-| `/categorias` | Dispositivos o categorías de producto |
-| `/productos` | Inventario: productos, proveedor, stock, precios y fotos |
-| `/ventas` | Punto de venta con descuento automático de stock |
+| `/home`, `/product/[id]` | Catálogo público: gustos y bebidas visibles, por grupo, con fotos y precios (sin login) |
+| `/` | Estadísticas (sólo admin): ingresos, ganancia en limpio, mermas, valor del stock, medios de pago y vendedores |
+| `/ventas` | Ventas/Pedidos: historial con comprobante y anulación (sólo admin); "Nuevo pedido" abre el tablero |
+| `/ventas/nueva` | Tablero de pedidos por grupo, con colores y emojis, surtidas, mitad y mitad, y cobro en 4 medios de pago |
+| `/stock` | Stock por gusto: ingresos con costo y proveedor, mermas (sólo admin) e historial |
+| `/alta-de-productos` | Gustos y bebidas, precios del grupo o por gusto, fotos y visibilidad en el catálogo (sólo admin) |
 | `/clientes` | Directorio de clientes |
-| `/proveedores` | Proveedores (feature molde de la arquitectura: [`docs/features/provider/`](docs/features/provider/README.md)) |
+| `/proveedores` | Proveedores, sólo admin (feature molde de la arquitectura: [`docs/features/provider/`](docs/features/provider/README.md)) |
 | `/usuarios` | Usuarios internos (sólo admin) |
-| `/logs` | Auditoría de todas las escrituras |
+| `/logs` | Auditoría de todas las escrituras (sólo admin) |
 
-Roles: `admin` y `vendedor`. Cada Server Action verifica sesión y rol en el servidor.
+Roles: `admin` (todo) y `vendedor` (Ventas/Pedidos, Stock y Clientes). Cada Server Action verifica sesión y rol en el
+servidor; las únicas lecturas públicas son las del catálogo.
 
 ## Puesta en marcha local
 
@@ -94,7 +97,7 @@ npm run verify                        # todo lo anterior salvo E2E, más el buil
 | `npm run db:seed` / `db:reset-data` | Carga o reinicia los datos base (sólo base local) |
 | `npm run db:reset-full` | Borra toda la base local y la recrea (destructivo) |
 | `npm run db:seed-users` | Crea los usuarios iniciales |
-| `npm run db:stress-test` | Llena la base con datos de prueba de volumen |
+| `npm run db:stress-test` | Agrega 300 ventas de bebidas para probar el volumen de Ventas/Pedidos |
 
 Contra producción, sólo con `APP_ENV=production` delante y sabiendo lo que se hace (por ejemplo
 `APP_ENV=production npm run db:migrate`).

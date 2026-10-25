@@ -23,7 +23,7 @@ export function Button({ children, variant = 'primary', fullWidth = false, leftI
   };
 
   const variants = {
-    primary: 'bg-indigo-600 hover:bg-indigo-700 text-white',
+    primary: 'bg-brand-600 hover:bg-brand-700 text-white',
     secondary: 'bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800',
     danger: 'bg-red-600 hover:bg-red-700 text-white',
     ghost: 'bg-transparent hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-400',

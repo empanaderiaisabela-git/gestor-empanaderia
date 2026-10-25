@@ -5,8 +5,8 @@ describeProviderRepository('fake en memoria', async () => {
   const fake = createFakeProviderUnitOfWork();
   return {
     repository: fake.read,
-    linkProduct: async (providerId) => {
-      fake.state.withProducts.add(providerId);
+    linkStockEntry: async (providerId) => {
+      fake.state.withStockEntries.add(providerId);
     },
   };
 });

@@ -1,10 +1,10 @@
-import type { DashboardLoss, DashboardRange, DashboardSale, DashboardSnapshot, DashboardStats, TopSeller } from '@/features/stats/domain/stats.schema';
+import type { PaymentType } from '@/features/order/domain/order-validation';
+import type { DashboardRange, DashboardSale, DashboardSnapshot, DashboardStats, TopSeller } from '@/features/stats/domain/stats.schema';
 
 const TOP_SELLERS_LIMIT = 5;
 const UNKNOWN_VENDOR = { id: 'sistema', username: 'Sistema' };
 
 type RangeInput = { startDate?: string; endDate?: string; now?: Date };
-type PaymentType = DashboardSale['payments'][number]['type'];
 
 export function toDashboardRange({ startDate, endDate, now = new Date() }: RangeInput): DashboardRange {
   return {
@@ -17,13 +17,11 @@ function sumBy<T>(rows: T[], value: (row: T) => number): number {
   return rows.reduce((total, row) => total + value(row), 0);
 }
 
+const amount = (value: string): number => Number(value || 0);
+
 function collected(salesRows: DashboardSale[], type: PaymentType): number {
   const payments = salesRows.flatMap((sale) => sale.payments).filter((payment) => payment.type === type);
-  return sumBy(payments, (payment) => Number(payment.amount));
-}
-
-function lossCost(loss: DashboardLoss): number {
-  return Number(loss.product?.purchasePrice || 0) * (loss.quantity || 0);
+  return sumBy(payments, (payment) => amount(payment.amount));
 }
 
 function topSellers(salesRows: DashboardSale[]): TopSeller[] {
@@ -31,25 +29,27 @@ function topSellers(salesRows: DashboardSale[]): TopSeller[] {
   for (const sale of salesRows) {
     const key = sale.vendorId || UNKNOWN_VENDOR.id;
     const seller = byVendor.get(key) ?? { username: sale.vendor?.username || UNKNOWN_VENDOR.username, total: 0, count: 0 };
-    byVendor.set(key, { ...seller, total: seller.total + Number(sale.total), count: seller.count + 1 });
+    byVendor.set(key, { ...seller, total: seller.total + amount(sale.total), count: seller.count + 1 });
   }
   return [...byVendor.values()].sort((a, b) => b.total - a.total).slice(0, TOP_SELLERS_LIMIT);
 }
 
-export function computeDashboardStats({ products, sales, losses }: DashboardSnapshot): DashboardStats {
-  const totalRevenue = sumBy(sales, (sale) => Number(sale.total));
-  const costOfGoodsSold = sumBy(sales.flatMap((sale) => sale.items), (item) => Number(item.unitCost || 0) * item.quantity);
-  const totalLossCost = sumBy(losses, lossCost);
+export function computeDashboardStats({ items, sales, losses }: DashboardSnapshot): DashboardStats {
+  const totalRevenue = sumBy(sales, (sale) => amount(sale.total));
+  const costOfGoodsSold = sumBy(sales.flatMap((sale) => sale.items), (item) => amount(item.unitCost) * amount(item.units));
+  const totalLossCost = sumBy(losses, (loss) => amount(loss.unitCost) * amount(loss.quantity));
   return {
-    totalEquipos: sumBy(products, (product) => Number(product.stock || 0)),
-    totalModels: products.length,
+    totalUnits: sumBy(items, (item) => amount(item.stock)),
+    totalItems: items.length,
     totalRevenue,
-    currentInventoryCost: sumBy(products, (product) => Number(product.purchasePrice || 0) * Number(product.stock || 0)),
+    currentInventoryCost: sumBy(items, (item) => amount(item.unitCost) * amount(item.stock)),
     netProfit: totalRevenue - costOfGoodsSold - totalLossCost,
     totalLossCost,
     topSellers: topSellers(sales),
     salesCount: sales.length,
     cashRevenue: collected(sales, 'efectivo'),
     transferRevenue: collected(sales, 'transferencia'),
+    debitRevenue: collected(sales, 'debito'),
+    creditRevenue: collected(sales, 'credito'),
   };
 }

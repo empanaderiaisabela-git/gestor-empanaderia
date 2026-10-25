@@ -1,21 +1,26 @@
-import 'dotenv/config';
+import * as dotenv from 'dotenv';
 import pg from 'pg';
+import { envFileFor } from '../database-config';
+import { wipeTargetUrl } from './wipe-target';
 
-async function wipeDatabase() {
-  const connectionString = process.env.LOCAL_DATABASE_URL;
+dotenv.config({ path: envFileFor(process.env), quiet: true });
 
-  if (!connectionString) {
-    console.error('❌ Error: LOCAL_DATABASE_URL no está definida en el .env');
+function targetOrExit(): string {
+  try {
+    return wipeTargetUrl(process.env);
+  } catch (error) {
+    console.error(`❌ ${error instanceof Error ? error.message : String(error)}`);
     process.exit(1);
   }
+}
+
+async function wipeDatabase() {
+  const connectionString = targetOrExit();
 
   console.log('⚠️  ATENCIÓN: Se van a ELIMINAR TODAS las tablas de la base de datos LOCAL.');
+  console.log('Conectando a:', connectionString.split('@')[1]);
 
-  console.log('Conectando a:', connectionString.split('@')[1]); // Mostrar solo el host para seguridad
-
-  const client = new pg.Client({
-    connectionString,
-  });
+  const client = new pg.Client({ connectionString });
 
   try {
     await client.connect();

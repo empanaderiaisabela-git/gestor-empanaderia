@@ -1,6 +1,5 @@
 import { test, expect } from '@playwright/test';
 import { ProveedoresPage } from './pages/ProveedoresPage';
-import { ProductosPage } from './pages/ProductosPage';
 
 /**
  * Suite de Pruebas E2E: Gestión de Proveedores
@@ -93,7 +92,7 @@ test.describe.parallel('Gestión de Proveedores: Validaciones y Lógica', () => 
   }
 
   test('Debería vaciar el formulario al cancelar', async ({ page }) => {
-    const inputNombre = page.getByRole('textbox', { name: 'Ej: Accesorios del Sur SRL' });
+    const inputNombre = page.getByRole('textbox', { name: 'Ej: Distribuidora del Sur SRL' });
     const inputTelefono = page.getByRole('textbox', { name: '+54 9 11 1234-' });
     const inputCorreo = page.getByRole('textbox', { name: 'ventas@distribuidora.com' });
 
@@ -182,19 +181,19 @@ test.describe.parallel('Gestión de Proveedores: Validaciones y Lógica', () => 
     await expect(page.getByText(proveedorTest.nombreEditado, { exact: true })).toBeVisible();
   });
 
-  test('Debería mostrar un error si se intenta eliminar un proveedor que está asociado a un producto', async ({ page }) => {
+  test('Debería mostrar un error si se intenta eliminar un proveedor que tiene ingresos de stock', async ({ page }) => {
     const proveedoresPage = new ProveedoresPage(page);
-    const productosPage = new ProductosPage(page);
-
-    await productosPage.goto();
-    const producto = await productosPage.inyectarProductoEfimero();
 
     await proveedoresPage.goto();
-    await proveedoresPage.eliminarProveedor(producto.proveedor);
+    const proveedor = await proveedoresPage.inyectarProveedorEfimero();
+    await proveedoresPage.vincularIngresoDeStock(proveedor);
+
+    await proveedoresPage.goto();
+    await proveedoresPage.eliminarProveedor(proveedor);
 
     await expect(page.getByText('No se puede completar la operación porque existen registros relacionados.')).toBeVisible();
 
-    await proveedoresPage.buscarProveedor(producto.proveedor);
-    await expect(page.getByText(producto.proveedor, { exact: true })).toBeVisible();
+    await proveedoresPage.buscarProveedor(proveedor);
+    await expect(page.getByText(proveedor, { exact: true })).toBeVisible();
   });
 });

@@ -2,6 +2,7 @@ import { execSync } from 'child_process';
 import * as dotenv from 'dotenv';
 import { envFileFor } from '../database-config';
 import { assertSafeToWipe } from './assert-safe-to-wipe';
+import { RESET_STEPS } from './reset-steps';
 
 function assertResetIsSafe(): void {
   const env = { ...process.env };
@@ -13,19 +14,10 @@ console.log('🚀 Starting Full Database Reset...');
 
 try {
   assertResetIsSafe();
-
-  console.log('Step 1: Wiping database...');
-  execSync('npx tsx src/lib/db/scripts/wipe-db.ts', { stdio: 'inherit' });
-
-  console.log('Step 2: Generating migrations (drizzle-kit)...');
-  execSync('npm run db:generate', { stdio: 'inherit' });
-
-  console.log('Step 3: Applying migrations (drizzle-kit)...');
-  execSync('npm run db:migrate', { stdio: 'inherit' });
-
-  console.log('Step 4: Seeding initial data (setup-initial-data.ts)...');
-  execSync('npx tsx --conditions=react-server src/lib/db/scripts/setup-initial-data.ts', { stdio: 'inherit' });
-
+  for (const { label, command } of RESET_STEPS) {
+    console.log(label);
+    execSync(command, { stdio: 'inherit' });
+  }
   console.log('✅ Full Database Reset completed successfully!');
 } catch (error) {
   console.error('❌ Error during database reset:', error);
