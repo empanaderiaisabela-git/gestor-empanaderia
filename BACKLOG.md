@@ -935,9 +935,10 @@ retira cuando la reemplaza su ítem, y T-12 borra el resto. `main` recibe el spr
 | 8   | [US-5](#us-5--ventas-tablero-por-comida-y-pedido-actual)                        | Ventas: tablero por comida y pedido actual                     | En revisión | US-4       | 4 h 40 min      |
 | 9   | [US-6](#us-6--ventas-cobrar-con-4-medios-de-pago-y-precios-del-servidor)        | Ventas: cobrar con 4 medios de pago y precios del servidor     | En revisión | US-5       | 3 h 50 min      |
 | 10  | [US-7](#us-7--ventas-historial-comprobante-y-anulación)                         | Ventas: historial, comprobante y anulación                     | Pendiente   | US-6       | 2 h 30 min      |
-| 11  | [T-12](#t-12--retirar-el-modelo-heredado-de-la-casa-de-celulares)               | Retirar el modelo heredado de la casa de celulares             | Pendiente   | US-7, T-11 | 3 h 30 min      |
-| 12  | [T-13](#t-13--cierre-del-sprint-1)                                              | Cierre del Sprint 1                                            | Pendiente   | todos      | 1 h             |
-|     |                                                                                 | **Total del sprint**                                           |             |            | **29 h 30 min** |
+| 11  | [US-15](#us-15--ventas-colores-y-emojis-de-cada-grupo)                          | Ventas: colores y emojis de cada grupo                         | Pendiente   | US-5       | 1 h             |
+| 12  | [T-12](#t-12--retirar-el-modelo-heredado-de-la-casa-de-celulares)               | Retirar el modelo heredado de la casa de celulares             | Pendiente   | US-7, T-11 | 3 h 30 min      |
+| 13  | [T-13](#t-13--cierre-del-sprint-1)                                              | Cierre del Sprint 1                                            | Pendiente   | todos      | 1 h             |
+|     |                                                                                 | **Total del sprint**                                           |             |            | **30 h 30 min** |
 
 ### Decisiones del dev para los Sprints 1 y 2 (2026-10-25)
 
@@ -959,6 +960,9 @@ Respuestas a las preguntas de descubrimiento sobre `specs.md`. El detalle y el p
 | Mermas y descuentos | Se mantienen los dos; las mermas siguen restando de la ganancia |
 | Auditoría | **El vendedor no tiene Auditoría** (el dev corrige la lista de `specs.md`) |
 | Pedidos | "Ventas/Pedidos" es el nombre del botón de Ventas, no un concepto nuevo |
+| Ventas/Pedidos | Muestra el historial de ventas con toda la información de la grilla. **"Nuevo pedido"** abre el tablero del wireframe y reemplaza a "Nueva Venta" ("Consideraciones del primer sprint" de `specs.md`) |
+| Colores y emojis | Cada grupo con su color en el tablero y en el KPI de dinero por comida: Empanadas naranja 🥟, Pizzas amarillo suave 🍕, Ciabattas marrón claro 🥖, Sanguches verde suave 🥪, Coca-Cola rojo 🥤 y Pepsi azul 🥤. Emojis Unicode, no la librería de íconos |
+| Base de producción | Ya hay una base real en Supabase. La conecta el dev con su clave en `.env.prod` (`DATABASE_URL`, con SSL); el agente nunca la lee ni corre nada contra ella |
 | Gastos | Anotador aislado de facturas: número, título y monto. No afecta Estadísticas |
 | Tarjetas | Recargo % por plan de cuotas (1, 3, 6 y 12) |
 | Promos | Se arman con grupo + presentación + cantidad; los gustos se eligen al vender |
@@ -1598,13 +1602,42 @@ una venta, de forma que los errores de carga se corrijan y el stock vuelva.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · Historial con fecha y hora de Argentina, comprador ("Sin nombre" si no hay), vendedor, medios de pago e importe, con filtro por fechas y búsqueda · Estimación: 45 min · Completado: —
+- [ ] **CA-1** · Ventas/Pedidos muestra el historial con toda la información de la grilla actual (fecha y hora de Argentina, comprador o "Sin nombre", vendedor, medios de pago, descuento e importe), con filtro por fechas y búsqueda. El botón "Nueva Venta" del POS viejo se reemplaza por **"Nuevo pedido"**, que abre el tablero del wireframe · Estimación: 45 min · Completado: —
 
 - [ ] **CA-2** · Comprobante imprimible con la marca y las líneas del pedido (gustos y pizzas mitad y mitad) · Estimación: 30 min · Completado: —
 
 - [ ] **CA-3** · Anular (sólo admin) repone el stock exacto, también las medias pizzas, y una venta no se puede anular dos veces · Estimación: 45 min · Completado: —
 
 - [ ] **CA-4** · Contrato: el vendedor que anula → `FORBIDDEN`; una venta inexistente → `NOT_FOUND`; README y E2E de anulación actualizados · Estimación: 30 min · Completado: —
+
+### US-15 · Ventas: colores y emojis de cada grupo
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Pendiente |
+| Dueño        | —         |
+| Inicio       | —         |
+| Tamaño       | S         |
+| Depende de   | US-5      |
+| Plan         | —         |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como vendedor quiero que cada grupo del tablero tenga su color y su emoji, de forma que lo encuentre de
+un vistazo.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · Cada subdivisión del tablero se rellena con el color de su grupo, en un tono suave: Empanadas naranja, Pizzas amarillo suave, Ciabattas marrón claro (tostado), Sanguches verde suave, Coca-Cola rojo y Pepsi azul. Funciona en modo claro y oscuro, y el texto cumple contraste WCAG AA (test) · Estimación: 30 min · Completado: —
+
+- [ ] **CA-2** · El ícono de cada grupo pasa a un emoji Unicode, en lugar de la librería de íconos: 🥟 Empanadas, 🍕 Pizzas, 🥖 Ciabattas, 🥪 Sanguches, 🥤 Coca-Cola y 🥤 Pepsi · Estimación: 15 min · Completado: —
+
+- [ ] **CA-3** · Colores y emojis se definen en un solo lugar, para que el KPI de dinero por comida (US-12) use los mismos; tests de componente y E2E del tablero en verde · Estimación: 15 min · Completado: —
+
+**Detalle**
+
+- Pedido del dev en "Consideraciones del primer sprint" de `specs.md`, para el tablero de Ventas y para el KPI de
+  dinero por comida de Estadísticas.
 
 ### T-12 · Retirar el modelo heredado de la casa de celulares
 
@@ -1662,6 +1695,12 @@ lo construido y el próximo agente arranque con un contexto verdadero.
 - [ ] **CA-1** · `README.md` (módulos y rutas), `docs/architecture.md` (Vista general y Datos) y `docs/initial_prompt.md` al día · Estimación: 30 min · Completado: —
 
 - [ ] **CA-2** · `npm run verify` en verde sobre `develop`; con el OK del dev, merge local `develop → main` ("chore(release): sprint 1") con el tag `sprint-1` · Estimación: 30 min · Completado: —
+
+**Notas**
+
+- Producción: ya hay una base real en Supabase ("Consideraciones del primer sprint" de `specs.md`). La app ya la
+  soporta (`APP_ENV=production`, `DATABASE_URL` en `.env.prod`, con SSL). Cargar la clave y correr las migraciones
+  contra esa base lo hace el dev; el agente nunca lee `.env.prod` ni corre nada con `APP_ENV=production`.
 
 ------------------------------------------------------------------------------------------------------------------------
 
@@ -1826,7 +1865,7 @@ del día, de forma que sepa cómo cerró la jornada.
 
 - [ ] **CA-1** · Estadísticas abre con el día de hoy en hora de Argentina y un calendario para elegir otro día; los límites del día se calculan en `America/Argentina/Buenos_Aires` · Estimación: 45 min · Completado: —
 
-- [ ] **CA-2** · KPI de dinero generado por Empanadas, Pizzas, Ciabattas, Sándwiches de miga, Coca-Cola y Pepsi · Estimación: 45 min · Completado: —
+- [ ] **CA-2** · KPI de dinero generado por Empanadas, Pizzas, Ciabattas, Sándwiches de miga, Coca-Cola y Pepsi, cada cuadro relleno con el color de su grupo (US-15) · Estimación: 45 min · Completado: —
 
 - [ ] **CA-3** · KPI de ganancia en limpio = ventas − costo congelado de lo vendido − mermas (ejemplo del cliente: comprada a $10 y vendida a $30 → $20) · Estimación: 30 min · Completado: —
 

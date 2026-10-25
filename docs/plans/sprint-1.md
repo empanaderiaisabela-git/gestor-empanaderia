@@ -52,6 +52,9 @@ Respuestas del dev a las preguntas de descubrimiento (`workflow.md` §2) sobre `
 | Mermas y descuentos | Se mantienen los dos; las mermas restan de la ganancia | No aparecen en `specs.md`, pero ya existen y el dev los conserva |
 | Auditoría | **El vendedor no la tiene** | El dev corrige la lista de `specs.md`. Vendedor: Ventas/Pedidos, Stock, Clientes |
 | Pedidos | "Ventas/Pedidos" es el nombre del botón de Ventas | No hay pedidos para más tarde |
+| Ventas/Pedidos | Muestra el historial con toda la información de la grilla; **"Nuevo pedido"** abre el tablero y reemplaza a "Nueva Venta" | "Consideraciones del primer sprint" de `specs.md`, aclarado por el dev |
+| Colores y emojis | Empanadas naranja 🥟, Pizzas amarillo suave 🍕, Ciabattas marrón claro 🥖, Sanguches verde suave 🥪, Coca-Cola rojo 🥤 y Pepsi azul 🥤 | En el tablero (US-15) y en el KPI de dinero por comida (US-12). Emojis Unicode |
+| Base de producción | Ya hay una base real en Supabase | La conecta el dev con su clave; el agente no lee `.env.prod` (nota en T-13) |
 | Gastos | Anotador aislado de facturas (número, título, monto) | No afecta Estadísticas (Sprint 2) |
 | Tarjetas | Recargo % por plan de cuotas (1, 3, 6, 12) | Sprint 2 |
 | Promos | Grupo + presentación + cantidad; los gustos se eligen al vender | Sprint 2 |
@@ -112,8 +115,9 @@ US-3 catálogo nuevo ─▶ US-4 stock nuevo ─▶ US-5/US-6/US-7 POS nuevo ─
 | 8 | US-5 Tablero de ventas y pedido actual | US-4 | `feat/us-5-tablero-de-ventas` |
 | 9 | US-6 Cobrar con 4 medios de pago | US-5 | `feat/us-6-cobrar-pedido` |
 | 10 | US-7 Historial, comprobante y anulación | US-6 | `feat/us-7-historial-de-ventas` |
-| 11 | T-12 Retirar el modelo heredado | US-7, T-11 | `feat/t-12-retirar-modelo-heredado` |
-| 12 | T-13 Cierre del Sprint 1 | todos | `docs/t-13-cierre-sprint-1` |
+| 11 | US-15 Colores y emojis de cada grupo | US-5 | `feat/us-15-colores-y-emojis` |
+| 12 | T-12 Retirar el modelo heredado | US-7, T-11 | `feat/t-12-retirar-modelo-heredado` |
+| 13 | T-13 Cierre del Sprint 1 | todos | `docs/t-13-cierre-sprint-1` |
 
 **Ciclo de cada ítem**, igual que en el Sprint 0:
 
@@ -313,8 +317,16 @@ Los criterios y estimaciones de cada ítem están en [`BACKLOG.md`](../../BACKLO
 - **Anulación**: se conserva el enfoque actual (`SELECT … FOR UPDATE`, reposición y borrado de la venta) sobre las
   tablas nuevas. La reposición de una mitad y mitad devuelve ½ de cada gusto. Una segunda anulación da `NOT_FOUND`.
 - **Retiro**: el POS viejo (`sales-pos-view.tsx`, `useCart.ts`, los modales viejos) y los E2E de ventas viejos.
+- **Nuevo pedido**: reemplaza a "Nueva Venta" y al link provisorio "Tablero de ventas", y abre `/ventas/nueva`.
 
-## 11 · T-12 Retirar el modelo heredado (L, 3 h 30 min)
+## 11 · US-15 Colores y emojis de cada grupo (S, 1 h)
+
+- Un color y un emoji por grupo en `menu-groups` (o un config de UI), usados por `GroupCard` y después por el KPI
+  de dinero por comida (US-12).
+- Tonos suaves para modo claro y oscuro, con el test de contraste WCAG de US-1 extendido a esos colores.
+- Los emojis Unicode reemplazan a los íconos de `lucide-react` en el tablero.
+
+## 12 · T-12 Retirar el modelo heredado (L, 3 h 30 min)
 
 - **Migración**: borra `devices`, el `products` viejo y `sale_items`. `product_images` (y las mermas, si US-4 no las
   movió) pasan a apuntar a `menu_items`.
@@ -336,7 +348,7 @@ Los criterios y estimaciones de cada ítem están en [`BACKLOG.md`](../../BACKLO
 - **Guarda**: un test unit recorre `src/` y falla si encuentra "ArgenStock", "iPhone", "Apple", "accesorio",
   "celular" o "equipo" como texto. Excepción: el font stack `'Apple Color Emoji'` de `globals.css`.
 
-## 12 · T-13 Cierre del Sprint 1 (S, 1 h)
+## 13 · T-13 Cierre del Sprint 1 (S, 1 h)
 
 - `README.md` (módulos y rutas nuevas), `architecture.md` (Vista general, Datos, Concurrencia: el stock sin `sql`) e
   `initial_prompt.md` (foto al día, §3 sin "temas no definidos" ya resueltos).
@@ -373,6 +385,9 @@ Los criterios y estimaciones de cada ítem están en [`BACKLOG.md`](../../BACKLO
 | 109 | Tarjetas con 1, 3, 6 o 12 cuotas | US-10, US-11 (Sprint 2) |
 | 111-126 | Gustos que disponen | US-3 CA-6 (seed) |
 | 128-135 | Aclaración de precios: empanadas y ciabattas iguales; sanguches y pizzas por gusto | US-3 CA-1, CA-2 y CA-7; US-5 CA-2 |
+| 139-141 | "Nueva Venta" se va: Ventas/Pedidos es el historial y "Nuevo pedido" abre el tablero | US-7 CA-1 |
+| 143 | Base real en Supabase | T-13 (nota: la conecta el dev) |
+| 145-161 | Colores y emojis de cada grupo, en Ventas y en el KPI de dinero por comida | US-15; US-12 CA-2 (Sprint 2) |
 
 ## Preguntas para el cliente
 

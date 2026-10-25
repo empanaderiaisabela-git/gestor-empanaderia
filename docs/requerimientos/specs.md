@@ -133,3 +133,29 @@ Carne suave, Carne, Carne picante, Carne cheddar   Pollo, Pollo a mostaza   Bond
 -los sanguche de primavera y los de jamon y queso difieren en el precio
 
 -las pizzas dependiendo de su gusto difieren en el precio
+
+----------------------------------------------------------
+
+**CONSIDERACIONES DEL PRIMER SPRINT:**
+
+EL BOTON DE NUEVA VENTA EN VENTAS/PEDIDOS SE VA, ya no cumple ninguna función pues el pedido que será venta se registra desde el tablero de pedidos.
+
+ya hay api key para conectarse con una bd real en supabase.
+
+tanto en los cuadrados de cada comida en ventas, como los cuadrados de cada comida en kpi de dinero por comida, estos serán rellenos por sus colores particulares de cada uno, siendo estos los siguientes para tanto kpi de estadisticas como ventas:
+
+Empanadas: Naranja (evoca la masa horneada).
+Pizzas: amarillo (asociado al queso, pero que no sea chillon, amarillo suave).
+Ciabattas: Marrón claro o Tostado (refleja el pan rústico).
+Sándwich: Verde (transmite frescura e ingredientes naturales, pero un verde suave).
+Cocacola: rojo (clásico como su marca)
+pepsi: azul (tambien como su marca es conocida)
+
+luego para los emojis, en vez de usar de la libreria de react, prefiero que uses los de unicode, los emojis que están en cualquier telefono, y de la siguiente forma:
+
+Empanadas: 🥟
+Pizzas: 🍕
+Ciabattas: 🥖
+Sándwich: 🥪
+Cocacola: 🥤
+pepsi: 🥤
