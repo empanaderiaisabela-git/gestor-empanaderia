@@ -51,7 +51,7 @@ export function renderAuditCard(actions: AuditCardActionsProps) {
         title={
           <span>
             {dateStr}{' '}
-            <span className='text-indigo-600 dark:text-indigo-400 font-bold'>{timeStr}</span>
+            <span className='text-brand-600 dark:text-brand-400 font-bold'>{timeStr}</span>
           </span>
         }
         subtitle={`Por: ${log.user?.username ?? 'SISTEMA'}`}

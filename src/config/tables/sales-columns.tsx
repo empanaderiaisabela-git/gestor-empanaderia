@@ -23,7 +23,7 @@ export function getSalesColumns({ role, onPrint, onDelete }: ColumnActions): Col
             {dateString}
             <span
               title={timeString}
-              className='text-indigo-600 dark:text-indigo-400 ml-1 font-bold'
+              className='text-brand-600 dark:text-brand-400 ml-1 font-bold'
             >
               {timeString}
             </span>
@@ -91,7 +91,7 @@ export function getSalesColumns({ role, onPrint, onDelete }: ColumnActions): Col
         <>
           <button
             onClick={() => onPrint(s)}
-            className='p-1.5 text-indigo-600 hover:bg-indigo-50 dark:text-indigo-400 dark:hover:bg-indigo-500/10 rounded-lg transition-colors'
+            className='p-1.5 text-brand-600 hover:bg-brand-50 dark:text-brand-400 dark:hover:bg-brand-500/10 rounded-lg transition-colors'
             title='Imprimir Factura'
           >
             <FileText className='w-4 h-4' />

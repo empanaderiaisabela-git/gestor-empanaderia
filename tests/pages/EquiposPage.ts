@@ -37,7 +37,7 @@ export class EquiposPage {
   constructor(page: Page) {
     this.page = page;
 
-    this.inputNombre = page.getByRole('textbox', { name: 'Ej: iPhone 15 Pro Max' });
+    this.inputNombre = page.getByRole('textbox', { name: 'Ej: Empanadas' });
     this.inputBusqueda = page.getByTestId(TEST_IDS.general.inputBusquedaTabla).filter({ visible: true });
 
     this.btnAgregarNuevo = page.getByTestId(TEST_IDS.general.btnAgregar);

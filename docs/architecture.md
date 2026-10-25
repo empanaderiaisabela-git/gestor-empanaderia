@@ -158,7 +158,9 @@ Con el tope de 100 líneas, cuando un archivo crece se parte por operación (`cr
 | `src/stores/index.ts` | `invalidateAllCaches()` marca todos los stores como no cargados después de una mutación. |
 | `src/hooks/` | `useEntityManager` (modales, búsqueda, mensajes) y `useEntityActions` (CRUD genérico con `useTransition`, refetch e invalidación). |
 | `src/components/ui/` | Componentes genéricos sin lógica de negocio: botón, modal, tabla virtualizada, toolbar, skeleton, alertas. |
-| `src/components/contact/`, `src/lib/contact/` | Botones de contacto del catálogo (WhatsApp e Instagram) con el mensaje armado. |
+| `src/components/contact/`, `src/lib/contact/` | Botones de contacto del catálogo (WhatsApp e Instagram) con el mensaje armado. Sin datos en `contact.config.ts` no se muestran. |
+| `src/config/brand.ts`, `src/components/brand/` | Marca de Empanadería Isabela: nombre, descripciones y `BrandLogo` (sidebar, login, catálogo). El ícono de la pestaña es `src/app/icon.png` y el logo, `public/brand/logo-isabela.png`, generados del jpeg de `docs/wireframes-ventas-gestor/`. |
+| `src/app/globals.css` (`@theme`) | Paleta de la marca: `brand-50…950` (ámbar del logo), `ink` y `cream`. El acento de la UI usa `brand-*`; `src/test/brand-contrast.test.ts` verifica el contraste AA de los pares que usa la UI. |
 | `src/config/tables/`, `src/config/cards/` | Columnas de tabla (desktop) y tarjetas (mobile) por entidad. |
 | `src/config/messages.ts` | Mensajes de éxito y error en español. |
 | `src/constants/test-ids.ts` | `data-testid` compartidos entre la UI y los tests E2E. |
@@ -345,4 +347,4 @@ Cuando un ítem corrige uno, lo saca de la lista, y la lista nunca crece (ADR 00
 | 50 de 142 archivos de `src/` superan las 100 líneas, y hay comentarios en todo el código | POS, dashboard, schema, paneles… | Tope de líneas, Comentarios |
 | Fechas como `timestamp` sin zona; se formatean con `toLocaleString('es-AR')` sin fijar la zona; el dashboard arma los rangos con la hora local del servidor | `schema.ts`, `stats.actions.ts`, paneles | Fechas |
 | Dependencias sin uso: `pino`, `jsonwebtoken`, `@supabase/supabase-js`, `jspdf`, `html2canvas` | `package.json` | — |
-| Textos, metadata SEO y datos de contacto de ArgenStock (accesorios Apple, teléfono e Instagram del cliente anterior) | `app/layout.tsx`, `app/home/page.tsx`, `lib/contact/contact.config.ts`, seed | — |
+| Datos de demo de la casa de celulares (iPhones, proveedores de tecnología). La marca, la metadata y el contacto ya son de Empanadería Isabela (US-1) | seed (`setup-initial-data.ts`, `seed-stress-test.ts`), hasta US-3 y T-12 | — |

@@ -42,7 +42,7 @@ export class ProveedoresPage {
   constructor(page: Page) {
     this.page = page;
 
-    this.inputNombre = page.getByRole('textbox', { name: 'Ej: Accesorios del Sur SRL' });
+    this.inputNombre = page.getByRole('textbox', { name: 'Ej: Distribuidora del Sur SRL' });
     this.inputTelefono = page.getByRole('textbox', { name: '+54 9 11 1234-' });
     this.inputCorreo = page.getByRole('textbox', { name: 'ventas@distribuidora.com' });
     this.inputBusqueda = page.getByTestId(TEST_IDS.general.inputBusquedaTabla).filter({ visible: true });

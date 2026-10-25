@@ -106,7 +106,7 @@ export function ProductFormModal({
       isOpen={isOpen}
       onClose={onClose}
       title={editingItem ? 'Editar Producto / Stock' : 'Añadir Nuevo Lote'}
-      icon={<PackageOpen className='w-6 h-6 text-indigo-500' />}
+      icon={<PackageOpen className='w-6 h-6 text-brand-500' />}
       width='2xl'
       onSubmit={handleSubmit(handleFormSubmit)}
       submitLabel='Confirmar Inventario'
@@ -139,7 +139,7 @@ export function ProductFormModal({
           <input
             type='text'
             {...register('description')}
-            placeholder='Ej: Negro, 256GB - Kit Funda'
+            placeholder='Ej: Carne suave'
             className='w-full px-4 py-2 text-sm sm:text-base placeholder:text-xs sm:placeholder:text-sm border rounded-lg bg-zinc-50 dark:bg-zinc-950 border-zinc-300 dark:border-zinc-700'
           />
         </div>
@@ -153,7 +153,7 @@ export function ProductFormModal({
               {...register('purchasePrice', { onChange: (e) => setValue('purchasePrice', e.target.value.replace(/\./g, '')) })}
               onKeyDown={blockInvalidPriceKey}
               placeholder='0,00'
-              className={`w-full pl-9 pr-4 py-2 border rounded-lg bg-zinc-50 dark:bg-zinc-950 border-zinc-300 dark:border-zinc-700 focus:outline-none focus:border-indigo-500 ${errors.purchasePrice ? 'border-red-500' : ''}`}
+              className={`w-full pl-9 pr-4 py-2 border rounded-lg bg-zinc-50 dark:bg-zinc-950 border-zinc-300 dark:border-zinc-700 focus:outline-none focus:border-brand-500 ${errors.purchasePrice ? 'border-red-500' : ''}`}
             />
           </div>
           {errors.purchasePrice && <p className='text-red-500 text-xs mt-1'>{errors.purchasePrice.message}</p>}
@@ -168,7 +168,7 @@ export function ProductFormModal({
               {...register('salePrice', { onChange: (e) => setValue('salePrice', e.target.value.replace(/\./g, '')) })}
               onKeyDown={blockInvalidPriceKey}
               placeholder='0,00'
-              className={`w-full pl-9 pr-4 py-2 border rounded-lg bg-zinc-50 dark:bg-zinc-950 border-zinc-300 dark:border-zinc-700 focus:outline-none focus:border-indigo-500 ${errors.salePrice ? 'border-red-500' : ''}`}
+              className={`w-full pl-9 pr-4 py-2 border rounded-lg bg-zinc-50 dark:bg-zinc-950 border-zinc-300 dark:border-zinc-700 focus:outline-none focus:border-brand-500 ${errors.salePrice ? 'border-red-500' : ''}`}
             />
           </div>
           {errors.salePrice && <p className='text-red-500 text-xs mt-1'>{errors.salePrice.message}</p>}
@@ -184,7 +184,7 @@ export function ProductFormModal({
             min='0'
             step='1'
             placeholder='1'
-            className='w-full px-4 py-2 text-sm sm:text-base placeholder:text-xs sm:placeholder:text-sm border rounded-lg bg-zinc-50 dark:bg-zinc-950 border-zinc-300 dark:border-zinc-700 focus:outline-none focus:border-indigo-500'
+            className='w-full px-4 py-2 text-sm sm:text-base placeholder:text-xs sm:placeholder:text-sm border rounded-lg bg-zinc-50 dark:bg-zinc-950 border-zinc-300 dark:border-zinc-700 focus:outline-none focus:border-brand-500'
           />
           {errors.stock && <p className='text-red-500 text-xs mt-1'>{errors.stock.message}</p>}
         </div>

@@ -928,7 +928,7 @@ retira cuando la reemplaza su ítem, y T-12 borra el resto. `main` recibe el spr
 | 1   | [BUG-12](#bug-12--el-vendedor-puede-pedir-las-estadísticas-del-dashboard)       | El vendedor puede pedir las estadísticas                       | En revisión | T-4        | 25 min          |
 | 2   | [BUG-10](#bug-10--scripts-destructivos-que-quedaron-fuera-de-bug-3)             | Scripts destructivos que quedaron fuera de BUG-3               | En revisión | BUG-3      | 40 min          |
 | 3   | [T-11](#t-11--el-catálogo-público-se-regenera-sólo-cuando-cambia)               | El catálogo público se regenera sólo cuando cambia             | En revisión | —          | 1 h 5 min       |
-| 4   | [US-1](#us-1--la-app-con-la-marca-empanadería-isabela)                          | La app con la marca Empanadería Isabela                        | Pendiente   | —          | 1 h 50 min      |
+| 4   | [US-1](#us-1--la-app-con-la-marca-empanadería-isabela)                          | La app con la marca Empanadería Isabela                        | En revisión | —          | 1 h 50 min      |
 | 5   | [US-2](#us-2--menú-por-rol-y-sidebar-más-angosto)                               | Menú por rol y sidebar más angosto                             | Pendiente   | —          | 1 h 15 min      |
 | 6   | [US-3](#us-3--alta-de-productos-gustos-y-bebidas-con-precio-por-presentación)   | Alta de productos: gustos y bebidas con precio por presentación | Pendiente   | US-2       | 4 h 45 min      |
 | 7   | [US-4](#us-4--stock-grilla-ingresar-stock-y-mermas)                             | Stock: grilla, ingresar stock y mermas                         | Pendiente   | US-3       | 3 h 30 min      |
@@ -1157,9 +1157,9 @@ ISR Writes de Vercel cuando no cambió nada.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
-| Dueño        | —         |
-| Inicio       | —         |
+| Estado       | En revisión |
+| Dueño        | Ignacio Tomas |
+| Inicio       | 2026-10-25 |
 | Tamaño       | M         |
 | Depende de   | —         |
 | Plan         | —         |
@@ -1171,13 +1171,13 @@ textos de la casa de celulares.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · El logo ([`logo-empanaderia.jpeg`](docs/wireframes-ventas-gestor/logo-empanaderia.jpeg)) aparece en el sidebar, el login, el ícono de la pestaña y el comprobante; la metadata dice "Empanadería Isabela", con la descripción en español · Estimación: 30 min · Completado: —
+- [x] **CA-1** · El logo ([`logo-empanaderia.jpeg`](docs/wireframes-ventas-gestor/logo-empanaderia.jpeg)) aparece en el sidebar, el login, el ícono de la pestaña y el comprobante; la metadata dice "Empanadería Isabela", con la descripción en español · Estimación: 30 min · Completado: 2026-10-25 11:38
 
-- [ ] **CA-2** · La paleta de la marca (negro, ámbar y crema) queda como tokens en `globals.css` y reemplaza a los `indigo-*` del panel y del login, en claro y oscuro, sin violaciones de contraste de axe en el login y el panel · Estimación: 45 min · Completado: —
+- [x] **CA-2** · La paleta de la marca (negro, ámbar y crema) queda como tokens en `globals.css` y reemplaza a los `indigo-*` del panel y del login, en claro y oscuro, sin violaciones de contraste de axe en el login y el panel · Estimación: 45 min · Completado: 2026-10-25 11:38
 
-- [ ] **CA-3** · El catálogo público queda sin textos de Apple, accesorios ni garantía, y `contact.config.ts` sin el teléfono ni el Instagram del cliente anterior · Estimación: 20 min · Completado: —
+- [x] **CA-3** · El catálogo público queda sin textos de Apple, accesorios ni garantía, y `contact.config.ts` sin el teléfono ni el Instagram del cliente anterior · Estimación: 20 min · Completado: 2026-10-25 11:38
 
-- [ ] **CA-4** · Tests de componente del sidebar y del login, con el nombre y el logo · Estimación: 15 min · Completado: —
+- [x] **CA-4** · Tests de componente del sidebar y del login, con el nombre y el logo · Estimación: 15 min · Completado: 2026-10-25 11:38
 
 **Detalle**
 
@@ -1195,6 +1195,33 @@ textos de la casa de celulares.
 **Notas**
 
 - El repo es público: el nombre y el logo del cliente quedan publicados.
+
+**Cierre** (2026-10-25)
+
+- **CA-1**:
+  - `BrandLogo` (`src/components/brand/`) con el nombre de `src/config/brand.ts`, en el sidebar, el login y el
+    catálogo.
+  - El comprobante dice "EMPANADERÍA ISABELA".
+  - El ícono de la pestaña es `src/app/icon.png` (más `apple-icon.png`) y el logo,
+    `public/brand/logo-isabela.png` (256 px), generados del jpeg con `sharp`. Se borraron los `icon.svg` viejos.
+  - La metadata raíz y la del catálogo están en español y con la marca.
+  - El logo va en PNG porque `proxy.ts` sólo deja pasar sin sesión `.png`, `.svg` y similares, no `.webp`.
+- **CA-2**: tokens `brand-50…950` (ámbar del logo), `ink` y `cream` en `globals.css`.
+  - Los `indigo-*` de los 45 archivos de `src/` pasaron a `brand-*`, con un reemplazo mecánico; los colores de
+    impresión también.
+  - El catálogo y el login usan fondo `cream`.
+  - **Desvío**: no hay axe en el repo y no se sumó una dependencia. `src/test/brand-contrast.test.ts` aplica la
+    fórmula de contraste WCAG a los 7 pares que usa la UI (botones, menú activo y textos en claro y en oscuro),
+    todos ≥ 4,5:1.
+- **CA-3**:
+  - El catálogo y la ficha de producto quedan sin Apple, accesorios ni garantía. También se cambiaron los
+    placeholders de celulares de Proveedores, Categorías, Productos y Mermas.
+  - `contact.config.ts` queda sin el teléfono ni el Instagram del cliente anterior, y los botones de contacto no se
+    muestran sin datos (`contact.config.test.ts`).
+  - Siguen los datos de demo del seed viejo: los reemplaza US-3 y la guarda de texto llega con T-12 CA-5.
+- **CA-4**: tests de componente de `BrandLogo`, del login (`login-page.test.tsx`) y del layout del panel
+  (`main-layout.test.tsx`).
+- **E2E**: los Page Objects buscaban los campos por los placeholders viejos; se actualizaron. `npm run test:e2e` en verde (79 tests).
 
 ### US-2 · Menú por rol y sidebar más angosto
 

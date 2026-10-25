@@ -128,7 +128,7 @@ export function SaleDiscountModal({ isOpen, onClose, subtotal, onConfirm, isPend
       width='sm'
     >
       <div className='space-y-6'>
-        <div className='bg-indigo-50 dark:bg-indigo-900/20 p-4 rounded-xl border border-indigo-100 dark:border-indigo-900/30'>
+        <div className='bg-brand-50 dark:bg-brand-900/20 p-4 rounded-xl border border-brand-100 dark:border-brand-900/30'>
           <div className='flex justify-between items-center mb-1'>
             <span className='text-xs font-black uppercase text-zinc-400 tracking-widest'>Subtotal</span>
             <span className='text-sm font-black text-zinc-500'>${subtotalFormatted}</span>
@@ -139,9 +139,9 @@ export function SaleDiscountModal({ isOpen, onClose, subtotal, onConfirm, isPend
               <span className='text-sm font-black text-emerald-600'>-${discountsFormatted}</span>
             </div>
           )}
-          <div className='flex justify-between items-center pt-2 border-t border-indigo-100 dark:border-indigo-900/30'>
-            <span className='text-xs font-black uppercase text-indigo-400 tracking-widest'>Total a Cobrar</span>
-            <span className='text-2xl font-black text-indigo-700 dark:text-indigo-300'>${finalTotal < 0 ? '0,00' : finalFormatted}</span>
+          <div className='flex justify-between items-center pt-2 border-t border-brand-100 dark:border-brand-900/30'>
+            <span className='text-xs font-black uppercase text-brand-400 tracking-widest'>Total a Cobrar</span>
+            <span className='text-2xl font-black text-brand-700 dark:text-brand-300'>${finalTotal < 0 ? '0,00' : finalFormatted}</span>
           </div>
         </div>
 
@@ -154,7 +154,7 @@ export function SaleDiscountModal({ isOpen, onClose, subtotal, onConfirm, isPend
               <input
                 type='text'
                 inputMode='decimal'
-                className='w-full pl-3 pr-8 py-2.5 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg focus:outline-none focus:border-indigo-500 font-bold'
+                className='w-full pl-3 pr-8 py-2.5 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg focus:outline-none focus:border-brand-500 font-bold'
                 value={percentage}
                 onChange={(e) => handlePercentageChange(e.target.value)}
                 data-testid={TEST_IDS.ventas.discount.descuentoPorcentual}
@@ -183,7 +183,7 @@ export function SaleDiscountModal({ isOpen, onClose, subtotal, onConfirm, isPend
               <input
                 type='text'
                 inputMode='decimal'
-                className='w-full pl-7 pr-4 py-2.5 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg focus:outline-none focus:border-indigo-500 font-bold'
+                className='w-full pl-7 pr-4 py-2.5 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg focus:outline-none focus:border-brand-500 font-bold'
                 value={amount}
                 onChange={(e) => handleAmountChange(e.target.value)}
                 data-testid={TEST_IDS.ventas.discount.descuentoAbsoluto}
@@ -231,7 +231,7 @@ export function SaleDiscountModal({ isOpen, onClose, subtotal, onConfirm, isPend
           {pVal === 0 && aVal === 0 && (
             <button
               onClick={handleSkip}
-              className='text-[10px] font-black uppercase text-indigo-400 hover:text-indigo-600 tracking-widest transition-colors mx-auto block'
+              className='text-[10px] font-black uppercase text-brand-400 hover:text-brand-600 tracking-widest transition-colors mx-auto block'
               data-testid={TEST_IDS.ventas.discount.btnOmitirDescuento}
             >
               Omitir Descuentos

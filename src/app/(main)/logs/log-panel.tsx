@@ -46,7 +46,7 @@ function AuditDetailModal({ log, onClose }: { log: AuditLogDef; onClose: () => v
       <div className='bg-white dark:bg-zinc-900 rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800 flex flex-col max-h-[90vh]'>
         <div className='flex justify-between items-center p-5 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800/50'>
           <h3 className='text-lg font-bold flex items-center gap-2 text-zinc-900 dark:text-zinc-100'>
-            <History className='w-5 h-5 text-indigo-500' />
+            <History className='w-5 h-5 text-brand-500' />
             Resumen de Transacción
           </h3>
           <button onClick={onClose} className='p-1.5 text-zinc-500 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg transition-colors'>
@@ -62,7 +62,7 @@ function AuditDetailModal({ log, onClose }: { log: AuditLogDef; onClose: () => v
             </MetaField>
             <MetaField label='Realizado por'>
               <span className='flex items-center gap-1.5'>
-                <User className='w-3.5 h-3.5 text-indigo-400' />
+                <User className='w-3.5 h-3.5 text-brand-400' />
                 {log.user?.username ?? <span className='text-zinc-400 font-normal italic'>Sistema</span>}
               </span>
             </MetaField>
@@ -70,7 +70,7 @@ function AuditDetailModal({ log, onClose }: { log: AuditLogDef; onClose: () => v
               {ENTITY_LABELS[log.entity] ?? log.entity}
             </MetaField>
             <MetaField label='Entidad Específica'>
-              <span className='text-indigo-600 dark:text-indigo-400'>
+              <span className='text-brand-600 dark:text-brand-400'>
                 {entityName ?? <span className='text-zinc-400 font-normal italic'>—</span>}
               </span>
             </MetaField>

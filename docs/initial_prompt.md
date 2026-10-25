@@ -46,8 +46,8 @@ backlog**. Mientras tanto vas a encontrar:
 | Lo que ves en el código | Qué significa hoy |
 |---|---|
 | Tabla `devices`, "equipos", "modelos", ruta `/categorias`, `device.*` | **Categoría** de producto |
-| "ArgenStock", textos de accesorios Apple, metadata SEO de tecnología | Marca y textos viejos, a reemplazar |
-| `src/lib/contact/contact.config.ts` (teléfono e Instagram) | Datos de contacto **del cliente anterior** |
+| Nombres de tablas y pantallas de celulares (`devices`, "equipo", "lote") y el seed con iPhones | Restos del modelo viejo: los reemplazan US-3 a US-7 y los borra T-12. La marca, la metadata y la paleta ya son de Empanadería Isabela (US-1) |
+| `src/lib/contact/contact.config.ts` | Vacío: falta que el cliente pase su WhatsApp e Instagram; sin datos, el catálogo no muestra botones de contacto |
 | Seed con iPhones y proveedores de tecnología | Datos de demo viejos |
 | `product_losses` | Mermas |
 

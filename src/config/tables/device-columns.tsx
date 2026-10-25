@@ -36,7 +36,7 @@ export function getDeviceColumns({ role, onEdit, onToggleActive, onDelete }: { r
                 </button>
                 <button
                   onClick={() => onEdit(row)}
-                  className='p-1.5 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 rounded-lg transition'
+                  className='p-1.5 text-brand-600 dark:text-brand-400 hover:bg-brand-50 rounded-lg transition'
                   title='Editar Ficha'
                 >
                   <Edit className='w-4 h-4' />

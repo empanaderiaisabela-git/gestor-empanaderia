@@ -31,7 +31,7 @@ export function renderProductCard(actions: ProductCardActionsProps) {
           <>
             <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${stock.cls}`}>{stock.text}</span>
             {actions.role === 'admin' && product.showOnLanding && (
-              <span className='px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-400'>
+              <span className='px-2.5 py-0.5 rounded-full text-xs font-medium bg-brand-100 text-brand-700 dark:bg-brand-500/20 dark:text-brand-400'>
                 En landing
               </span>
             )}

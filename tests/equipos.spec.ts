@@ -7,7 +7,7 @@ import { MESSAGES } from '@/config/messages';
 // =========================================================================
 const UI = {
   // Placeholders / Labels
-  NOMBRE: 'Ej: iPhone 15 Pro Max', // Ej: 'Nombre del equipo'
+  NOMBRE: 'Ej: Empanadas', // Ej: 'Nombre del equipo'
 
   // Botones y Búsqueda
   BTN_AGREGAR_NUEVO: 'Agregar Categoría', // Ej: 'Agregar Equipo'

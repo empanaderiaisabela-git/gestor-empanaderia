@@ -17,7 +17,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
     notFound();
   }
 
-  const deviceName = product.device?.name || 'Accesorio Apple';
+  const deviceName = product.device?.name || 'Producto';
   const isOutOfStock = product.stock <= 0;
 
   return (

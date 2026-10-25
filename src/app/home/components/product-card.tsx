@@ -14,7 +14,7 @@ interface ProductCardProps {
 export function ProductCard({ product }: ProductCardProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [direction, setDirection] = useState(0);
-  const deviceName = product.device?.name || 'Accesorio Apple';
+  const deviceName = product.device?.name || 'Producto';
   const isOutOfStock = product.stock <= 0;
   
   const images = product.images || [];
@@ -71,7 +71,7 @@ export function ProductCard({ product }: ProductCardProps) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: 'easeOut' }}
       whileHover={{ y: -5, transition: { duration: 0.2 } }}
-      className={`h-full group relative flex flex-col bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl hover:shadow-indigo-500/10 transition-all duration-500 ${isOutOfStock ? 'opacity-70 grayscale-[0.3]' : ''}`}
+      className={`h-full group relative flex flex-col bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl hover:shadow-brand-500/10 transition-all duration-500 ${isOutOfStock ? 'opacity-70 grayscale-[0.3]' : ''}`}
     >
       <Link
         href={`/product/${product.id}`}
@@ -141,7 +141,7 @@ export function ProductCard({ product }: ProductCardProps) {
 
         <div className='flex flex-col flex-1 p-3 sm:p-4 text-center'>
           <h3 className='text-xs sm:text-base font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight mb-1 sm:mb-1.5 line-clamp-1'>{deviceName}</h3>
-          <p className='text-[11px] sm:text-sm text-zinc-500 dark:text-zinc-400 line-clamp-2 mb-2 sm:mb-3 leading-relaxed flex-1'>{product.description || 'Diseñado con precisión para ofrecer la mejor experiencia y protección.'}</p>
+          <p className='text-[11px] sm:text-sm text-zinc-500 dark:text-zinc-400 line-clamp-2 mb-2 sm:mb-3 leading-relaxed flex-1'>{product.description || 'Elaborado en el día por Empanadería Isabela.'}</p>
           <div className='mb-3'>
             <span className='text-sm sm:text-lg font-medium tracking-tight text-zinc-900 dark:text-zinc-100'>${product.salePrice.toLocaleString('es-AR')}</span>
           </div>

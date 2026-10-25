@@ -27,7 +27,7 @@ export function renderSaleCard(actions: SaleCardActionsProps) {
         title={
           <span>
             {date}{' '}
-            <span className='text-indigo-600 dark:text-indigo-400 font-bold'>{time}</span>
+            <span className='text-brand-600 dark:text-brand-400 font-bold'>{time}</span>
           </span>
         }
         subtitle={sale.customer?.name ?? 'Consumidor Final'}

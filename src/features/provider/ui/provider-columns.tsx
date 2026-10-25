@@ -26,7 +26,7 @@ function RowActions({ provider, actions }: { provider: ProviderDef; actions: Pro
       <button onClick={() => actions.onToggleActive(provider)} className={`p-1.5 rounded-lg transition ${toggleClass}`} title={provider.isActive ? 'Desactivar' : 'Activar'}>
         <Plus className={`w-4 h-4 ${provider.isActive ? 'rotate-45' : ''}`} />
       </button>
-      <button onClick={() => actions.onEdit(provider)} className='p-1.5 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 rounded-lg transition' title='Editar'>
+      <button onClick={() => actions.onEdit(provider)} className='p-1.5 text-brand-600 dark:text-brand-400 hover:bg-brand-50 dark:hover:bg-brand-500/10 rounded-lg transition' title='Editar'>
         <Edit className='w-4 h-4' />
       </button>
       <button onClick={() => actions.onDelete(provider.id)} className='p-1.5 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg transition' title='Eliminar'>

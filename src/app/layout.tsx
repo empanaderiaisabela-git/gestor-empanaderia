@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { Providers } from './providers';
+import { BRAND } from '@/config/brand';
 import './globals.css';
 
 const inter = Inter({
@@ -9,11 +10,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'ArgenStock',
-  description: 'Manage technology store stock effectively',
-  icons: {
-    icon: '/icon.svg',
-  },
+  title: BRAND.name,
+  description: BRAND.description,
   robots: {
     index: false,
     follow: false,

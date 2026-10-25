@@ -93,7 +93,7 @@ test.describe.parallel('Gestión de Proveedores: Validaciones y Lógica', () => 
   }
 
   test('Debería vaciar el formulario al cancelar', async ({ page }) => {
-    const inputNombre = page.getByRole('textbox', { name: 'Ej: Accesorios del Sur SRL' });
+    const inputNombre = page.getByRole('textbox', { name: 'Ej: Distribuidora del Sur SRL' });
     const inputTelefono = page.getByRole('textbox', { name: '+54 9 11 1234-' });
     const inputCorreo = page.getByRole('textbox', { name: 'ventas@distribuidora.com' });
 

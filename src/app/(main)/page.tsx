@@ -44,7 +44,7 @@ export default function DashboardPage() {
       <div className='flex flex-col xl:flex-row justify-between items-start xl:items-center gap-6 shrink-0'>
         <div>
           <h1 className='text-3xl font-black text-zinc-900 dark:text-zinc-100 flex items-center gap-3'>
-            <Activity className='text-indigo-600' /> Resumen de Actividad
+            <Activity className='text-brand-600' /> Resumen de Actividad
           </h1>
           <p className='text-zinc-500 text-sm font-medium mt-1'>Panel de Control e Inteligencia de Negocio.</p>
         </div>
@@ -70,7 +70,7 @@ export default function DashboardPage() {
           <button
             onClick={handleSync}
             disabled={isPending}
-            className='px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-base transition-all disabled:opacity-50 shadow-sm flex items-center justify-center gap-2 group'
+            className='px-6 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-base transition-all disabled:opacity-50 shadow-sm flex items-center justify-center gap-2 group'
           >
             {isPending ? (
               'Recalculando...'
@@ -88,8 +88,8 @@ export default function DashboardPage() {
       <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 shrink-0'>
         <div className='bg-white dark:bg-zinc-900 p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm flex flex-col'>
           <div className='flex justify-between items-start mb-4'>
-            <div className='p-2 bg-indigo-50 dark:bg-indigo-500/10 rounded-lg'>
-              <DollarSign className='w-5 h-5 text-indigo-600' />
+            <div className='p-2 bg-brand-50 dark:bg-brand-500/10 rounded-lg'>
+              <DollarSign className='w-5 h-5 text-brand-600' />
             </div>
             <span className='text-[10px] font-bold text-zinc-500 bg-zinc-50 dark:bg-zinc-500/10 px-2 py-0.5 rounded-full uppercase tracking-tighter'>Ingresos</span>
           </div>
@@ -97,7 +97,7 @@ export default function DashboardPage() {
           <span className='text-xl font-black text-zinc-900 dark:text-zinc-100 mt-1'>${stats?.totalRevenue?.toLocaleString('es-AR') || '0'}</span>
         </div>
 
-        <div className='bg-white dark:bg-zinc-900 p-5 rounded-2xl border border-indigo-200 dark:border-indigo-800 shadow-md shadow-indigo-50 dark:shadow-none flex flex-col ring-2 ring-indigo-500/5'>
+        <div className='bg-white dark:bg-zinc-900 p-5 rounded-2xl border border-brand-200 dark:border-brand-800 shadow-md shadow-brand-50 dark:shadow-none flex flex-col ring-2 ring-brand-500/5'>
           <div className='flex justify-between items-start mb-4'>
             <div className='p-2 bg-emerald-50 dark:bg-emerald-500/10 rounded-lg'>
               <TrendingUp className='w-5 h-5 text-emerald-600' />
@@ -106,7 +106,7 @@ export default function DashboardPage() {
               <ArrowUpRight className='w-3 h-3' /> NETO
             </span>
           </div>
-          <span className='text-[10px] font-black uppercase text-indigo-500 tracking-widest leading-none'>Ganancia Real</span>
+          <span className='text-[10px] font-black uppercase text-brand-500 tracking-widest leading-none'>Ganancia Real</span>
           <span className='text-xl font-black text-zinc-900 dark:text-zinc-100 mt-1'>${stats?.netProfit?.toLocaleString('es-AR') || '0'}</span>
         </div>
 
@@ -182,7 +182,7 @@ export default function DashboardPage() {
         <div className='lg:col-span-12 bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden flex flex-col'>
           <div className='p-6 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 flex items-center justify-between'>
             <h3 className='font-black flex items-center gap-2 text-zinc-900 dark:text-zinc-100'>
-              <Users className='w-5 h-5 text-indigo-500' /> Vendedores con Mayor Rendimiento
+              <Users className='w-5 h-5 text-brand-500' /> Vendedores con Mayor Rendimiento
             </h3>
             <span className='text-xs font-bold text-zinc-400 uppercase tracking-widest'>Últimos Datos</span>
           </div>
@@ -202,7 +202,7 @@ export default function DashboardPage() {
                     className='hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors'
                   >
                     <td className='px-8 py-5 flex items-center gap-4'>
-                      <div className='w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-500/20 flex items-center justify-center text-indigo-600 font-bold'>{seller.username[0].toUpperCase()}</div>
+                      <div className='w-10 h-10 rounded-full bg-brand-100 dark:bg-brand-500/20 flex items-center justify-center text-brand-600 font-bold'>{seller.username[0].toUpperCase()}</div>
                       <div className='min-w-0'>
                         <p
                           className='font-bold text-zinc-900 dark:text-zinc-100 truncate max-w-[180px]'
@@ -236,7 +236,7 @@ export default function DashboardPage() {
         <div className='lg:col-span-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 px-2 pb-6'>
           <div className='bg-zinc-100 dark:bg-zinc-950 p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 transition-all hover:border-zinc-300 dark:hover:border-zinc-700'>
             <div className='flex items-center gap-3 mb-4'>
-              <Clock className='w-5 h-5 text-indigo-500' />
+              <Clock className='w-5 h-5 text-brand-500' />
               <h4 className='font-bold text-sm'>Actividad Reciente</h4>
             </div>
             <p className='text-xs text-zinc-500 leading-relaxed font-medium'>

@@ -88,7 +88,7 @@ export function getProductColumns({ role, onLoss, onEdit, onDelete, onToggleVisi
           {role === 'admin' ? (
             <button
               onClick={() => onEdit(p)}
-              className='p-1.5 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 rounded-lg transition'
+              className='p-1.5 text-brand-600 dark:text-brand-400 hover:bg-brand-50 dark:hover:bg-brand-500/10 rounded-lg transition'
               title='Editar'
             >
               <Edit className='w-4 h-4' />

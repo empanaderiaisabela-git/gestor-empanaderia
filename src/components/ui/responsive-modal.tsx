@@ -49,7 +49,7 @@ export function ResponsiveModal({ isOpen, onClose, title, icon, children, width 
             <button
               type='submit'
               disabled={isPending}
-              className='px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition disabled:opacity-70 font-medium shadow-sm flex items-center gap-2'
+              className='px-5 py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-lg transition disabled:opacity-70 font-medium shadow-sm flex items-center gap-2'
               data-testid={submitTestId}
             >
               {isPending && <Spinner />}

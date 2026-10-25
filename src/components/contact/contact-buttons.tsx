@@ -1,7 +1,7 @@
 'use client';
 
 import { generateWhatsAppLink, generateWhatsAppMessage, generateInstagramLink, type ProductMessageData } from '@/lib/contact/message-generator';
-import { CONTACT_CONFIG } from '@/lib/contact/contact.config';
+import { CONTACT_CONFIG, hasContactInfo } from '@/lib/contact/contact.config';
 
 interface ContactButtonsProps {
   product: ProductMessageData;
@@ -30,6 +30,7 @@ const InstagramIcon = () => (
 );
 
 export function ContactButtons({ product, size = 'md', showLabels = true }: ContactButtonsProps) {
+  if (!hasContactInfo(CONTACT_CONFIG)) return null;
   const message = generateWhatsAppMessage(product);
   const whatsappLink = generateWhatsAppLink(CONTACT_CONFIG.phoneNumber, message);
   const instagramLink = generateInstagramLink(CONTACT_CONFIG.instagramUser);

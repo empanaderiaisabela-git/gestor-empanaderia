@@ -42,7 +42,7 @@ export function ProviderFormModal({ model }: { model: ProvidersPanelModel }): JS
       isOpen={isModalOpen}
       onClose={manager.closeFormModal}
       title={editingItem ? 'Editar Proveedor' : 'Nuevo Proveedor Local'}
-      icon={<Store className='w-5 h-5 text-indigo-500' />}
+      icon={<Store className='w-5 h-5 text-brand-500' />}
       width='md'
       onSubmit={submit}
       submitLabel={editingItem ? 'Actualizar Firma' : 'Registrar Proveedor'}

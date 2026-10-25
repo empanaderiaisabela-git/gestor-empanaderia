@@ -65,7 +65,7 @@ export function DeviceModal({ isOpen, onClose, onSubmit, editingItem, serverErro
       isOpen={isOpen}
       onClose={onClose}
       title={editingItem ? 'Actualizar Categoría' : 'Nueva Categoría en Catálogo'}
-      icon={<MonitorSmartphone className='w-5 h-5 text-indigo-500' />}
+      icon={<MonitorSmartphone className='w-5 h-5 text-brand-500' />}
       width='sm'
       onSubmit={handleSubmit(handleFormSubmit)}
       submitLabel={editingItem ? 'Actualizar Categoría' : 'Agregar Categoría'}
@@ -80,8 +80,8 @@ export function DeviceModal({ isOpen, onClose, onSubmit, editingItem, serverErro
             type='text'
             {...register('name')}
             autoFocus
-            placeholder='Ej: iPhone 15 Pro Max'
-            className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-indigo-500 bg-zinc-50 dark:bg-zinc-950 dark:text-zinc-100 transition-colors ${errors.name ? 'border-red-500' : 'border-zinc-300 dark:border-zinc-700'}`}
+            placeholder='Ej: Empanadas'
+            className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-brand-500 bg-zinc-50 dark:bg-zinc-950 dark:text-zinc-100 transition-colors ${errors.name ? 'border-red-500' : 'border-zinc-300 dark:border-zinc-700'}`}
           />
           {errors.name && <p className='text-red-500 text-xs mt-1.5'>{errors.name.message}</p>}
         </div>

@@ -2,21 +2,20 @@ import { Metadata } from 'next';
 import { fetchLandingProducts } from '@/features/product/actions/product.actions';
 import { fetchLandingCategories } from '@/features/device/actions/device.actions';
 import { CatalogClient } from './components/catalog-client';
+import { BrandLogo } from '@/components/brand/brand-logo';
+import { BRAND } from '@/config/brand';
 
 export const metadata: Metadata = {
-  title: 'ArgenStock - Catálogo',
-  description: 'Descubre nuestra colección exclusiva de fundas, cargadores, cables y accesorios premium diseñados para tus dispositivos Apple. Calidad superior, envío rápido y la mejor protección.',
-  keywords: 'accesorios apple, fundas iphone, cargador magsafe, cables premium, apple watch, airpods, tienda de accesorios, fundas premium',
-  icons: {
-    icon: '/icon.svg',
-  },
+  title: `${BRAND.name} - Catálogo`,
+  description: BRAND.catalogDescription,
+  keywords: 'empanadas, pizzas, sándwiches de miga, ciabattas, empanadería, rotisería, Empanadería Isabela',
   robots: {
     index: true,
     follow: true,
   },
   openGraph: {
-    title: 'Accesorios Premium para Apple',
-    description: 'La mejor colección de accesorios para tu iPhone, iPad y Apple Watch.',
+    title: BRAND.name,
+    description: BRAND.catalogDescription,
     type: 'website',
   },
 };
@@ -27,14 +26,15 @@ export default async function HomePage() {
   const [products, categories] = await Promise.all([fetchLandingProducts(), fetchLandingCategories()]);
 
   return (
-    <div className='lg:h-screen lg:overflow-hidden bg-[#F5F5F7] dark:bg-zinc-950 selection:bg-indigo-500/30 flex flex-col'>
+    <div className='lg:h-screen lg:overflow-hidden bg-cream dark:bg-zinc-950 selection:bg-brand-500/30 flex flex-col'>
       {/* Hero Section */}
       <section className='relative pb-4 md:pb-10 pt-16 md:pt-12 overflow-hidden px-4 sm:px-8 shrink-0'>
         <div className='absolute top-4 right-4 z-50'>
           <ThemeToggle />
         </div>
-        <div className='max-w-6xl mx-auto text-center space-y-4 md:space-y-6'>
-          <h1 className='text-4xl md:text-6xl font-bold text-zinc-900 dark:text-white'>ArgenStock</h1>
+        <div className='max-w-6xl mx-auto flex justify-center'>
+          <h1 className='sr-only'>{BRAND.name}</h1>
+          <BrandLogo size='lg' />
         </div>
       </section>
 
@@ -48,7 +48,9 @@ export default async function HomePage() {
 
       {/* Footer - Minimal on desktop to save space */}
       <footer className='shrink-0 border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 py-8 text-center text-[14px] text-zinc-500 dark:text-zinc-400 px-6'>
-        <p>© {new Date().getFullYear()} ArgenStock. Todos los derechos reservados.</p>
+        <p>
+          © {new Date().getFullYear()} {BRAND.name}. Todos los derechos reservados.
+        </p>
       </footer>
     </div>
   );

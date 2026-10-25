@@ -39,7 +39,7 @@ export function getAuditColumns({ onView }: ColumnActions): ColumnDef<AuditLogDe
             {dateString}
             <span
               title={timeString}
-              className='text-indigo-600 dark:text-indigo-400 ml-1'
+              className='text-brand-600 dark:text-brand-400 ml-1'
             >
               {timeString}
             </span>
@@ -103,7 +103,7 @@ export function getAuditColumns({ onView }: ColumnActions): ColumnDef<AuditLogDe
             e.stopPropagation();
             onView(log);
           }}
-          className='p-1.5 text-indigo-600 hover:bg-indigo-50 dark:text-indigo-400 dark:hover:bg-indigo-500/10 rounded-lg transition-colors shadow-sm'
+          className='p-1.5 text-brand-600 hover:bg-brand-50 dark:text-brand-400 dark:hover:bg-brand-500/10 rounded-lg transition-colors shadow-sm'
           title='Ver Detalle'
         >
           <Eye className='w-4 h-4' />

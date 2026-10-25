@@ -56,7 +56,7 @@ export class ProductosPage {
 
     this.btnAgregarNuevo = page.getByTestId(TEST_IDS.general.btnAgregar);
     this.btnVerInactivos = page.getByTestId(TEST_IDS.general.btnVerOcultos).filter({ visible: true });
-    this.inputDescripcion = page.getByRole('textbox', { name: 'Ej: Negro, 256GB - Kit Funda' });
+    this.inputDescripcion = page.getByRole('textbox', { name: 'Ej: Carne suave' });
     this.inputPrecioCompra = page.locator('input[name="purchasePrice"]');
     this.inputPrecioVenta = page.locator('input[name="salePrice"]');
     this.inputUnidades = page.getByPlaceholder('1');
@@ -64,7 +64,7 @@ export class ProductosPage {
     this.btnCancelar = page.getByRole('button', { name: ProductosPage.UI.BTN_CANCELAR, exact: true });
 
     this.inputPerdidaCantidad = page.getByPlaceholder('Ej: 1');
-    this.inputPerdidaMotivo = page.getByRole('textbox', { name: 'Ej: Pantalla rota al' });
+    this.inputPerdidaMotivo = page.getByRole('textbox', { name: 'Ej: Se quemó en el horno' });
     this.btnConfirmarPerdida = page.getByRole('button', { name: ProductosPage.UI.BTN_CONFIRMAR_PERDIDA, exact: true });
     this.btnSincronizar = page.getByTestId(TEST_IDS.general.btnSincronizar);
   }
