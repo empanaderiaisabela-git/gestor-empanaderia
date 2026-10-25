@@ -1,7 +1,7 @@
 const config = {
   testRunner: 'vitest',
   vitest: { configFile: 'vitest.mutation.config.mts' },
-  mutate: ['src/features/provider/domain/**/*.ts', 'src/features/provider/services/**/*.ts', 'src/lib/errors/**/*.ts', '!src/**/*.test.ts'],
+  mutate: ['src/features/provider/domain/**/*.ts', 'src/features/provider/services/**/*.ts', 'src/features/menu/domain/**/*.ts', 'src/features/menu/services/**/*.ts', 'src/lib/errors/**/*.ts', '!src/**/*.test.ts'],
   reporters: ['clear-text', 'html', 'progress'],
   htmlReporter: { fileName: 'reports/mutation/mutation.html' },
   thresholds: { high: 85, low: 70, break: 70 },

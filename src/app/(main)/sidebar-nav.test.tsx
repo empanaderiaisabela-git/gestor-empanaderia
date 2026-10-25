@@ -13,7 +13,7 @@ describe('SidebarNav (US-2 CA-1)', () => {
 
   it('el admin ve el menú completo, con Estadísticas primero', () => {
     render(<SidebarNav role='admin' pathname='/' onNavigate={vi.fn()} />);
-    expect(linkNames()).toEqual(['Estadísticas', 'Productos', 'Ventas/Pedidos', 'Clientes', 'Proveedores', 'Categorías', 'Usuarios', 'Auditoría']);
+    expect(linkNames()).toEqual(['Estadísticas', 'Productos', 'Ventas/Pedidos', 'Clientes', 'Proveedores', 'Alta de productos', 'Categorías', 'Usuarios', 'Auditoría']);
   });
 
   it('marca la sección actual con aria-current', () => {

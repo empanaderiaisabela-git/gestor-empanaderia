@@ -930,7 +930,7 @@ retira cuando la reemplaza su ítem, y T-12 borra el resto. `main` recibe el spr
 | 3   | [T-11](#t-11--el-catálogo-público-se-regenera-sólo-cuando-cambia)               | El catálogo público se regenera sólo cuando cambia             | En revisión | —          | 1 h 5 min       |
 | 4   | [US-1](#us-1--la-app-con-la-marca-empanadería-isabela)                          | La app con la marca Empanadería Isabela                        | En revisión | —          | 1 h 50 min      |
 | 5   | [US-2](#us-2--menú-por-rol-y-sidebar-más-angosto)                               | Menú por rol y sidebar más angosto                             | En revisión | —          | 1 h 15 min      |
-| 6   | [US-3](#us-3--alta-de-productos-gustos-y-bebidas-con-precio-por-presentación)   | Alta de productos: gustos y bebidas con precio por presentación | Pendiente   | US-2       | 4 h 45 min      |
+| 6   | [US-3](#us-3--alta-de-productos-gustos-y-bebidas-con-precio-por-presentación)   | Alta de productos: gustos y bebidas con precio por presentación | En revisión | US-2       | 4 h 45 min      |
 | 7   | [US-4](#us-4--stock-grilla-ingresar-stock-y-mermas)                             | Stock: grilla, ingresar stock y mermas                         | Pendiente   | US-3       | 3 h 30 min      |
 | 8   | [US-5](#us-5--ventas-tablero-por-comida-y-pedido-actual)                        | Ventas: tablero por comida y pedido actual                     | Pendiente   | US-4       | 4 h 40 min      |
 | 9   | [US-6](#us-6--ventas-cobrar-con-4-medios-de-pago-y-precios-del-servidor)        | Ventas: cobrar con 4 medios de pago y precios del servidor     | Pendiente   | US-5       | 3 h 50 min      |
@@ -1285,9 +1285,9 @@ angosto, de forma que el área de trabajo sea más grande.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
-| Dueño        | —         |
-| Inicio       | —         |
+| Estado       | En revisión |
+| Dueño        | Ignacio Tomas |
+| Inicio       | 2026-10-25 |
 | Tamaño       | L         |
 | Depende de   | US-2      |
 | Plan         | —         |
@@ -1299,19 +1299,19 @@ costo y su precio para cada presentación, de forma que el POS y las estadístic
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · Schema nuevo, en paralelo al heredado: gusto o bebida con grupo, nombre, costo unitario, stock (admite medias), activo y `version`, más sus precios por presentación sólo en Sanguches, Pizzas y bebidas; Postgres garantiza `unique(grupo, nombre)`, precio > 0, costo ≥ 0, stock ≥ 0 y los precios que corresponden a cada grupo (tests de tipos e integración) · Estimación: 1 h · Completado: —
+- [x] **CA-1** · Schema nuevo, en paralelo al heredado: gusto o bebida con grupo, nombre, costo unitario, stock (admite medias), activo y `version`, más sus precios por presentación sólo en Sanguches, Pizzas y bebidas; Postgres garantiza `unique(grupo, nombre)`, precio > 0, costo ≥ 0, stock ≥ 0 y los precios que corresponden a cada grupo (tests de tipos e integración) · Estimación: 1 h · Completado: 2026-10-25 12:30
 
-- [ ] **CA-2** · El admin crea un gusto o bebida; nombre vacío o de más de 60 caracteres, un precio faltante, de más o ≤ 0 según el grupo → `VALIDATION`; nombre repetido en el grupo → `DUPLICATE`; un test de contrato por fila · Estimación: 45 min · Completado: —
+- [x] **CA-2** · El admin crea un gusto o bebida; nombre vacío o de más de 60 caracteres, un precio faltante, de más o ≤ 0 según el grupo → `VALIDATION`; nombre repetido en el grupo → `DUPLICATE`; un test de contrato por fila · Estimación: 45 min · Completado: 2026-10-25 12:30
 
-- [ ] **CA-3** · Edita nombre, costo y precios con `version` (`STALE_VERSION`), desactiva y reactiva; borrar uno con ventas → `HAS_RELATIONS` · Estimación: 45 min · Completado: —
+- [x] **CA-3** · Edita nombre, costo y precios con `version` (`STALE_VERSION`), desactiva y reactiva; borrar uno con ventas → `HAS_RELATIONS` · Estimación: 45 min · Completado: 2026-10-25 12:30
 
-- [ ] **CA-4** · El vendedor recibe `FORBIDDEN` y sin sesión `UNAUTHENTICATED`; `/alta-de-productos` es sólo del admin (menú y `proxy.ts`) · Estimación: 20 min · Completado: —
+- [x] **CA-4** · El vendedor recibe `FORBIDDEN` y sin sesión `UNAUTHENTICATED`; `/alta-de-productos` es sólo del admin (menú y `proxy.ts`) · Estimación: 20 min · Completado: 2026-10-25 12:30
 
-- [ ] **CA-5** · Pantalla agrupada por grupo, con búsqueda y estados de carga, vacío y error, con tests de componente · Estimación: 45 min · Completado: —
+- [x] **CA-5** · Pantalla agrupada por grupo, con búsqueda y estados de carga, vacío y error, con tests de componente · Estimación: 45 min · Completado: 2026-10-25 12:30
 
-- [ ] **CA-6** · Auditoría de cada alta, edición y baja; `docs/features/<f>/README.md` con la tabla de errores; ADR "Grupos y presentaciones fijos, precio del grupo o por gusto"; seed con los gustos reales de `specs.md` y bebidas de demo; mutación ≥ 70 · Estimación: 25 min · Completado: —
+- [x] **CA-6** · Auditoría de cada alta, edición y baja; `docs/features/<f>/README.md` con la tabla de errores; ADR "Grupos y presentaciones fijos, precio del grupo o por gusto"; seed con los gustos reales de `specs.md` y bebidas de demo; mutación ≥ 70 · Estimación: 25 min · Completado: 2026-10-25 12:30
 
-- [ ] **CA-7** · El admin edita los precios del grupo de Empanadas (1, 3, 6 y 12 u) y de Ciabattas (unidad), con `version` y auditoría; mientras un grupo no tiene precio cargado, sus gustos no se pueden vender · Estimación: 45 min · Completado: —
+- [x] **CA-7** · El admin edita los precios del grupo de Empanadas (1, 3, 6 y 12 u) y de Ciabattas (unidad), con `version` y auditoría; mientras un grupo no tiene precio cargado, sus gustos no se pueden vender · Estimación: 45 min · Completado: 2026-10-25 12:30
 
 **Detalle**
 
@@ -1329,6 +1329,45 @@ costo y su precio para cada presentación, de forma que el POS y las estadístic
   `provider`.
 - El costo del gusto lo actualiza "Ingresar stock" (US-4); acá se carga el inicial.
 - Las fotos y la visibilidad en el catálogo público pasan al modelo nuevo en T-12.
+
+**Cierre** (2026-10-25)
+
+- **Modelo** ([ADR 0005](docs/adr/0005-grupos-fijos-y-precio-del-grupo-o-por-gusto.md),
+  [README del feature](docs/features/menu/README.md)):
+  - Feature nuevo `src/features/menu/`, con el molde de `provider`.
+  - Grupos y presentaciones fijos en `domain/menu-groups.ts`.
+  - Empanadas y Ciabattas usan el precio del grupo (`menu_group_prices`); Sanguches, Pizzas y bebidas, el precio
+    por gusto (columnas de `menu_items`).
+- **CA-1**:
+  - Migración `0006_menu-items` con `menu_items` y `menu_group_prices`, en `src/lib/db/menu-schema.ts`.
+  - `CHECK` de costo ≥ 0, stock ≥ 0 y en medias (sólo Pizzas con medias), y de los precios que corresponden a cada
+    grupo, más `unique(menu_group, name)`.
+  - Las reglas se probaron contra `db-test` con el seed y con la suite de comportamiento del repositorio, que corre
+    contra el fake y contra Drizzle.
+  - `menu-schema.ts` puede usar `sql` sólo para los `check()` (`eslint/layers.mjs`) y quedó fuera de la cobertura,
+    como `schema.ts`.
+- **CA-2 y CA-3**: un test de contrato por fila de la tabla de errores (`UNAUTHENTICATED`, `FORBIDDEN`, `VALIDATION`,
+  `DUPLICATE`, `STALE_VERSION`, `NOT_FOUND` y `HAS_RELATIONS`), más un fuzz.
+  - El caso de borrar con movimientos contra Drizzle queda salteado hasta que US-4 cree la primera tabla que
+    referencia a `menu_items`. Contra el fake sí corre.
+- **CA-4**: `/alta-de-productos` sólo para el admin, en el menú (después de Proveedores) y en `proxy.ts`.
+- **CA-5**: pantalla con las tarjetas de precios de Empanadas y Ciabattas, búsqueda, filtro por grupo, "Ver
+  inactivos", tabla y tarjetas.
+  - Carga con esqueleto y mensaje de grupo vacío.
+  - El formulario muestra sólo los precios del grupo elegido.
+  - Tests de componente del panel, los campos, la tarjeta de precios, la grilla y el hook.
+- **CA-6**:
+  - Auditoría con `entity` `MENU_ITEM` y `MENU_GROUP_PRICES`.
+  - Seed (`db:seed`) con los gustos de `specs.md`: 15 de empanadas, 6 pizzas, 2 sanguches y 4 ciabattas, más 8
+    bebidas de demo.
+  - Mutación: 93,51 en total y 91,76 en `menu`.
+- **CA-7**: precios del grupo con `version` (0 = primera carga). Sin precio, la tarjeta avisa "Sin precio:
+  todavía no se puede vender".
+- `formatMoney` (`src/lib/format-money.ts`) muestra los importes en formato argentino.
+- `invalidateAllCaches` suma el store del menú, con su test.
+- **Costos**: `fetchMenuItems` le manda el costo en `null` al vendedor (contrato `regression`: el vendedor no recibe
+  el costo). Así queda hasta que el cliente responda si el vendedor ve costos (pregunta 2).
+- **E2E**: `npm run test:e2e` en verde (81 tests); la prueba de humo abre `/alta-de-productos` con el seed nuevo.
 
 ### US-4 · Stock: grilla, ingresar stock y mermas
 

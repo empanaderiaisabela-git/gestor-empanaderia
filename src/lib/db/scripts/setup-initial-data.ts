@@ -2,6 +2,7 @@ import * as bcrypt from 'bcrypt';
 import { db } from '..';
 import { providers, customers, devices, products, sales, saleItems, auditLogs, productLosses, users, salePayments, productImages } from '../schema';
 import { assertSafeToWipe } from './assert-safe-to-wipe';
+import { clearMenu, seedMenu } from './seed-menu';
 
 async function setup() {
   assertSafeToWipe(process.env);
@@ -10,6 +11,7 @@ async function setup() {
 
   try {
     // Order matters for deletion due to foreign keys
+    await clearMenu();
     await db.delete(auditLogs);
     await db.delete(saleItems);
     await db.delete(salePayments);
@@ -121,6 +123,8 @@ async function setup() {
     }
     await db.insert(products).values(productList);
     console.log(`${productList.length} products created.`);
+
+    await seedMenu();
 
     console.log('Creating initial users...');
     const adminPasswordHash = await bcrypt.hash('admin', 10);

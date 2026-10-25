@@ -1,8 +1,9 @@
 import { db } from '@/lib/db';
+import { menuGroupPrices, menuItems } from '@/lib/db/menu-schema';
 import { auditLogs, customers, devices, productImages, productLosses, products, providers, saleItems, salePayments, sales, users } from '@/lib/db/schema';
 import { assertTestDatabaseUrl } from './test-database-url';
 
-const TABLES_CHILDREN_FIRST = [auditLogs, saleItems, salePayments, sales, productLosses, productImages, products, devices, providers, customers, users];
+const TABLES_CHILDREN_FIRST = [menuGroupPrices, menuItems, auditLogs, saleItems, salePayments, sales, productLosses, productImages, products, devices, providers, customers, users];
 
 export async function truncateAll(): Promise<void> {
   const { LOCAL_DATABASE_URL, NODE_ENV, APP_ENV } = process.env;

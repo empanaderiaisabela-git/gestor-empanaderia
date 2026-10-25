@@ -101,6 +101,9 @@ Hacer preguntas de más es mejor que inventar.
   - E2E con Playwright (`tests/`, con Page Objects) contra `db-test`, con `next build` + `next start` en el 3100 y la carpeta
     `.next-e2e` (T-6, ver `tests/readme.md`). Nunca toca la base de desarrollo.
   - Mutación con Stryker (`stryker.config.mjs`, `npm run test:mutation`) sobre `provider` y `src/lib/errors` (T-5).
+- `menu` (US-3, `docs/features/menu/README.md`, ADR 0005) es el **modelo nuevo de productos**: gustos y bebidas por
+  grupo fijo, precio del grupo (Empanadas, Ciabattas) o por gusto (Sanguches, Pizzas, bebidas). Convive con el
+  modelo heredado (`devices`/`products`) hasta T-12.
 - `provider` es el **feature molde** (T-5, `docs/features/provider/README.md`): los demás features se migran
   copiando su estructura.
 - Gates (T-3, ADR 0003):
@@ -139,7 +142,7 @@ Detalle en [`docs/architecture.md`](architecture.md).
 - `src/lib/db/index.ts` lleva `import 'server-only'`. Los scripts `db:*` y el E2E corren con
   `--conditions=react-server`, ya configurado en `package.json`. Si agregás un script que importe `@/lib/db`, sumale
   esa condición.
-- Doc por feature en `docs/features/<f>/README.md`; hoy sólo `stats`.
+- Doc por feature en `docs/features/<f>/README.md`: hoy `provider`, `stats` y `menu`.
 - Schema de la base en `src/lib/db/schema.ts`.
 - **Seguridad**:
   - JWT en la cookie `session`.

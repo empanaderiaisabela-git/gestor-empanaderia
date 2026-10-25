@@ -223,7 +223,7 @@ Los criterios y estimaciones de cada ítem están en [`BACKLOG.md`](../../BACKLO
   en el catálogo.
 - **Ruta y menú**: `/alta-de-productos`, sólo para el admin, en el menú de US-2 y en `proxy.ts`.
 - **Seed** (`db:seed` y el seed del E2E), con los gustos de `specs.md`:
-  - Empanadas (16): Carne suave, Carne, Carne picante, Carne cheddar, Pollo, Pollo a mostaza, Bondiola mostaza y
+  - Empanadas (15): Carne suave, Carne, Carne picante, Carne cheddar, Pollo, Pollo a mostaza, Bondiola mostaza y
     miel, Bondiola barbacoa, Jamón y muzza, Capresse, Muzza y cebolla, Muzza y pepperoni, Muzza, cebolla y
     roquefort, Verdura y Humita.
   - Pizzas (6): Muzza, Muzza y jamón, Napolitana, Napolitana con jamón, Pepperoni y Roquefort.

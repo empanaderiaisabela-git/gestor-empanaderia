@@ -43,6 +43,13 @@
       "when": 1792869009012,
       "tag": "0005_enable-unaccent",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1792940241941,
+      "tag": "0006_menu-items",
+      "breakpoints": true
     }
   ]
 }

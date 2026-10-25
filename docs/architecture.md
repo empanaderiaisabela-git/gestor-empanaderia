@@ -289,6 +289,8 @@ Casos especiales:
 | `product_losses` | Mermas: cantidad y motivo | No | — |
 | `sales`, `sale_items`, `sale_payments` | Venta; renglones con el costo unitario congelado al vender; pagos en `efectivo` o `transferencia` | No | Anulación (borrado y reposición de stock) |
 | `audit_logs` | Bitácora de operaciones | No | — |
+| `menu_items` (`src/lib/db/menu-schema.ts`) | Gustos y bebidas del modelo nuevo (US-3): grupo, nombre, costo, stock con medias para pizzas y precios por gusto según el grupo ([ADR 0005](adr/0005-grupos-fijos-y-precio-del-grupo-o-por-gusto.md)) | Sí | Lógica; física si no tiene movimientos |
+| `menu_group_prices` | Precio único por presentación de Empanadas y Ciabattas | Sí | — |
 
 Convenciones:
 
