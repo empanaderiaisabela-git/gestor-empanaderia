@@ -8,7 +8,8 @@
 
 - [Convenciones](#convenciones)
 - [Sprint 0 · Base técnica](#sprint-0--base-técnica)
-- [Sprint 1 · Primeras historias del cliente](#sprint-1--primeras-historias-del-cliente)
+- [Sprint 1 · Vender con el modelo de la empanadería](#sprint-1--vender-con-el-modelo-de-la-empanadería)
+- [Sprint 2 · Promociones, tarjetas, estadísticas y gastos](#sprint-2--promociones-tarjetas-estadísticas-y-gastos)
 
 ## Convenciones
 
@@ -786,7 +787,8 @@ teléfono y el mail de los proveedores.
 
 **Preguntas abiertas**
 
-- ¿El vendedor debe ver los precios de compra y el contacto de los proveedores?
+- (Cliente) ¿El vendedor debe ver los precios de compra y el contacto de los proveedores? Se consulta junto con la
+  de US-4 (¿el vendedor ingresa stock?), en la lista de [`docs/plans/sprint-1.md`](docs/plans/sprint-1.md#preguntas-para-el-cliente).
 
 ### BUG-9 · Errores de base de datos mal traducidos
 
@@ -903,14 +905,129 @@ con un contexto verdadero.
 
 ------------------------------------------------------------------------------------------------------------------------
 
-## Sprint 1 · Primeras historias del cliente
+## Sprint 1 · Vender con el modelo de la empanadería
 
 ------------------------------------------------------------------------------------------------------------------------
 
-Se carga desde [`docs/requerimientos/specs.md`](docs/requerimientos/specs.md) siguiendo `docs/workflow.md` §0.
+**Objetivo**: que el local venda con su catálogo real (gustos y bebidas, presentaciones fijas y precio por gusto),
+con stock por gusto, el POS del wireframe, 4 medios de pago y la marca Empanadería Isabela, sin restos del modelo de
+la casa de celulares.
 
-Todavía no hay historias del cliente. Hay tres bugs que aparecieron al explorar el código para el Sprint 0 y que el
-dev dejó para este sprint (2026-10-24).
+**Plan del sprint**: [`docs/plans/sprint-1.md`](docs/plans/sprint-1.md). Tiene las decisiones del dev, el orden, el
+enfoque de cada ítem, la trazabilidad con [`specs.md`](docs/requerimientos/specs.md) y las preguntas para el
+cliente. La tabla de abajo está en orden de ejecución.
+
+**Regla del sprint**: el modelo nuevo se construye en tablas nuevas, en paralelo al heredado. Cada pantalla vieja se
+retira cuando la reemplaza su ítem, y T-12 borra el resto. `main` recibe el sprint recién en T-13.
+
+### Resumen del Sprint 1
+
+| #   | ID                                                                              | Título                                                         | Estado      | Depende de | Estimación      |
+| --- | ------------------------------------------------------------------------------- | -------------------------------------------------------------- | ----------- | ---------- | --------------- |
+| 0   | [T-10](#t-10--backlog-de-los-sprints-1-y-2-desde-specsmd)                       | Backlog de los Sprints 1 y 2 desde `specs.md`                  | En revisión | —          | 30 min          |
+| 1   | [BUG-12](#bug-12--el-vendedor-puede-pedir-las-estadísticas-del-dashboard)       | El vendedor puede pedir las estadísticas                       | Pendiente   | T-4        | 25 min          |
+| 2   | [BUG-10](#bug-10--scripts-destructivos-que-quedaron-fuera-de-bug-3)             | Scripts destructivos que quedaron fuera de BUG-3               | Pendiente   | BUG-3      | 40 min          |
+| 3   | [T-11](#t-11--el-catálogo-público-se-regenera-sólo-cuando-cambia)               | El catálogo público se regenera sólo cuando cambia             | Pendiente   | —          | 1 h 5 min       |
+| 4   | [US-1](#us-1--la-app-con-la-marca-empanadería-isabela)                          | La app con la marca Empanadería Isabela                        | Pendiente   | —          | 1 h 50 min      |
+| 5   | [US-2](#us-2--menú-por-rol-y-sidebar-más-angosto)                               | Menú por rol y sidebar más angosto                             | Pendiente   | —          | 1 h 15 min      |
+| 6   | [US-3](#us-3--alta-de-productos-gustos-y-bebidas-con-precio-por-presentación)   | Alta de productos: gustos y bebidas con precio por presentación | Pendiente   | US-2       | 4 h             |
+| 7   | [US-4](#us-4--stock-grilla-ingresar-stock-y-mermas)                             | Stock: grilla, ingresar stock y mermas                         | Pendiente   | US-3       | 3 h 30 min      |
+| 8   | [US-5](#us-5--ventas-tablero-por-comida-y-pedido-actual)                        | Ventas: tablero por comida y pedido actual                     | Pendiente   | US-4       | 4 h 25 min      |
+| 9   | [US-6](#us-6--ventas-cobrar-con-4-medios-de-pago-y-precios-del-servidor)        | Ventas: cobrar con 4 medios de pago y precios del servidor     | Pendiente   | US-5       | 3 h 50 min      |
+| 10  | [US-7](#us-7--ventas-historial-comprobante-y-anulación)                         | Ventas: historial, comprobante y anulación                     | Pendiente   | US-6       | 2 h 30 min      |
+| 11  | [T-12](#t-12--retirar-el-modelo-heredado-de-la-casa-de-celulares)               | Retirar el modelo heredado de la casa de celulares             | Pendiente   | US-7, T-11 | 3 h 30 min      |
+| 12  | [T-13](#t-13--cierre-del-sprint-1)                                              | Cierre del Sprint 1                                            | Pendiente   | todos      | 1 h             |
+|     |                                                                                 | **Total del sprint**                                           |             |            | **28 h 30 min** |
+
+### Decisiones del dev para los Sprints 1 y 2 (2026-10-25)
+
+Respuestas a las preguntas de descubrimiento sobre `specs.md`. El detalle y el porqué están en
+[`docs/plans/sprint-1.md`](docs/plans/sprint-1.md#decisiones-del-dev-2026-10-25).
+
+| Tema | Decisión |
+| --- | --- |
+| Grupos | **Fijos en el código**: Empanadas, Pizzas, Sanguches (de miga), Ciabattas, Coca-Cola y Pepsi. Desaparece Categorías |
+| Presentaciones | **Fijas**: Empanadas y Sanguches 1, 3, 6 y 12 u; Pizzas de 1 o 2 sabores (siempre entera); Ciabattas y bebidas, por unidad |
+| Precio | Por gusto **y** presentación. La pizza de 2 sabores cuesta lo que el sabor más caro |
+| Surtidas | Una línea por gusto: "6" + carne y después "6" + pollo |
+| Stock | Por gusto. La pizza mitad y mitad descuenta ½ de cada gusto |
+| Comprador | Nombre libre y opcional; vacío se muestra "Sin nombre". La venta deja de exigir un cliente de Clientes |
+| Turno | Mañana o tarde según una hora de corte en hora de Argentina. **La hora la consulta el dev con el cliente** |
+| Ingresar stock | Cantidad, costo unitario (actualiza el costo del gusto) y proveedor opcional, con historial |
+| Mermas y descuentos | Se mantienen los dos; las mermas siguen restando de la ganancia |
+| Auditoría | **El vendedor no tiene Auditoría** (el dev corrige la lista de `specs.md`) |
+| Pedidos | "Ventas/Pedidos" es el nombre del botón de Ventas, no un concepto nuevo |
+| Gastos | Anotador aislado de facturas: número, título y monto. No afecta Estadísticas |
+| Tarjetas | Recargo % por plan de cuotas (1, 3, 6 y 12) |
+| Promos | Se arman con grupo + presentación + cantidad; los gustos se eligen al vender |
+| ISR | Revalidación a demanda: el catálogo se regenera sólo cuando cambia |
+| Datos de producción | Sólo demo: el modelo viejo se puede borrar (se conservan los usuarios) |
+| Marca | Empanadería Isabela, con [`logo-empanaderia.jpeg`](docs/wireframes-ventas-gestor/logo-empanaderia.jpeg) |
+
+### T-10 · Backlog de los Sprints 1 y 2 desde `specs.md`
+
+| Campo        | Valor                                              |
+| ------------ | -------------------------------------------------- |
+| Estado       | En revisión                                        |
+| Dueño        | Ignacio Tomas                                      |
+| Inicio       | 2026-10-25                                         |
+| Tamaño       | S                                                  |
+| Depende de   | —                                                  |
+| Plan         | [`docs/plans/sprint-1.md`](docs/plans/sprint-1.md) |
+| Merge        | —                                                  |
+| Horas reales | —                                                  |
+
+**Historia**: Como dev quiero los pedidos del cliente convertidos en ítems formales, de forma que cada uno se pueda
+planificar e implementar sin volver a interpretar `specs.md`.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · `BACKLOG.md` con los Sprints 1 y 2: cada ítem con historia, CA medibles con estimación, dependencias y preguntas abiertas · Estimación: 15 min · Completado: 2026-10-25 02:44
+
+- [x] **CA-2** · `docs/plans/sprint-1.md` y `docs/plans/sprint-2.md` con las decisiones del dev, el orden, la trazabilidad specs → ítem y las preguntas para el cliente · Estimación: 10 min · Completado: 2026-10-25 02:44
+
+- [x] **CA-3** · `specs.md` y `docs/wireframes-ventas-gestor/` versionados; `docs/initial_prompt.md` §3 y §4 al día · Estimación: 5 min · Completado: 2026-10-25 02:44
+
+**Notas**
+
+- Descubrimiento hecho con el dev el 2026-10-25, sobre `specs.md`, los dos wireframes y el logo.
+- **Hallazgos del código** que pasaron a los ítems:
+  - `createSale` guarda los precios, costos, totales y pagos que manda el navegador, sin recalcularlos: va en US-6
+    CA-2.
+  - "Ingresar Stock" crea un producto nuevo (un lote) y el producto no tiene nombre propio: lo reemplazan US-3 y
+    US-4.
+  - El stock no tiene `CHECK` en la base y puede quedar negativo: va en US-3 CA-1.
+  - Estadísticas arranca con todo el historial y arma el día con la hora del servidor: va en US-12 CA-1.
+- BUG-11 pasó al Sprint 2: las fotos son del catálogo público, que hoy no es prioridad.
+
+### BUG-12 · El vendedor puede pedir las estadísticas del dashboard
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Pendiente |
+| Dueño        | —         |
+| Inicio       | —         |
+| Tamaño       | S         |
+| Depende de   | T-4       |
+| Plan         | —         |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Actual**: `fetchDashboardStats` usa `verifyAuthOrAdmin(false)`. `proxy.ts` no deja entrar al vendedor a `/`, pero
+la action se puede invocar igual y devuelve ingresos, costos y ganancia. Además, en caso de error devuelve `message`
+en vez del campo `error` de `ActionResult`.
+
+**Esperado**: sólo el admin puede pedir las estadísticas, y el error tiene la forma de `ActionResult`.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · Test de contrato `regression BUG-12`: el vendedor recibe `FORBIDDEN` y el admin recibe los datos · Estimación: 15 min · Completado: —
+
+- [ ] **CA-2** · El error de `fetchDashboardStats` tiene la forma de `ActionResult` · Estimación: 10 min · Completado: —
+
+**Preguntas resueltas** (`specs.md`, 2026-10-25)
+
+- El vendedor no tiene Estadísticas: sólo el admin ve ingresos, costos y ganancia.
 
 ### BUG-10 · Scripts destructivos que quedaron fuera de BUG-3
 
@@ -947,6 +1064,612 @@ existentes.
 
 - ¿`db:seed-users` tiene que poder correr contra producción para crear la primera cuenta real?
 
+### T-11 · El catálogo público se regenera sólo cuando cambia
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Pendiente |
+| Dueño        | —         |
+| Inicio       | —         |
+| Tamaño       | S         |
+| Depende de   | —         |
+| Plan         | —         |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como dueño quiero que el catálogo público no se regenere cada 30 segundos, de forma que no se gasten
+ISR Writes de Vercel cuando no cambió nada.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · `/home` no exporta `revalidate`; las lecturas del catálogo se cachean con una etiqueta, sin vencimiento por tiempo · Estimación: 20 min · Completado: —
+
+- [ ] **CA-2** · Toda mutación que cambia lo que muestra el catálogo (alta, edición, borrado, visibilidad, fotos, venta y anulación) invalida la etiqueta con un único helper; un test unit verifica que cada action lo llama · Estimación: 20 min · Completado: —
+
+- [ ] **CA-3** · `next build` lista `/home` sin "Revalidate 30s"; `tests/landing.spec.ts` deja de esperar 30 s y ve el cambio al instante · Estimación: 15 min · Completado: —
+
+- [ ] **CA-4** · `docs/architecture.md` (Vista general y Catálogo público) y ADR "Revalidación a demanda del catálogo" · Estimación: 10 min · Completado: —
+
+**Notas**
+
+- El mecanismo (etiqueta con `revalidateTag`/`updateTag`, `unstable_cache` o `'use cache'`) se decide en el plan
+  del ítem con la skill `next-cache-components`.
+- El arreglo llega a producción en el cierre del sprint (T-13). Si el dev lo quiere antes, se integra como
+  `hotfix/` desde `main` ([`docs/git.md`](docs/git.md)).
+- T-12 conecta la invalidación con Alta de productos y Stock, cuando el catálogo pase al modelo nuevo.
+
+### US-1 · La app con la marca Empanadería Isabela
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Pendiente |
+| Dueño        | —         |
+| Inicio       | —         |
+| Tamaño       | M         |
+| Depende de   | —         |
+| Plan         | —         |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como dueño quiero que el sistema muestre la marca de mi empanadería, de forma que no queden nombres ni
+textos de la casa de celulares.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · El logo ([`logo-empanaderia.jpeg`](docs/wireframes-ventas-gestor/logo-empanaderia.jpeg)) aparece en el sidebar, el login, el ícono de la pestaña y el comprobante; la metadata dice "Empanadería Isabela", con la descripción en español · Estimación: 30 min · Completado: —
+
+- [ ] **CA-2** · La paleta de la marca (negro, ámbar y crema) queda como tokens en `globals.css` y reemplaza a los `indigo-*` del panel y del login, en claro y oscuro, sin violaciones de contraste de axe en el login y el panel · Estimación: 45 min · Completado: —
+
+- [ ] **CA-3** · El catálogo público queda sin textos de Apple, accesorios ni garantía, y `contact.config.ts` sin el teléfono ni el Instagram del cliente anterior · Estimación: 20 min · Completado: —
+
+- [ ] **CA-4** · Tests de componente del sidebar y del login, con el nombre y el logo · Estimación: 15 min · Completado: —
+
+**Detalle**
+
+- Hoy dicen "ArgenStock": `app/layout.tsx`, `(main)/layout.tsx`, `home/page.tsx`, `message-generator.ts` y
+  `sales-print-view.tsx`. Los textos de Apple están en `home/page.tsx`, `product/[id]/page.tsx`,
+  `product-info.tsx`, `home/components/product-card.tsx` y `catalog-grid.tsx`.
+- Los textos de "equipo", "modelo" y "lote" de Productos, Categorías y el POS no se tocan acá: esas pantallas las
+  reemplazan US-3 a US-7 y T-12. El test que garantiza cero referencias es T-12 CA-5.
+
+**Preguntas abiertas**
+
+- (Cliente) ¿Cuáles son el WhatsApp y el Instagram del local? Mientras tanto, los botones de contacto del catálogo
+  no muestran datos del cliente anterior.
+
+**Notas**
+
+- El repo es público: el nombre y el logo del cliente quedan publicados.
+
+### US-2 · Menú por rol y sidebar más angosto
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Pendiente |
+| Dueño        | —         |
+| Inicio       | —         |
+| Tamaño       | S         |
+| Depende de   | —         |
+| Plan         | —         |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como admin o vendedor quiero ver sólo las secciones de mi rol, en el orden del local y con un menú más
+angosto, de forma que el área de trabajo sea más grande.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · El menú y `proxy.ts` salen de una sola lista (ruta, nombre y roles); un test unit verifica que el vendedor ve exactamente Ventas/Pedidos, Stock y Clientes, y el admin, en orden, Estadísticas, Gastos, Stock, Ventas/Pedidos, Promociones, Clientes, Proveedores, Alta de productos, Tarjetas, Usuarios y Auditoría (las que existan) · Estimación: 30 min · Completado: —
+
+- [ ] **CA-2** · "Dashboard" pasa a llamarse "Estadísticas" en el menú y en el título de la página · Estimación: 10 min · Completado: —
+
+- [ ] **CA-3** · El sidebar de escritorio mide 240 px (antes, 320 px), sin textos cortados · Estimación: 15 min · Completado: —
+
+- [ ] **CA-4** · Después del login, el admin va a Estadísticas y el vendedor a Ventas/Pedidos; un vendedor que entra por URL a una sección ajena va a Ventas/Pedidos; el E2E de navegación por rol se actualiza · Estimación: 20 min · Completado: —
+
+**Detalle**
+
+- Cada sección nueva entra al menú y a `proxy.ts` con su ítem (Gastos en US-14, Stock en US-4, etc.). Productos y
+  Categorías siguen en el menú hasta que los retiran US-4 y T-12.
+- Hoy el vendedor entra a Productos, Ventas y Clientes, y aterriza en Productos.
+
+**Decisiones del dev** (2026-10-25)
+
+- El vendedor **no** tiene Auditoría, aunque la lista de `specs.md` la incluya: el dev la corrigió.
+- Que el vendedor aterrice en Ventas/Pedidos es una propuesta; se confirma en `start-task`.
+
+### US-3 · Alta de productos: gustos y bebidas con precio por presentación
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Pendiente |
+| Dueño        | —         |
+| Inicio       | —         |
+| Tamaño       | L         |
+| Depende de   | US-2      |
+| Plan         | —         |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como admin quiero dar de alta los gustos de cada comida y las bebidas de Coca-Cola y Pepsi, con su
+costo y su precio para cada presentación, de forma que el POS y las estadísticas trabajen con lo que vende el local.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · Schema nuevo, en paralelo al heredado: gusto o bebida con grupo, nombre, costo unitario, stock (admite medias), activo y `version`, más sus precios por presentación; Postgres garantiza `unique(grupo, nombre)`, precio > 0, costo ≥ 0, stock ≥ 0 y sólo las presentaciones de su grupo (tests de tipos e integración) · Estimación: 1 h · Completado: —
+
+- [ ] **CA-2** · El admin crea un gusto o bebida; nombre vacío o de más de 60 caracteres, un precio faltante de su grupo o un precio ≤ 0 → `VALIDATION`; nombre repetido en el grupo → `DUPLICATE`; un test de contrato por fila · Estimación: 45 min · Completado: —
+
+- [ ] **CA-3** · Edita nombre, costo y precios con `version` (`STALE_VERSION`), desactiva y reactiva; borrar uno con ventas → `HAS_RELATIONS` · Estimación: 45 min · Completado: —
+
+- [ ] **CA-4** · El vendedor recibe `FORBIDDEN` y sin sesión `UNAUTHENTICATED`; `/alta-de-productos` es sólo del admin (menú y `proxy.ts`) · Estimación: 20 min · Completado: —
+
+- [ ] **CA-5** · Pantalla agrupada por grupo, con búsqueda y estados de carga, vacío y error, con tests de componente · Estimación: 45 min · Completado: —
+
+- [ ] **CA-6** · Auditoría de cada alta, edición y baja; `docs/features/<f>/README.md` con la tabla de errores; ADR "Grupos y presentaciones fijos, precio por gusto y presentación"; seed de demo con gustos y bebidas del rubro; mutación ≥ 70 · Estimación: 25 min · Completado: —
+
+**Detalle**
+
+| Grupo | Presentaciones (con precio propio por gusto) | Stock |
+| --- | --- | --- |
+| Empanadas | 1, 3, 6 y 12 u | Unidades |
+| Sanguches (de miga) | 1, 3, 6 y 12 u | Unidades |
+| Pizzas | Entera (se vende de 1 o 2 sabores) | Pizzas; admite medias |
+| Ciabattas | Unidad | Unidades |
+| Coca-Cola | Unidad (cada bebida: Coca-Cola 1,5 L, Sprite 500 ml…) | Unidades |
+| Pepsi | Unidad | Unidades |
+
+- Los grupos y las presentaciones son fijos en el código: cada grupo tiene reglas propias en el POS.
+- Nombres de tablas, feature y ruta: propuestas que se confirman en el plan del ítem. Se copia el molde de
+  `provider`.
+- El costo del gusto lo actualiza "Ingresar stock" (US-4); acá se carga el inicial.
+- Las fotos y la visibilidad en el catálogo público pasan al modelo nuevo en T-12.
+
+### US-4 · Stock: grilla, ingresar stock y mermas
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Pendiente |
+| Dueño        | —         |
+| Inicio       | —         |
+| Tamaño       | L         |
+| Depende de   | US-3      |
+| Plan         | —         |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como admin o vendedor quiero ver el stock de cada gusto y bebida y registrar lo que entra, de forma que
+el POS sólo ofrezca lo que hay.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · `/stock` muestra la grilla de los gustos y bebidas activos, agrupados por grupo, con stock y precio de venta; costo y proveedor sólo los ve el admin; estados de carga, vacío y error · Estimación: 45 min · Completado: —
+
+- [ ] **CA-2** · "Ingresar stock" pide gusto, cantidad (entera > 0), costo unitario (≥ 0, actualiza el costo del gusto) y proveedor opcional; suma de forma atómica sin pisar una venta simultánea (test de integración) y queda en un historial de sólo inserción · Estimación: 1 h · Completado: —
+
+- [ ] **CA-3** · Historial de ingresos por gusto: fecha en hora de Argentina, cantidad, costo, proveedor y usuario · Estimación: 30 min · Completado: —
+
+- [ ] **CA-4** · Registrar una merma (sólo admin) pide cantidad ≤ stock y motivo, descuenta el stock y guarda el costo unitario del momento · Estimación: 30 min · Completado: —
+
+- [ ] **CA-5** · Errores por fila con su test de contrato: cantidad ≤ 0 → `VALIDATION`; gusto inexistente → `NOT_FOUND`; merma mayor que el stock → `INSUFFICIENT_STOCK` (código nuevo del catálogo) · Estimación: 30 min · Completado: —
+
+- [ ] **CA-6** · "Stock" reemplaza a "Productos" en el menú de los dos roles; se retiran el panel viejo de `/productos` y su E2E; `docs/features/<f>/README.md` · Estimación: 15 min · Completado: —
+
+**Detalle**
+
+- Hoy "Ingresar Stock" crea un producto nuevo (un lote) con su proveedor y sus precios. Con el modelo nuevo suma
+  unidades a un gusto existente.
+
+**Preguntas abiertas**
+
+- (Cliente, junto con la de BUG-8) ¿El vendedor puede ingresar stock? ¿Ve costos y proveedores? Mientras no
+  responda, se mantiene lo de hoy: el vendedor ingresa stock y no ve costos ni proveedores.
+
+### US-5 · Ventas: tablero por comida y pedido actual
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Pendiente |
+| Dueño        | —         |
+| Inicio       | —         |
+| Tamaño       | L         |
+| Depende de   | US-4      |
+| Plan         | —         |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como vendedor quiero armar el pedido tocando una presentación y un gusto en el tablero de cada comida,
+de forma que cargar una venta me lleve pocos clics.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · "Nueva venta" muestra el tablero del wireframe: una subdivisión por grupo (Empanadas, Pizzas, Sanguches, Ciabattas, Coca-Cola y Pepsi), cada una con su ícono, el contador "N en pedido" y un botón por presentación · Estimación: 1 h · Completado: —
+
+- [ ] **CA-2** · Empanadas y Sanguches: tocar 1, 3, 6 o 12 despliega los gustos con el precio de esa presentación, y elegir uno agrega una línea con esa cantidad de ese gusto; una surtida se arma con varias líneas · Estimación: 45 min · Completado: —
+
+- [ ] **CA-3** · Pizzas: "1 sabor" pide un gusto; "2 sabores" pide dos gustos distintos, cobra el más caro (mozzarella $10 + J&Q $5 = $10) y consume ½ de cada uno · Estimación: 45 min · Completado: —
+
+- [ ] **CA-4** · Ciabattas suma de a una unidad; Coca-Cola y Pepsi despliegan con un clic las bebidas de esa marca con stock y suman 1 u · Estimación: 30 min · Completado: —
+
+- [ ] **CA-5** · "Pedido actual" muestra comida, cantidad, unidades e importe, con quitar línea, vaciar y total; no se ofrece un gusto sin stock suficiente, contando lo que ya está en el pedido · Estimación: 45 min · Completado: —
+
+- [ ] **CA-6** · Campo "Comprador" opcional, de hasta 60 caracteres; vacío se muestra "Sin nombre" · Estimación: 10 min · Completado: —
+
+- [ ] **CA-7** · Las reglas del pedido son funciones puras del `domain` con tests unit y fuzz (mitad y mitad = el más caro, unidades por presentación, stock disponible), más tests de componente del tablero · Estimación: 30 min · Completado: —
+
+**Detalle**
+
+- Wireframes: [`venta_vista_general.png`](docs/wireframes-ventas-gestor/venta_vista_general.png) y
+  [`venta_vista_panel_desplegable_gustos.png`](docs/wireframes-ventas-gestor/venta_vista_panel_desplegable_gustos.png).
+  Las presentaciones del wireframe se reemplazan por las decididas por el dev (Pizzas: 1 o 2 sabores; Sanguches: 1,
+  3, 6 y 12 u). El botón "Combo + bebida" del wireframe no entra: lo cubren las promos (US-9).
+- Regla del cliente: en una presentación de más de 1 unidad, el gusto elegido se aplica a toda la cantidad.
+- Este ítem no cobra ni guarda nada: lo hace US-6. La subdivisión Promos llega con US-9.
+
+**A confirmar en `start-task`** (con el dev)
+
+- Los Sanguches de 3, 6 y 12 u llevan un solo gusto, igual que las empanadas.
+- El costo de una pizza mitad y mitad es ½ del costo de cada gusto.
+
+### US-6 · Ventas: cobrar con 4 medios de pago y precios del servidor
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Pendiente |
+| Dueño        | —         |
+| Inicio       | —         |
+| Tamaño       | L         |
+| Depende de   | US-5      |
+| Plan         | —         |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como vendedor quiero cobrar el pedido en efectivo, transferencia, débito o crédito, de forma que la
+venta quede registrada con su comprador y descuente el stock.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · Medios de pago Efectivo, Transferencia, Débito y Crédito (enum y migración); se mantiene el máximo de 2 pagos con medios distintos · Estimación: 30 min · Completado: —
+
+- [ ] **CA-2** · El servidor recalcula precios, costos y total desde la base: un precio, costo o total adulterado desde el navegador se ignora (test de contrato), y si los pagos no suman el total → `VALIDATION` · Estimación: 1 h · Completado: —
+
+- [ ] **CA-3** · La venta guarda vendedor, fecha y hora en UTC, comprador (o vacío), las líneas con lo cobrado y lo que consume de cada gusto con su costo congelado · Estimación: 45 min · Completado: —
+
+- [ ] **CA-4** · Descuenta el stock de forma atómica; si un gusto no alcanza → `INSUFFICIENT_STOCK` con el nombre del gusto y no se registra nada (test de integración con dos ventas simultáneas) · Estimación: 45 min · Completado: —
+
+- [ ] **CA-5** · Se mantienen los descuentos actuales (porcentaje y monto) sobre el total · Estimación: 20 min · Completado: —
+
+- [ ] **CA-6** · Auditoría, `docs/features/<f>/README.md` y E2E del flujo crítico: armar el pedido, cobrar y ver el stock descontado · Estimación: 30 min · Completado: —
+
+**Detalle**
+
+- Hoy `createSale` guarda los precios, costos, totales y pagos que manda el navegador, y sólo la UI controla que los
+  pagos sumen el total. CA-2 lo corrige para el POS nuevo.
+- La venta deja de exigir un cliente de Clientes ("Mostrador"): el comprador es un nombre libre y opcional.
+- En Crédito sólo se registra el medio. La tarjeta, las cuotas y el recargo llegan con US-11.
+
+### US-7 · Ventas: historial, comprobante y anulación
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Pendiente |
+| Dueño        | —         |
+| Inicio       | —         |
+| Tamaño       | M         |
+| Depende de   | US-6      |
+| Plan         | —         |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como admin o vendedor quiero ver las ventas registradas e imprimir su comprobante, y como admin anular
+una venta, de forma que los errores de carga se corrijan y el stock vuelva.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · Historial con fecha y hora de Argentina, comprador ("Sin nombre" si no hay), vendedor, medios de pago e importe, con filtro por fechas y búsqueda · Estimación: 45 min · Completado: —
+
+- [ ] **CA-2** · Comprobante imprimible con la marca y las líneas del pedido (gustos y pizzas mitad y mitad) · Estimación: 30 min · Completado: —
+
+- [ ] **CA-3** · Anular (sólo admin) repone el stock exacto, también las medias pizzas, y una venta no se puede anular dos veces · Estimación: 45 min · Completado: —
+
+- [ ] **CA-4** · Contrato: el vendedor que anula → `FORBIDDEN`; una venta inexistente → `NOT_FOUND`; README y E2E de anulación actualizados · Estimación: 30 min · Completado: —
+
+### T-12 · Retirar el modelo heredado de la casa de celulares
+
+| Campo        | Valor      |
+| ------------ | ---------- |
+| Estado       | Pendiente  |
+| Dueño        | —          |
+| Inicio       | —          |
+| Tamaño       | L          |
+| Depende de   | US-7, T-11 |
+| Plan         | —          |
+| Merge        | —          |
+| Horas reales | —          |
+
+**Historia**: Como dev quiero borrar las tablas, pantallas y datos del modelo viejo, de forma que quede un solo
+modelo y nada de código muerto.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · Una migración elimina `devices`, el `products` viejo y `sale_items`; las fotos (y las mermas, si quedaran) apuntan al modelo nuevo · Estimación: 45 min · Completado: —
+
+- [ ] **CA-2** · Se borran la pantalla Categorías, el feature `device`, el POS viejo y el panel viejo de productos; `eslint-legacy.json` se achica · Estimación: 45 min · Completado: —
+
+- [ ] **CA-3** · Las estadísticas actuales calculan con el modelo nuevo, con los mismos totales sobre datos sembrados · Estimación: 30 min · Completado: —
+
+- [ ] **CA-4** · El catálogo público muestra los gustos y bebidas visibles del modelo nuevo, y Alta de productos y Stock invalidan su caché (T-11) · Estimación: 45 min · Completado: —
+
+- [ ] **CA-5** · `db:seed`, el stress test y el seed del E2E sólo tienen datos de la empanadería; un test falla si aparecen "ArgenStock", "iPhone", "Apple", "accesorio", "celular" o "equipo" como texto en `src/` · Estimación: 30 min · Completado: —
+
+- [ ] **CA-6** · `npm run verify` y `npm run test:e2e` en verde · Estimación: 15 min · Completado: —
+
+**Notas**
+
+- Producción sólo tiene datos de demo (dev, 2026-10-25): el modelo viejo se borra sin migrar datos. Los usuarios se
+  conservan.
+
+### T-13 · Cierre del Sprint 1
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Pendiente |
+| Dueño        | —         |
+| Inicio       | —         |
+| Tamaño       | S         |
+| Depende de   | todos     |
+| Plan         | —         |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como dev quiero la documentación al día y el sprint integrado en `main`, de forma que el cliente vea
+lo construido y el próximo agente arranque con un contexto verdadero.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · `README.md` (módulos y rutas), `docs/architecture.md` (Vista general y Datos) y `docs/initial_prompt.md` al día · Estimación: 30 min · Completado: —
+
+- [ ] **CA-2** · `npm run verify` en verde sobre `develop`; con el OK del dev, merge local `develop → main` ("chore(release): sprint 1") con el tag `sprint-1` · Estimación: 30 min · Completado: —
+
+------------------------------------------------------------------------------------------------------------------------
+
+## Sprint 2 · Promociones, tarjetas, estadísticas y gastos
+
+------------------------------------------------------------------------------------------------------------------------
+
+**Objetivo**: vender promociones y en cuotas con recargo, ver las estadísticas del día que pidió el cliente y anotar
+los gastos.
+
+**Plan del sprint**: [`docs/plans/sprint-2.md`](docs/plans/sprint-2.md), **en borrador**: se revisa al cerrar el
+Sprint 1. El orden pone primero lo que cambia la venta (promos y tarjetas) y después las estadísticas que la leen.
+
+### Resumen del Sprint 2
+
+| #   | ID                                                                               | Título                                                      | Estado    | Depende de  | Estimación      |
+| --- | -------------------------------------------------------------------------------- | ----------------------------------------------------------- | --------- | ----------- | --------------- |
+| 0   | [US-8](#us-8--promociones-armar-promos-con-precio-de-rebaja)                     | Promociones: armar promos con precio de rebaja              | Pendiente | T-13        | 2 h 45 min      |
+| 1   | [US-9](#us-9--ventas-subdivisión-promos)                                         | Ventas: subdivisión Promos                                  | Pendiente | US-8        | 3 h             |
+| 2   | [US-10](#us-10--tarjetas-tarjetas-aceptadas-y-planes-de-cuotas-con-recargo)      | Tarjetas: tarjetas aceptadas y planes de cuotas con recargo | Pendiente | T-13        | 2 h             |
+| 3   | [US-11](#us-11--ventas-cobrar-con-crédito-en-cuotas)                             | Ventas: cobrar con crédito en cuotas                        | Pendiente | US-10       | 2 h             |
+| 4   | [US-12](#us-12--estadísticas-del-día-dinero-por-comida-ganancia-y-ventas)        | Estadísticas del día: dinero por comida, ganancia y ventas  | Pendiente | US-9, US-11 | 2 h 30 min      |
+| 5   | [US-13](#us-13--estadísticas-cuadros-de-vendedores-y-de-ventas)                  | Estadísticas: cuadros de vendedores y de ventas             | Pendiente | US-12       | 2 h             |
+| 6   | [US-14](#us-14--gastos-anotador-de-facturas)                                     | Gastos: anotador de facturas                                | Pendiente | T-13        | 2 h             |
+| 7   | [BUG-11](#bug-11--la-subida-de-fotos-no-valida-antes-de-subir)                   | La subida de fotos no valida antes de subir                 | Pendiente | BUG-1       | 55 min          |
+| 8   | [T-14](#t-14--cierre-del-sprint-2)                                               | Cierre del Sprint 2                                         | Pendiente | todos       | 1 h             |
+|     |                                                                                  | **Total del sprint**                                        |           |             | **18 h 10 min** |
+
+### US-8 · Promociones: armar promos con precio de rebaja
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Pendiente |
+| Dueño        | —         |
+| Inicio       | —         |
+| Tamaño       | M         |
+| Depende de   | T-13      |
+| Plan         | —         |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como admin quiero armar promociones que combinen productos distintos con un precio rebajado, de forma
+que el vendedor las ofrezca desde Ventas.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · Una promo tiene nombre único (hasta 60 caracteres) y uno o más componentes de grupo + presentación + cantidad (por ejemplo, 12 empanadas + 1 Coca-Cola); los gustos y la bebida se eligen al vender · Estimación: 45 min · Completado: —
+
+- [ ] **CA-2** · Al armarla se ve la lista de componentes con el precio de referencia de cada uno y el total sin rebaja, y el admin escribe a mano el precio de la promo (> 0) · Estimación: 45 min · Completado: —
+
+- [ ] **CA-3** · Al guardarla queda activa y disponible en Ventas; se edita con `version` y se desactiva · Estimación: 30 min · Completado: —
+
+- [ ] **CA-4** · Errores por fila con su test de contrato (sin componentes, precio ≤ 0, nombre duplicado, `STALE_VERSION`, vendedor → `FORBIDDEN`); "Promociones" en el menú sólo del admin; README · Estimación: 45 min · Completado: —
+
+**Detalle**
+
+- `specs.md`: "Finalmente, una vez agregada, esta va seleccionada". Se interpreta como que la promo guardada queda
+  activa y disponible en Ventas; se confirma con el dev en `start-task`.
+
+**Preguntas abiertas**
+
+- (Cliente) ¿Qué precio de referencia se muestra para un componente cuyo gusto se elige al vender? La propuesta es
+  el rango mínimo–máximo de esa presentación.
+- (Cliente) ¿Las promos tienen vigencia (fechas o días de la semana)?
+
+### US-9 · Ventas: subdivisión Promos
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Pendiente |
+| Dueño        | —         |
+| Inicio       | —         |
+| Tamaño       | M         |
+| Depende de   | US-8      |
+| Plan         | —         |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como vendedor quiero elegir una promo, completar sus gustos y sumarla al pedido, de forma que se cobre
+el precio rebajado.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · La subdivisión Promos despliega con un clic las promos activas con su precio; elegir una pide los gustos o las bebidas de cada componente, sólo entre los que tienen stock · Estimación: 1 h · Completado: —
+
+- [ ] **CA-2** · La promo se suma al pedido como una línea con su precio, y se pueden agregar varias, iguales o distintas · Estimación: 30 min · Completado: —
+
+- [ ] **CA-3** · Al cobrar, el servidor valida la promo (activa, componentes completos) y recalcula su precio; descuenta el stock de cada componente con su costo congelado · Estimación: 1 h · Completado: —
+
+- [ ] **CA-4** · Errores con su test de contrato (promo inactiva, componentes incompletos, stock insuficiente) y E2E de una venta con promo · Estimación: 30 min · Completado: —
+
+### US-10 · Tarjetas: tarjetas aceptadas y planes de cuotas con recargo
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Pendiente |
+| Dueño        | —         |
+| Inicio       | —         |
+| Tamaño       | M         |
+| Depende de   | T-13      |
+| Plan         | —         |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como admin quiero dar de alta las tarjetas que acepta el local con sus cuotas y el recargo de cada
+plan, de forma que el vendedor cobre en cuotas con el importe correcto.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · Una tarjeta tiene nombre único (hasta 40 caracteres) y uno o más planes de 1, 3, 6 o 12 cuotas, cada uno con un recargo de 0 a 100 % con 2 decimales; las restricciones van en el schema · Estimación: 45 min · Completado: —
+
+- [ ] **CA-2** · Alta, edición con `version` y desactivación, con errores por fila y su test de contrato; "Tarjetas" en el menú sólo del admin · Estimación: 1 h · Completado: —
+
+- [ ] **CA-3** · Auditoría de cada cambio y README · Estimación: 15 min · Completado: —
+
+### US-11 · Ventas: cobrar con crédito en cuotas
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Pendiente |
+| Dueño        | —         |
+| Inicio       | —         |
+| Tamaño       | M         |
+| Depende de   | US-10     |
+| Plan         | —         |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como vendedor quiero elegir la tarjeta y las cuotas al cobrar con crédito, de forma que se aplique el
+recargo del plan.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · Al elegir Crédito se elige una tarjeta activa y uno de sus planes; el pago suma el recargo y el importe final se ve antes de confirmar · Estimación: 45 min · Completado: —
+
+- [ ] **CA-2** · El servidor recalcula el recargo desde la tarjeta (ignora el del navegador) y guarda tarjeta, cuotas, porcentaje y monto del recargo · Estimación: 45 min · Completado: —
+
+- [ ] **CA-3** · Una tarjeta o un plan inexistente o inactivo da error con su test de contrato; el comprobante y el historial muestran la tarjeta y las cuotas · Estimación: 30 min · Completado: —
+
+**Preguntas abiertas**
+
+- (Cliente) ¿El recargo cuenta como ingreso y como ganancia en Estadísticas?
+- (Cliente) ¿El pago con Débito también pide elegir la tarjeta?
+
+### US-12 · Estadísticas del día: dinero por comida, ganancia y ventas
+
+| Campo        | Valor       |
+| ------------ | ----------- |
+| Estado       | Pendiente   |
+| Dueño        | —           |
+| Inicio       | —           |
+| Tamaño       | M           |
+| Depende de   | US-9, US-11 |
+| Plan         | —           |
+| Merge        | —           |
+| Horas reales | —           |
+
+**Historia**: Como admin quiero ver cuánto generó cada comida y bebida, la ganancia en limpio y la cantidad de ventas
+del día, de forma que sepa cómo cerró la jornada.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · Estadísticas abre con el día de hoy en hora de Argentina y un calendario para elegir otro día; los límites del día se calculan en `America/Argentina/Buenos_Aires` · Estimación: 45 min · Completado: —
+
+- [ ] **CA-2** · KPI de dinero generado por Empanadas, Pizzas, Ciabattas, Sándwiches de miga, Coca-Cola y Pepsi · Estimación: 45 min · Completado: —
+
+- [ ] **CA-3** · KPI de ganancia en limpio = ventas − costo congelado de lo vendido − mermas (ejemplo del cliente: comprada a $10 y vendida a $30 → $20) · Estimación: 30 min · Completado: —
+
+- [ ] **CA-4** · KPI de ventas registradas; estados de carga, día sin ventas y error; tests sobre datos sembrados · Estimación: 30 min · Completado: —
+
+**Detalle**
+
+- Hoy Estadísticas (ex Dashboard) arranca con todo el historial y arma el día con la hora del servidor (brecha de
+  fechas de `docs/architecture.md`). CA-1 lo corrige.
+
+**Preguntas abiertas**
+
+- (Cliente) ¿Cómo se reparte el precio de una promo en los KPI por comida? La propuesta es en proporción a los
+  precios de lista de sus componentes.
+- (Cliente) ¿Se conservan los KPI de hoy que no nombró (efectivo y transferencia, valor del stock, mermas,
+  unidades)? Mientras no responda, quedan debajo de los nuevos.
+
+### US-13 · Estadísticas: cuadros de vendedores y de ventas
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Pendiente |
+| Dueño        | —         |
+| Inicio       | —         |
+| Tamaño       | M         |
+| Depende de   | US-12     |
+| Plan         | —         |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como admin quiero ver debajo de las estadísticas el rendimiento de cada vendedor por turno y la lista
+de ventas del día, de forma que sepa quién vendió cuánto y cuándo.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · Cuadro de vendedores: vendedor, turno (mañana o tarde según la hora de corte, en hora de Argentina), número de ventas e importe · Estimación: 1 h · Completado: —
+
+- [ ] **CA-2** · Cuadro de ventas: comprador ("Sin nombre" si no hay), hora en Argentina e importe, ordenado por hora · Estimación: 45 min · Completado: —
+
+- [ ] **CA-3** · Tests unit de la regla del turno con valores frontera (justo antes y justo después del corte) · Estimación: 15 min · Completado: —
+
+**Preguntas abiertas**
+
+- (Cliente, **bloquea CA-1 y CA-3**) ¿A qué hora termina el turno mañana y empieza el turno tarde?
+
+### US-14 · Gastos: anotador de facturas
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Pendiente |
+| Dueño        | —         |
+| Inicio       | —         |
+| Tamaño       | M         |
+| Depende de   | T-13      |
+| Plan         | —         |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como admin quiero anotar las facturas de gastos con su número, título y monto, de forma que tenga un
+registro aparte de lo que se gasta.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · Alta de un gasto con número de factura (texto de hasta 30 caracteres), título (hasta 100) y monto (> 0, con 2 decimales); la fecha de carga es automática · Estimación: 45 min · Completado: —
+
+- [ ] **CA-2** · Lista ordenada por fecha con búsqueda; editar con `version` y borrar · Estimación: 45 min · Completado: —
+
+- [ ] **CA-3** · Un test demuestra que los gastos no cambian Estadísticas; sólo el admin (menú y `proxy.ts`); errores por fila con su test de contrato; auditoría y README · Estimación: 30 min · Completado: —
+
+**Preguntas abiertas**
+
+- (Cliente) ¿Se adjunta una foto de la factura?
+- (Cliente) ¿El número de factura es único?
+- (Cliente) ¿Hace falta la fecha de la factura, además de la de carga?
+
 ### BUG-11 · La subida de fotos no valida antes de subir
 
 | Campo        | Valor     |
@@ -981,7 +1704,7 @@ subir y borrar quedan auditados.
 
 - ¿Qué tamaño máximo y qué formatos se aceptan?
 
-### BUG-12 · El vendedor puede pedir las estadísticas del dashboard
+### T-14 · Cierre del Sprint 2
 
 | Campo        | Valor     |
 | ------------ | --------- |
@@ -989,23 +1712,16 @@ subir y borrar quedan auditados.
 | Dueño        | —         |
 | Inicio       | —         |
 | Tamaño       | S         |
-| Depende de   | T-4       |
+| Depende de   | todos     |
 | Plan         | —         |
 | Merge        | —         |
 | Horas reales | —         |
 
-**Actual**: `fetchDashboardStats` usa `verifyAuthOrAdmin(false)`. `proxy.ts` no deja entrar al vendedor a `/`, pero
-la action se puede invocar igual y devuelve ingresos, costos y ganancia. Además, en caso de error devuelve `message`
-en vez del campo `error` de `ActionResult`.
-
-**Esperado**: lo decide el cliente (ver la pregunta abierta). El error tiene la forma de `ActionResult`.
+**Historia**: Como dev quiero la documentación al día y el sprint integrado en `main`, de forma que el cliente vea
+lo construido y el próximo agente arranque con un contexto verdadero.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · Test de contrato con el permiso que decida el cliente · Estimación: 15 min · Completado: —
+- [ ] **CA-1** · `README.md`, `docs/architecture.md` y `docs/initial_prompt.md` al día · Estimación: 30 min · Completado: —
 
-- [ ] **CA-2** · El error de `fetchDashboardStats` tiene la forma de `ActionResult` · Estimación: 10 min · Completado: —
-
-**Preguntas abiertas**
-
-- ¿El vendedor puede ver los ingresos, los costos y la ganancia del dashboard?
+- [ ] **CA-2** · `npm run verify` en verde sobre `develop`; con el OK del dev, merge local `develop → main` ("chore(release): sprint 2") con el tag `sprint-2` · Estimación: 30 min · Completado: —

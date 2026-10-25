@@ -39,7 +39,7 @@ transferencia, y los 5 vendedores que más vendieron.
 | Acción | admin | vendedor | público (sin sesión) |
 |---|---|---|---|
 | Ver el dashboard (`/`) | Sí | No: `proxy.ts` lo redirige a `/productos` | No |
-| Invocar `fetchDashboardStats` | Sí | **Sí** (BUG-12, pendiente: falta que el cliente decida) | No |
+| Invocar `fetchDashboardStats` | Sí | **Sí**: debería ser No, porque el vendedor no tiene Estadísticas (`specs.md`); lo corrige BUG-12 | No |
 
 ## Server Actions
 

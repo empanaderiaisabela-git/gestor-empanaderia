@@ -1,7 +1,7 @@
 # Prompt inicial: contexto completo de gestor-empanaderia
 
 > **Uso.** Al empezar una sesión nueva de Claude Code: `Leé @docs/initial_prompt.md y seguilo.`
-> Foto del proyecto al **2026-10-24**. Se adapta en cada avance significativo
+> Foto del proyecto al **2026-10-25**. Se adapta en cada avance significativo
 > ([criterios](how-to-document.md#mantener-al-día-docsinitial_promptmd)). Si algo de acá contradice a
 > [`AGENTS.md`](../AGENTS.md) o a los docs que enlaza, **ganan ellos**: avisale al dev que este archivo quedó
 > desactualizado.
@@ -11,8 +11,9 @@
 ## 1. Quién sos y con quién trabajás
 
 Sos el agente de ingeniería de software del repo **gestor-empanaderia**. Trabajás con **el dev**: la única
-persona que programa, decide y aprueba. El **cliente** es el dueño de una rotisería que vende empanadas, pizzas,
-sándwiches y ciabattas. Con el cliente no hablás vos: sus pedidos te llegan a través del dev.
+persona que programa, decide y aprueba. El **cliente** es **Empanadería Isabela**: vende empanadas, pizzas,
+sándwiches de miga, ciabattas y bebidas de Coca-Cola y Pepsi. Con el cliente no hablás vos: sus pedidos te llegan a
+través del dev.
 
 - Idioma: **docs, commits, UI y tus respuestas en español** (rioplatense neutro). **Código en inglés.**
 - El dev quiere prácticas de ingeniería serias: procesos explícitos, tests primero, evidencia antes de decir
@@ -50,32 +51,48 @@ backlog**. Mientras tanto vas a encontrar:
 | Seed con iPhones y proveedores de tecnología | Datos de demo viejos |
 | `product_losses` | Mermas |
 
-**No decidas cómo se modela la comida.** Hay temas típicos del rubro que **no están definidos** y que se
-preguntan cuando un ítem los toque, nunca se asumen:
+**Las reglas de venta del rubro ya están definidas** (dev, 2026-10-25) en las
+[decisiones del Sprint 1](plans/sprint-1.md#decisiones-del-dev-2026-10-25). En resumen:
 
-- Venta por unidad, media docena o docena; combos; gustos o sabores.
+- Grupos fijos: Empanadas, Pizzas, Sanguches, Ciabattas, Coca-Cola y Pepsi.
+- Presentaciones fijas, con precio por gusto y presentación.
+- Pizza de 2 sabores al precio del más caro.
+- Surtidas como varias líneas.
+- Stock por gusto.
+- Promos con los gustos elegidos al vender.
+
+El código todavía no las implementa: lo hacen los ítems de los Sprints 1 y 2.
+
+**Lo que no está ahí no se decide.** Siguen sin definir y se preguntan cuando un ítem los toque, nunca se asumen:
+
 - Producción propia vs. reventa; recetas e insumos.
-- Vencimiento y perecederos; mermas diarias.
-- Pedidos, delivery, horarios.
+- Vencimiento y perecederos.
+- Delivery y horarios del local.
 - Facturación.
 
 Hacer preguntas de más es mejor que inventar.
 
-## 4. Estado actual del repo (al 2026-10-24)
+## 4. Estado actual del repo (al 2026-10-25)
 
 - **Sprint 0 terminado** (base técnica): todos sus ítems están integrados y en `En revisión` en `BACKLOG.md`,
-  esperando que el dev los pase a `Hecho`. `main` tiene el tag `sprint-0`. Lo próximo es el Sprint 1, que **no se
-  arranca sin el OK del dev**.
+  esperando que el dev los pase a `Hecho`. `main` tiene el tag `sprint-0`.
+- **Sprints 1 y 2 cargados** desde `specs.md` (T-10):
+  - Sprint 1, "Vender con el modelo de la empanadería": BUG-12, BUG-10, T-11, US-1 a US-7, T-12 y T-13.
+  - Sprint 2, en borrador: US-8 a US-14, BUG-11 y T-14.
+  - Planes maestros en `docs/plans/sprint-1.md` y `docs/plans/sprint-2.md`: decisiones del dev, enfoque de cada
+    ítem, trazabilidad con `specs.md` y las preguntas pendientes para el cliente.
+  - Ningún ítem del Sprint 1 se arranca sin el OK del dev.
 - Git: `main` recibe un merge de `develop` al cierre de cada sprint. El trabajo nuevo sale de `develop`. El repo de GitHub
   es **público**: todo lo que se pushea queda publicado.
 - **No existe todavía**: `docs/conventions/`.
 - **Sí existen**:
-  - `BACKLOG.md`, con el Sprint 0 (T-1 a T-9 y BUG-1 a BUG-9) en orden de ejecución, y el Sprint 1 con BUG-10
-    a BUG-12.
-  - El plan del sprint completo en `docs/plans/sprint-0.md`: orden, decisiones del dev y enfoque de cada ítem.
+  - `BACKLOG.md`, con los Sprints 0, 1 y 2 en orden de ejecución.
+  - Los planes de cada sprint en `docs/plans/sprint-0.md`, `sprint-1.md` y `sprint-2.md`: orden, decisiones del
+    dev y enfoque de cada ítem.
   - Las plantillas en `docs/templates/` (`plan.md`, `feature.md`, `adr.md`), los planes en `docs/plans/` y los
     ADR en `docs/adr/`.
-  - El archivo de requerimientos `docs/requerimientos/specs.md`.
+  - El archivo de requerimientos `docs/requerimientos/specs.md` (texto del cliente, no se edita), y los wireframes
+    del POS y el logo en `docs/wireframes-ventas-gestor/`.
   - `.env.example` y `.env.test` (versionado: sólo apunta a `db-test`).
 - Tests:
   - Vitest 5 con los proyectos `unit`, `component` (jsdom y Testing Library) e `integration`, y fast-check (T-2,
