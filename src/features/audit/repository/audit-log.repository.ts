@@ -25,6 +25,7 @@ export class AuditLogRepository {
             { label: 'merma', value: 'STOCK_LOSS' },
             { label: 'cliente', value: 'CUSTOMER' },
             { label: 'venta', value: 'SALE' },
+            { label: 'promoción', value: 'PROMOTION' },
           ];
 
           // Map Action labels for better searchability

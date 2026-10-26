@@ -96,7 +96,7 @@ Un tab nuevo con las promociones, donde se combinan productos distintos y se col
 
 Se muestra una lista de lo elegido, del precio de cada producto y lo que sale todo en total, y finalmente se coloca el precio a mano de lo que saldrá la promoción.
 
-Finalmente, una vez agregada, esta va seleccionada
+Finalmente, una vez agregada, esta va al tablero de ventas para hacer una venta con esa promo.
 
 algunos comentarios sueltos: 
 

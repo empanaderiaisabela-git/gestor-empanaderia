@@ -1830,7 +1830,7 @@ la leen.
 | #   | ID                                                                               | Título                                                      | Estado    | Depende de  | Estimación      |
 | --- | -------------------------------------------------------------------------------- | ----------------------------------------------------------- | --------- | ----------- | --------------- |
 | 0   | [T-15](#t-15--respuestas-del-cliente-en-el-backlog-del-sprint-2)                 | Respuestas del cliente en el backlog del Sprint 2           | En revisión | T-13      | 30 min          |
-| 1   | [US-8](#us-8--promociones-armar-promos-con-precio-de-rebaja)                     | Promociones: armar promos con precio de rebaja              | Pendiente | T-13        | 2 h 20 min      |
+| 1   | [US-8](#us-8--promociones-armar-promos-con-precio-de-rebaja)                     | Promociones: armar promos con precio de rebaja              | En revisión | T-13        | 2 h 20 min      |
 | 2   | [US-9](#us-9--ventas-subdivisión-promos)                                         | Ventas: subdivisión Promos                                  | Pendiente | US-8        | 3 h             |
 | 3   | [US-10](#us-10--tarjetas-tarjetas-aceptadas-y-planes-de-cuotas-con-recargo)      | Tarjetas: tarjetas aceptadas y planes de cuotas con recargo | Pendiente | T-13        | 2 h             |
 | 4   | [US-11](#us-11--ventas-cobrar-con-crédito-en-cuotas)                             | Ventas: cobrar con crédito en cuotas                        | Pendiente | US-10       | 2 h             |
@@ -1869,12 +1869,12 @@ programe con una regla vieja.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
-| Dueño        | —         |
-| Inicio       | —         |
+| Estado       | En revisión |
+| Dueño        | Agente |
+| Inicio       | 2026-10-25 |
 | Tamaño       | M         |
 | Depende de   | T-13      |
-| Plan         | —         |
+| Plan         | [`docs/plans/US-8-promociones.md`](docs/plans/US-8-promociones.md) |
 | Merge        | —         |
 | Horas reales | —         |
 
@@ -1883,13 +1883,13 @@ que el vendedor las ofrezca desde Ventas.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · Una promo tiene nombre único (hasta 60 caracteres) y uno o más componentes de grupo + presentación + cantidad (por ejemplo, 12 empanadas + 1 Coca-Cola); los gustos y la bebida se eligen al vender · Estimación: 45 min · Completado: —
+- [x] **CA-1** · Una promo tiene nombre único (hasta 60 caracteres) y uno o más componentes de grupo + presentación + cantidad (por ejemplo, 12 empanadas + 1 Coca-Cola); los gustos y la bebida se eligen al vender · Estimación: 45 min · Completado: 2026-10-26 00:17
 
-- [ ] **CA-2** · Al armarla se ve la lista de componentes y el admin escribe a mano el precio de venta de la promo (> 0); no se muestra precio de referencia · Estimación: 20 min · Completado: —
+- [x] **CA-2** · Al armarla se ve la lista de componentes y el admin escribe a mano el precio de venta de la promo (> 0); no se muestra precio de referencia · Estimación: 20 min · Completado: 2026-10-26 00:17
 
-- [ ] **CA-3** · Al guardarla queda activa y disponible en Ventas; se edita con `version` y se desactiva; no tiene vigencia: sigue activa hasta que el admin la desactiva · Estimación: 30 min · Completado: —
+- [x] **CA-3** · Al guardarla queda activa y disponible en Ventas; se edita con `version` y se desactiva; no tiene vigencia: sigue activa hasta que el admin la desactiva · Estimación: 30 min · Completado: 2026-10-26 00:17
 
-- [ ] **CA-4** · Errores por fila con su test de contrato (sin componentes, precio ≤ 0, nombre duplicado, `STALE_VERSION`, vendedor → `FORBIDDEN`); "Promociones" en el menú sólo del admin; README · Estimación: 45 min · Completado: —
+- [x] **CA-4** · Errores por fila con su test de contrato (sin componentes, precio ≤ 0, nombre duplicado, `STALE_VERSION`, vendedor → `FORBIDDEN`); "Promociones" en el menú sólo del admin; README · Estimación: 45 min · Completado: 2026-10-26 00:17
 
 **Detalle**
 
@@ -1900,6 +1900,11 @@ que el vendedor las ofrezca desde Ventas.
 
 - Precio de referencia: no hay; el precio de la promo se escribe a mano.
 - Vigencia: no tiene; el admin la desactiva cuando quiere.
+
+**Notas**
+
+- Decisión provisoria D-1 (`docs/plans/sprint-2.md`): una promo se puede borrar sólo si nunca se vendió; si no, se desactiva.
+- Cierre: `npm run verify` (682 tests, cobertura 96/89, mutación 88,9) y 65 E2E en verde. README en `docs/features/promotion/README.md`.
 
 ### US-9 · Ventas: subdivisión Promos
 

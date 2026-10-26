@@ -2,17 +2,19 @@ import { describe, expect, it } from 'vitest';
 import { useAuditStore } from '@/features/audit/store/audit.store';
 import { useCustomerStore } from '@/features/customer/store/customer.store';
 import { useMenuStore } from '@/features/menu/store/menu.store';
+import { usePromotionStore } from '@/features/promotion/store/promotion.store';
 import { useProviderStore } from '@/features/provider/store/provider.store';
 import { useStatsStore } from '@/features/stats/store/stats.store';
 import { useUserStore } from '@/features/user/store/user.store';
 import { invalidateAllCaches } from './index';
 
-const STORES = [useAuditStore, useCustomerStore, useMenuStore, useProviderStore, useStatsStore, useUserStore];
+const STORES = [useAuditStore, useCustomerStore, useMenuStore, usePromotionStore, useProviderStore, useStatsStore, useUserStore];
 
 const FILL = [
   () => useAuditStore.getState().setLogs([]),
   () => useCustomerStore.getState().setCustomers([]),
   () => useMenuStore.getState().setItems([]),
+  () => usePromotionStore.getState().setPromotions([]),
   () => useProviderStore.getState().setProviders([]),
   () => useStatsStore.getState().setStats(null),
   () => useUserStore.getState().setUsers([]),

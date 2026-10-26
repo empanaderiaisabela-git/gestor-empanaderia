@@ -158,3 +158,16 @@ Respuestas anotadas por el dev en `specs.md`, sección "preguntas que claude cod
 - **Las respuestas del cliente** ya están en los ítems (T-15). Si al tomar un ítem aparece una duda nueva, se
   pregunta en `start-task`.
 - **US-9 y US-11 tocan el cobro de US-6**: tienen que mantener verde su suite de contrato y su E2E.
+
+## Decisiones provisorias del agente
+
+El dev dejó el Sprint 2 corriendo de noche (2026-10-25) y autorizó decidir las dudas nuevas con la opción más
+prudente. Cada una tiene la pregunta que le habría hecho, la situación con un ejemplo, qué se eligió y qué cambia si
+responde otra cosa. También figura en las notas del ítem del backlog.
+
+### D-1 · Borrar una promoción (US-8)
+
+- **Pregunta**: ¿Una promoción se puede borrar para siempre, o sólo desactivar?
+- **Situación**: El admin crea "Docena + Coca" con un error de tipeo y nunca la vendió; otra promo, "Pizza + Pepsi", ya se vendió 30 veces. La historia sólo pide desactivarlas.
+- **Qué elegí y por qué**: Se puede borrar sólo si nunca se vendió; si ya se vendió, el sistema no deja ("existen registros relacionados") y hay que desactivarla. Así se corrige un error de carga sin romper el historial de ventas ni los comprobantes.
+- **Si respondés otra cosa**: Si querés "sólo desactivar", se quitan el botón Eliminar y `deletePromotionAction` (`src/features/promotion/`). Si querés borrar también las vendidas, habría que guardar el nombre de la promo en cada venta (US-9).

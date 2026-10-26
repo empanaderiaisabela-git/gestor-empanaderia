@@ -6,6 +6,7 @@ const SECTIONS = {
   estadisticas: { href: '/', label: 'Estadísticas' },
   stock: { href: '/stock', label: 'Stock' },
   ventas: { href: '/ventas', label: 'Ventas/Pedidos' },
+  promociones: { href: '/promociones', label: 'Promociones' },
   clientes: { href: '/clientes', label: 'Clientes' },
   proveedores: { href: '/proveedores', label: 'Proveedores' },
   altaProductos: { href: '/alta-de-productos', label: 'Alta de productos' },
@@ -16,7 +17,7 @@ const SECTIONS = {
 type Section = keyof typeof SECTIONS;
 
 const MENU: Readonly<Record<Role, readonly Section[]>> = {
-  admin: ['estadisticas', 'stock', 'ventas', 'clientes', 'proveedores', 'altaProductos', 'usuarios', 'auditoria'],
+  admin: ['estadisticas', 'stock', 'ventas', 'promociones', 'clientes', 'proveedores', 'altaProductos', 'usuarios', 'auditoria'],
   vendedor: ['ventas', 'stock', 'clientes'],
 };
 

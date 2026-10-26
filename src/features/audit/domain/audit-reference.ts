@@ -10,6 +10,7 @@ export const ENTITY_LABELS: Readonly<Record<string, string>> = {
   STOCK_ENTRY: 'STOCK',
   STOCK_LOSS: 'MERMA',
   SALE: 'VENTA',
+  PROMOTION: 'PROMOCIÓN',
 };
 
 function detailName(detail: unknown): string | null {
