@@ -1841,7 +1841,9 @@ la leen.
 | 9   | [BUG-13](#bug-13--alta-y-stock-confunden-el-costo-con-el-precio-de-venta)          | Alta y Stock confunden el costo con el precio de venta      | En revisión | US-3, US-4 | 45 min          |
 | 10  | [BUG-14](#bug-14--cualquier-error-de-la-base-se-muestra-como-datos-desactualizados) | Cualquier error de la base se muestra como "datos desactualizados" | En revisión | BUG-9 | 35 min          |
 | 11  | [T-14](#t-14--cierre-del-sprint-2)                                               | Cierre del Sprint 2                                         | En revisión | todos       | 1 h             |
-|     |                                                                                  | **Total del sprint**                                        |           |             | **20 h 5 min**  |
+| 12  | [BUG-15](#bug-15--los-precios-del-grupo-borran-lo-que-se-está-escribiendo)       | Los precios del grupo borran lo que se está escribiendo     | En revisión | US-3        | 30 min          |
+| 13  | [BUG-16](#bug-16--un-e2e-de-clientes-falla-a-veces-en-el-ci)                     | Un E2E de Clientes falla a veces en el CI                   | Pendiente | T-6         | 45 min          |
+|     |                                                                                  | **Total del sprint**                                        |           |             | **21 h 20 min** |
 
 ### T-15 · Respuestas del cliente en el backlog del Sprint 2
 
@@ -2266,3 +2268,74 @@ lo construido y el próximo agente arranque con un contexto verdadero.
 - `docs/plans/sprint-2.md` cierra con el **resumen para principiantes**: qué hace ahora el local, las decisiones
   provisorias D-1 a D-5, lo que entró en cada commit y lo que le toca al dev (migrar su base local con
   `npm run db:migrate`, probar a mano, contestar D-1 a D-5 y migrar Supabase).
+- Antes del merge a `main`, el CI de `develop` (d2ff408) falló por un test de componente intermitente de Alta de
+  productos: el cierre espera a BUG-15. Al revisar el historial del CI apareció también BUG-16.
+
+### BUG-15 · Los precios del grupo borran lo que se está escribiendo
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente |
+| Inicio       | 2026-10-26 |
+| Tamaño       | S         |
+| Depende de   | US-3      |
+| Plan         | [`docs/plans/BUG-15-precios-del-grupo.md`](docs/plans/BUG-15-precios-del-grupo.md) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Actual**:
+- Al montarse, cada tarjeta "Precios de venta de <grupo>" de Alta de productos copia los precios guardados a lo que
+  muestra con un `useEffect`, y lo repite cada vez que la lista de precios se recarga, aunque no haya cambiado nada.
+- Guardar los precios de un grupo recarga los de todos: si el admin estaba escribiendo los de Ciabattas sin guardar y
+  guarda los de Empanadas, lo que escribió en Ciabattas se borra.
+- El mismo efecto hace fallar a veces `menu-panel.test.tsx` en el CI: en una PC lenta la copia llega después de que
+  el test escribió el primer precio y lo borra (falló en 6e802c6 y d2ff408 con los valores "", 2000, 3000 y 4000).
+
+**Esperado**: la tarjeta toma los precios guardados sólo al armarse, y se vuelve a armar cuando cambia la versión
+guardada de ese grupo. Recargar sin cambios no toca lo que se está escribiendo.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · Lo escrito en una tarjeta se conserva si los precios se recargan sin cambios, y la tarjeta muestra los precios nuevos cuando se guardan (tests de `group-price-card` y `menu-panel`) · Estimación: 20 min · Completado: 2026-10-26 06:17
+
+- [x] **CA-2** · `menu-panel.test.tsx` ya no depende de la velocidad de la PC: sin efecto pendiente que pise lo escrito · Estimación: 10 min · Completado: 2026-10-26 06:17
+
+**Notas**
+
+- Apareció al cerrar el sprint: el CI de `develop` (d2ff408) falló por este test, y el merge a `main` esperó a este
+  ítem. El dev había autorizado decidir dudas nuevas: el arreglo cambia sólo cómo se arma la tarjeta, no qué guarda.
+- Los dos tests de regresión fallan con el código anterior (se comprobó sacando la `key` y con el `useEffect`), y el
+  panel pasó 10 corridas seguidas.
+- `npm run verify` (867 tests, cobertura 96/88,8, mutación 89,3) y 72 E2E en verde.
+
+### BUG-16 · Un E2E de Clientes falla a veces en el CI
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Pendiente |
+| Dueño        | —         |
+| Inicio       | —         |
+| Tamaño       | S         |
+| Depende de   | T-6       |
+| Plan         | —         |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Actual**: `tests/clientes.spec.ts:176` ("Debería desactivar a un cliente, crear uno con DNI identico…") falló en
+el CI de `develop` en c67ae43 y 3c28a35, en el intento y en el reintento: después de crear el cliente con el DNI del
+desactivado, la búsqueda por DNI no lo encuentra en 15 s. En local nunca falló (todas las corridas de la noche del
+2026-10-25 en verde).
+
+**Esperado**: el E2E pasa siempre, o se corrige el defecto de Clientes que muestre.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · Se encuentra la causa con el trace y el video de Playwright del CI (los artefactos piden credenciales de GitHub) · Estimación: 30 min · Completado: —
+
+- [ ] **CA-2** · El test o el código de Clientes corregido, con 5 corridas seguidas del CI en verde · Estimación: 15 min · Completado: —
+
+**Preguntas abiertas**
+
+- ¿Podés bajar el artefacto `playwright-report` de una corrida fallida (c67ae43 o 3c28a35) y dejarlo en el repo local,
+  sin commitearlo? Sin el trace, la causa no se puede ver.

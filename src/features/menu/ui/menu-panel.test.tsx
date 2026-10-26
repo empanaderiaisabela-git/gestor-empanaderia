@@ -62,4 +62,15 @@ describe('pantalla de Alta de productos (US-3 CA-5 y CA-7)', () => {
     fireEvent.click(within(card).getByRole('button', { name: 'Guardar precios' }));
     await waitFor(() => expect(actions.saveMenuGroupPricesAction).toHaveBeenCalledWith({ group: 'empanadas', prices: { price1: 1000, price3: 2000, price6: 3000, price12: 4000 }, version: 0 }), { timeout: 10_000 });
   });
+
+  it('regression BUG-15: al guardar, la tarjeta se vuelve a armar con los precios guardados', async () => {
+    const saved = { group: 'empanadas' as const, price1: 1500.5, price3: 4000, price6: 7500, price12: 14000, version: 1, updatedAt: '' };
+    actions.fetchMenuGroupPrices.mockResolvedValueOnce([CIABATTAS]).mockResolvedValue([CIABATTAS, saved]);
+    render(<MenuPanel />);
+    const card = await screen.findByRole('form', { name: 'Precios de venta de Empanadas' });
+    ['1500,50', '4000', '7500', '14000'].forEach((value, index) => fireEvent.change(within(card).getAllByRole('textbox')[index], { target: { value } }));
+    fireEvent.click(within(card).getByRole('button', { name: 'Guardar precios' }));
+    await waitFor(() => expect(screen.queryByText('Sin precio: todavía no se puede vender')).toBeNull(), { timeout: 10_000 });
+    expect(within(screen.getByRole('form', { name: 'Precios de venta de Empanadas' })).getAllByRole('textbox')[0].getAttribute('value')).toBe('1500.5');
+  });
 });

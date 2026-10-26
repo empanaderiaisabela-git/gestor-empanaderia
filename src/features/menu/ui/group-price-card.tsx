@@ -1,6 +1,6 @@
 'use client';
 
-import { type JSX, type FormEvent, useEffect, useState } from 'react';
+import { type JSX, type FormEvent, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { type GroupPricedGroup, GROUPS, priceFieldsOf, priceLabelOf, type PriceField } from '@/features/menu/domain/menu-groups';
 import { type MenuGroupPriceDef, type MenuGroupPricesInput, menuGroupPricesSchema } from '@/features/menu/domain/menu-group-price.schema';
@@ -20,10 +20,9 @@ const textsOf = (current: MenuGroupPriceDef | undefined): Texts =>
 const amount = (text: string | undefined): number | undefined => (text === undefined || text.trim() === '' ? undefined : Number(text.replace(',', '.')));
 
 export function GroupPriceCard({ group, current, onSave }: GroupPriceCardProps): JSX.Element {
-  const [texts, setTexts] = useState<Texts>(textsOf(current));
+  const [texts, setTexts] = useState<Texts>(() => textsOf(current));
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
-  useEffect(() => setTexts(textsOf(current)), [current]);
 
   const submit = async (event: FormEvent): Promise<void> => {
     event.preventDefault();

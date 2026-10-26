@@ -38,6 +38,8 @@ El orden pone primero lo que **cambia la venta** (promos y tarjetas) y después 
 | 9 | BUG-13 Costo para el local y precio de venta (en revisión) | US-3, US-4 | `fix/bug-13-costo-y-precio-de-venta` |
 | 10 | BUG-14 Errores de base que mandan a sincronizar | BUG-9 | `fix/bug-14-errores-de-base` |
 | 11 | T-14 Cierre del Sprint 2 | todos | `docs/t-14-cierre-sprint-2` |
+| 12 | BUG-15 Precios del grupo que se borran mientras se escriben (apareció en el cierre) | US-3 | `fix/bug-15-precios-del-grupo` |
+| 13 | BUG-16 Un E2E de Clientes que falla a veces en el CI (apareció en el cierre) | T-6 | — (pendiente) |
 
 US-14, BUG-11 y BUG-14 no dependen de los demás: se pueden adelantar si un ítem queda bloqueado.
 
@@ -140,6 +142,19 @@ US-14, BUG-11 y BUG-14 no dependen de los demás: se pueden adelantar si un íte
   el tag `sprint-2`.
 - El dev autorizó el cierre en `main` para esta noche si todo estaba en verde (2026-10-25). Abajo, el
   [resumen para principiantes](#resumen-para-principiantes).
+- El CI de `develop` falló después de T-14 por un test intermitente de Alta de productos: el merge a `main` esperó
+  a BUG-15.
+
+## 12 · BUG-15 Precios del grupo que se borran mientras se escriben (S, 30 min)
+
+- La tarjeta de precios del grupo copiaba los precios guardados con un efecto que también borraba lo que se estaba
+  escribiendo; ahora se vuelve a armar sólo cuando cambia la versión guardada. Hacía fallar a veces
+  `menu-panel.test.tsx` en el CI.
+
+## 13 · BUG-16 Un E2E de Clientes que falla a veces en el CI (S, 45 min)
+
+- `tests/clientes.spec.ts:176` falló dos veces en el CI y nunca en local. Queda pendiente: la causa se ve en el
+  trace de Playwright del CI, que pide credenciales de GitHub (pregunta en el ítem).
 
 ## Trazabilidad: respuestas del cliente → ítems
 
@@ -221,6 +236,8 @@ Lo que hice de noche, solo, con tu permiso (2026-10-25 y 26). Todo está en `mai
 - **Gastos**: una pantalla para anotar las facturas (número, título, monto y fecha). No cambian las estadísticas.
 - **Mensajes de error más honestos**: el aviso "sincronizá" aparece sólo cuando otra persona cambió el dato.
 - **Fotos**: ya se validaban antes de subirse; ahora hay una prueba más que lo garantiza.
+- **Alta de productos**: guardar los precios de Empanadas ya no borra lo que estabas escribiendo en Ciabattas (y al
+  revés).
 
 ### Qué decidí yo sin preguntarte
 
@@ -238,7 +255,10 @@ con números y qué cambia si respondés otra cosa.
 
 ### Qué quedó sin hacer
 
-Nada del plan del sprint. Las **horas reales** de cada ítem las cargás vos, como siempre.
+- Del plan del sprint, nada.
+- **BUG-16**, que apareció al cerrar: un test automático de Clientes a veces falla en GitHub y nunca en la PC. Para
+  ver la causa necesito el informe de esa corrida, que GitHub sólo te deja bajar a vos (punto 6).
+- Las **horas reales** de cada ítem las cargás vos, como siempre.
 
 ### Qué tenés que hacer vos
 
@@ -250,8 +270,11 @@ Nada del plan del sprint. Las **horas reales** de cada ítem las cargás vos, co
 4. **Revisar los ítems "En revisión"** del Sprint 2 en `BACKLOG.md` y pasarlos a "Hecho".
 5. **Supabase**, cuando quieras publicar: migrala vos con tu clave. Ya probé que todas las migraciones corren
    desde cero en una base vacía. Yo no la toqué.
-6. Para tu información: dos pruebas de pantalla (`menu-panel.test` y `order-board.test`) ahora esperan un poco más,
-   porque fallaban cuando la PC estaba cargada.
+6. **Para BUG-16**: en GitHub, Actions → la corrida fallida de "feat(stats): cuadros de vendedores…" (3c28a35) →
+   bajá el archivo `playwright-report` y dejalo en la carpeta del repo, sin commitearlo.
+7. Para tu información: dos pruebas de pantalla (`menu-panel.test` y `order-board.test`) ahora esperan un poco más,
+   porque fallaban cuando la PC estaba cargada. La de `menu-panel` tenía además una causa real, que se corrigió en
+   BUG-15.
 
 <details>
 <summary><strong>Qué entró en cada commit</strong> (la lista simple que normalmente aprobás antes de cada commit)</summary>
@@ -339,5 +362,12 @@ Nada del plan del sprint. Las **horas reales** de cada ítem las cargás vos, co
   pantallas y las tablas nuevas.
 - Este resumen para principiantes.
 - El sprint pasa de `develop` a `main` con la etiqueta `sprint-2`.
+
+#### BUG-15 · Precios del grupo que se borraban mientras se escribían
+
+- En Alta de productos, guardar los precios de un grupo (por ejemplo, Empanadas) borraba lo que estabas escribiendo
+  sin guardar en el otro (Ciabattas). Ya no pasa.
+- Era también la causa de una prueba automática que fallaba a veces en GitHub y frenaba el cierre del sprint.
+- Se anota BUG-16 (pendiente): otra prueba, la de Clientes, que a veces falla en GitHub.
 
 </details>

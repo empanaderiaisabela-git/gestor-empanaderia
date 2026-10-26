@@ -89,7 +89,8 @@ Hacer preguntas de más es mejor que inventar.
 - **Sprint 1 terminado** ("Vender con el modelo de la empanadería"): BUG-12, BUG-10, T-11, US-1 a US-7, US-15, T-12
   y T-13 están en `main` con el tag `sprint-1`, y en `En revisión` hasta que el dev los apruebe.
 - **Sprint 2 terminado** ("Promociones, tarjetas, estadísticas y gastos"): T-15, US-8 a US-14, BUG-11, BUG-13,
-  BUG-14 y T-14 están en `main` con el tag `sprint-2`, y en `En revisión` hasta que el dev los apruebe.
+  BUG-14, T-14 y BUG-15 están en `main` con el tag `sprint-2`, y en `En revisión` hasta que el dev los apruebe.
+  BUG-16 (un E2E de Clientes que a veces falla en el CI) queda `Pendiente`: necesita el trace de Playwright del CI.
   - Lo hizo el agente solo, de noche (2026-10-25 y 26), con permiso del dev para commitear, cerrar el sprint y
     decidir dudas nuevas. Esas decisiones están marcadas en
     [`sprint-2.md`](plans/sprint-2.md#decisiones-provisorias-del-agente) con la pregunta, un ejemplo y qué cambia

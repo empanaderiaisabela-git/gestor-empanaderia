@@ -35,6 +35,13 @@ describe('precios del grupo en pantalla (US-3 CA-7)', () => {
     expect(onSave).not.toHaveBeenCalled();
   });
 
+  it('regression BUG-15: recargar los mismos precios no borra lo que se está escribiendo', () => {
+    const { rerender } = render(<GroupPriceCard group='ciabattas' current={CIABATTAS} onSave={vi.fn()} />);
+    fireEvent.change(screen.getByRole('textbox'), { target: { value: '7000' } });
+    rerender(<GroupPriceCard group='ciabattas' current={{ ...CIABATTAS }} onSave={vi.fn()} />);
+    expect(screen.getByRole('textbox').getAttribute('value')).toBe('7000');
+  });
+
   it('muestra el error que devuelve el servidor', async () => {
     render(<GroupPriceCard group='ciabattas' current={CIABATTAS} onSave={async () => 'Los datos en el servidor han cambiado.'} />);
     fireEvent.click(screen.getByRole('button', { name: 'Guardar precios' }));

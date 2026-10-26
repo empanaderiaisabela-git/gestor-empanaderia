@@ -20,9 +20,10 @@ function GroupPrices({ model }: { model: MenuPanelModel }): JSX.Element {
   const groupPrices = useMenuStore((state) => state.groupPrices);
   return (
     <div className='grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4 shrink-0'>
-      {GROUP_PRICED.map((group) => (
-        <GroupPriceCard key={group} group={group} current={groupPrices.find((row) => row.group === group)} onSave={model.saveGroupPrices} />
-      ))}
+      {GROUP_PRICED.map((group) => {
+        const current = groupPrices.find((row) => row.group === group);
+        return <GroupPriceCard key={`${group}-${current?.version ?? 0}`} group={group} current={current} onSave={model.saveGroupPrices} />;
+      })}
     </div>
   );
 }

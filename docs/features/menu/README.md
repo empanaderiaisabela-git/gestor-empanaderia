@@ -120,7 +120,9 @@ Si Cloudinary sube la foto pero falla el guardado en la base, la imagen se borra
 `src/app/(main)/alta-de-productos/page.tsx` → `MenuPanel`:
 
 - Arriba, las tarjetas "Precios de venta de Empanadas" y "Precios de venta de Ciabattas" (`GroupPriceCard`). Sin
-  precio cargado, muestran "Sin precio: todavía no se puede vender".
+  precio cargado, muestran "Sin precio: todavía no se puede vender". Cada tarjeta toma los precios guardados al
+  armarse y se vuelve a armar sólo cuando cambia la versión guardada de su grupo (`key` con la versión): guardar un
+  grupo no borra lo que se está escribiendo en el otro (BUG-15).
 - Debajo, la barra con búsqueda, filtro por grupo y "Ver inactivos", y la grilla: tabla en escritorio y tarjetas en
   mobile.
 - El formulario (`MenuItemFormModal`) pide el costo ("Costo para el local, por unidad"; en la pizza, "por pizza
