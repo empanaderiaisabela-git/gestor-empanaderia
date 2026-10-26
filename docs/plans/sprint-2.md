@@ -1,7 +1,7 @@
 # Plan maestro: Sprint 2 · Promociones, tarjetas, estadísticas y gastos
 
 - **Autor**: Claude Code con Ignacio Tomas · **Fecha**: 2026-10-25 · **Estado**: revisado en T-15
-  (2026-10-25) con las respuestas del cliente.
+  (2026-10-25) con las respuestas del cliente y cerrado en T-14 (2026-10-26).
 - **Ítem que lo produce**: T-10. Las decisiones del dev, la trazabilidad con `specs.md` y las preguntas para el
   cliente están en [`sprint-1.md`](sprint-1.md).
 
@@ -138,6 +138,8 @@ US-14, BUG-11 y BUG-14 no dependen de los demás: se pueden adelantar si un íte
 
 - Docs al día, `npm run verify` y, con el OK del dev, merge local `develop → main` ("chore(release): sprint 2") con
   el tag `sprint-2`.
+- El dev autorizó el cierre en `main` para esta noche si todo estaba en verde (2026-10-25). Abajo, el
+  [resumen para principiantes](#resumen-para-principiantes).
 
 ## Trazabilidad: respuestas del cliente → ítems
 
@@ -201,3 +203,141 @@ responde otra cosa. También figura en las notas del ítem del backlog.
 - **Situación**: El admin le saca una foto con el celular a la pizza de muzzarella: un JPG de 3 MB entra. Si intenta subir un GIF animado, una foto de 8 MB o pegar el link de una imagen de internet, el sistema la rechaza antes de mandarla a Cloudinary.
 - **Qué elegí y por qué**: JPG, PNG o WEBP de hasta 5 MB, lo que ya regía desde T-12 y anunciaba el botón "Agregar foto (JPG, PNG o WEBP, hasta 5 MB)". Una foto de celular entra sin problema, y Cloudinary la achica a 800 × 800 al guardarla.
 - **Si respondés otra cosa**: Se cambian `PHOTO_MAX_BYTES` y los formatos de `DATA_URL` en `src/features/menu/domain/menu-photo.schema.ts`, el texto del botón en `menu-photos-modal.tsx` y los casos de `catalog.test.ts` y `upload-menu-photo.contract.test.ts`.
+
+## Resumen para principiantes
+
+Lo que hice de noche, solo, con tu permiso (2026-10-25 y 26). Todo está en `main` con la etiqueta `sprint-2`.
+
+### Qué puede hacer ahora el local
+
+- **Promociones**: el admin arma una promo (por ejemplo, "Media docena + Coca" a $9.000) y aparece en el tablero de
+  ventas. Al venderla se eligen los gustos de cada parte, y el stock se descuenta igual que en una venta común.
+- **Tarjetas y cuotas**: el admin carga las tarjetas que acepta el local, con sus planes de 1, 3, 6 o 12 cuotas y el
+  recargo de cada uno. Al cobrar con crédito se elige la tarjeta y las cuotas, y el sistema calcula solo el recargo
+  sobre la parte pagada con crédito.
+- **Estadísticas de la jornada** (de 7:00 a 6:59 del día siguiente): ganancia en limpio, cantidad de ventas, plata
+  por cada comida y por las promos, cuánto entró por cada medio de pago, quién vendió en cada turno y la lista de
+  ventas con su hora.
+- **Gastos**: una pantalla para anotar las facturas (número, título, monto y fecha). No cambian las estadísticas.
+- **Mensajes de error más honestos**: el aviso "sincronizá" aparece sólo cuando otra persona cambió el dato.
+- **Fotos**: ya se validaban antes de subirse; ahora hay una prueba más que lo garantiza.
+
+### Qué decidí yo sin preguntarte
+
+Cinco dudas que no estaban resueltas. Cada una tiene arriba, en
+[Decisiones provisorias del agente](#decisiones-provisorias-del-agente), la pregunta que te habría hecho, un ejemplo
+con números y qué cambia si respondés otra cosa.
+
+| # | En una línea |
+|---|---|
+| D-1 | Una promo se puede borrar sólo si nunca se vendió; si ya se vendió, se desactiva. |
+| D-2 | El descuento de la venta también rebaja las promos. |
+| D-3 | El total de la venta incluye el recargo de las cuotas (lo que pagó el cliente). |
+| D-4 | Si la base rechaza un dato mal formado, el mensaje es "Los datos proporcionados no son válidos.". |
+| D-5 | Las fotos pueden ser JPG, PNG o WEBP de hasta 5 MB. |
+
+### Qué quedó sin hacer
+
+Nada del plan del sprint. Las **horas reales** de cada ítem las cargás vos, como siempre.
+
+### Qué tenés que hacer vos
+
+1. **Actualizar tu base local**: `npm run db:migrate`. Le faltan las migraciones 0012 a 0016; sin ellas, las
+   pantallas nuevas muestran "Ocurrió un error inesperado".
+2. **Probarlo a mano**: armar una promo y venderla, cargar una tarjeta y cobrar en cuotas, mirar Estadísticas y
+   anotar un gasto.
+3. **Contestar D-1 a D-5**. Si alguna no te sirve, decímelo y la cambio.
+4. **Revisar los ítems "En revisión"** del Sprint 2 en `BACKLOG.md` y pasarlos a "Hecho".
+5. **Supabase**, cuando quieras publicar: migrala vos con tu clave. Ya probé que todas las migraciones corren
+   desde cero en una base vacía. Yo no la toqué.
+6. Para tu información: dos pruebas de pantalla (`menu-panel.test` y `order-board.test`) ahora esperan un poco más,
+   porque fallaban cuando la PC estaba cargada.
+
+<details>
+<summary><strong>Qué entró en cada commit</strong> (la lista simple que normalmente aprobás antes de cada commit)</summary>
+
+#### US-8 · Promociones (`07e3df5`)
+
+- Nueva pantalla **Promociones** (sólo admin): se arma una promo eligiendo productos (grupo, presentación y
+  cantidad) y se escribe a mano su precio de venta.
+- La promo queda activa y se puede editar, desactivar o borrar (borrar sólo si nunca se vendió).
+- El vendedor no puede entrar a esa pantalla.
+- Cada cambio queda en Auditoría como "PROMOCIÓN".
+- Entra también tu aclaración en `specs.md`: la promo nueva va al tablero de ventas.
+
+#### US-9 · Promos en el tablero de ventas (`47e1812`)
+
+- En el tablero aparece la subdivisión **Promos** con las promos activas y su precio.
+- Al elegir una, se eligen los gustos de cada producto de la promo (por ejemplo, los 6 gustos de la media docena y la
+  bebida), sólo entre los que tienen stock.
+- La promo se suma al pedido con su precio; se pueden sumar varias. Mientras le falten gustos, no se puede cobrar.
+- Al cobrar, el sistema usa el precio guardado de la promo, descuenta el stock de cada gusto y guarda su costo.
+- En Ventas/Pedidos y en el comprobante, la línea dice "Promo: nombre: gustos".
+- Una promo que ya se vendió no se puede borrar (sólo desactivar).
+
+#### US-10 · Tarjetas (`6e802c6`)
+
+- Nueva pantalla **Tarjetas** (sólo admin): se cargan las tarjetas de crédito que acepta el local.
+- Cada tarjeta tiene sus planes de 1, 3, 6 o 12 cuotas, cada uno con su recargo en %.
+- Se editan, desactivan o borran; el vendedor no puede entrar.
+- Cada cambio queda en Auditoría como "TARJETA".
+- Un test de Alta de productos que a veces fallaba por lentitud ahora espera un poco más.
+
+#### US-11 · Cobrar con crédito en cuotas (`d334174`)
+
+- Al cobrar con **Crédito** se elige la tarjeta y las cuotas; aparece el recargo y el total con recargo antes de
+  confirmar. Débito, efectivo y transferencia no piden tarjeta.
+- El recargo se cobra sólo sobre la parte pagada con crédito (tu ejemplo: $4.000 efectivo + $6.000 crédito al 10 % =
+  $10.600) y lo calcula el sistema con el % guardado.
+- El total de la venta es lo que pagó el cliente, con recargo (decisión provisoria D-3).
+- El comprobante muestra "Recargo de cuotas" y "Crédito · Visa · 3 cuotas"; el historial también.
+- Una tarjeta ya usada en un cobro no se puede borrar.
+- Se corrigió una migración para que la base de Supabase se pueda crear de una sola vez sin error.
+
+#### US-12 · Estadísticas de la jornada (`9e4fc7f`)
+
+- **Estadísticas** abre con la jornada de hoy (de 7:00 a 6:59 del día siguiente) y deja elegir otra.
+- Muestra la ganancia en limpio, las ventas registradas y el total facturado.
+- Un cuadro por comida y bebida con su color y su emoji, y uno aparte para las promos. Si hubo descuento, se reparte
+  entre las comidas.
+- Lo facturado por Efectivo, Transferencia, Débito y Crédito (con su recargo).
+- Se quitaron los cuadros viejos que el cliente no pidió (valor del stock, unidades, etc.).
+
+#### US-13 · Cuadros de vendedores y de ventas (`3c28a35`)
+
+- Al final de Estadísticas, un cuadro de **vendedores**: cada vendedor por turno (mañana de 7:00 a 16:59, tarde de
+  17:00 a 6:59), con cuántas ventas hizo y cuánto facturó.
+- Y un cuadro de **ventas**: comprador ("Sin nombre" si no se anotó), hora e importe, ordenadas por hora.
+
+#### US-14 · Gastos (`133857b`)
+
+- Nueva pantalla **Gastos** (sólo admin, en el menú después de Estadísticas): un anotador de facturas con número,
+  título, monto y fecha de la factura, sin foto.
+- El número de factura no se puede repetir.
+- Se buscan por número o título, se editan y se borran.
+- Los gastos no cambian ningún número de Estadísticas (hay un test que lo controla).
+
+#### BUG-14 · Errores de la base que mandaban a sincronizar (`81722cb`)
+
+- Antes, casi cualquier problema de la base decía "los datos cambiaron, sincronizá", aunque sincronizar no sirviera
+  (te pasó con la base sin migrar).
+- Ahora ese aviso sale sólo cuando otra persona cambió el dato de verdad.
+- Si la base rechaza un dato mal formado, dice "Los datos proporcionados no son válidos." (decisión provisoria D-4).
+- Cualquier otro problema dice "Ocurrió un error inesperado" y el detalle técnico queda sólo en el servidor, nunca en
+  la pantalla.
+
+#### BUG-11 · Fotos que se validan antes de subir (`8a8164d`)
+
+- La subida de fotos ya revisaba todo antes de mandarla a Cloudinary (desde T-12); ahora una prueba más lo garantiza:
+  un gusto que no existe, un GIF, un link o una foto de más de 5 MB se rechazan sin subir nada.
+- Quedan aceptadas fotos JPG, PNG o WEBP de hasta 5 MB (decisión provisoria D-5).
+- No cambia nada de lo que ve el usuario.
+
+#### T-14 · Cierre del Sprint 2
+
+- El README, la arquitectura y el "prompt inicial" (lo primero que lee el próximo agente) quedan al día con las
+  pantallas y las tablas nuevas.
+- Este resumen para principiantes.
+- El sprint pasa de `develop` a `main` con la etiqueta `sprint-2`.
+
+</details>

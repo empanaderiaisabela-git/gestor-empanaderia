@@ -1840,7 +1840,7 @@ la leen.
 | 8   | [BUG-11](#bug-11--la-subida-de-fotos-no-valida-antes-de-subir)                   | La subida de fotos no valida antes de subir                 | En revisión | BUG-1       | 55 min          |
 | 9   | [BUG-13](#bug-13--alta-y-stock-confunden-el-costo-con-el-precio-de-venta)          | Alta y Stock confunden el costo con el precio de venta      | En revisión | US-3, US-4 | 45 min          |
 | 10  | [BUG-14](#bug-14--cualquier-error-de-la-base-se-muestra-como-datos-desactualizados) | Cualquier error de la base se muestra como "datos desactualizados" | En revisión | BUG-9 | 35 min          |
-| 11  | [T-14](#t-14--cierre-del-sprint-2)                                               | Cierre del Sprint 2                                         | Pendiente | todos       | 1 h             |
+| 11  | [T-14](#t-14--cierre-del-sprint-2)                                               | Cierre del Sprint 2                                         | En revisión | todos       | 1 h             |
 |     |                                                                                  | **Total del sprint**                                        |           |             | **20 h 5 min**  |
 
 ### T-15 · Respuestas del cliente en el backlog del Sprint 2
@@ -2239,12 +2239,12 @@ detalle va al log del servidor, nunca al cliente.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
-| Dueño        | —         |
-| Inicio       | —         |
+| Estado       | En revisión |
+| Dueño        | Agente |
+| Inicio       | 2026-10-26 |
 | Tamaño       | S         |
 | Depende de   | todos     |
-| Plan         | —         |
+| Plan         | [`docs/plans/sprint-2.md`](docs/plans/sprint-2.md) |
 | Merge        | —         |
 | Horas reales | —         |
 
@@ -2253,6 +2253,16 @@ lo construido y el próximo agente arranque con un contexto verdadero.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · `README.md`, `docs/architecture.md` y `docs/initial_prompt.md` al día · Estimación: 30 min · Completado: —
+- [x] **CA-1** · `README.md`, `docs/architecture.md` y `docs/initial_prompt.md` al día · Estimación: 30 min · Completado: 2026-10-26 03:10
 
-- [ ] **CA-2** · `npm run verify` en verde sobre `develop`; con el OK del dev, merge local `develop → main` ("chore(release): sprint 2") con el tag `sprint-2` · Estimación: 30 min · Completado: —
+- [x] **CA-2** · `npm run verify` en verde sobre `develop`; con el OK del dev, merge local `develop → main` ("chore(release): sprint 2") con el tag `sprint-2` · Estimación: 30 min · Completado: 2026-10-26 03:10
+
+**Notas**
+
+- El OK del dev para cerrar en `main` llegó antes de la noche (2026-10-25): commit y push de cada ítem, y cierre del
+  sprint con el tag `sprint-2` si todo estaba en verde.
+- `npm run verify` sobre el estado final (865 tests, cobertura 96/88,7, mutación 89,3 y build) y 72 E2E en Chromium
+  en verde. Firefox y WebKit corren en el CI de `main`.
+- `docs/plans/sprint-2.md` cierra con el **resumen para principiantes**: qué hace ahora el local, las decisiones
+  provisorias D-1 a D-5, lo que entró en cada commit y lo que le toca al dev (migrar su base local con
+  `npm run db:migrate`, probar a mano, contestar D-1 a D-5 y migrar Supabase).

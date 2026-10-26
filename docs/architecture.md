@@ -18,7 +18,7 @@ Una sola aplicación **Next.js 16 (App Router)** con dos caras:
 |---|---|---|---|
 | Catálogo público | `/home`, `/product/[id]` | Clientes del local, sin login | Server Components: `/home` estática con revalidación a demanda ([ADR 0004](adr/0004-revalidacion-a-demanda-del-catalogo.md)); `/product/[id]` dinámica |
 | Login | `/login` | Personal | Client Component + Server Action |
-| Panel de gestión | `/` (Estadísticas), `/ventas` (Ventas/Pedidos), `/ventas/nueva` (tablero), `/stock`, `/alta-de-productos`, `/clientes`, `/proveedores`, `/usuarios`, `/logs` | `admin` y `vendedor` | Client Components + Server Actions |
+| Panel de gestión | `/` (Estadísticas), `/gastos`, `/ventas` (Ventas/Pedidos), `/ventas/nueva` (tablero), `/promociones`, `/stock`, `/alta-de-productos`, `/tarjetas`, `/clientes`, `/proveedores`, `/usuarios`, `/logs` | `admin` y `vendedor` | Client Components + Server Actions |
 
 **Estilo arquitectónico.** Son dos ejes distintos y valen los dos:
 
@@ -130,9 +130,9 @@ Con el tope de 100 líneas, cuando un archivo crece se parte por operación (`cr
 |---|---|
 | `src/proxy.ts` | Next 16 renombró `middleware.ts` a `proxy.ts`. Corre en cada request: valida la cookie `session`, redirige a `/home` si no hay sesión y aplica RBAC por ruta con **la misma lista que el menú** (`src/config/navigation.ts`, US-2): el `vendedor` sólo entra a Ventas/Pedidos, Stock y Clientes, y si pide otra sección va a `/ventas`. Con sesión, `/login` lleva al inicio de cada rol (admin: Estadísticas; vendedor: Ventas/Pedidos). Las rutas públicas están en `PUBLIC_PATHS`. |
 | `src/features/<f>/actions/` | Server Actions. Única puerta del cliente al servidor: sesión y rol, validación Zod, service y `ActionResult`. |
-| `src/features/<f>/services/` | Reglas de negocio y orquestación. Abren la transacción y la pasan a los repositorios. Existe en `stats`, `provider` (T-5, el molde), `menu`, `stock` y `order`, con unidad de trabajo: el service nunca ve `tx`. En `customer`, `user` y `audit` la lógica sigue repartida entre actions y repositorios, y se migra copiando `provider`. |
+| `src/features/<f>/services/` | Reglas de negocio y orquestación. Abren la transacción y la pasan a los repositorios. Existe en `provider` (T-5, el molde), `menu`, `stock`, `order`, `promotion`, `card` y `expense`, con unidad de trabajo: el service nunca ve `tx`. `stats` lee la jornada en una sola transacción de sólo lectura y calcula con funciones puras. En `customer`, `user` y `audit` la lógica sigue repartida entre actions y repositorios, y se migra copiando `provider`. |
 | `src/features/<f>/repository/` | Acceso a datos con Drizzle. Reciben `tx` opcional para participar de una transacción y traducen "0 filas afectadas" a error de concurrencia. |
-| `src/lib/db/schema.ts`, `menu-schema.ts`, `stock-schema.ts`, `order-schema.ts` | Schema Drizzle: tablas, enums, índices, FKs, `CHECK` y relaciones. Fuente de verdad de la base. |
+| `src/lib/db/schema.ts`, `menu-schema.ts`, `stock-schema.ts`, `order-schema.ts`, `promotion-schema.ts`, `card-schema.ts`, `expense-schema.ts` | Schema Drizzle: tablas, enums, índices, FKs, `CHECK` y relaciones. Fuente de verdad de la base. |
 | `src/lib/db/migrations/` | Migraciones SQL generadas por `drizzle-kit`. No se editan a mano. |
 | `src/lib/db/index.ts` | Pool de conexión y cliente `db`. La configuración sale de `database-config.ts`: `.env.prod` sólo con `APP_ENV=production`; si no, `.env.local`. |
 | `src/lib/db/scripts/` | Seeds, reset, stress test y backfills (`npm run db:*`). |
@@ -140,7 +140,7 @@ Con el tope de 100 líneas, cuando un archivo crece se parte por operación (`cr
 | `src/lib/audit-logs.ts` | `recordAuditLog`: registra cada mutación dentro de la misma transacción. |
 | `src/lib/db-errors.ts` | Traducción de errores a código y mensaje: `databaseErrorCode` (23505 → `DUPLICATE`; 23503 → `RELATION_NOT_FOUND` al insertar o `HAS_RELATIONS` al borrar; `ConcurrencyError` → `STALE_VERSION`; 23502, 23514, 22P02, 22001 y 22003 → `VALIDATION`; cualquier otro `Failed query` → `UNEXPECTED`, BUG-14), `handleDatabaseError` (texto, para el código heredado) y `toActionFailure` (`ActionResult` con `code`, para el código nuevo). Ninguno filtra al navegador el mensaje ni el SQL de un error desconocido: el detalle queda en el log del servidor. Lee el error original también en `error.cause`, donde lo deja Drizzle 0.45 (BUG-9). |
 | `src/lib/db/transaction.ts` | `withTransaction(work)` y el tipo `DbTransaction`: el único acceso a la transacción que pueden usar los services. |
-| `src/lib/format-date-time.ts` | `formatDateTime(fecha)`: `DD/MM/AAAA, HH:mm` en `America/Argentina/Buenos_Aires`; "—" si la fecha no es válida. |
+| `src/lib/format-date-time.ts` | `formatDateTime(fecha)`: `DD/MM/AAAA, HH:mm` en `America/Argentina/Buenos_Aires`; "—" si la fecha no es válida. `argentinaDay`, `argentinaTime` y `argentinaHour` dan el día, la hora y la hora entera en Argentina, para la jornada y los turnos de Estadísticas (US-12 y US-13). |
 | `src/lib/cloudinary.ts` | Subida y borrado de fotos. |
 | `src/scripts/` | Mantenimiento de la base (`enable-unaccent`). |
 
@@ -244,7 +244,7 @@ Problema que resuelve: dos personas editan lo mismo y la segunda pisa los cambio
 
 | Pieza | Cómo funciona |
 |---|---|
-| Columna | `version integer not null default 1` en toda tabla que recibe `UPDATE`: `users`, `providers`, `customers`, `menu_items`, `menu_group_prices`. |
+| Columna | `version integer not null default 1` en toda tabla que recibe `UPDATE`: `users`, `providers`, `customers`, `menu_items`, `menu_group_prices`, `promotions`, `cards`, `expenses`. |
 | Lectura | El `*RowSchema` incluye `version` y el cliente la guarda con la fila. |
 | Escritura | El `*UpdateSchema` exige `version`. El repositorio filtra `WHERE id = :id AND version = :version` y suma 1 a `version`. |
 | Conflicto | 0 filas afectadas ⇒ `ConcurrencyError` (objetivo: `AppError('STALE_VERSION')`) ⇒ "Los datos en el servidor han cambiado. Por favor, sincroniza la lista e intenta nuevamente." |
@@ -265,6 +265,8 @@ Casos especiales:
   simultáneas recibe `NOT_FOUND` (`sale-history.service.int.test.ts`).
 - **Tablas append-only** (`sales`, `sale_lines`, `sale_line_items`, `sale_payments`, `stock_entries`,
   `stock_losses`, `menu_item_images`, `audit_logs`). No llevan `version`: se insertan y, a lo sumo, se borran enteras.
+- **Componentes de una promo y planes de una tarjeta** (`promotion_components`, `card_plans`). No llevan `version`:
+  se reemplazan enteros al editar la promo o la tarjeta, que sí la lleva y la controla en la misma transacción.
 - **Bajas.** Si una entidad participó de una venta, no se borra: se desactiva (`is_active = false`). Las FKs
   sin `onDelete` hacen que Postgres rechace el borrado físico (23503) como red de seguridad.
 
@@ -288,14 +290,17 @@ Casos especiales:
 | `users` | Personal con rol `admin` o `vendedor` | Sí | Lógica (`is_active`) |
 | `providers` | Proveedores | Sí | Lógica; física si no tiene ingresos de stock |
 | `customers` | Clientes; DNI único, comparado sin puntos ni guiones | Sí | Lógica |
-| `sales`, `sale_payments` | Venta: vendedor, comprador opcional, descuentos y total; pagos en `efectivo`, `transferencia`, `debito` o `credito` (hasta 2 por venta) | No | Anulación (borrado y reposición de stock) |
-| `sale_lines`, `sale_line_items` (`order-schema.ts`) | Cada línea del pedido con lo cobrado, su orden y la descripción de sus gustos; lo que consumió de cada gusto con el costo congelado (US-6) | No | En cascada con la venta |
+| `sales`, `sale_payments` | Venta: vendedor, comprador opcional, descuentos y total; pagos en `efectivo`, `transferencia`, `debito` o `credito` (hasta 2 por venta). El crédito guarda tarjeta, cuotas, % y monto del recargo (US-11), y el total de la venta incluye el recargo (D-3 de `sprint-2.md`) | No | Anulación (borrado y reposición de stock) |
+| `sale_lines`, `sale_line_items` (`order-schema.ts`) | Cada línea del pedido con lo cobrado, su orden y la descripción de sus gustos; lo que consumió de cada gusto con el costo congelado (US-6). Una línea de promo lleva `promotion_id` en vez de grupo y presentación (US-9) | No | En cascada con la venta |
 | `audit_logs` | Bitácora de operaciones | No | — |
 | `menu_items` (`src/lib/db/menu-schema.ts`) | Gustos y bebidas (US-3): grupo, nombre, costo, stock con medias para pizzas, precios por gusto según el grupo y visibilidad en el catálogo ([ADR 0005](adr/0005-grupos-fijos-y-precio-del-grupo-o-por-gusto.md)) | Sí | Lógica; física si no tiene movimientos |
 | `menu_group_prices` | Precio único por presentación de Empanadas y Ciabattas | Sí | — |
 | `menu_item_images` | Fotos de cada gusto en Cloudinary (T-12) | No | Física; en cascada con el gusto |
 | `stock_entries` (`src/lib/db/stock-schema.ts`) | Ingresos de stock (US-4): gusto, cantidad entera, costo unitario, proveedor opcional y usuario | No | — |
 | `stock_losses` | Mermas: cantidad (media pizza incluida), costo unitario del momento, motivo y usuario | No | — |
+| `promotions`, `promotion_components` (`promotion-schema.ts`) | Promociones con su precio de venta y las presentaciones que llevan (US-8) | Sí (la promo) | Lógica; física si nunca se vendió (D-1) |
+| `cards`, `card_plans` (`card-schema.ts`) | Tarjetas aceptadas y sus planes de 1, 3, 6 o 12 cuotas con el % de recargo (US-10) | Sí (la tarjeta) | Lógica; física si nunca se usó en un cobro |
+| `expenses` (`expense-schema.ts`) | Gastos: número de factura único, título, monto, fecha de la factura y usuario (US-14) | Sí | Física |
 
 Convenciones:
 
@@ -340,7 +345,7 @@ uso sin conexión), se decide con un ADR que evalúe primero una PWA y después 
 El código heredado **no se copia como ejemplo**. Cada brecha se corrige cuando un ítem del backlog toca ese
 código, o con un ítem propio. Nunca "de paso" dentro de otra tarea.
 
-El inventario exacto de archivos que violan las reglas duras es `eslint-legacy.json` (143 al activarlas en T-3, 88 al cerrar el Sprint 1).
+El inventario exacto de archivos que violan las reglas duras es `eslint-legacy.json` (143 al activarlas en T-3, 88 al cerrar el Sprint 1 y 86 al cerrar el Sprint 2).
 Cuando un ítem corrige uno, lo saca de la lista, y la lista nunca crece (ADR 0003).
 
 | Brecha | Dónde | Regla de `AGENTS.md` |
@@ -351,6 +356,6 @@ Cuando un ítem corrige uno, lo saca de la lista, y la lista nunca crece (ADR 00
 | `any` / `as any`: unos 116 usos | Repositorios, actions, stats | Tipado |
 | Errores como textos (`MESSAGES` + `handleDatabaseError`), sin catálogo `AppError(code)` | `lib/`, actions | Errores |
 | Activar/desactivar y borrar no filtran por `version` | `updateActiveStatus`, `delete*` de los repositorios | Concurrencia |
-| 28 de 372 archivos de `src/` superan las 100 líneas, y el código heredado tiene comentarios | Dashboard, catálogo público, schema, paneles de Clientes, Usuarios y Auditoría | Tope de líneas, Comentarios |
-| Fechas como `timestamp` sin zona; se formatean con `toLocaleString('es-AR')` sin fijar la zona; el dashboard arma los rangos con la hora local del servidor | `schema.ts`, `stats.actions.ts`, paneles | Fechas |
+| 28 de 372 archivos de `src/` superan las 100 líneas, y el código heredado tiene comentarios | Catálogo público, schema, paneles de Clientes, Usuarios y Auditoría | Tope de líneas, Comentarios |
+| Fechas como `timestamp` sin zona; se formatean con `toLocaleString('es-AR')` sin fijar la zona. Estadísticas ya arma la jornada en hora de Argentina (US-12) | `schema.ts`, paneles heredados | Fechas |
 | Dependencias sin uso: `pino`, `jsonwebtoken`, `@supabase/supabase-js`, `jspdf`, `html2canvas` | `package.json` | — |
