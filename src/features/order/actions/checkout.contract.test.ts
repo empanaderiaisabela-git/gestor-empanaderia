@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { MESSAGES } from '@/config/messages';
 import { asUser, TEST_USER_IDS } from '@/test/as-user';
 import { fakeCheckout } from '../testing/fake-checkout-unit-of-work';
-import { CARNE, checkoutOf, cokes, halfAndHalf, halfDozen, loadMenu } from '../testing/checkout-fixtures';
+import { CARNE, checkoutOf, cokes, halfAndHalf, halfDozen, loadMenu, MEDIA_Y_COCA, promoOf } from '../testing/checkout-fixtures';
 import { checkoutAction } from './checkout';
 
 vi.mock('@/features/order/repository/checkout-unit-of-work', async () => {
@@ -43,6 +43,14 @@ describe('acción de cobro (US-6)', () => {
   ])('$caso', async ({ input, code, error }) => {
     await asUser({ role: 'vendedor' });
     expect(await checkoutAction(input)).toEqual({ success: false, code, error });
+  });
+
+  it('cobra una promo con el precio de la base y avisa si la promo ya no está (US-9 CA-3 y CA-4)', async () => {
+    await asUser({ role: 'vendedor' });
+    const { id } = await fakeCheckout.promotions.read.insert(MEDIA_Y_COCA);
+    const pay = [{ type: 'efectivo' as const, amount: 9000 }];
+    expect(await checkoutAction(checkoutOf([], { promos: [promoOf(id)], payments: pay }))).toMatchObject({ success: true, message: 'Venta registrada por $9.000' });
+    expect(await checkoutAction(checkoutOf([], { promos: [promoOf(crypto.randomUUID())], payments: pay }))).toEqual({ success: false, code: 'NOT_FOUND', error: 'El/la promoción seleccionado ya no existe.' });
   });
 
   it('fuzz: ninguna entrada hace lanzar ni devuelve un error fuera del catálogo', async () => {

@@ -1,7 +1,7 @@
 import type { Promotion, PromotionRepository } from '@/features/promotion/repository/promotion.repository';
 import type { PromotionAuditEntry, PromotionUnitOfWork } from '@/features/promotion/repository/promotion-unit-of-work';
 
-type FakeState = { rows: Promotion[]; audits: PromotionAuditEntry[]; clock: number };
+type FakeState = { rows: Promotion[]; withSales: Set<string>; audits: PromotionAuditEntry[]; clock: number };
 
 const pgError = (code: string, detail: string): Error => Object.assign(new Error(`Failed query (${code})`), { cause: { code, detail } });
 const copy = (row: Promotion): Promotion => ({ ...row, components: row.components.map((component) => ({ ...component })) });
@@ -30,6 +30,7 @@ export function fakePromotionRepository(state: FakeState): PromotionRepository {
       return copy(row);
     },
     remove: async ({ id, version }) => {
+      if (state.withSales.has(id)) throw pgError('23503', 'Key (id) is still referenced from table "sale_lines".');
       const before = state.rows.length;
       state.rows = state.rows.filter((row) => !(row.id === id && row.version === version));
       return state.rows.length < before;
@@ -40,13 +41,13 @@ export function fakePromotionRepository(state: FakeState): PromotionRepository {
 export type FakePromotionUnitOfWork = PromotionUnitOfWork & { state: FakeState; reset(): void };
 
 export function createFakePromotionUnitOfWork(): FakePromotionUnitOfWork {
-  const state: FakeState = { rows: [], audits: [], clock: 0 };
+  const state: FakeState = { rows: [], withSales: new Set(), audits: [], clock: 0 };
   const repository = fakePromotionRepository(state);
   return {
     state,
     read: repository,
     run: (work) => work({ promotions: repository, audit: async (entry) => void state.audits.push(entry) }),
-    reset: () => Object.assign(state, { rows: [], audits: [], clock: 0 }),
+    reset: () => Object.assign(state, { rows: [], withSales: new Set(), audits: [], clock: 0 }),
   };
 }
 

@@ -8,6 +8,7 @@ import { CheckoutModal } from './checkout-modal';
 import { CurrentOrder } from './current-order';
 import { FlavorPicker } from './flavor-picker';
 import { GroupCard } from './group-card';
+import { PromoCard } from './promo-card';
 import { useCheckout } from './use-checkout';
 import { useOrderBoard } from './use-order-board';
 
@@ -22,6 +23,7 @@ export function OrderBoard(): JSX.Element {
         {MENU_GROUPS.map((group) => (
           <GroupCard key={group} group={group} board={board} />
         ))}
+        <PromoCard board={board} />
       </div>
       <CurrentOrder board={board} onCheckout={checkout.open} />
       <FlavorPicker board={board} />

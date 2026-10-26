@@ -171,3 +171,10 @@ responde otra cosa. También figura en las notas del ítem del backlog.
 - **Situación**: El admin crea "Docena + Coca" con un error de tipeo y nunca la vendió; otra promo, "Pizza + Pepsi", ya se vendió 30 veces. La historia sólo pide desactivarlas.
 - **Qué elegí y por qué**: Se puede borrar sólo si nunca se vendió; si ya se vendió, el sistema no deja ("existen registros relacionados") y hay que desactivarla. Así se corrige un error de carga sin romper el historial de ventas ni los comprobantes.
 - **Si respondés otra cosa**: Si querés "sólo desactivar", se quitan el botón Eliminar y `deletePromotionAction` (`src/features/promotion/`). Si querés borrar también las vendidas, habría que guardar el nombre de la promo en cada venta (US-9).
+
+### D-2 · Descuento en una venta con promo (US-9)
+
+- **Pregunta**: Si en una venta hay una promo, ¿se le puede hacer además el descuento de la venta (% o $), o la promo ya es el descuento y no se rebaja más?
+- **Situación**: Un cliente lleva la promo "Media + Coca" a $9.000 y una Coca suelta a $2.500 (total $11.500). El vendedor le hace un 10 % de descuento.
+- **Qué elegí y por qué**: El descuento se aplica sobre el total de la venta, promos incluidas: $11.500 − 10 % = $10.350. Es como funcionaba el descuento antes de las promos, no frena una venta y no toca datos guardados.
+- **Si respondés otra cosa**: Si la promo no admite más descuento, el descuento se calcularía sólo sobre las líneas comunes ($2.500 − 10 % = $2.250, total $11.250): se cambia el cálculo del total en `checkout.service.ts` y en el modal de cobro (`checkout-modal.tsx`).

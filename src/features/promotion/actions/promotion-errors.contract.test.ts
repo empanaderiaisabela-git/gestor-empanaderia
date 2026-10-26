@@ -60,6 +60,13 @@ describe('tabla de errores de Promociones (US-8 CA-4)', () => {
     expect(await createPromotionAction(PROMO_INPUT)).toEqual({ success: false, code: 'DUPLICATE', error: DATABASE.UNIQUE_VIOLATION });
   });
 
+  it('HAS_RELATIONS: no deja borrar una promo que ya se vendió (decisión provisoria D-1)', async () => {
+    const id = await existingPromotion();
+    fakePromotions.state.withSales.add(id);
+    await asUser({ role: 'admin' });
+    expect(await deletePromotionAction({ id, version: 1 })).toEqual({ success: false, code: 'HAS_RELATIONS', error: DATABASE.FOREIGN_KEY_VIOLATION });
+  });
+
   it('STALE_VERSION: editar, activar o borrar con una versión vieja', async () => {
     const id = await existingPromotion();
     await asUser({ role: 'admin' });

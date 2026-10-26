@@ -5,7 +5,7 @@ import { type FormEvent, type JSX, useEffect, useState } from 'react';
 import { ErrorAlert } from '@/components/ui/alert';
 import { FormField, inputClass } from '@/components/ui/form-field';
 import { ResponsiveModal } from '@/components/ui/responsive-modal';
-import { orderTotal } from '@/features/order/domain/order-pricing';
+import { orderSubtotal } from '@/features/order/domain/promo-line';
 import { useOrderStore } from '@/features/order/store/order.store';
 import { formatMoney } from '@/lib/format-money';
 import { BLANK_CHECKOUT, type CheckoutForm, checkCheckout } from './checkout-form';
@@ -30,11 +30,11 @@ function DiscountFields({ form, onChange }: DiscountFieldsProps): JSX.Element {
 }
 
 export function CheckoutModal({ model, board }: CheckoutModalProps): JSX.Element {
-  const { lines, buyerName } = useOrderStore();
+  const { lines, promos, buyerName } = useOrderStore();
   const [form, setForm] = useState(BLANK_CHECKOUT);
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
-  const subtotal = orderTotal(lines.filter((line) => line.flavors.length > 0), board.book) ?? 0;
+  const subtotal = orderSubtotal(lines.filter((line) => line.flavors.length > 0), promos, board.book) ?? 0;
   const check = checkCheckout(subtotal, form);
 
   useEffect(() => {

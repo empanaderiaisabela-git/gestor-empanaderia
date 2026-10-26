@@ -23,6 +23,13 @@ export function missingLabel(line: OrderLine): string | null {
   return `faltan ${missing}`;
 }
 
-export function describeSaleLine(line: PresentedLine & { description: string }): string {
-  return `${describePresentation(line)}: ${line.description}`;
+type SoldLine = { group: OrderLine['group'] | null; presentationKey: string | null; quantity: number; description: string };
+
+export function describeSoldPresentation({ group, presentationKey, quantity }: Omit<SoldLine, 'description'>): string {
+  if (group === null || presentationKey === null) return quantity > 1 ? `Promo × ${quantity}` : 'Promo';
+  return describePresentation({ group, presentationKey, quantity });
+}
+
+export function describeSaleLine(line: SoldLine): string {
+  return `${describeSoldPresentation(line)}: ${line.description}`;
 }

@@ -1831,7 +1831,7 @@ la leen.
 | --- | -------------------------------------------------------------------------------- | ----------------------------------------------------------- | --------- | ----------- | --------------- |
 | 0   | [T-15](#t-15--respuestas-del-cliente-en-el-backlog-del-sprint-2)                 | Respuestas del cliente en el backlog del Sprint 2           | En revisión | T-13      | 30 min          |
 | 1   | [US-8](#us-8--promociones-armar-promos-con-precio-de-rebaja)                     | Promociones: armar promos con precio de rebaja              | En revisión | T-13        | 2 h 20 min      |
-| 2   | [US-9](#us-9--ventas-subdivisión-promos)                                         | Ventas: subdivisión Promos                                  | Pendiente | US-8        | 3 h             |
+| 2   | [US-9](#us-9--ventas-subdivisión-promos)                                         | Ventas: subdivisión Promos                                  | En revisión | US-8        | 3 h             |
 | 3   | [US-10](#us-10--tarjetas-tarjetas-aceptadas-y-planes-de-cuotas-con-recargo)      | Tarjetas: tarjetas aceptadas y planes de cuotas con recargo | Pendiente | T-13        | 2 h             |
 | 4   | [US-11](#us-11--ventas-cobrar-con-crédito-en-cuotas)                             | Ventas: cobrar con crédito en cuotas                        | Pendiente | US-10       | 2 h             |
 | 5   | [US-12](#us-12--estadísticas-del-día-dinero-por-comida-ganancia-y-ventas)        | Estadísticas del día: dinero por comida, ganancia y ventas  | Pendiente | US-9, US-11 | 3 h             |
@@ -1910,12 +1910,12 @@ que el vendedor las ofrezca desde Ventas.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
-| Dueño        | —         |
-| Inicio       | —         |
+| Estado       | En revisión |
+| Dueño        | Agente |
+| Inicio       | 2026-10-26 |
 | Tamaño       | M         |
 | Depende de   | US-8      |
-| Plan         | —         |
+| Plan         | [`docs/plans/US-9-promos-en-ventas.md`](docs/plans/US-9-promos-en-ventas.md) |
 | Merge        | —         |
 | Horas reales | —         |
 
@@ -1924,13 +1924,18 @@ el precio rebajado.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · La subdivisión Promos despliega con un clic las promos activas con su precio; elegir una pide los gustos o las bebidas de cada componente, sólo entre los que tienen stock · Estimación: 1 h · Completado: —
+- [x] **CA-1** · La subdivisión Promos despliega con un clic las promos activas con su precio; elegir una pide los gustos o las bebidas de cada componente, sólo entre los que tienen stock · Estimación: 1 h · Completado: 2026-10-26 00:46
 
-- [ ] **CA-2** · La promo se suma al pedido como una línea con su precio, y se pueden agregar varias, iguales o distintas · Estimación: 30 min · Completado: —
+- [x] **CA-2** · La promo se suma al pedido como una línea con su precio, y se pueden agregar varias, iguales o distintas · Estimación: 30 min · Completado: 2026-10-26 00:46
 
-- [ ] **CA-3** · Al cobrar, el servidor valida la promo (activa, componentes completos) y recalcula su precio; descuenta el stock de cada componente con su costo congelado · Estimación: 1 h · Completado: —
+- [x] **CA-3** · Al cobrar, el servidor valida la promo (activa, componentes completos) y recalcula su precio; descuenta el stock de cada componente con su costo congelado · Estimación: 1 h · Completado: 2026-10-26 00:46
 
-- [ ] **CA-4** · Errores con su test de contrato (promo inactiva, componentes incompletos, stock insuficiente) y E2E de una venta con promo · Estimación: 30 min · Completado: —
+- [x] **CA-4** · Errores con su test de contrato (promo inactiva, componentes incompletos, stock insuficiente) y E2E de una venta con promo · Estimación: 30 min · Completado: 2026-10-26 00:46
+
+**Notas**
+
+- Decisión provisoria D-2 (`docs/plans/sprint-2.md`): el descuento de la venta se aplica sobre el total, promos incluidas.
+- Cierre: `npm run verify` (712 tests, cobertura 96/90, mutación 88,8) y 66 E2E en verde.
 
 ### US-10 · Tarjetas: tarjetas aceptadas y planes de cuotas con recargo
 

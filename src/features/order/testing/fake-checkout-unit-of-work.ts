@@ -2,6 +2,7 @@ import { fakeMenuGroupPriceRepository, type FakeGroupPriceState } from '@/featur
 import type { CheckoutUnitOfWork, SaleAuditEntry } from '@/features/order/repository/checkout-unit-of-work';
 import type { NewSale, NewSaleLine, SaleWriter } from '@/features/order/repository/sale-writer.repository';
 import type { Payment } from '@/features/order/domain/order-validation';
+import { createFakePromotionUnitOfWork, type FakePromotionUnitOfWork } from '@/features/promotion/testing/fake-promotion-unit-of-work';
 import { createFakeStockUnitOfWork, type FakeStockUnitOfWork } from '@/features/stock/testing/fake-stock-unit-of-work';
 
 export type FakeSale = NewSale & { id: string; createdAt: Date; lines: NewSaleLine[]; payments: Payment[] };
@@ -9,6 +10,7 @@ export type FakeSale = NewSale & { id: string; createdAt: Date; lines: NewSaleLi
 export type FakeCheckoutUnitOfWork = CheckoutUnitOfWork & {
   stock: FakeStockUnitOfWork;
   prices: FakeGroupPriceState;
+  promotions: FakePromotionUnitOfWork;
   sales: FakeSale[];
   audits: SaleAuditEntry[];
   reset(): void;
@@ -41,11 +43,14 @@ export function createFakeCheckoutUnitOfWork(): FakeCheckoutUnitOfWork {
   const fake: FakeCheckoutUnitOfWork = {
     stock: createFakeStockUnitOfWork(),
     prices: { groupPrices: [] },
+    promotions: createFakePromotionUnitOfWork(),
     sales: [],
     audits: [],
-    run: (work) => work({ stock: fake.stock.read, groupPrices: fakeMenuGroupPriceRepository(fake.prices), sales: fakeSaleWriter(fake.sales), audit: async (entry) => void fake.audits.push(entry) }),
+    run: (work) =>
+      work({ stock: fake.stock.read, groupPrices: fakeMenuGroupPriceRepository(fake.prices), promotions: fake.promotions.read, sales: fakeSaleWriter(fake.sales), audit: async (entry) => void fake.audits.push(entry) }),
     reset: () => {
       fake.stock.reset();
+      fake.promotions.reset();
       fake.prices.groupPrices = [];
       fake.sales.length = 0;
       fake.audits.length = 0;

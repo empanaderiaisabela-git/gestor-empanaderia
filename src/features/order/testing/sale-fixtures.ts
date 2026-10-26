@@ -10,8 +10,8 @@ export function saleDef(overrides: Partial<SaleDef> = {}): SaleDef {
     discountAmount: 0,
     discountPercentage: 0,
     lines: [
-      { group: 'empanadas', presentationKey: 'u6', quantity: 1, unitPrice: 6500, subtotal: 6500, description: '2 Carne + 4 Pollo' },
-      { group: 'pizzas', presentationKey: 'pizza_2', quantity: 1, unitPrice: 12000, subtotal: 12000, description: 'Muzza / Napolitana' },
+      { group: 'empanadas', presentationKey: 'u6', promotionId: null, quantity: 1, unitPrice: 6500, subtotal: 6500, description: '2 Carne + 4 Pollo' },
+      { group: 'pizzas', presentationKey: 'pizza_2', promotionId: null, quantity: 1, unitPrice: 12000, subtotal: 12000, description: 'Muzza / Napolitana' },
     ],
     payments: [
       { type: 'efectivo', amount: 10000 },

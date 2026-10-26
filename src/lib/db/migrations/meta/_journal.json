@@ -92,6 +92,13 @@
       "when": 1792983300076,
       "tag": "0012_promotions",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1792984935994,
+      "tag": "0013_sale-lines-promotions",
+      "breakpoints": true
     }
   ]
 }

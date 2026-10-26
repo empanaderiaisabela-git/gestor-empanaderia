@@ -37,6 +37,15 @@ describe('lo que el navegador puede mandar al cobrar (US-6 CA-1 y CA-2)', () => 
     expect(first(input)).toBe(message);
   });
 
+  it('acepta un pedido sólo con promos, y una promo con sus partes (US-9)', () => {
+    const promo = { promotionId: ITEM, quantity: 1, parts: [{ group: 'coca_cola', presentationKey: 'u1', flavors: [{ menuItemId: ITEM, units: 1 }] }] };
+    expect(checkoutSchema.parse({ ...VALID, lines: [], promos: [promo] }).promos).toEqual([promo]);
+    expect(first({ ...VALID, lines: [], promos: [] })).toBe('El pedido está vacío');
+    expect(first({ ...VALID, promos: [{ ...promo, parts: [] }] })).toBe('La promo no tiene productos');
+    expect(first({ ...VALID, promos: [{ ...promo, promotionId: 'x' }] })).toBe('Elegí una promo válida');
+    expect(checkoutSchema.safeParse({ ...VALID, promos: [{ ...promo, price: 1 }] }).success).toBe(false);
+  });
+
   it('no deja mandar precios, costos ni total (strictObject)', () => {
     expect(checkoutSchema.safeParse({ ...VALID, total: 1 }).success).toBe(false);
     expect(checkoutSchema.safeParse({ ...VALID, lines: [{ ...LINE, unitPrice: 1 }] }).success).toBe(false);

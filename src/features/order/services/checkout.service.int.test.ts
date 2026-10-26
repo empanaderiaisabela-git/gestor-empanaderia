@@ -7,6 +7,7 @@ import { auditLogs, salePayments, sales } from '@/lib/db/schema';
 import { TEST_USER_IDS } from '@/test/as-user';
 import { seedTestUser } from '@/test/seed-test-user';
 import { truncateAll } from '@/test/truncate-all';
+import { drizzlePromotionRepository } from '@/features/promotion/repository/promotion.repository';
 import { checkoutService } from './checkout.service';
 
 const CALLER = { id: TEST_USER_IDS.vendedor };
@@ -49,6 +50,16 @@ describe('cobro contra Postgres (US-6 CA-3 y CA-4)', () => {
     expect(await db.select({ type: salePayments.type, amount: salePayments.amount }).from(salePayments)).toEqual([{ type: 'efectivo', amount: '10900.00' }]);
     expect(await db.select({ entity: auditLogs.entity, entityId: auditLogs.entityId }).from(auditLogs)).toEqual([{ entity: 'SALE', entityId: saleId }]);
     expect([await stockOf(carne), await stockOf(coca)]).toEqual([6, 0]);
+  });
+
+  it('cobra una promo: la línea guarda la promo, sus gustos con el costo congelado y descuenta el stock (US-9)', async () => {
+    const promo = await drizzlePromotionRepository(db).insert({ name: 'Coca promo', price: 2000, components: [{ group: 'coca_cola', presentationKey: 'u1', quantity: 1 }] });
+    const promos = [{ promotionId: promo.id, quantity: 1, parts: [{ group: 'coca_cola' as const, presentationKey: 'u1', flavors: [{ menuItemId: coca, units: 1 }] }] }];
+    const { total } = await checkoutService.checkout(CALLER, { ...order([], 2000), promos });
+    expect(total).toBe(2000);
+    expect(await db.select({ promotionId: saleLines.promotionId, group: saleLines.group, subtotal: saleLines.subtotal, description: saleLines.description }).from(saleLines)).toEqual([{ promotionId: promo.id, group: null, subtotal: '2000.00', description: 'Coca promo: Coca 500' }]);
+    expect(await db.select({ units: saleLineItems.units, unitCost: saleLineItems.unitCost }).from(saleLineItems)).toEqual([{ units: '1.0', unitCost: '1200.00' }]);
+    expect(await stockOf(coca)).toBe(0);
   });
 
   it('dos cobros simultáneos de la última Coca: uno gana y el otro recibe INSUFFICIENT_STOCK', async () => {

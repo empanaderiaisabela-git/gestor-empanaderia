@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { describeFlavors, describePresentation, missingLabel } from './order-describe';
+import { describeFlavors, describePresentation, describeSaleLine, describeSoldPresentation, missingLabel } from './order-describe';
 import type { OrderLine } from './order-line';
 
 const NAMES: Record<string, string> = { carne: 'Carne', pollo: 'Pollo', muzza: 'Muzza', napo: 'Napolitana' };
@@ -17,6 +17,12 @@ describe('cómo se lee una línea en el pedido', () => {
   it('nombra el grupo, la presentación y la cantidad', () => {
     expect(describePresentation(line('empanadas', 'u6', []))).toBe('Empanadas · ½ docena');
     expect(describePresentation({ ...line('coca_cola', 'u1', []), quantity: 3 })).toBe('Coca-Cola · 1 unidad × 3');
+  });
+
+  it('en el historial, una línea de promo dice "Promo" y su descripción (US-9)', () => {
+    expect(describeSaleLine({ group: null, presentationKey: null, quantity: 1, description: 'Media + Coca: Carne · Coca 500' })).toBe('Promo: Media + Coca: Carne · Coca 500');
+    expect(describeSoldPresentation({ group: null, presentationKey: null, quantity: 2 })).toBe('Promo × 2');
+    expect(describeSaleLine({ group: 'pizzas', presentationKey: 'pizza_1', quantity: 1, description: 'Muzza' })).toBe('Pizzas · 1 sabor: Muzza');
   });
 
   it('dice qué falta para completar la línea', () => {

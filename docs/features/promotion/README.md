@@ -21,8 +21,8 @@ Una promo guardada queda **activa** y aparece en Ventas. No vence: sigue activa 
 - El precio de venta se escribe a mano, mayor a 0 y con 2 decimales como máximo. No hay precio de referencia
   (fuente: cliente, 2026-10-25).
 - Sin vigencia: el admin la desactiva cuando quiere (fuente: cliente, 2026-10-25).
-- Se puede borrar sólo si nunca se vendió. Si no, se desactiva (decisión provisoria D-1 de
-  `docs/plans/sprint-2.md`).
+- Se puede borrar sólo si nunca se vendió; si no, devuelve `HAS_RELATIONS` y hay que desactivarla (decisión
+  provisoria D-1 de `docs/plans/sprint-2.md`). Lo garantiza la FK de `sale_lines.promotion_id` (US-9).
 
 ## Roles y permisos
 
@@ -63,6 +63,7 @@ Cada cambio se audita con la entidad `PROMOTION` ("PROMOCIÓN" en Auditoría): n
 | Un vendedor crea, edita, activa o borra | `FORBIDDEN` | Solo los administradores pueden realizar esta acción | `promotion-errors.contract.test.ts` |
 | Sin productos, precio ≤ 0, presentación que no es del grupo, producto repetido, nombre inválido | `VALIDATION` | Los datos proporcionados no son válidos. | `promotion-errors.contract.test.ts`, `promotion.schema.test.ts` |
 | Nombre de otra promo | `DUPLICATE` | Ya existe un registro con esos datos (DNI, nombre o código duplicado). | `promotion-errors.contract.test.ts`, `promotion.service.test.ts` |
+| Borrar una promo que ya se vendió | `HAS_RELATIONS` | No se puede completar la operación porque existen registros relacionados. | `promotion-errors.contract.test.ts` |
 | Editar, activar o borrar con una versión vieja | `STALE_VERSION` | Los datos en el servidor han cambiado. Por favor, sincroniza la lista e intenta nuevamente. | `promotion-errors.contract.test.ts` |
 
 ## Pantallas

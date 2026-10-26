@@ -14,7 +14,7 @@ function viewOf(fake: FakeCheckoutUnitOfWork, sale: FakeSale): SaleView {
     total: money(sale.total),
     discountAmount: money(sale.discountAmount),
     discountPercentage: money(sale.discountPercentage),
-    lines: lines.map(({ group, presentationKey, quantity, unitPrice, subtotal, description }) => ({ group, presentationKey, quantity, unitPrice: money(unitPrice), subtotal: money(subtotal), description })),
+    lines: lines.map(({ group, presentationKey, promotionId, quantity, unitPrice, subtotal, description }) => ({ group, presentationKey, promotionId, quantity, unitPrice: money(unitPrice), subtotal: money(subtotal), description })),
     payments: sale.payments.map(({ type, amount }) => ({ type, amount: money(amount) })),
   };
 }

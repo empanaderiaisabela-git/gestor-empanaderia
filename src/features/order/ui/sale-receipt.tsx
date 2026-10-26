@@ -4,7 +4,7 @@ import { ArrowLeft, Printer } from 'lucide-react';
 import type { JSX } from 'react';
 import { Button } from '@/components/ui/button';
 import { BRAND } from '@/config/brand';
-import { describePresentation } from '@/features/order/domain/order-describe';
+import { describeSoldPresentation } from '@/features/order/domain/order-describe';
 import { PAYMENT_LABELS } from '@/features/order/domain/order-validation';
 import { buyerLabel, type SaleDef } from '@/features/order/domain/sale-history.schema';
 import { formatDateTime } from '@/lib/format-date-time';
@@ -51,7 +51,7 @@ function ReceiptLines({ sale }: { sale: SaleDef }): JSX.Element {
       <tbody>
         {sale.lines.map((line, index) => (
           <tr key={index} className='border-t border-zinc-100'>
-            <td className='py-2 pr-2'>{describePresentation(line)}</td>
+            <td className='py-2 pr-2'>{describeSoldPresentation(line)}</td>
             <td className='py-2 pr-2'>{line.description}</td>
             <td className='py-2 text-right'>{formatMoney(line.subtotal)}</td>
           </tr>

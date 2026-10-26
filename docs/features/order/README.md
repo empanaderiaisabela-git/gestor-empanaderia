@@ -68,6 +68,34 @@ costos ni total: `checkoutSchema` es `strictObject` y rechaza cualquier campo de
 Si el cobro sale bien, el pedido se vacía y el tablero vuelve a leer gustos y stock. Si falla, el pedido queda como
 estaba, se muestra el motivo y también se recargan precios y stock, porque pueden haber cambiado.
 
+## Promos en el tablero (US-9)
+
+La subdivisión **Promos** del tablero lista las promos activas (US-8) con su precio de venta. Una promo con un
+producto cuyo grupo no tiene gustos activos queda deshabilitada.
+
+- Elegir una promo la suma al pedido y abre la lista de gustos de su primer producto. Cada producto se abre en
+  tantas partes como su cantidad: "2 × Coca-Cola · 1 unidad" pide dos bebidas, que pueden ser distintas.
+- La lista es la misma del tablero ("Agregar uno", "Completar", sólo gustos con stock), pero dice "En la promo" en
+  lugar del precio: se cobra el precio de la promo. Al completar un producto pasa al siguiente y, al terminar, se
+  cierra sola.
+- En el pedido, la promo aparece como "Promo · <nombre>" con sus gustos y su precio. A medio armar muestra
+  "faltan gustos · elegir", que retoma donde quedó, y bloquea el cobro. Se pueden sumar varias, iguales o distintas.
+
+Al cobrar, el navegador manda cada promo como `{ promotionId, quantity, parts }`, con los gustos de cada parte y
+sin precios. `checkout-promos.ts`, dentro de la misma transacción del cobro:
+
+1. Lee la promo: si no existe o está desactivada, `NOT_FOUND`.
+2. Controla que las partes sean exactamente las de sus productos, en orden (`expandComponents`); si no,
+   `VALIDATION`.
+3. Suma los gustos de las partes al bloqueo, la validación de grupo y el control de stock del resto del pedido.
+4. Cobra el precio de la promo guardado en la base, por la cantidad. El descuento de la venta se aplica sobre el
+   total, promos incluidas (decisión provisoria D-2).
+5. Guarda una línea con `promotion_id`, sin grupo ni presentación, con la descripción "<promo>: <gustos>" y lo
+   que consumió de cada gusto con el costo congelado.
+
+Una promo que ya se vendió no se puede borrar: la FK de `sale_lines.promotion_id` no tiene cascada y el borrado
+devuelve `HAS_RELATIONS` (decisión provisoria D-1).
+
 ## Historial, comprobante y anulación (US-7)
 
 **Ventas/Pedidos** (`/ventas`) es el historial: fecha y hora de Argentina, comprador ("Sin nombre" si no hay),
@@ -95,6 +123,8 @@ borre.
 | Línea incompleta, gusto de otro grupo o dado de baja, grupo sin precio, descuento mayor al total o pagos que no suman | `VALIDATION` | idem | `checkout-errors.test.ts` |
 | Un gusto que ya no existe | `NOT_FOUND` | El/la producto seleccionado ya no existe. | `checkout-errors.test.ts` |
 | Un gusto no alcanza | `INSUFFICIENT_STOCK` | No hay stock suficiente de {gusto}. | `checkout-errors.test.ts` y `checkout.service.int.test.ts` |
+| Promo inexistente o desactivada (US-9) | `NOT_FOUND` | El/la promoción seleccionado ya no existe. | `checkout-promos.test.ts`, `checkout.contract.test.ts` |
+| Partes de la promo que no coinciden con sus productos, gustos incompletos o de otro grupo (US-9) | `VALIDATION` | Los datos proporcionados no son válidos. | `checkout-promos.test.ts` |
 | Otro movimiento cambió el gusto entre el bloqueo y el guardado | `STALE_VERSION` | mensaje de concurrencia | `checkout-errors.test.ts` |
 | Anular: el vendedor lo intenta | `FORBIDDEN` | Solo los administradores pueden realizar esta acción | `sale-history.contract.test.ts` |
 | Anular: la venta no existe o ya se anuló | `NOT_FOUND` | El/la venta seleccionado ya no existe. | `sale-history.contract.test.ts` y `sale-history.service.int.test.ts` |

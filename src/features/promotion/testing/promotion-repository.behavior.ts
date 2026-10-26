@@ -13,12 +13,22 @@ async function failureCode(operation: Promise<unknown>): Promise<string | null> 
   );
 }
 
-export function describePromotionRepository(label: string, setup: () => Promise<PromotionRepository>): void {
+export type PromotionRepositoryHarness = { repository: PromotionRepository; linkSale(promotionId: string): Promise<void> };
+
+export function describePromotionRepository(label: string, setup: () => Promise<PromotionRepositoryHarness>): void {
   describe(`PromotionRepository (${label}) — US-8 CA-1`, () => {
     let repository: PromotionRepository;
+    let harness: PromotionRepositoryHarness;
 
     beforeEach(async () => {
-      repository = await setup();
+      harness = await setup();
+      repository = harness.repository;
+    });
+
+    it('no deja borrar una promo que ya se vendió (US-9, decisión provisoria D-1)', async () => {
+      const created = await repository.insert(PROMO_INPUT);
+      await harness.linkSale(created.id);
+      expect(await failureCode(repository.remove({ id: created.id, version: 1 }))).toBe('HAS_RELATIONS');
     });
 
     it('inserta una promo activa con versión 1 y sus componentes en orden', async () => {

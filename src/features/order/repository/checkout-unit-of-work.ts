@@ -1,6 +1,7 @@
 import { auditLogs } from '@/lib/db/schema';
 import { type DbTransaction, withTransaction } from '@/lib/db/transaction';
 import { drizzleMenuGroupPriceRepository, type MenuGroupPriceRepository } from '@/features/menu/repository/menu-group-price.repository';
+import { drizzlePromotionRepository, type PromotionRepository } from '@/features/promotion/repository/promotion.repository';
 import { drizzleStockRepository, type StockRepository } from '@/features/stock/repository/stock.repository';
 import { drizzleSaleWriter, type SaleWriter } from './sale-writer.repository';
 
@@ -15,6 +16,7 @@ export type SaleAuditEntry = {
 export type CheckoutScope = {
   stock: StockRepository;
   groupPrices: MenuGroupPriceRepository;
+  promotions: Pick<PromotionRepository, 'findById'>;
   sales: SaleWriter;
   audit: (entry: SaleAuditEntry) => Promise<void>;
 };
@@ -32,6 +34,6 @@ export function auditIn(tx: DbTransaction): CheckoutScope['audit'] {
 export const drizzleCheckoutUnitOfWork: CheckoutUnitOfWork = {
   run: (work) =>
     withTransaction((tx) =>
-      work({ stock: drizzleStockRepository(tx), groupPrices: drizzleMenuGroupPriceRepository(tx), sales: drizzleSaleWriter(tx), audit: auditIn(tx) })
+      work({ stock: drizzleStockRepository(tx), groupPrices: drizzleMenuGroupPriceRepository(tx), promotions: drizzlePromotionRepository(tx), sales: drizzleSaleWriter(tx), audit: auditIn(tx) })
     ),
 };

@@ -1,8 +1,10 @@
 import { AppError } from '@/lib/errors';
 import type { CheckoutData, CheckoutResult } from '@/features/order/domain/checkout.schema';
 import type { OrderLine } from '@/features/order/domain/order-line';
+import { round2 } from '@/features/order/domain/order-pricing';
 import { applyDiscount, paymentsCover } from '@/features/order/domain/order-validation';
 import { type CheckoutScope, type CheckoutUnitOfWork, drizzleCheckoutUnitOfWork } from '@/features/order/repository/checkout-unit-of-work';
+import { promoSaleLineOf, promoSubtotal, resolvePromos } from './checkout-promos';
 import { assertSellable, consumeStock, lockFlavors, priceBookOf, priceLine, saleLineOf } from './checkout-steps';
 
 type Caller = { id: string };
@@ -13,21 +15,22 @@ export type CheckoutService = {
 
 async function checkout(scope: CheckoutScope, caller: Caller, input: CheckoutData): Promise<CheckoutResult> {
   const lines: OrderLine[] = input.lines.map((line, index) => ({ ...line, id: String(index + 1) }));
-  const items = await lockFlavors(scope, lines);
-  assertSellable(lines, items);
+  const promos = await resolvePromos(scope, input.promos ?? []);
+  const sold = [...lines, ...promos.flatMap((promo) => promo.parts)];
+  const items = await lockFlavors(scope, sold);
+  assertSellable(sold, items);
   const book = priceBookOf(items, await scope.groupPrices.findAll());
   const priced = lines.map((line) => priceLine(line, book));
   const { discountAmount, discountPercentage, buyerName, payments } = input;
-  const total = applyDiscount(
-    priced.reduce((sum, { subtotal }) => sum + subtotal, 0),
-    { percentage: discountPercentage, amount: discountAmount }
-  );
+  const subtotal = round2([...priced.map((line) => line.subtotal), ...promos.map(promoSubtotal)].reduce((sum, value) => sum + value, 0));
+  const total = applyDiscount(subtotal, { percentage: discountPercentage, amount: discountAmount });
   if (total < 0 || !paymentsCover(total, payments)) throw new AppError('VALIDATION');
-  await consumeStock(scope, items, lines);
+  await consumeStock(scope, items, sold);
   const saleId = await scope.sales.insertSale({ vendorId: caller.id, buyerName, total, discountAmount, discountPercentage });
-  for (const [position, line] of priced.entries()) await scope.sales.insertLine(saleId, { ...saleLineOf(line, items), position });
+  const saleLines = [...priced.map((line) => saleLineOf(line, items)), ...promos.map((promo) => promoSaleLineOf(promo, items))];
+  for (const [position, line] of saleLines.entries()) await scope.sales.insertLine(saleId, { ...line, position });
   await scope.sales.insertPayments(saleId, payments);
-  await scope.audit({ userId: caller.id, action: 'CREAR', entity: 'SALE', entityId: saleId, detail: { total, buyerName, lines: priced.length, payments } });
+  await scope.audit({ userId: caller.id, action: 'CREAR', entity: 'SALE', entityId: saleId, detail: { total, buyerName, lines: saleLines.length, payments } });
   return { saleId, total };
 }
 

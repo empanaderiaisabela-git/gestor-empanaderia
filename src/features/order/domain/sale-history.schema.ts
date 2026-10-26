@@ -5,8 +5,9 @@ import { PAYMENT_TYPES } from './order-validation';
 const amount = z.union([z.string(), z.number()]).transform(Number);
 
 export const saleLineRowSchema = z.object({
-  group: z.enum(MENU_GROUPS),
-  presentationKey: z.string(),
+  group: z.enum(MENU_GROUPS).nullable(),
+  presentationKey: z.string().nullable(),
+  promotionId: z.uuid().nullable(),
   quantity: z.number(),
   unitPrice: amount,
   subtotal: amount,

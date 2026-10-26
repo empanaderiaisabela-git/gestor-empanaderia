@@ -7,7 +7,7 @@ import type { Payment } from '@/features/order/domain/order-validation';
 
 export type NewSale = { vendorId: string; buyerName: string | null; total: number; discountAmount: number; discountPercentage: number };
 export type NewSaleItem = { menuItemId: string; units: number; unitCost: number };
-export type NewSaleLine = { group: MenuGroup; presentationKey: string; quantity: number; unitPrice: number; subtotal: number; description: string; position: number; items: NewSaleItem[] };
+export type NewSaleLine = { group: MenuGroup | null; presentationKey: string | null; promotionId: string | null; quantity: number; unitPrice: number; subtotal: number; description: string; position: number; items: NewSaleItem[] };
 
 export type SaleWriter = {
   insertSale(sale: NewSale): Promise<string>;

@@ -25,8 +25,8 @@ describe('cobrar el pedido (US-6)', () => {
         discountPercentage: 0,
         payments,
         lines: [
-          { group: 'empanadas', presentationKey: 'u6', quantity: 1, unitPrice: 8000, subtotal: 8000, description: '2 Carne + 4 Pollo', position: 0, items: [{ menuItemId: CARNE.id, units: 2, unitCost: 400 }, { menuItemId: POLLO.id, units: 4, unitCost: 350 }] },
-          { group: 'pizzas', presentationKey: 'pizza_2', quantity: 1, unitPrice: 10000, subtotal: 10000, description: 'Muzza / Napolitana', position: 1, items: [{ menuItemId: MUZZA.id, units: 0.5, unitCost: 2000 }, { menuItemId: NAPO.id, units: 0.5, unitCost: 1500 }] },
+          { group: 'empanadas', presentationKey: 'u6', promotionId: null, quantity: 1, unitPrice: 8000, subtotal: 8000, description: '2 Carne + 4 Pollo', position: 0, items: [{ menuItemId: CARNE.id, units: 2, unitCost: 400 }, { menuItemId: POLLO.id, units: 4, unitCost: 350 }] },
+          { group: 'pizzas', presentationKey: 'pizza_2', promotionId: null, quantity: 1, unitPrice: 10000, subtotal: 10000, description: 'Muzza / Napolitana', position: 1, items: [{ menuItemId: MUZZA.id, units: 0.5, unitCost: 2000 }, { menuItemId: NAPO.id, units: 0.5, unitCost: 1500 }] },
         ],
       },
     ]);
