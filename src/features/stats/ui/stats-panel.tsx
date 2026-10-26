@@ -8,6 +8,7 @@ import { inputClass } from '@/components/ui/form-field';
 import { TableSkeleton } from '@/components/ui/table-skeleton';
 import { type StatsModel, useWorkdayStats } from './use-workday-stats';
 import { GroupKpis, PaymentKpis, SummaryKpis } from './workday-kpis';
+import { SalesTable, VendorsTable } from './workday-tables';
 
 function StatsToolbar({ model }: { model: StatsModel }): JSX.Element {
   return (
@@ -33,6 +34,10 @@ function StatsBody({ model }: { model: StatsModel }): JSX.Element {
       <SummaryKpis stats={stats} />
       <GroupKpis stats={stats} />
       <PaymentKpis stats={stats} />
+      <div className='grid grid-cols-1 xl:grid-cols-2 gap-4'>
+        <VendorsTable rows={stats.vendorTable} />
+        <SalesTable rows={stats.saleTable} />
+      </div>
     </div>
   );
 }

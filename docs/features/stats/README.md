@@ -22,6 +22,9 @@ Muestra los números de una **jornada** del local, por defecto la de hoy, con un
 - **Dinero generado por comida**: Empanadas, Pizzas, Sanguches, Ciabattas, Coca-Cola y Pepsi, cada cuadro con el color
   y el emoji de su grupo (US-15), y un cuadro aparte para las **Promos**.
 - **Facturado por medio de pago**: Efectivo, Transferencia, Débito y Crédito.
+- Abajo del todo (US-13), dos cuadros:
+  - **Vendedores**: vendedor, turno, número de ventas e importe, de a una fila por vendedor y turno;
+  - **Ventas**: comprador ("Sin nombre" si no hay), hora en Argentina e importe, ordenadas por hora.
 
 Se quitaron los KPI heredados que el cliente no nombró: valor del stock, unidades, pérdidas, órdenes procesadas y
 mejores vendedores (cliente, 2026-10-25).
@@ -36,6 +39,10 @@ mejores vendedores (cliente, 2026-10-25).
 - **Ganancia en limpio** = total facturado (con recargo) − Σ unidades × costo congelado (también lo que usó cada
   promo) − Σ mermas de la jornada × su costo. Ejemplo del cliente: comprada a $10 y vendida a $30 ⇒ $20.
 - **Por medio de pago**: cada pago suma su monto y, en crédito, su recargo.
+- **Turno** (`domain/shift.ts`): mañana de 7:00 a 16:59 y tarde de 17:00 a 6:59, en hora de Argentina (cliente,
+  2026-10-25: el local abre de 11 a 16 y de 19 a 1, y el margen cubre lo que se cargue fuera de horario). Una venta
+  de la 0:30 es de la tarde de la jornada anterior.
+- El importe de cada venta es lo que pagó el cliente, recargo incluido (decisión provisoria D-3).
 - Montos redondeados a 2 decimales al final.
 
 ## Roles y permisos
@@ -67,5 +74,6 @@ con el costo congelado) y los pagos (con el recargo); y las mermas de la jornada
 
 ## Pantallas
 
-`StatsPanel`: selector "Jornada" y "Sincronizar"; mientras carga, un esqueleto; si la jornada no tuvo ventas, "No
+`StatsPanel`: selector "Jornada" y "Sincronizar"; los KPI; y al final los cuadros de vendedores y de ventas (con
+"Nadie vendió en esta jornada." cuando están vacíos); mientras carga, un esqueleto; si la jornada no tuvo ventas, "No
 hubo ventas en esta jornada." con los cuadros en $0; si el servidor falla, el motivo.

@@ -35,6 +35,14 @@ describe('estadísticas de la jornada contra db-test (US-12)', () => {
   it('los KPI de la jornada sobre los datos sembrados (CA-2 a CA-5)', async () => {
     expect(await getWorkdayStats(SEEDED_WORKDAY)).toEqual({
       day: SEEDED_WORKDAY,
+      vendorTable: [
+        { vendor: 'vendedora', shift: 'morning', count: 1, amount: 500 },
+        { vendor: 'vendedora', shift: 'afternoon', count: 1, amount: 500 },
+      ],
+      saleTable: [
+        { buyer: 'Marta', at: '2026-10-25T16:00:00.000Z', amount: 500 },
+        { buyer: 'Marta', at: '2026-10-26T03:30:00.000Z', amount: 500 },
+      ],
       byGroup: { empanadas: 1000, pizzas: 0, sanguches: 0, ciabattas: 0, coca_cola: 0, pepsi: 0 },
       promos: 0,
       revenue: 1000,

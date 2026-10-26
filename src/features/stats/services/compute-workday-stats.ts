@@ -2,6 +2,7 @@ import { MENU_GROUPS, type MenuGroup } from '@/features/menu/domain/menu-groups'
 import { round2 } from '@/features/order/domain/order-pricing';
 import { PAYMENT_TYPES, type PaymentType } from '@/features/order/domain/order-validation';
 import type { StatsSale, StatsSnapshot, WorkdayStats } from '@/features/stats/domain/stats.schema';
+import { saleRows, vendorRows } from './workday-tables';
 
 type Shares = { byGroup: Record<MenuGroup, number>; promos: number };
 
@@ -38,5 +39,6 @@ export function computeWorkdayStats(day: string, { sales, losses }: StatsSnapsho
   const revenue = round2(sumBy(sales, (sale) => amount(sale.total)));
   const cost = sumBy(sales.flatMap((sale) => sale.items), (item) => amount(item.units) * amount(item.unitCost));
   const lost = sumBy(losses, (loss) => amount(loss.quantity) * amount(loss.unitCost));
-  return { day, byGroup: shares.byGroup, promos: round2(shares.promos), revenue, profit: round2(revenue - cost - lost), salesCount: sales.length, byPayment: byPaymentOf(sales) };
+  const tables = { vendorTable: vendorRows(sales), saleTable: saleRows(sales) };
+  return { day, ...tables, byGroup: shares.byGroup, promos: round2(shares.promos), revenue, profit: round2(revenue - cost - lost), salesCount: sales.length, byPayment: byPaymentOf(sales) };
 }

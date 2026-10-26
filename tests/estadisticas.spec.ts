@@ -24,5 +24,8 @@ test.describe('Estadísticas de la jornada (US-12)', () => {
     expect(await montoDe(page.getByRole('region', { name: 'Transferencia', exact: true }))).toBeGreaterThanOrEqual(3200);
     expect(Number(await page.getByRole('region', { name: 'Ventas registradas' }).locator('p').nth(1).innerText())).toBeGreaterThanOrEqual(1);
     await expect(page.getByRole('region', { name: 'Promos', exact: true })).toBeVisible();
+
+    await expect(page.getByRole('table', { name: 'Vendedores' }).getByRole('row').filter({ hasText: 'admin' }).first()).toContainText(/Mañana|Tarde/);
+    await expect(page.getByRole('table', { name: 'Ventas' }).getByRole('row').filter({ hasText: '$3.200' }).first()).toBeVisible();
   });
 });

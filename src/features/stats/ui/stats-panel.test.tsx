@@ -9,6 +9,11 @@ vi.mock('@/features/stats/actions/fetch-workday-stats', () => ({ fetchWorkdaySta
 
 const STATS: WorkdayStats = {
   day: '2026-10-25',
+  vendorTable: [
+    { vendor: 'ana', shift: 'morning', count: 3, amount: 15000 },
+    { vendor: 'ana', shift: 'afternoon', count: 4, amount: 27100 },
+  ],
+  saleTable: [{ buyer: 'Sin nombre', at: '2026-10-26T03:30:00.000Z', amount: 6600 }],
   byGroup: { empanadas: 12000, pizzas: 11000, sanguches: 0, ciabattas: 6000, coca_cola: 3500, pepsi: 0 },
   promos: 9000,
   revenue: 42100,
@@ -34,6 +39,13 @@ describe('pantalla de Estadísticas (US-12 CA-1 a CA-5)', () => {
     expect(within(card('Ventas registradas')).getByText('7')).toBeDefined();
     expect(['Efectivo', 'Transferencia', 'Débito', 'Crédito'].map((name) => within(card(name)).getByText(/\$/).textContent)).toEqual(['$20.000', '$10.000', '$5.500', '$6.600']);
     expect(action.fetch).toHaveBeenCalledWith(expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/));
+  });
+
+  it('abajo, el cuadro de vendedores por turno y el de ventas con su hora en Argentina (US-13)', async () => {
+    render(<StatsPanel />);
+    const vendedores = await screen.findByRole('table', { name: 'Vendedores' });
+    expect(within(vendedores).getAllByRole('row').map((row) => row.textContent)).toEqual(['VendedorTurnoVentasImporte', 'anaMañana3$15.000', 'anaTarde4$27.100']);
+    expect(within(screen.getByRole('table', { name: 'Ventas' })).getAllByRole('row')[1].textContent).toBe('Sin nombre00:30$6.600');
   });
 
   it('elegir otra jornada la pide al servidor', async () => {

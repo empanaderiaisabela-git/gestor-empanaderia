@@ -1835,7 +1835,7 @@ la leen.
 | 3   | [US-10](#us-10--tarjetas-tarjetas-aceptadas-y-planes-de-cuotas-con-recargo)      | Tarjetas: tarjetas aceptadas y planes de cuotas con recargo | En revisión | T-13        | 2 h             |
 | 4   | [US-11](#us-11--ventas-cobrar-con-crédito-en-cuotas)                             | Ventas: cobrar con crédito en cuotas                        | En revisión | US-10       | 2 h             |
 | 5   | [US-12](#us-12--estadísticas-del-día-dinero-por-comida-ganancia-y-ventas)        | Estadísticas del día: dinero por comida, ganancia y ventas  | En revisión | US-9, US-11 | 3 h             |
-| 6   | [US-13](#us-13--estadísticas-cuadros-de-vendedores-y-de-ventas)                  | Estadísticas: cuadros de vendedores y de ventas             | Pendiente | US-12       | 2 h             |
+| 6   | [US-13](#us-13--estadísticas-cuadros-de-vendedores-y-de-ventas)                  | Estadísticas: cuadros de vendedores y de ventas             | En revisión | US-12       | 2 h             |
 | 7   | [US-14](#us-14--gastos-anotador-de-facturas)                                     | Gastos: anotador de facturas                                | Pendiente | T-13        | 2 h             |
 | 8   | [BUG-11](#bug-11--la-subida-de-fotos-no-valida-antes-de-subir)                   | La subida de fotos no valida antes de subir                 | Pendiente | BUG-1       | 55 min          |
 | 9   | [BUG-13](#bug-13--alta-y-stock-confunden-el-costo-con-el-precio-de-venta)          | Alta y Stock confunden el costo con el precio de venta      | En revisión | US-3, US-4 | 45 min          |
@@ -2048,12 +2048,12 @@ del día, de forma que sepa cómo cerró la jornada.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
-| Dueño        | —         |
-| Inicio       | —         |
+| Estado       | En revisión |
+| Dueño        | Agente |
+| Inicio       | 2026-10-26 |
 | Tamaño       | M         |
 | Depende de   | US-12     |
-| Plan         | —         |
+| Plan         | [`docs/plans/US-13-cuadros-de-estadisticas.md`](docs/plans/US-13-cuadros-de-estadisticas.md) |
 | Merge        | —         |
 | Horas reales | —         |
 
@@ -2062,16 +2062,20 @@ de ventas del día, de forma que sepa quién vendió cuánto y cuándo.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · Cuadro de vendedores: vendedor, turno (mañana de 7:00 a 16:59 y tarde de 17:00 a 6:59, en hora de Argentina), número de ventas e importe · Estimación: 1 h · Completado: —
+- [x] **CA-1** · Cuadro de vendedores: vendedor, turno (mañana de 7:00 a 16:59 y tarde de 17:00 a 6:59, en hora de Argentina), número de ventas e importe · Estimación: 1 h · Completado: 2026-10-26 02:17
 
-- [ ] **CA-2** · Cuadro de ventas: comprador ("Sin nombre" si no hay), hora en Argentina e importe, ordenado por hora · Estimación: 45 min · Completado: —
+- [x] **CA-2** · Cuadro de ventas: comprador ("Sin nombre" si no hay), hora en Argentina e importe, ordenado por hora · Estimación: 45 min · Completado: 2026-10-26 02:17
 
-- [ ] **CA-3** · Tests unit de la regla del turno con valores frontera: 6:59 y 7:00, 16:59 y 17:00, y una venta después de medianoche (tarde de la jornada anterior) · Estimación: 15 min · Completado: —
+- [x] **CA-3** · Tests unit de la regla del turno con valores frontera: 6:59 y 7:00, 16:59 y 17:00, y una venta después de medianoche (tarde de la jornada anterior) · Estimación: 15 min · Completado: 2026-10-26 02:17
 
 **Preguntas respondidas** (cliente, 2026-10-25)
 
 - Turno: el local abre de 11 a 16 y de 19 a 1. La mañana se cuenta desde las 7 y la tarde desde las 17, para cubrir
   lo que se cargue fuera de horario.
+
+**Notas**
+
+- Cierre: `npm run verify` (811 tests, cobertura 96/89, mutación 89,3) y 70 E2E en verde.
 
 ### US-14 · Gastos: anotador de facturas
 
