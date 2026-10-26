@@ -319,8 +319,10 @@ Requerimiento → Ítem de backlog → Descubrimiento → Plan aprobado → Rama
   de este archivo, lo adaptás en el mismo cambio y actualizás la fecha de la foto.
 - **Contradicciones entre docs:** avisá y proponé cuál corregir; `AGENTS.md` es la fuente canónica.
 - **Cambios mínimos y enfocados.** Nada de refactors, dependencias ni "mejoras" que nadie pidió.
-- **Skills:** las propias (`start-task`, `finish-task`) se editan en `.agents/skills/` y después se corre
-  `npm run skills:sync`.
+- **Skills:** las propias (`start-task`, `finish-task`, `delegate-task`) se editan en `.agents/skills/` y después
+  se corre `npm run skills:sync`.
+- **Subagentes:** con `delegate-task`, cada parte del trabajo va al modelo más barato que pueda hacerla (Haiku,
+  Sonnet u Opus; Opus es el techo). Lo chico se hace directo, y commits y comandos sobre la base nunca se delegan.
 - **Dudas que quedan abiertas:** las tuyas para el dev van a `docs/preguntas-dev.md`; las de negocio, a
   "Preguntas abiertas" del ítem en `BACKLOG.md`.
 

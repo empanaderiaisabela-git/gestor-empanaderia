@@ -114,7 +114,10 @@ Nunca `--no-verify`. Si un gate falla, se arregla la causa.
   `npx skills add <owner/repo> -s <skill> -a claude-code -a opencode -a antigravity --copy -y`, luego
   `npm run skills:check` y commit `chore(skills): …`. Sólo fuentes oficiales o de mantenedores reconocidos.
 - Para restaurarlas o actualizarlas: `npx skills experimental_install` / `npx skills update -p`.
-- Las propias (`start-task`, `finish-task`) se editan en `.agents/skills/` y se copian con `npm run skills:sync`.
+- Las propias (`start-task`, `finish-task`, `delegate-task`) se editan en `.agents/skills/` y se copian con
+  `npm run skills:sync`.
+- `delegate-task` reparte el trabajo en subagentes según la dificultad: Haiku para lo mecánico, Sonnet para la
+  implementación acotada y Opus para lo que requiere juicio. Opus es el techo.
 
 > `skills:sync` reemplaza `.claude/skills/` por una copia exacta de `.agents/skills/`, borrando lo que sobre. La
 > fuente es siempre `.agents/skills/`: lo que se edite directo en `.claude/skills/` se pierde en el próximo sync.

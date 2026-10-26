@@ -1843,7 +1843,8 @@ la leen.
 | 11  | [T-14](#t-14--cierre-del-sprint-2)                                               | Cierre del Sprint 2                                         | En revisión | todos       | 1 h             |
 | 12  | [BUG-15](#bug-15--los-precios-del-grupo-borran-lo-que-se-está-escribiendo)       | Los precios del grupo borran lo que se está escribiendo     | En revisión | US-3        | 30 min          |
 | 13  | [BUG-16](#bug-16--un-e2e-de-clientes-falla-a-veces-en-el-ci)                     | Un E2E de Clientes falla a veces en el CI                   | Pendiente | T-6         | 45 min          |
-|     |                                                                                  | **Total del sprint**                                        |           |             | **21 h 20 min** |
+| 14  | [T-16](#t-16--skill-para-delegar-en-subagentes-según-el-costo)                   | Skill para delegar en subagentes según el costo             | En revisión | —         | 40 min          |
+|     |                                                                                  | **Total del sprint**                                        |           |             | **22 h**        |
 
 ### T-15 · Respuestas del cliente en el backlog del Sprint 2
 
@@ -2339,3 +2340,43 @@ desactivado, la búsqueda por DNI no lo encuentra en 15 s. En local nunca falló
 
 - ¿Podés bajar el artefacto `playwright-report` de una corrida fallida (c67ae43 o 3c28a35) y dejarlo en el repo local,
   sin commitearlo? Sin el trace, la causa no se puede ver.
+
+### T-16 · Skill para delegar en subagentes según el costo
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente |
+| Inicio       | 2026-10-26 |
+| Tamaño       | S         |
+| Depende de   | —         |
+| Plan         | [`docs/plans/T-16-delegate-task.md`](docs/plans/T-16-delegate-task.md) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como dev quiero que el agente reparta el trabajo entre subagentes baratos y caros según la dificultad,
+de forma que las tareas simples no gasten como las difíciles.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · `delegate-task` con 3 niveles (Haiku/Sonnet/Opus, Opus como techo), cuándo no delegar, escalado único y verificación; la skill no nombra ningún otro modelo · Estimación: 20 min · Completado: 2026-10-26 15:06
+
+- [x] **CA-2** · `skills:sync` y `skills:check` en verde; `AGENTS.md`, `docs/workflow.md` §8 y `docs/initial_prompt.md` la listan entre las skills propias · Estimación: 10 min · Completado: 2026-10-26 15:06
+
+- [x] **CA-3** · Prueba real: una tarea de sólo lectura se delega con `Explore` + `haiku` + `low` y se informa en la tabla subtarea · nivel · resultado · Estimación: 10 min · Completado: 2026-10-26 15:06
+
+**Decisiones del dev** (2026-10-26)
+
+- Vive sólo en este proyecto y es una sola skill, sin agentes propios en `.claude/agents/`.
+- Tres niveles: Haiku, Sonnet y Opus. Opus es el techo, también al escalar: los modelos por encima están
+  prohibidos, fuera de todo presupuesto.
+- Se activa con `/delegate-task` y también sola, cuando el trabajo se puede repartir.
+
+**Notas**
+
+- Prueba de CA-3: "archivos de `src/features` de más de 80 líneas, con un resumen de cada uno". La skill lo mandó a
+  nivel 1 (`Explore` + `haiku` + `low`, 3 llamadas, ~24 s). La lista de 21 archivos coincidió con un `wc -l`
+  propio; sólo el total que informó estaba mal (22) y se corrigió sin escalar.
+- `skills:check`, lint y typecheck en verde. El resto de `npm run verify` en verde: 867 tests, cobertura
+  96/88,76, mutación 89,31 y build. `test:int` no corrió: Docker estaba apagado y el dev decidió integrar sin él,
+  porque el cambio es sólo texto.

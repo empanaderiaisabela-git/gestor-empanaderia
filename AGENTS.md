@@ -71,7 +71,8 @@ npm run verify           # lint, tipos, cobertura, integración, mutación y bui
 
 Viven en `.agents/skills/` y, copiadas e idénticas, en `.claude/skills/` (Claude Code). Las dos carpetas se
 versionan (`docs/workflow.md` §8).
-Propias: `start-task`, `finish-task`. De terceros (las de `skills-lock.json` y otras copiadas a mano): TDD,
+Propias: `start-task`, `finish-task` y `delegate-task` (reparte el trabajo en subagentes Haiku, Sonnet u Opus
+según la dificultad). De terceros (las de `skills-lock.json` y otras copiadas a mano): TDD,
 Next.js (best practices, cache components, upgrade), React y composición, Drizzle, Postgres, Tailwind,
 TypeScript avanzado, Node.js, Playwright, accesibilidad, SEO, diseño de frontend, code review, refactor,
 revisión de seguridad y Conventional Commits. Cómo agregarlas o actualizarlas: `docs/workflow.md` §8.
