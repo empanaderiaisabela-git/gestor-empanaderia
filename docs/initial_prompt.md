@@ -10,7 +10,7 @@
 
 ## 1. Quién sos y con quién trabajás
 
-Sos el agente de ingeniería de software del repo **gestor-empanaderia**. Trabajás con **el dev**: la única
+Sos el agente de ingeniería de software del repo **gestor-empanaderia**. Trabajás con **el Tomás**: la única
 persona que programa, decide y aprueba. El **cliente** es **Empanadería Isabela**: vende empanadas, pizzas,
 sándwiches de miga, ciabattas y bebidas de Coca-Cola y Pepsi. Con el cliente no hablás vos: sus pedidos te llegan a
 través del dev.
@@ -49,7 +49,7 @@ en `eslint-legacy.json`.
 
 | Lo que ves en el código | Qué significa hoy |
 |---|---|
-| `src/lib/contact/contact.config.ts` | Vacío: falta que el cliente pase su WhatsApp e Instagram; sin datos, el catálogo no muestra botones de contacto |
+| `src/lib/contact/contact.config.ts` | Vacío: el cliente no los necesita por ahora porque la web no se usa pronto; sin datos, el catálogo no muestra botones de contacto |
 | Nombres en inglés del modelo: `menu_items` (gustos y bebidas), `sale_lines` (líneas del pedido), `stock_losses` (mermas) | Ver el [glosario](#12-glosario) |
 
 **Las reglas de venta del rubro ya están definidas** (dev, 2026-10-25) en las
@@ -78,11 +78,13 @@ Hacer preguntas de más es mejor que inventar.
 - **Sprint 0 terminado** (base técnica): todos sus ítems están integrados y en `En revisión` en `BACKLOG.md`,
   esperando que el dev los pase a `Hecho`. `main` tiene el tag `sprint-0`.
 - **Sprint 1 terminado** ("Vender con el modelo de la empanadería"): BUG-12, BUG-10, T-11, US-1 a US-7, US-15, T-12
-  y T-13 están integrados en `develop` y en `En revisión`. El merge `develop → main` con el tag `sprint-1` espera
-  el OK del dev.
-- **Sprint 2 en borrador**: US-8 a US-14, BUG-11 (ya cubierto en parte por T-12) y T-14.
+  y T-13 están en `main` con el tag `sprint-1`, y en `En revisión` hasta que el dev los apruebe.
+- **Sprint 2 en curso**:
+  - T-15 llevó las respuestas del cliente a los ítems.
+  - BUG-13 está en `develop`, en revisión.
+  - Quedan US-8 a US-14, BUG-11, BUG-14 y T-14.
   - Planes maestros en `docs/plans/sprint-1.md` y `docs/plans/sprint-2.md`: decisiones del dev, enfoque de cada
-    ítem, trazabilidad con `specs.md` y las preguntas pendientes para el cliente.
+    ítem y trazabilidad con `specs.md` y con las respuestas del cliente.
   - Ningún ítem del Sprint 2 se arranca sin el OK del dev.
 - Git: `main` recibe un merge de `develop` al cierre de cada sprint. El trabajo nuevo sale de `develop`. El repo de GitHub
   es **público**: todo lo que se pushea queda publicado.
@@ -198,8 +200,8 @@ exacto de archivos es `eslint-legacy.json`. Si tu ítem corrige un archivo hered
   - En desarrollo, Next ya no imprime los argumentos de las Server Actions (`logging.serverFunctions: false`), y
     Drizzle loguea el SQL sin parámetros. Fuera de `auth`, las lecturas no traen `password_hash` (BUG-6).
   - Ninguna respuesta al navegador ni el usuario de `verifyAuthOrAdmin` llevan el `password_hash` (BUG-7).
-  - `fetchMenuItems` exige sesión y al vendedor no le manda el costo. Sigue abierta la pregunta al cliente de si el
-    vendedor debe ver costos y proveedores.
+  - `fetchMenuItems` exige sesión y al vendedor no le manda el costo: no ve costos ni proveedores (decisión del dev,
+    2026-10-25).
   - `handleDatabaseError` lee el error original de Postgres (también en `error.cause` de Drizzle): un duplicado,
     una referencia inexistente y un borrado de algo referenciado tienen cada uno su mensaje (BUG-9).
 - **Qué base se usa** (T-8, ADR 0002): la de producción, **sólo** con `APP_ENV=production` (`.env.prod`, con

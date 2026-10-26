@@ -51,7 +51,7 @@ varias presentaciones), sus fotos y si hay stock.
 | Acción | admin | vendedor | público (sin sesión) |
 |---|---|---|---|
 | Ver la pantalla `/alta-de-productos` | Sí | No: `proxy.ts` lo lleva a `/ventas` | No |
-| Listar gustos, bebidas y precios del grupo | Sí | Sí (los necesita para vender), **sin el costo** (`unitCost: null`) mientras el cliente no responda si el vendedor ve costos | No |
+| Listar gustos, bebidas y precios del grupo | Sí | Sí (los necesita para vender), **sin el costo** (`unitCost: null`) por decisión del dev (2026-10-25) | No |
 | Crear, editar, activar, desactivar y borrar; cambiar precios del grupo | Sí | No (`FORBIDDEN`) | No (`UNAUTHENTICATED`) |
 | Mostrar u ocultar en el catálogo; subir y borrar fotos | Sí | No (`FORBIDDEN`) | No (`UNAUTHENTICATED`) |
 | Ver el catálogo (`fetchCatalog`, `fetchCatalogItem`) | Sí | Sí | **Sí: son las únicas lecturas públicas** |

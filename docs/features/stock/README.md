@@ -18,8 +18,8 @@ Muestra el stock de cada gusto y bebida activos, agrupados por grupo, y permite:
 - La cantidad que entra es un entero mayor a 0. Las mermas admiten media unidad sólo en Pizzas.
 - Una merma no puede superar el stock (`INSUFFICIENT_STOCK`).
 - Sin costo nuevo, el ingreso conserva el costo actual del gusto y lo registra en el historial.
-- **El vendedor ingresa stock, pero no ve ni carga costos ni proveedores**. Es lo vigente mientras el cliente no
-  responda la pregunta 2 de `docs/plans/sprint-1.md` (también BUG-8).
+- **El vendedor ingresa stock, pero no ve ni carga costos ni proveedores** (cliente y dev, 2026-10-25; también
+  BUG-8).
 - Cada movimiento sube la `version` del gusto: si alguien lo estaba editando en Alta de productos, recibe
   `STALE_VERSION` y sincroniza.
 

@@ -785,10 +785,9 @@ teléfono y el mail de los proveedores.
   vacías sin llamar al repositorio, y con sesión de vendedor siguen devolviendo los datos.
 - **CA-2**: `verifyAuthOrAdmin(false)` al empezar las dos acciones. `product.actions.ts` sigue en la lista legacy.
 
-**Preguntas abiertas**
+**Preguntas respondidas** (2026-10-25)
 
-- (Cliente) ¿El vendedor debe ver los precios de compra y el contacto de los proveedores? Se consulta junto con la
-  de US-4 (¿el vendedor ingresa stock?), en la lista de [`docs/plans/sprint-1.md`](docs/plans/sprint-1.md#preguntas-para-el-cliente).
+- El vendedor no ve los costos ni el contacto de los proveedores (dev, T-15).
 
 ### BUG-9 · Errores de base de datos mal traducidos
 
@@ -950,12 +949,12 @@ Respuestas a las preguntas de descubrimiento sobre `specs.md`. El detalle y el p
 | Grupos | **Fijos en el código**: Empanadas, Pizzas, Sanguches (de miga), Ciabattas, Coca-Cola y Pepsi. Desaparece Categorías |
 | Presentaciones | **Fijas**: Empanadas y Sanguches 1, 3, 6 y 12 u; Pizzas de 1 o 2 sabores (siempre entera); Ciabattas y bebidas, por unidad |
 | Precio | Empanadas y Ciabattas: **un precio por presentación para todo el grupo**. Sanguches, Pizzas y bebidas: **por gusto** ("Aclaración de precios" de `specs.md`). La pizza de 2 sabores cuesta lo que el sabor más caro |
-| Surtidas | Dentro de la misma presentación, con "Agregar uno" y "Completar" (AGREGADO de `specs.md`). En Sanguches se cobra la parte proporcional del precio de cada gusto. Una línea incompleta no se puede cobrar |
+| Surtidas | Dentro de la misma presentación, con "Agregar uno" y "Completar" (AGREGADO de `specs.md`). En Sanguches se cobra la parte proporcional del precio de cada gusto (confirmado por el dev, 2026-10-25). Una línea incompleta no se puede cobrar |
 | Stock | Por gusto. La pizza mitad y mitad descuenta ½ de cada gusto, y su costo es ½ del costo de cada uno |
 | Inicio del vendedor | Ventas/Pedidos |
 | Push | Después de cada ítem integrado a `develop`; el merge a `main` espera el OK del dev |
 | Comprador | Nombre libre y opcional; vacío se muestra "Sin nombre". La venta deja de exigir un cliente de Clientes |
-| Turno | Mañana o tarde según una hora de corte en hora de Argentina. **La hora la consulta el dev con el cliente** |
+| Turno | En hora de Argentina, **mañana de 7:00 a 16:59 y tarde de 17:00 a 6:59**. El local abre de 11 a 16 y de 19 a 1; el margen cubre lo que se cargue fuera de horario (cliente, 2026-10-25) |
 | Ingresar stock | Cantidad, costo unitario (actualiza el costo del gusto) y proveedor opcional, con historial |
 | Mermas y descuentos | Se mantienen los dos; las mermas siguen restando de la ganancia |
 | Auditoría | **El vendedor no tiene Auditoría** (el dev corrige la lista de `specs.md`) |
@@ -963,9 +962,13 @@ Respuestas a las preguntas de descubrimiento sobre `specs.md`. El detalle y el p
 | Ventas/Pedidos | Muestra el historial de ventas con toda la información de la grilla. **"Nuevo pedido"** abre el tablero del wireframe y reemplaza a "Nueva Venta" ("Consideraciones del primer sprint" de `specs.md`) |
 | Colores y emojis | Cada grupo con su color en el tablero y en el KPI de dinero por comida: Empanadas naranja 🥟, Pizzas amarillo suave 🍕, Ciabattas marrón claro 🥖, Sanguches verde suave 🥪, Coca-Cola rojo 🥤 y Pepsi azul 🥤. Emojis Unicode, no la librería de íconos |
 | Base de producción | Ya hay una base real en Supabase. La conecta el dev con su clave en `.env.prod` (`DATABASE_URL`, con SSL); el agente nunca la lee ni corre nada contra ella |
-| Gastos | Anotador aislado de facturas: número, título y monto. No afecta Estadísticas |
-| Tarjetas | Recargo % por plan de cuotas (1, 3, 6 y 12) |
-| Promos | Se arman con grupo + presentación + cantidad; los gustos se eligen al vender |
+| Gastos | Anotador aislado de facturas: número **único**, título, monto y **fecha de la factura**, sin foto (cliente, 2026-10-25). No afecta Estadísticas |
+| Tarjetas | Recargo % por plan de cuotas (1, 3, 6 y 12). **El recargo cuenta como ganancia** y el débito no pide tarjeta (cliente, 2026-10-25) |
+| Promos | Se arman con grupo + presentación + cantidad; los gustos se eligen al vender. El precio se escribe a mano, **sin precio de referencia ni vigencia**: el admin la desactiva. Ganancia = precio de la promo − costo para el local de lo que se usó (cliente, 2026-10-25) |
+| Día de Estadísticas | La **jornada del local**: de 7:00 a 6:59 del día siguiente, en hora de Argentina. Una venta de la 0:30 cuenta para la jornada que empezó a las 7 (dev, 2026-10-25) |
+| KPI de Estadísticas | Dinero por grupo, un cuadro aparte **"Promos"**, ganancia en limpio, ventas registradas y **lo facturado por cada uno de los 4 medios de pago**. Se quitan los KPI heredados que el cliente no nombró (cliente y dev, 2026-10-25) |
+| Vendedor y costos | Carga stock (cliente). No ve ni carga costos ni proveedores (dev, 2026-10-25) |
+| Contacto del catálogo | Sin WhatsApp ni Instagram por ahora: la web no se va a usar pronto (cliente, 2026-10-25) |
 | ISR | Revalidación a demanda: el catálogo se regenera sólo cuando cambia |
 | Datos de producción | Sólo demo: el modelo viejo se puede borrar (se conservan los usuarios) |
 | Costo y precio | Campos, columnas y títulos dicen siempre **"Costo para el local"** (lo que le cuesta al local hacerlo o comprarlo) y **"Precio de venta"** (lo que paga el cliente), nunca "costo" o "precio" a secas. La pizza va por pizza entera. El costo es por gusto en todos los grupos (BUG-13) |
@@ -1192,10 +1195,10 @@ textos de la casa de celulares.
 - Los textos de "equipo", "modelo" y "lote" de Productos, Categorías y el POS no se tocan acá: esas pantallas las
   reemplazan US-3 a US-7 y T-12. El test que garantiza cero referencias es T-12 CA-5.
 
-**Preguntas abiertas**
+**Preguntas respondidas** (cliente, 2026-10-25)
 
-- (Cliente) ¿Cuáles son el WhatsApp y el Instagram del local? Mientras tanto, los botones de contacto del catálogo
-  no muestran datos del cliente anterior.
+- El WhatsApp y el Instagram no hacen falta por ahora, porque la web no se va a usar pronto. Los botones de
+  contacto del catálogo siguen sin datos.
 
 **Notas**
 
@@ -1409,10 +1412,9 @@ el POS sólo ofrezca lo que hay.
 - Hoy "Ingresar Stock" crea un producto nuevo (un lote) con su proveedor y sus precios. Con el modelo nuevo suma
   unidades a un gusto existente.
 
-**Preguntas abiertas**
+**Preguntas respondidas** (2026-10-25)
 
-- (Cliente, junto con la de BUG-8) ¿El vendedor puede ingresar stock? ¿Ve costos y proveedores? Mientras no
-  responda, se mantiene lo de hoy: el vendedor ingresa stock y no ve costos ni proveedores.
+- El vendedor ingresa stock (cliente) y no ve costos ni proveedores (dev). Queda como está.
 
 **Cierre** (2026-10-25) · [README del feature](docs/features/stock/README.md)
 
@@ -1819,25 +1821,49 @@ lo construido y el próximo agente arranque con un contexto verdadero.
 **Objetivo**: vender promociones y en cuotas con recargo, ver las estadísticas del día que pidió el cliente y anotar
 los gastos.
 
-**Plan del sprint**: [`docs/plans/sprint-2.md`](docs/plans/sprint-2.md), **en borrador**: se revisa al cerrar el
-Sprint 1. El orden pone primero lo que cambia la venta (promos y tarjetas) y después las estadísticas que la leen.
+**Plan del sprint**: [`docs/plans/sprint-2.md`](docs/plans/sprint-2.md), revisado en T-15 con las respuestas del
+cliente (2026-10-25). El orden pone primero lo que cambia la venta (promos y tarjetas) y después las estadísticas que
+la leen.
 
 ### Resumen del Sprint 2
 
 | #   | ID                                                                               | Título                                                      | Estado    | Depende de  | Estimación      |
 | --- | -------------------------------------------------------------------------------- | ----------------------------------------------------------- | --------- | ----------- | --------------- |
-| 0   | [US-8](#us-8--promociones-armar-promos-con-precio-de-rebaja)                     | Promociones: armar promos con precio de rebaja              | Pendiente | T-13        | 2 h 45 min      |
-| 1   | [US-9](#us-9--ventas-subdivisión-promos)                                         | Ventas: subdivisión Promos                                  | Pendiente | US-8        | 3 h             |
-| 2   | [US-10](#us-10--tarjetas-tarjetas-aceptadas-y-planes-de-cuotas-con-recargo)      | Tarjetas: tarjetas aceptadas y planes de cuotas con recargo | Pendiente | T-13        | 2 h             |
-| 3   | [US-11](#us-11--ventas-cobrar-con-crédito-en-cuotas)                             | Ventas: cobrar con crédito en cuotas                        | Pendiente | US-10       | 2 h             |
-| 4   | [US-12](#us-12--estadísticas-del-día-dinero-por-comida-ganancia-y-ventas)        | Estadísticas del día: dinero por comida, ganancia y ventas  | Pendiente | US-9, US-11 | 2 h 30 min      |
-| 5   | [US-13](#us-13--estadísticas-cuadros-de-vendedores-y-de-ventas)                  | Estadísticas: cuadros de vendedores y de ventas             | Pendiente | US-12       | 2 h             |
-| 6   | [US-14](#us-14--gastos-anotador-de-facturas)                                     | Gastos: anotador de facturas                                | Pendiente | T-13        | 2 h             |
-| 7   | [BUG-11](#bug-11--la-subida-de-fotos-no-valida-antes-de-subir)                   | La subida de fotos no valida antes de subir                 | Pendiente | BUG-1       | 55 min          |
-| 8   | [BUG-13](#bug-13--alta-y-stock-confunden-el-costo-con-el-precio-de-venta)          | Alta y Stock confunden el costo con el precio de venta      | En revisión | US-3, US-4 | 45 min          |
-| 9   | [BUG-14](#bug-14--cualquier-error-de-la-base-se-muestra-como-datos-desactualizados) | Cualquier error de la base se muestra como "datos desactualizados" | Pendiente | BUG-9 | 35 min          |
-| 10  | [T-14](#t-14--cierre-del-sprint-2)                                               | Cierre del Sprint 2                                         | Pendiente | todos       | 1 h             |
-|     |                                                                                  | **Total del sprint**                                        |           |             | **19 h 30 min** |
+| 0   | [T-15](#t-15--respuestas-del-cliente-en-el-backlog-del-sprint-2)                 | Respuestas del cliente en el backlog del Sprint 2           | En revisión | T-13      | 30 min          |
+| 1   | [US-8](#us-8--promociones-armar-promos-con-precio-de-rebaja)                     | Promociones: armar promos con precio de rebaja              | Pendiente | T-13        | 2 h 20 min      |
+| 2   | [US-9](#us-9--ventas-subdivisión-promos)                                         | Ventas: subdivisión Promos                                  | Pendiente | US-8        | 3 h             |
+| 3   | [US-10](#us-10--tarjetas-tarjetas-aceptadas-y-planes-de-cuotas-con-recargo)      | Tarjetas: tarjetas aceptadas y planes de cuotas con recargo | Pendiente | T-13        | 2 h             |
+| 4   | [US-11](#us-11--ventas-cobrar-con-crédito-en-cuotas)                             | Ventas: cobrar con crédito en cuotas                        | Pendiente | US-10       | 2 h             |
+| 5   | [US-12](#us-12--estadísticas-del-día-dinero-por-comida-ganancia-y-ventas)        | Estadísticas del día: dinero por comida, ganancia y ventas  | Pendiente | US-9, US-11 | 3 h             |
+| 6   | [US-13](#us-13--estadísticas-cuadros-de-vendedores-y-de-ventas)                  | Estadísticas: cuadros de vendedores y de ventas             | Pendiente | US-12       | 2 h             |
+| 7   | [US-14](#us-14--gastos-anotador-de-facturas)                                     | Gastos: anotador de facturas                                | Pendiente | T-13        | 2 h             |
+| 8   | [BUG-11](#bug-11--la-subida-de-fotos-no-valida-antes-de-subir)                   | La subida de fotos no valida antes de subir                 | Pendiente | BUG-1       | 55 min          |
+| 9   | [BUG-13](#bug-13--alta-y-stock-confunden-el-costo-con-el-precio-de-venta)          | Alta y Stock confunden el costo con el precio de venta      | En revisión | US-3, US-4 | 45 min          |
+| 10  | [BUG-14](#bug-14--cualquier-error-de-la-base-se-muestra-como-datos-desactualizados) | Cualquier error de la base se muestra como "datos desactualizados" | Pendiente | BUG-9 | 35 min          |
+| 11  | [T-14](#t-14--cierre-del-sprint-2)                                               | Cierre del Sprint 2                                         | Pendiente | todos       | 1 h             |
+|     |                                                                                  | **Total del sprint**                                        |           |             | **20 h 5 min**  |
+
+### T-15 · Respuestas del cliente en el backlog del Sprint 2
+
+| Campo        | Valor                                              |
+| ------------ | -------------------------------------------------- |
+| Estado       | En revisión                                        |
+| Dueño        | Agente                                             |
+| Inicio       | 2026-10-25                                         |
+| Tamaño       | S                                                  |
+| Depende de   | T-13                                               |
+| Plan         | [`docs/plans/sprint-2.md`](docs/plans/sprint-2.md) |
+| Merge        | —                                                  |
+| Horas reales | —                                                  |
+
+**Historia**: Como dev quiero las respuestas del cliente volcadas en los ítems del Sprint 2, de forma que ninguno se
+programe con una regla vieja.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · Cada respuesta de `specs.md` (sección "preguntas que claude code me hizo") está en el ítem que afecta, en las decisiones del dev y en la trazabilidad de `docs/plans/sprint-2.md`; las preguntas respondidas se cierran · Estimación: 25 min · Completado: 2026-10-25 23:35
+
+- [x] **CA-2** · `specs.md` queda commiteado tal como lo escribió el dev · Estimación: 5 min · Completado: 2026-10-25 23:35
 
 ### US-8 · Promociones: armar promos con precio de rebaja
 
@@ -1859,9 +1885,9 @@ que el vendedor las ofrezca desde Ventas.
 
 - [ ] **CA-1** · Una promo tiene nombre único (hasta 60 caracteres) y uno o más componentes de grupo + presentación + cantidad (por ejemplo, 12 empanadas + 1 Coca-Cola); los gustos y la bebida se eligen al vender · Estimación: 45 min · Completado: —
 
-- [ ] **CA-2** · Al armarla se ve la lista de componentes con el precio de referencia de cada uno y el total sin rebaja, y el admin escribe a mano el precio de la promo (> 0) · Estimación: 45 min · Completado: —
+- [ ] **CA-2** · Al armarla se ve la lista de componentes y el admin escribe a mano el precio de venta de la promo (> 0); no se muestra precio de referencia · Estimación: 20 min · Completado: —
 
-- [ ] **CA-3** · Al guardarla queda activa y disponible en Ventas; se edita con `version` y se desactiva · Estimación: 30 min · Completado: —
+- [ ] **CA-3** · Al guardarla queda activa y disponible en Ventas; se edita con `version` y se desactiva; no tiene vigencia: sigue activa hasta que el admin la desactiva · Estimación: 30 min · Completado: —
 
 - [ ] **CA-4** · Errores por fila con su test de contrato (sin componentes, precio ≤ 0, nombre duplicado, `STALE_VERSION`, vendedor → `FORBIDDEN`); "Promociones" en el menú sólo del admin; README · Estimación: 45 min · Completado: —
 
@@ -1870,11 +1896,10 @@ que el vendedor las ofrezca desde Ventas.
 - `specs.md`: "Finalmente, una vez agregada, esta va seleccionada". Se interpreta como que la promo guardada queda
   activa y disponible en Ventas; se confirma con el dev en `start-task`.
 
-**Preguntas abiertas**
+**Preguntas respondidas** (cliente, 2026-10-25)
 
-- (Cliente) ¿Qué precio de referencia se muestra para un componente cuyo gusto se elige al vender? La propuesta es
-  el rango mínimo–máximo de esa presentación.
-- (Cliente) ¿Las promos tienen vigencia (fechas o días de la semana)?
+- Precio de referencia: no hay; el precio de la promo se escribe a mano.
+- Vigencia: no tiene; el admin la desactiva cuando quiere.
 
 ### US-9 · Ventas: subdivisión Promos
 
@@ -1944,16 +1969,16 @@ recargo del plan.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · Al elegir Crédito se elige una tarjeta activa y uno de sus planes; el pago suma el recargo y el importe final se ve antes de confirmar · Estimación: 45 min · Completado: —
+- [ ] **CA-1** · Al elegir Crédito se elige una tarjeta activa y uno de sus planes; el pago suma el recargo y el importe final se ve antes de confirmar; el Débito no pide tarjeta · Estimación: 45 min · Completado: —
 
 - [ ] **CA-2** · El servidor recalcula el recargo desde la tarjeta (ignora el del navegador) y guarda tarjeta, cuotas, porcentaje y monto del recargo · Estimación: 45 min · Completado: —
 
 - [ ] **CA-3** · Una tarjeta o un plan inexistente o inactivo da error con su test de contrato; el comprobante y el historial muestran la tarjeta y las cuotas · Estimación: 30 min · Completado: —
 
-**Preguntas abiertas**
+**Preguntas respondidas** (cliente, 2026-10-25)
 
-- (Cliente) ¿El recargo cuenta como ingreso y como ganancia en Estadísticas?
-- (Cliente) ¿El pago con Débito también pide elegir la tarjeta?
+- El recargo cuenta como ganancia en Estadísticas (US-12 CA-3).
+- El Débito no pide tarjeta.
 
 ### US-12 · Estadísticas del día: dinero por comida, ganancia y ventas
 
@@ -1973,13 +1998,15 @@ del día, de forma que sepa cómo cerró la jornada.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · Estadísticas abre con el día de hoy en hora de Argentina y un calendario para elegir otro día; los límites del día se calculan en `America/Argentina/Buenos_Aires` · Estimación: 45 min · Completado: —
+- [ ] **CA-1** · Estadísticas abre con la jornada de hoy y un calendario para elegir otra; la jornada va de 7:00 a 6:59 del día siguiente en `America/Argentina/Buenos_Aires` (una venta de la 0:30 cuenta para la jornada que empezó a las 7) · Estimación: 45 min · Completado: —
 
-- [ ] **CA-2** · KPI de dinero generado por Empanadas, Pizzas, Ciabattas, Sándwiches de miga, Coca-Cola y Pepsi, cada cuadro relleno con el color de su grupo (US-15) · Estimación: 45 min · Completado: —
+- [ ] **CA-2** · KPI de dinero generado por Empanadas, Pizzas, Ciabattas, Sándwiches de miga, Coca-Cola y Pepsi, cada cuadro relleno con el color de su grupo (US-15), y un cuadro aparte "Promos" con lo facturado en promos · Estimación: 45 min · Completado: —
 
-- [ ] **CA-3** · KPI de ganancia en limpio = ventas − costo congelado de lo vendido − mermas (ejemplo del cliente: comprada a $10 y vendida a $30 → $20) · Estimación: 30 min · Completado: —
+- [ ] **CA-3** · KPI de ganancia en limpio = ventas (con el recargo de las cuotas) − costo para el local congelado de lo vendido (también lo que usó cada promo) − mermas (ejemplo del cliente: comprada a $10 y vendida a $30 → $20) · Estimación: 30 min · Completado: —
 
 - [ ] **CA-4** · KPI de ventas registradas; estados de carga, día sin ventas y error; tests sobre datos sembrados · Estimación: 30 min · Completado: —
+
+- [ ] **CA-5** · Lo facturado por Efectivo, Transferencia, Débito y Crédito, cada uno en su cuadro; se quitan los KPI heredados que el cliente no nombró (valor del stock, unidades, pérdidas y órdenes procesadas) · Estimación: 30 min · Completado: —
 
 **Detalle**
 
@@ -1987,12 +2014,12 @@ del día, de forma que sepa cómo cerró la jornada.
 - Hoy Estadísticas (ex Dashboard) arranca con todo el historial y arma el día con la hora del servidor (brecha de
   fechas de `docs/architecture.md`). CA-1 lo corrige.
 
-**Preguntas abiertas**
+**Preguntas respondidas** (2026-10-25)
 
-- (Cliente) ¿Cómo se reparte el precio de una promo en los KPI por comida? La propuesta es en proporción a los
-  precios de lista de sus componentes.
-- (Cliente) ¿Se conservan los KPI de hoy que no nombró (efectivo y transferencia, valor del stock, mermas,
-  unidades)? Mientras no responda, quedan debajo de los nuevos.
+- Promos en los KPI por comida: van en el cuadro "Promos", y su ganancia es el precio de la promo menos el costo
+  para el local de lo que se usó (cliente y dev).
+- KPI que el cliente no nombró: se quitan. Lo facturado va por cada uno de los 4 medios de pago (cliente).
+- El día es la jornada del local, de 7:00 a 6:59 (dev).
 
 ### US-13 · Estadísticas: cuadros de vendedores y de ventas
 
@@ -2012,15 +2039,16 @@ de ventas del día, de forma que sepa quién vendió cuánto y cuándo.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · Cuadro de vendedores: vendedor, turno (mañana o tarde según la hora de corte, en hora de Argentina), número de ventas e importe · Estimación: 1 h · Completado: —
+- [ ] **CA-1** · Cuadro de vendedores: vendedor, turno (mañana de 7:00 a 16:59 y tarde de 17:00 a 6:59, en hora de Argentina), número de ventas e importe · Estimación: 1 h · Completado: —
 
 - [ ] **CA-2** · Cuadro de ventas: comprador ("Sin nombre" si no hay), hora en Argentina e importe, ordenado por hora · Estimación: 45 min · Completado: —
 
-- [ ] **CA-3** · Tests unit de la regla del turno con valores frontera (justo antes y justo después del corte) · Estimación: 15 min · Completado: —
+- [ ] **CA-3** · Tests unit de la regla del turno con valores frontera: 6:59 y 7:00, 16:59 y 17:00, y una venta después de medianoche (tarde de la jornada anterior) · Estimación: 15 min · Completado: —
 
-**Preguntas abiertas**
+**Preguntas respondidas** (cliente, 2026-10-25)
 
-- (Cliente, **bloquea CA-1 y CA-3**) ¿A qué hora termina el turno mañana y empieza el turno tarde?
+- Turno: el local abre de 11 a 16 y de 19 a 1. La mañana se cuenta desde las 7 y la tarde desde las 17, para cubrir
+  lo que se cargue fuera de horario.
 
 ### US-14 · Gastos: anotador de facturas
 
@@ -2035,22 +2063,20 @@ de ventas del día, de forma que sepa quién vendió cuánto y cuándo.
 | Merge        | —         |
 | Horas reales | —         |
 
-**Historia**: Como admin quiero anotar las facturas de gastos con su número, título y monto, de forma que tenga un
-registro aparte de lo que se gasta.
+**Historia**: Como admin quiero anotar las facturas de gastos con su número, título, monto y fecha, de forma que
+tenga un registro aparte de lo que se gasta.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · Alta de un gasto con número de factura (texto de hasta 30 caracteres), título (hasta 100) y monto (> 0, con 2 decimales); la fecha de carga es automática · Estimación: 45 min · Completado: —
+- [ ] **CA-1** · Alta de un gasto con número de factura único (texto de hasta 30 caracteres), título (hasta 100), monto (> 0, con 2 decimales) y fecha de la factura; la fecha de carga es automática; sin foto · Estimación: 45 min · Completado: —
 
-- [ ] **CA-2** · Lista ordenada por fecha con búsqueda; editar con `version` y borrar · Estimación: 45 min · Completado: —
+- [ ] **CA-2** · Lista ordenada por fecha de la factura con búsqueda; editar con `version` y borrar · Estimación: 45 min · Completado: —
 
-- [ ] **CA-3** · Un test demuestra que los gastos no cambian Estadísticas; sólo el admin (menú y `proxy.ts`); errores por fila con su test de contrato; auditoría y README · Estimación: 30 min · Completado: —
+- [ ] **CA-3** · Un test demuestra que los gastos no cambian Estadísticas; sólo el admin (menú y `proxy.ts`); errores por fila con su test de contrato (también `DUPLICATE` por número repetido); auditoría y README · Estimación: 30 min · Completado: —
 
-**Preguntas abiertas**
+**Preguntas respondidas** (cliente, 2026-10-25)
 
-- (Cliente) ¿Se adjunta una foto de la factura?
-- (Cliente) ¿El número de factura es único?
-- (Cliente) ¿Hace falta la fecha de la factura, además de la de carga?
+- Sin foto. El número de factura es único. Lleva la fecha de la factura, además de la de carga.
 
 ### BUG-11 · La subida de fotos no valida antes de subir
 

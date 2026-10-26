@@ -159,3 +159,32 @@ Ciabattas: 🥖
 Sándwich: 🥪
 Cocacola: 🥤
 pepsi: 🥤
+
+**preguntas que claude code me hizo**
+
+¿A qué hora se corta el turno mañana/tarde? Esto bloquea los cuadros de vendedores del Sprint 2.
+mañana: de 11:00 a 16:00, tarde: de 19:00 a 1am, es decir, el corte se marca para la tarde empezando a las 19, y para la mañana empezando a las 11. Podemos extenderlo para que sea a las 7 am que sea de mañana, y a partir de las 17 que sea turno tarde, por si hay algun registro fuera de los horarios para ampliar mejor ese margen y registrar bien.
+
+¿El vendedor puede cargar stock? ¿Ve costos y proveedores? Hoy carga stock pero no ve costos.
+si puede cargar stock
+
+
+¿Cuáles son el WhatsApp y el Instagram? Sin esos datos, el catálogo no muestra botones de contacto.
+ahora no importa pues la web no estara en uso cercano.
+
+¿Cobra igual la docena surtida que la de un solo gusto? Hoy se cobra proporcional.
+si lo mismo para todos
+
+Promociones: precio de referencia, vigencia y cómo repartir el precio en las estadísticas.
+como repartir en estadisticas: obtener la diferencia de lo que salió usar cada producto y a lo que se pudo vender la promo, esa es la ganancia. No hay precio de referencia, se pone a mano la promo. No se supone que lleva una fecha limite por vigencia, los propios administradores la quitan.
+
+Cuotas: ¿el recargo cuenta como ganancia? ¿El débito pide tarjeta?
+el recargo cuenta como ganancia, no se pide tarjeta para debito
+
+
+Gastos: ¿foto de la factura? ¿Número único? ¿Fecha de la factura?
+fecha y numero unico, no es necesaria la foto, solo la fecha el monto, el numero de la factura, y el titulo de la factura
+
+
+¿Se conservan las estadísticas de hoy que no nombró, como efectivo/transferencia o valor del stock?
+no es necesario. En cuanto a lo que se facturó dependiendo que medio de pago, necesito a los 4 disponibles por separado.
