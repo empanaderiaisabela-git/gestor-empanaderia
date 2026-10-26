@@ -2,8 +2,9 @@ import { afterAll, beforeEach, describe, expect, it } from 'vitest';
 import { db } from '@/lib/db';
 import { sales, users } from '@/lib/db/schema';
 import { drizzleSaleHistoryRepository } from '@/features/order/repository/sale-history.repository';
-import { getDashboardSnapshot } from '@/features/stats/repository/stats.repository';
-import { DASHBOARD_RANGE, seedDashboard } from '@/features/stats/testing/seed-dashboard';
+import { workdayRange } from '@/features/stats/domain/workday';
+import { getWorkdaySnapshot } from '@/features/stats/repository/stats.repository';
+import { SEEDED_WORKDAY, seedWorkday } from '@/features/stats/testing/seed-workday';
 import { userRepository } from '@/features/user/repository/user.repository';
 import { truncateAll } from './truncate-all';
 
@@ -14,7 +15,7 @@ function expectNoPasswordHash(value: unknown): void {
 describe('regression BUG-6: las lecturas fuera de auth no traen password_hash', () => {
   beforeEach(async () => {
     await truncateAll();
-    await seedDashboard();
+    await seedWorkday();
   });
 
   afterAll(async () => {
@@ -32,13 +33,13 @@ describe('regression BUG-6: las lecturas fuera de auth no traen password_hash', 
     const [sale] = await db.select({ id: sales.id }).from(sales);
     const history = drizzleSaleHistoryRepository();
     const listed = await history.list();
-    expect(listed.map((row) => row.vendorName)).toEqual(['vendedora', 'vendedora']);
+    expect(listed.map((row) => row.vendorName)).toEqual(['vendedora', 'vendedora', 'vendedora', 'vendedora']);
     expectNoPasswordHash(listed);
     expectNoPasswordHash(await history.lockSale(sale.id));
   });
 
-  it('la foto del dashboard', async () => {
-    expectNoPasswordHash(await getDashboardSnapshot(DASHBOARD_RANGE));
+  it('la foto de la jornada de Estadísticas', async () => {
+    expectNoPasswordHash(await getWorkdaySnapshot(workdayRange(SEEDED_WORKDAY)));
   });
 
   it('el listado de usuarios', async () => {

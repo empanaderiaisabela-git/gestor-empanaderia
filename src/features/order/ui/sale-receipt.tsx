@@ -4,8 +4,8 @@ import { ArrowLeft, Printer } from 'lucide-react';
 import type { JSX } from 'react';
 import { Button } from '@/components/ui/button';
 import { BRAND } from '@/config/brand';
-import { describePresentation } from '@/features/order/domain/order-describe';
-import { PAYMENT_LABELS } from '@/features/order/domain/order-validation';
+import { describeSoldPresentation } from '@/features/order/domain/order-describe';
+import { chargedAmount, describePayment, surchargeTotal } from '@/features/order/domain/payment-describe';
 import { buyerLabel, type SaleDef } from '@/features/order/domain/sale-history.schema';
 import { formatDateTime } from '@/lib/format-date-time';
 import { formatMoney } from '@/lib/format-money';
@@ -16,6 +16,7 @@ const row = 'flex justify-between gap-4';
 
 function ReceiptTotals({ sale }: { sale: SaleDef }): JSX.Element {
   const subtotal = sale.lines.reduce((sum, line) => sum + line.subtotal, 0);
+  const surcharge = surchargeTotal(sale.payments);
   return (
     <div className='space-y-1 text-sm border-t border-zinc-200 pt-4'>
       <p className={row}>
@@ -24,14 +25,15 @@ function ReceiptTotals({ sale }: { sale: SaleDef }): JSX.Element {
       </p>
       {sale.discountPercentage > 0 && <p className={row}><span>Descuento</span><span>-{sale.discountPercentage}%</span></p>}
       {sale.discountAmount > 0 && <p className={row}><span>Descuento</span><span>-{formatMoney(sale.discountAmount)}</span></p>}
+      {surcharge > 0 && <p className={row}><span>Recargo de cuotas</span><span>+{formatMoney(surcharge)}</span></p>}
       <p className={`${row} text-xl font-black`}>
         <span>Total</span>
         <span>{formatMoney(sale.total)}</span>
       </p>
       {sale.payments.map((payment) => (
         <p key={payment.type} className={`${row} text-zinc-600`}>
-          <span>{PAYMENT_LABELS[payment.type]}</span>
-          <span>{formatMoney(payment.amount)}</span>
+          <span>{describePayment(payment)}</span>
+          <span>{formatMoney(chargedAmount(payment))}</span>
         </p>
       ))}
     </div>
@@ -51,7 +53,7 @@ function ReceiptLines({ sale }: { sale: SaleDef }): JSX.Element {
       <tbody>
         {sale.lines.map((line, index) => (
           <tr key={index} className='border-t border-zinc-100'>
-            <td className='py-2 pr-2'>{describePresentation(line)}</td>
+            <td className='py-2 pr-2'>{describeSoldPresentation(line)}</td>
             <td className='py-2 pr-2'>{line.description}</td>
             <td className='py-2 text-right'>{formatMoney(line.subtotal)}</td>
           </tr>

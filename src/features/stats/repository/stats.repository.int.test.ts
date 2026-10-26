@@ -1,54 +1,54 @@
 import { afterAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { db } from '@/lib/db';
 import { truncateAll } from '@/test/truncate-all';
-import { getDashboardStats } from '../services/dashboard-stats.service';
-import { DASHBOARD_RANGE, seedDashboard } from '../testing/seed-dashboard';
-import { getDashboardSnapshot } from './stats.repository';
+import { workdayRange } from '../domain/workday';
+import { getWorkdayStats } from '../services/workday-stats.service';
+import { SEEDED_WORKDAY, seedWorkday } from '../testing/seed-workday';
+import { getWorkdaySnapshot } from './stats.repository';
 
 const PG_PARALLEL_QUERY_WARNING = 'already executing a query';
 
-describe('estadísticas del dashboard contra db-test', () => {
+describe('estadísticas de la jornada contra db-test (US-12)', () => {
   beforeEach(async () => {
     await truncateAll();
-    await seedDashboard();
+    await seedWorkday();
   });
 
   afterAll(async () => {
     await db.$client.end();
   });
 
-  it('regression BUG-5: no lanza consultas simultáneas sobre la misma conexión', async () => {
+  it('regresión BUG-5: no lanza consultas simultáneas sobre la misma conexión', async () => {
     const emitWarning = vi.spyOn(process, 'emitWarning');
-    await getDashboardSnapshot(DASHBOARD_RANGE);
+    await getWorkdaySnapshot(workdayRange(SEEDED_WORKDAY));
     const warnings = emitWarning.mock.calls.map(([warning]) => String(warning));
     expect(warnings.filter((warning) => warning.includes(PG_PARALLEL_QUERY_WARNING))).toEqual([]);
   });
 
-  it('trae los gustos activos y sólo las ventas y mermas del rango (T-12 CA-3)', async () => {
-    const snapshot = await getDashboardSnapshot(DASHBOARD_RANGE);
-    expect(snapshot.items).toEqual([{ stock: '10.0', unitCost: '100.00' }]);
-    expect(snapshot.sales).toHaveLength(1);
-    const [sale] = snapshot.sales;
-    expect(sale).toMatchObject({ total: '500.00', vendor: { username: 'vendedora' } });
-    expect(sale.items.map((item) => [Number(item.unitCost), Number(item.units)])).toEqual([[100, 2]]);
-    expect(sale.payments.map((payment) => [payment.type, Number(payment.amount)]).sort()).toEqual([['efectivo', 300], ['transferencia', 200]]);
-    expect(snapshot.losses.map((loss) => [Number(loss.quantity), Number(loss.unitCost)])).toEqual([[1, 100]]);
+  it('trae sólo la jornada: la venta del almuerzo y la de la 0:30, no la de las 6:30 ni la de las 7:00 del día siguiente (CA-1)', async () => {
+    const snapshot = await getWorkdaySnapshot(workdayRange(SEEDED_WORKDAY));
+    expect(snapshot.sales.map((sale) => sale.createdAt.toISOString()).sort()).toEqual(['2026-10-25T16:00:00.000Z', '2026-10-26T03:30:00.000Z']);
+    expect(snapshot.sales[0]).toMatchObject({ total: '500.00', buyerName: 'Marta', vendor: 'vendedora', lines: [{ group: 'empanadas', subtotal: '500.00' }] });
+    expect(snapshot.losses).toHaveLength(1);
   });
 
-  it('BUG-5 CA-2 y T-12 CA-3: los mismos totales del dashboard sobre los datos del rango', async () => {
-    expect(await getDashboardStats(DASHBOARD_RANGE)).toEqual({
-      totalUnits: 10,
-      totalItems: 1,
-      totalRevenue: 500,
-      currentInventoryCost: 1000,
-      netProfit: 200,
-      totalLossCost: 100,
-      topSellers: [{ username: 'vendedora', total: 500, count: 1 }],
-      salesCount: 1,
-      cashRevenue: 300,
-      transferRevenue: 200,
-      debitRevenue: 0,
-      creditRevenue: 0,
+  it('los KPI de la jornada sobre los datos sembrados (CA-2 a CA-5)', async () => {
+    expect(await getWorkdayStats(SEEDED_WORKDAY)).toEqual({
+      day: SEEDED_WORKDAY,
+      vendorTable: [
+        { vendor: 'vendedora', shift: 'morning', count: 1, amount: 500 },
+        { vendor: 'vendedora', shift: 'afternoon', count: 1, amount: 500 },
+      ],
+      saleTable: [
+        { buyer: 'Marta', at: '2026-10-25T16:00:00.000Z', amount: 500 },
+        { buyer: 'Marta', at: '2026-10-26T03:30:00.000Z', amount: 500 },
+      ],
+      byGroup: { empanadas: 1000, pizzas: 0, sanguches: 0, ciabattas: 0, coca_cola: 0, pepsi: 0 },
+      promos: 0,
+      revenue: 1000,
+      profit: 500,
+      salesCount: 2,
+      byPayment: { efectivo: 600, transferencia: 400, debito: 0, credito: 0 },
     });
   });
 });

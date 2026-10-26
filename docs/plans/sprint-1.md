@@ -47,7 +47,7 @@ Respuestas del dev a las preguntas de descubrimiento (`workflow.md` §2) sobre `
 | Costo de la mitad y mitad | ½ del costo de cada gusto | Ejemplo del dev: $2.000 + $1.500 = $3.500 de costo, $6.500 de ganancia |
 | Ciabatta | Se elige 1 sabor por unidad | `specs.md` |
 | Comprador | Nombre libre y opcional; vacío = "Sin nombre" | La venta deja de exigir un cliente de Clientes ("Mostrador"). Clientes sigue existiendo |
-| Turno | Mañana o tarde según una hora de corte, en hora de Argentina | La hora la consulta el dev con el cliente (bloquea US-13, Sprint 2) |
+| Turno | Mañana de 7:00 a 16:59 y tarde de 17:00 a 6:59, en hora de Argentina | Respuesta del cliente (2026-10-25, T-15) |
 | Ingresar stock | Cantidad + costo unitario (actualiza el costo del gusto) + proveedor opcional, con historial | El costo alimenta la ganancia en limpio |
 | Mermas y descuentos | Se mantienen los dos; las mermas restan de la ganancia | No aparecen en `specs.md`, pero ya existen y el dev los conserva |
 | Auditoría | **El vendedor no la tiene** | El dev corrige la lista de `specs.md`. Vendedor: Ventas/Pedidos, Stock, Clientes |
@@ -391,18 +391,8 @@ Los criterios y estimaciones de cada ítem están en [`BACKLOG.md`](../../BACKLO
 
 ## Preguntas para el cliente
 
-Para llevarlas en una sola charla. Las respuestas pasan al ítem en `BACKLOG.md` y la pregunta se borra de acá.
-
-| # | Pregunta | Ítems | ¿Bloquea? | Mientras tanto |
-|---|---|---|---|---|
-| 1 | ¿A qué hora termina el turno mañana y empieza el turno tarde? | US-13 | **Sí** | — |
-| 2 | ¿El vendedor puede ingresar stock? ¿Ve costos y proveedores? | US-4, BUG-8 | No | Ingresa stock y no ve costos ni proveedores (como hoy) |
-| 3 | ¿Cuáles son el WhatsApp y el Instagram del local? | US-1 | No | El catálogo no muestra botones de contacto |
-| 4 | Promos: ¿qué precio de referencia se muestra para un componente cuyo gusto se elige al vender? ¿Tienen vigencia? | US-8 | No | Rango mín.–máx.; sin vigencia |
-| 5 | ¿Cómo se reparte el precio de una promo en los KPI por comida? | US-12 | No | En proporción a los precios de lista |
-| 6 | ¿El recargo de las cuotas cuenta como ingreso y ganancia? ¿El débito pide tarjeta? | US-11, US-12 | No | Se decide al tomar US-11 |
-| 7 | Gastos: ¿se adjunta foto de la factura? ¿El número es único? ¿Hace falta la fecha de la factura? | US-14 | No | Sin foto, número no único, sólo fecha de carga |
-| 8 | ¿Se conservan los KPI de hoy que no nombró (efectivo y transferencia, valor del stock, mermas)? | US-12 | No | Quedan debajo de los nuevos |
+Respondidas el 2026-10-25 en `specs.md` (líneas 163 a 190). Las respuestas están en los ítems del Sprint 2 y en la
+[trazabilidad de `sprint-2.md`](sprint-2.md#trazabilidad-respuestas-del-cliente--ítems) (T-15).
 
 ## Para confirmar con el dev en `start-task`
 

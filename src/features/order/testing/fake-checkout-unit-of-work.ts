@@ -1,14 +1,17 @@
 import { fakeMenuGroupPriceRepository, type FakeGroupPriceState } from '@/features/menu/testing/fake-menu-group-prices';
 import type { CheckoutUnitOfWork, SaleAuditEntry } from '@/features/order/repository/checkout-unit-of-work';
-import type { NewSale, NewSaleLine, SaleWriter } from '@/features/order/repository/sale-writer.repository';
-import type { Payment } from '@/features/order/domain/order-validation';
+import type { NewPayment, NewSale, NewSaleLine, SaleWriter } from '@/features/order/repository/sale-writer.repository';
+import { createFakeCardUnitOfWork, type FakeCardUnitOfWork } from '@/features/card/testing/fake-card-unit-of-work';
+import { createFakePromotionUnitOfWork, type FakePromotionUnitOfWork } from '@/features/promotion/testing/fake-promotion-unit-of-work';
 import { createFakeStockUnitOfWork, type FakeStockUnitOfWork } from '@/features/stock/testing/fake-stock-unit-of-work';
 
-export type FakeSale = NewSale & { id: string; createdAt: Date; lines: NewSaleLine[]; payments: Payment[] };
+export type FakeSale = NewSale & { id: string; createdAt: Date; lines: NewSaleLine[]; payments: NewPayment[] };
 
 export type FakeCheckoutUnitOfWork = CheckoutUnitOfWork & {
   stock: FakeStockUnitOfWork;
   prices: FakeGroupPriceState;
+  promotions: FakePromotionUnitOfWork;
+  cards: FakeCardUnitOfWork;
   sales: FakeSale[];
   audits: SaleAuditEntry[];
   reset(): void;
@@ -41,11 +44,23 @@ export function createFakeCheckoutUnitOfWork(): FakeCheckoutUnitOfWork {
   const fake: FakeCheckoutUnitOfWork = {
     stock: createFakeStockUnitOfWork(),
     prices: { groupPrices: [] },
+    promotions: createFakePromotionUnitOfWork(),
+    cards: createFakeCardUnitOfWork(),
     sales: [],
     audits: [],
-    run: (work) => work({ stock: fake.stock.read, groupPrices: fakeMenuGroupPriceRepository(fake.prices), sales: fakeSaleWriter(fake.sales), audit: async (entry) => void fake.audits.push(entry) }),
+    run: (work) =>
+      work({
+        stock: fake.stock.read,
+        groupPrices: fakeMenuGroupPriceRepository(fake.prices),
+        promotions: fake.promotions.read,
+        cards: fake.cards.read,
+        sales: fakeSaleWriter(fake.sales),
+        audit: async (entry) => void fake.audits.push(entry),
+      }),
     reset: () => {
       fake.stock.reset();
+      fake.promotions.reset();
+      fake.cards.reset();
       fake.prices.groupPrices = [];
       fake.sales.length = 0;
       fake.audits.length = 0;

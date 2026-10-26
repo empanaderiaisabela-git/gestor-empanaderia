@@ -1,5 +1,14 @@
 import { describe, expect, it } from 'vitest';
-import { argentinaDay, formatDateTime } from './format-date-time';
+import { argentinaDay, argentinaHour, argentinaTime, formatDateTime } from './format-date-time';
+
+describe('argentinaTime y argentinaHour (US-13)', () => {
+  it('da la hora de Buenos Aires', () => {
+    expect(argentinaTime('2026-10-26T03:30:00Z')).toBe('00:30');
+    expect(argentinaTime(new Date('2026-10-25T19:59:00Z'))).toBe('16:59');
+    expect(argentinaHour(new Date('2026-10-25T20:00:00Z'))).toBe(17);
+    expect(argentinaTime('no-es-una-fecha')).toBe('—');
+  });
+});
 
 describe('formatDateTime (T-4 CA-3)', () => {
   it.each([

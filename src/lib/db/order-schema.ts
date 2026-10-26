@@ -1,6 +1,7 @@
 import { sql } from 'drizzle-orm';
 import { check, index, integer, numeric, pgTable, uuid, varchar } from 'drizzle-orm/pg-core';
 import { menuGroupEnum, menuItems } from './menu-schema';
+import { promotions } from './promotion-schema';
 import { sales } from './schema';
 
 const money = (name: string) => numeric(name, { precision: 10, scale: 2 });
@@ -14,8 +15,9 @@ export const saleLines = pgTable(
     saleId: uuid('sale_id')
       .notNull()
       .references(() => sales.id, { onDelete: 'cascade' }),
-    group: menuGroupEnum('menu_group').notNull(),
-    presentationKey: varchar('presentation_key', { length: 10 }).notNull(),
+    group: menuGroupEnum('menu_group'),
+    presentationKey: varchar('presentation_key', { length: 10 }),
+    promotionId: uuid('promotion_id').references(() => promotions.id),
     quantity: integer('quantity').notNull(),
     unitPrice: money('unit_price').notNull(),
     subtotal: money('subtotal').notNull(),
@@ -24,6 +26,12 @@ export const saleLines = pgTable(
   },
   (table) => [
     index('sale_lines_sale_id_idx').on(table.saleId),
+    index('sale_lines_promotion_id_idx').on(table.promotionId),
+    check(
+      'sale_lines_kind_check',
+      sql`(${table.promotionId} is null and ${table.group} is not null and ${table.presentationKey} is not null)
+        or (${table.promotionId} is not null and ${table.group} is null and ${table.presentationKey} is null)`
+    ),
     check('sale_lines_quantity_check', sql`${table.quantity} > 0`),
     check('sale_lines_unit_price_check', sql`${table.unitPrice} >= 0`),
     check('sale_lines_subtotal_check', sql`${table.subtotal} >= 0`),

@@ -4,13 +4,14 @@ import { History } from 'lucide-react';
 import { type JSX, useEffect, useState } from 'react';
 import { ResponsiveModal } from '@/components/ui/responsive-modal';
 import { fetchStockEntries } from '@/features/stock/actions/fetch-stock-entries';
+import { COST_TERM } from '@/features/menu/domain/menu-terms';
 import type { StockEntryDef } from '@/features/stock/domain/stock.schema';
 import { formatDateTime } from '@/lib/format-date-time';
 import { formatMoney } from '@/lib/format-money';
 import type { StockPanelModel } from './use-stock-panel';
 
 function EntryRow({ entry, isAdmin }: { entry: StockEntryDef; isAdmin: boolean }): JSX.Element {
-  const costs = isAdmin ? ` · ${entry.unitCost === null ? '—' : formatMoney(entry.unitCost)} · ${entry.providerName ?? 'Sin proveedor'}` : '';
+  const costs = isAdmin ? ` · ${COST_TERM} ${entry.unitCost === null ? '—' : formatMoney(entry.unitCost)} · ${entry.providerName ?? 'Sin proveedor'}` : '';
   return (
     <li className='flex justify-between gap-3 py-2 border-b border-zinc-100 dark:border-zinc-800 text-sm'>
       <span className='text-zinc-500'>{formatDateTime(entry.createdAt)}</span>

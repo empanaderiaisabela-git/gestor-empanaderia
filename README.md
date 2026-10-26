@@ -1,7 +1,7 @@
 # Gestor de stock — empanadería
 
-Sistema web de gestión de stock, ventas, clientes, proveedores, usuarios y auditoría para la empanadería de un
-cliente. Next.js 16 (App Router), React 19, TypeScript estricto, Drizzle ORM sobre PostgreSQL 15, Zod 4 y Zustand.
+Sistema web de gestión de stock, ventas (con promociones y crédito en cuotas), estadísticas, gastos, clientes,
+proveedores, usuarios y auditoría para la empanadería de un cliente. Next.js 16 (App Router), React 19, TypeScript estricto, Drizzle ORM sobre PostgreSQL 15, Zod 4 y Zustand.
 
 - **Contexto completo para arrancar**: [`docs/initial_prompt.md`](docs/initial_prompt.md).
 - **Reglas del repo** (humanos y agentes): [`AGENTS.md`](AGENTS.md).
@@ -15,11 +15,14 @@ cliente. Next.js 16 (App Router), React 19, TypeScript estricto, Drizzle ORM sob
 |---|---|
 | `/login` | Acceso con bcrypt y JWT en cookie HttpOnly |
 | `/home`, `/product/[id]` | Catálogo público: gustos y bebidas visibles, por grupo, con fotos y precios (sin login) |
-| `/` | Estadísticas (sólo admin): ingresos, ganancia en limpio, mermas, valor del stock, medios de pago y vendedores |
+| `/` | Estadísticas de la jornada, de 7:00 a 6:59 (sólo admin): ganancia en limpio, ventas, dinero por comida y por promos, lo facturado por medio de pago y los cuadros de vendedores por turno y de ventas |
+| `/gastos` | Anotador de gastos con número de factura único (sólo admin); no cambia las Estadísticas |
 | `/ventas` | Ventas/Pedidos: historial con comprobante y anulación (sólo admin); "Nuevo pedido" abre el tablero |
-| `/ventas/nueva` | Tablero de pedidos por grupo, con colores y emojis, surtidas, mitad y mitad, y cobro en 4 medios de pago |
+| `/ventas/nueva` | Tablero de pedidos por grupo, con colores y emojis, surtidas, mitad y mitad y promos; cobro en 4 medios de pago, con crédito en cuotas y su recargo |
+| `/promociones` | Promociones: presentaciones con un precio de venta propio, que aparecen en el tablero (sólo admin) |
 | `/stock` | Stock por gusto: ingresos con costo y proveedor, mermas (sólo admin) e historial |
 | `/alta-de-productos` | Gustos y bebidas, precios del grupo o por gusto, fotos y visibilidad en el catálogo (sólo admin) |
+| `/tarjetas` | Tarjetas de crédito aceptadas y sus planes de 1, 3, 6 o 12 cuotas con recargo (sólo admin) |
 | `/clientes` | Directorio de clientes |
 | `/proveedores` | Proveedores, sólo admin (feature molde de la arquitectura: [`docs/features/provider/`](docs/features/provider/README.md)) |
 | `/usuarios` | Usuarios internos (sólo admin) |

@@ -5,15 +5,16 @@ import { PAYMENT_TYPES } from './order-validation';
 const amount = z.union([z.string(), z.number()]).transform(Number);
 
 export const saleLineRowSchema = z.object({
-  group: z.enum(MENU_GROUPS),
-  presentationKey: z.string(),
+  group: z.enum(MENU_GROUPS).nullable(),
+  presentationKey: z.string().nullable(),
+  promotionId: z.uuid().nullable(),
   quantity: z.number(),
   unitPrice: amount,
   subtotal: amount,
   description: z.string(),
 });
 
-export const salePaymentRowSchema = z.object({ type: z.enum(PAYMENT_TYPES), amount });
+export const salePaymentRowSchema = z.object({ type: z.enum(PAYMENT_TYPES), amount, cardName: z.string().nullable(), installments: z.number().nullable(), surchargeAmount: amount.nullable() });
 
 export const saleRowSchema = z.object({
   id: z.uuid(),

@@ -4,6 +4,7 @@ import type { ColumnDef } from '@/components/ui/virtualized-data-table';
 import { GROUPS } from '@/features/menu/domain/menu-groups';
 import type { MenuItemDef } from '@/features/menu/domain/menu-item.schema';
 import { priceSummary } from '@/features/menu/domain/menu-price-list';
+import { COST_TERM, SALE_PRICE_TERM } from '@/features/menu/domain/menu-terms';
 import { formatMoney } from '@/lib/format-money';
 import type { StockDialog } from './use-stock-panel';
 
@@ -39,8 +40,8 @@ export function getStockColumns(actions: StockRowActions): ColumnDef<MenuItemDef
     { header: 'Grupo', cellClassName: 'text-zinc-500', cell: (item) => GROUPS[item.group].label },
     { header: 'Gusto / bebida', cellClassName: 'font-bold text-zinc-900 dark:text-zinc-100', cell: (item) => item.name },
     { header: 'Stock', cell: (item) => <StockBadge item={item} /> },
-    { header: 'Precio', cellClassName: 'text-zinc-600 dark:text-zinc-300 text-sm', cell: (item) => priceSummary(item) },
+    { header: SALE_PRICE_TERM, cellClassName: 'text-zinc-600 dark:text-zinc-300 text-sm', cell: (item) => priceSummary(item) },
   ];
-  const cost: ColumnDef<MenuItemDef>[] = actions.isAdmin ? [{ header: 'Costo', cellClassName: 'text-zinc-500', cell: (item) => (item.unitCost === null ? '—' : formatMoney(item.unitCost)) }] : [];
+  const cost: ColumnDef<MenuItemDef>[] = actions.isAdmin ? [{ header: COST_TERM, cellClassName: 'text-zinc-500', cell: (item) => (item.unitCost === null ? '—' : formatMoney(item.unitCost)) }] : [];
   return [...columns, ...cost, { header: 'Acciones', headerClassName: 'text-right', cellClassName: 'flex gap-1 justify-end', cell: (item) => <StockButtons item={item} actions={actions} /> }];
 }

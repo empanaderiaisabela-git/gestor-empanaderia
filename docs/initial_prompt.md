@@ -1,7 +1,7 @@
 # Prompt inicial: contexto completo de gestor-empanaderia
 
 > **Uso.** Al empezar una sesión nueva de Claude Code: `Leé @docs/initial_prompt.md y seguilo.`
-> Foto del proyecto al **2026-10-25**. Se adapta en cada avance significativo
+> Foto del proyecto al **2026-10-26**. Se adapta en cada avance significativo
 > ([criterios](how-to-document.md#mantener-al-día-docsinitial_promptmd)). Si algo de acá contradice a
 > [`AGENTS.md`](../AGENTS.md) o a los docs que enlaza, **ganan ellos**: avisale al dev que este archivo quedó
 > desactualizado.
@@ -10,7 +10,7 @@
 
 ## 1. Quién sos y con quién trabajás
 
-Sos el agente de ingeniería de software del repo **gestor-empanaderia**. Trabajás con **el dev**: la única
+Sos el agente de ingeniería de software del repo **gestor-empanaderia**. Trabajás con **el Tomás**: la única
 persona que programa, decide y aprueba. El **cliente** es **Empanadería Isabela**: vende empanadas, pizzas,
 sándwiches de miga, ciabattas y bebidas de Coca-Cola y Pepsi. Con el cliente no hablás vos: sus pedidos te llegan a
 través del dev.
@@ -27,16 +27,23 @@ Sistema de **gestión de stock y punto de venta + catálogo web** para la rotise
 | Cara | Rutas | Quién |
 |---|---|---|
 | Catálogo público | `/home`, `/product/[id]` | Clientes del local, sin login. Consultan por WhatsApp o Instagram; no hay pedidos online. **Por ahora no se publica**: sólo se despliega el gestor y el catálogo queda en el código. |
-| Panel de gestión | `/` (Estadísticas), `/ventas` (Ventas/Pedidos: historial, comprobante y anulación), `/ventas/nueva` (tablero de pedidos y cobro), `/stock`, `/alta-de-productos`, `/clientes`, `/proveedores`, `/usuarios`, `/logs` (Auditoría) | `admin`: todo. `vendedor`: sólo Ventas/Pedidos, Stock y Clientes, y entra a Ventas/Pedidos. El menú y `proxy.ts` salen de `src/config/navigation.ts` (US-2). |
+| Panel de gestión | `/` (Estadísticas), `/gastos`, `/ventas` (Ventas/Pedidos: historial, comprobante y anulación), `/ventas/nueva` (tablero de pedidos y cobro), `/promociones`, `/stock`, `/alta-de-productos`, `/tarjetas`, `/clientes`, `/proveedores`, `/usuarios`, `/logs` (Auditoría) | `admin`: todo. `vendedor`: sólo Ventas/Pedidos, Stock y Clientes, y entra a Ventas/Pedidos. El menú y `proxy.ts` salen de `src/config/navigation.ts` (US-2). |
 
-Funciones que ya existen (Sprint 1):
+Funciones que ya existen (Sprints 1 y 2):
 - Alta de gustos y bebidas por grupo fijo, con precio del grupo (Empanadas, Ciabattas) o por gusto, fotos y
   visibilidad en el catálogo.
 - Stock por gusto: ingresos con costo y proveedor, mermas e historial.
 - Tablero de pedidos con colores y emojis por grupo, surtidas ("Agregar uno" / "Completar") y pizzas mitad y mitad.
 - Cobro con efectivo, transferencia, débito o crédito (hasta 2 medios) y descuentos, con precios recalculados en el
   servidor. Historial en Ventas/Pedidos, comprobante imprimible y anulación con reposición de stock.
-- Estadísticas sobre el modelo nuevo, ABM de clientes, proveedores y usuarios, y auditoría de toda operación.
+- Promociones con precio de venta a mano, que se venden desde el tablero eligiendo los gustos de cada parte
+  (US-8 y US-9).
+- Tarjetas con planes de 1, 3, 6 o 12 cuotas y su recargo; el crédito en cuotas cobra el recargo sólo sobre la
+  parte pagada con crédito (US-10 y US-11).
+- Estadísticas de la jornada (7:00 a 6:59): ganancia en limpio, ventas, dinero por comida y por promos, lo
+  facturado por medio de pago y los cuadros de vendedores por turno y de ventas (US-12 y US-13).
+- Anotador de gastos con número de factura único, que no cambia las Estadísticas (US-14).
+- ABM de clientes, proveedores y usuarios, y auditoría de toda operación.
 - Catálogo público que se regenera a demanda.
 
 ## 3. Origen: código heredado en remodelación
@@ -44,12 +51,12 @@ Funciones que ya existen (Sprint 1):
 El código **no se escribió para este negocio**. Es una copia de *ArgenStock*, un sistema para una casa de celulares.
 Se conservó la infraestructura y **el dominio se adaptó en el Sprint 1**: T-12 retiró las tablas, pantallas y datos
 del modelo viejo, y `src/test/no-legacy-words.test.ts` falla si vuelve un texto de esa época. Lo que sigue heredado
-es código que todavía no se migró al molde (clientes, usuarios, auditoría, el dashboard y el catálogo público): está
+es código que todavía no se migró al molde (clientes, usuarios, auditoría y el catálogo público): está
 en `eslint-legacy.json`.
 
 | Lo que ves en el código | Qué significa hoy |
 |---|---|
-| `src/lib/contact/contact.config.ts` | Vacío: falta que el cliente pase su WhatsApp e Instagram; sin datos, el catálogo no muestra botones de contacto |
+| `src/lib/contact/contact.config.ts` | Vacío: el cliente no los necesita por ahora porque la web no se usa pronto; sin datos, el catálogo no muestra botones de contacto |
 | Nombres en inglés del modelo: `menu_items` (gustos y bebidas), `sale_lines` (líneas del pedido), `stock_losses` (mermas) | Ver el [glosario](#12-glosario) |
 
 **Las reglas de venta del rubro ya están definidas** (dev, 2026-10-25) en las
@@ -62,7 +69,9 @@ en `eslint-legacy.json`.
 - Stock por gusto.
 - Promos con los gustos elegidos al vender.
 
-El Sprint 1 implementó las de vender. Promos, tarjetas en cuotas, gastos y las estadísticas nuevas son del Sprint 2.
+El Sprint 1 implementó las de vender, y el Sprint 2, las promos, las tarjetas en cuotas, las estadísticas de la
+jornada y los gastos. Las decisiones del Sprint 2 están en [`sprint-2.md`](plans/sprint-2.md): las del dev y las
+**provisorias del agente** (D-1 a D-5), que esperan su confirmación.
 
 **Lo que no está ahí no se decide.** Siguen sin definir y se preguntan cuando un ítem los toque, nunca se asumen:
 
@@ -73,17 +82,24 @@ El Sprint 1 implementó las de vender. Promos, tarjetas en cuotas, gastos y las 
 
 Hacer preguntas de más es mejor que inventar.
 
-## 4. Estado actual del repo (al 2026-10-25)
+## 4. Estado actual del repo (al 2026-10-26)
 
 - **Sprint 0 terminado** (base técnica): todos sus ítems están integrados y en `En revisión` en `BACKLOG.md`,
   esperando que el dev los pase a `Hecho`. `main` tiene el tag `sprint-0`.
 - **Sprint 1 terminado** ("Vender con el modelo de la empanadería"): BUG-12, BUG-10, T-11, US-1 a US-7, US-15, T-12
-  y T-13 están integrados en `develop` y en `En revisión`. El merge `develop → main` con el tag `sprint-1` espera
-  el OK del dev.
-- **Sprint 2 en borrador**: US-8 a US-14, BUG-11 (ya cubierto en parte por T-12) y T-14.
+  y T-13 están en `main` con el tag `sprint-1`, y en `En revisión` hasta que el dev los apruebe.
+- **Sprint 2 terminado** ("Promociones, tarjetas, estadísticas y gastos"): T-15, US-8 a US-14, BUG-11, BUG-13,
+  BUG-14, T-14 y BUG-15 están en `main` con el tag `sprint-2`, y en `En revisión` hasta que el dev los apruebe.
+  BUG-16 (un E2E de Clientes que a veces falla en el CI) queda `Pendiente`: necesita el trace de Playwright del CI.
+  - Lo hizo el agente solo, de noche (2026-10-25 y 26), con permiso del dev para commitear, cerrar el sprint y
+    decidir dudas nuevas. Esas decisiones están marcadas en
+    [`sprint-2.md`](plans/sprint-2.md#decisiones-provisorias-del-agente) con la pregunta, un ejemplo y qué cambia
+    si el dev responde otra cosa. Al final del mismo archivo hay un resumen para principiantes.
+  - Las migraciones 0012 a 0016 son del Sprint 2. Se probó que todas corren desde cero en una base nueva; la
+    de Supabase la migra el dev.
   - Planes maestros en `docs/plans/sprint-1.md` y `docs/plans/sprint-2.md`: decisiones del dev, enfoque de cada
-    ítem, trazabilidad con `specs.md` y las preguntas pendientes para el cliente.
-  - Ningún ítem del Sprint 2 se arranca sin el OK del dev.
+    ítem y trazabilidad con `specs.md` y con las respuestas del cliente.
+- **No hay Sprint 3 cargado**: el próximo trabajo lo define el dev. Ningún ítem nuevo se arranca sin su OK.
 - Git: `main` recibe un merge de `develop` al cierre de cada sprint. El trabajo nuevo sale de `develop`. El repo de GitHub
   es **público**: todo lo que se pushea queda publicado.
 - **No existe todavía**: `docs/conventions/`.
@@ -103,12 +119,17 @@ Hacer preguntas de más es mejor que inventar.
   - E2E con Playwright (`tests/`, con Page Objects) contra `db-test`, con `next build` + `next start` en el 3100 y la carpeta
     `.next-e2e` (T-6, ver `tests/readme.md`). Nunca toca la base de desarrollo.
   - Mutación con Stryker (`stryker.config.mjs`, `npm run test:mutation`) sobre el dominio y los services de
-    `provider`, `menu`, `stock` y `order`, y `src/lib/errors`.
+    `provider`, `menu`, `stock`, `order` (también su store), `promotion`, `card`, `stats` y `expense`, y
+    `src/lib/errors`.
 - Features del dominio, cada uno con su README en `docs/features/`:
   - `menu` (US-3, T-12, ADR 0005): gustos y bebidas por grupo fijo, precios, fotos y catálogo público.
   - `stock` (US-4): ingresos, mermas e historial por gusto.
-  - `order` (US-5 a US-7 y US-15): tablero, cobro, historial, comprobante y anulación.
-  - `stats`: estadísticas sobre el modelo nuevo.
+  - `order` (US-5 a US-7, US-9, US-11 y US-15): tablero, promos, cobro con crédito en cuotas, historial,
+    comprobante y anulación.
+  - `promotion` (US-8): promociones con precio de venta a mano.
+  - `card` (US-10): tarjetas y planes de cuotas con recargo.
+  - `stats` (US-12 y US-13): estadísticas de la jornada y los cuadros de vendedores y de ventas.
+  - `expense` (US-14): anotador de gastos.
 - `provider` es el **feature molde** (T-5, `docs/features/provider/README.md`): los demás features se migran
   copiando su estructura.
 - Gates (T-3, ADR 0003):
@@ -131,7 +152,7 @@ Detalle en [`docs/architecture.md`](architecture.md).
 - **En ejecución es cliente-servidor y en despliegue es un monolito modular.** El navegador habla con el
   servidor por **Server Actions** (`'use server'`), no por una API REST.
 - Capas: `ui → actions → service → repository → db`. La capa `service`, con unidad de trabajo, existe en `provider`,
-  `menu`, `stock`, `order` y `stats`. En `customer`, `user` y `audit` la lógica sigue repartida entre actions y
+  `menu`, `stock`, `order`, `promotion`, `card` y `expense`; `stats` tiene service y calcula con funciones puras. En `customer`, `user` y `audit` la lógica sigue repartida entre actions y
   repositorios: el código nuevo copia `provider`.
 - Cada feature vive en `src/features/<feature>/` con estas carpetas:
   - `domain/`: schemas Zod de entrada y de fila.
@@ -148,8 +169,10 @@ Detalle en [`docs/architecture.md`](architecture.md).
 - `src/lib/db/index.ts` lleva `import 'server-only'`. Los scripts `db:*` y el E2E corren con
   `--conditions=react-server`, ya configurado en `package.json`. Si agregás un script que importe `@/lib/db`, sumale
   esa condición.
-- Doc por feature en `docs/features/<f>/README.md`: hoy `provider`, `stats`, `menu`, `stock` y `order`.
-- Schema de la base en `src/lib/db/schema.ts`, `menu-schema.ts`, `stock-schema.ts` y `order-schema.ts`.
+- Doc por feature en `docs/features/<f>/README.md`: hoy `provider`, `menu`, `stock`, `order`, `promotion`, `card`,
+  `stats` y `expense`.
+- Schema de la base en `src/lib/db/schema.ts`, `menu-schema.ts`, `stock-schema.ts`, `order-schema.ts`,
+  `promotion-schema.ts`, `card-schema.ts` y `expense-schema.ts`.
 - **Seguridad**:
   - JWT en la cookie `session`.
   - `src/proxy.ts` filtra por ruta y rol, pero es sólo una barrera de navegación.
@@ -191,17 +214,18 @@ exacto de archivos es `eslint-legacy.json`. Si tu ítem corrige un archivo hered
 - **No lo arregles "de paso".** Cada brecha se corrige cuando un ítem del backlog toca ese código, o con un ítem
   propio.
 - **Seguridad:**
-  - Las fotos de los gustos se manejan desde Alta de productos: sólo el admin, con tipo y tamaño validados antes de
-    subir a Cloudinary (T-12).
+  - Las fotos de los gustos se manejan desde Alta de productos: sólo el admin, con tipo y tamaño (JPG, PNG o WEBP de
+    hasta 5 MB) validados antes de subir a Cloudinary (T-12 y BUG-11).
   - `JWT_SECRET` ya no tiene valor por defecto: es obligatoria y sin ella falla el login (BUG-2, con su test de
     regresión).
   - En desarrollo, Next ya no imprime los argumentos de las Server Actions (`logging.serverFunctions: false`), y
     Drizzle loguea el SQL sin parámetros. Fuera de `auth`, las lecturas no traen `password_hash` (BUG-6).
   - Ninguna respuesta al navegador ni el usuario de `verifyAuthOrAdmin` llevan el `password_hash` (BUG-7).
-  - `fetchMenuItems` exige sesión y al vendedor no le manda el costo. Sigue abierta la pregunta al cliente de si el
-    vendedor debe ver costos y proveedores.
+  - `fetchMenuItems` exige sesión y al vendedor no le manda el costo: no ve costos ni proveedores (decisión del dev,
+    2026-10-25).
   - `handleDatabaseError` lee el error original de Postgres (también en `error.cause` de Drizzle): un duplicado,
-    una referencia inexistente y un borrado de algo referenciado tienen cada uno su mensaje (BUG-9).
+    una referencia inexistente y un borrado de algo referenciado tienen cada uno su mensaje (BUG-9). Un error sin código conocido ya no manda a
+    sincronizar: es "error inesperado" y su detalle queda en el log del servidor (BUG-14).
 - **Qué base se usa** (T-8, ADR 0002): la de producción, **sólo** con `APP_ENV=production` (`.env.prod`, con
   `DATABASE_URL` y SSL). Con cualquier otro valor se usa `.env.local` y `LOCAL_DATABASE_URL`, que es obligatoria.
   `NODE_ENV` ya no elige la base: `next build` y `next start` usan la base local.
@@ -352,3 +376,9 @@ las cuentas reales y se borran esas.
 | Grupo y presentación | Grupo fijo (Empanadas, Pizzas, Sanguches, Ciabattas, Coca-Cola, Pepsi) y cantidad en que se vende (1, 3, 6, 12 u; pizza de 1 o 2 sabores). |
 | Línea del pedido | Una presentación con sus gustos y su cantidad. En el código, `sale_lines` y `sale_line_items`. |
 | Surtida | Una presentación de varias unidades con gustos distintos, armada con "Agregar uno" y "Completar". |
+| Costo para el local | Lo que le cuesta al local hacer o comprar una unidad (en la pizza, la pizza entera). Va por gusto y sirve para la ganancia. En el código, `unitCost`. Los campos, columnas y títulos nunca dicen "costo" a secas. |
+| Precio de venta | Lo que paga el cliente. Va por grupo en Empanadas y Ciabattas y por gusto en el resto. En el código, `price1` a `price12`. Los campos, columnas y títulos nunca dicen "precio" a secas. |
+| Promo | Presentaciones con un precio de venta propio que escribe el admin; al venderla se eligen los gustos de cada parte (US-8 y US-9). En el código, `promotions`. |
+| Recargo de cuotas | El % del plan de la tarjeta, cobrado sólo sobre la parte pagada con crédito. Suma al total de la venta y a la ganancia (US-11). |
+| Jornada | El día del local para Estadísticas: de 7:00 a 6:59 del día siguiente, en hora de Argentina (US-12). |
+| Turno | Mañana (7:00 a 16:59) o tarde (17:00 a 6:59), en el cuadro de vendedores (US-13). |

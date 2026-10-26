@@ -8,7 +8,7 @@
 
 Muestra el stock de cada gusto y bebida activos, agrupados por grupo, y permite:
 
-- **Ingresar stock**: suma unidades a un gusto. El admin puede cargar el costo por unidad (actualiza el costo del
+- **Ingresar stock**: suma unidades a un gusto. El admin puede cargar el costo para el local (por unidad; en la pizza, por pizza entera) (actualiza el costo del
   gusto, que alimenta la ganancia) y el proveedor.
 - **Registrar una merma** (sólo el admin): descuenta stock con un motivo y guarda el costo del momento.
 - **Ver el historial de ingresos** de cada gusto.
@@ -18,8 +18,8 @@ Muestra el stock de cada gusto y bebida activos, agrupados por grupo, y permite:
 - La cantidad que entra es un entero mayor a 0. Las mermas admiten media unidad sólo en Pizzas.
 - Una merma no puede superar el stock (`INSUFFICIENT_STOCK`).
 - Sin costo nuevo, el ingreso conserva el costo actual del gusto y lo registra en el historial.
-- **El vendedor ingresa stock, pero no ve ni carga costos ni proveedores**. Es lo vigente mientras el cliente no
-  responda la pregunta 2 de `docs/plans/sprint-1.md` (también BUG-8).
+- **El vendedor ingresa stock, pero no ve ni carga costos ni proveedores** (cliente y dev, 2026-10-25; también
+  BUG-8).
 - Cada movimiento sube la `version` del gusto: si alguien lo estaba editando en Alta de productos, recibe
   `STALE_VERSION` y sincroniza.
 

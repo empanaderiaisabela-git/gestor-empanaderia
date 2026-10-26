@@ -22,3 +22,14 @@ export function argentinaDay(value: Date | string): string {
   const date = typeof value === 'string' ? new Date(value) : value;
   return Number.isNaN(date.getTime()) ? '' : dayFormatter.format(date);
 }
+
+const timeFormatter = new Intl.DateTimeFormat('es-AR', { timeZone: DISPLAY_TIME_ZONE, hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
+
+export function argentinaTime(value: Date | string): string {
+  const date = typeof value === 'string' ? new Date(value) : value;
+  return Number.isNaN(date.getTime()) ? INVALID_DATE : timeFormatter.format(date);
+}
+
+export function argentinaHour(value: Date): number {
+  return Number(argentinaTime(value).slice(0, 2));
+}

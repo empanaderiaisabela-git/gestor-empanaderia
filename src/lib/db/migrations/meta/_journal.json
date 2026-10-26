@@ -85,6 +85,41 @@
       "when": 1792955375609,
       "tag": "0011_menu-item-photos-and-visibility",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1792983300076,
+      "tag": "0012_promotions",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1792984935994,
+      "tag": "0013_sale-lines-promotions",
+      "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1792986663097,
+      "tag": "0014_cards",
+      "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "7",
+      "when": 1792988639981,
+      "tag": "0015_sale-payments-cards",
+      "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1792992061622,
+      "tag": "0016_expenses",
+      "breakpoints": true
     }
   ]
 }

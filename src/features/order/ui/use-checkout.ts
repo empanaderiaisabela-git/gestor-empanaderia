@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { useMenuStore } from '@/features/menu/store/menu.store';
 import { checkoutAction } from '@/features/order/actions/checkout';
-import type { Discount, Payment } from '@/features/order/domain/order-validation';
+import type { Discount } from '@/features/order/domain/order-validation';
 import { useOrderStore } from '@/features/order/store/order.store';
+import type { FormPayment } from './checkout-form';
 
 export type Notice = { type: 'success' | 'error'; text: string };
-export type CheckoutDraft = { discount: Discount; payments: Payment[] };
+export type CheckoutDraft = { discount: Discount; payments: FormPayment[] };
 
 export type CheckoutModel = {
   isOpen: boolean;
@@ -16,11 +17,12 @@ export type CheckoutModel = {
 };
 
 async function submit({ discount, payments }: CheckoutDraft): ReturnType<typeof checkoutAction> {
-  const { lines, buyerName } = useOrderStore.getState();
+  const { lines, promos, buyerName } = useOrderStore.getState();
   const filled = lines.filter((line) => line.flavors.length > 0);
   return checkoutAction({
     buyerName,
     lines: filled.map(({ group, presentationKey, flavors, quantity }) => ({ group, presentationKey, flavors, quantity })),
+    promos: promos.map(({ promotionId, parts }) => ({ promotionId, quantity: 1, parts: parts.map(({ group, presentationKey, flavors }) => ({ group, presentationKey, flavors })) })),
     discountPercentage: discount.percentage,
     discountAmount: discount.amount,
     payments,

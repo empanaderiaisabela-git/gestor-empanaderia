@@ -1,19 +1,30 @@
 import { Camera, Edit, Eye, EyeOff, ToggleLeft, ToggleRight, Trash2 } from 'lucide-react';
-import type { JSX } from 'react';
+import type { JSX, ReactNode } from 'react';
 import { CardAction, EntityCard } from '@/components/ui/entity-card';
 import { GROUPS } from '@/features/menu/domain/menu-groups';
 import type { MenuItemDef } from '@/features/menu/domain/menu-item.schema';
 import { formatMoney } from '@/lib/format-money';
 import { priceSummary } from '@/features/menu/domain/menu-price-list';
+import { COST_TERM, SALE_PRICE_TERM } from '@/features/menu/domain/menu-terms';
 import type { MenuItemRowActions } from './menu-item-columns';
+
+function Detail({ term, className, children }: { term: string; className: string; children: ReactNode }): JSX.Element {
+  return (
+    <span className={className}>
+      <span className='font-medium text-zinc-600 dark:text-zinc-300'>{term}</span> {children}
+    </span>
+  );
+}
 
 function Details({ item }: { item: MenuItemDef }): JSX.Element {
   return (
     <div className='flex flex-col gap-1 mt-1 text-sm'>
-      <span className='text-zinc-500'>{priceSummary(item)}</span>
-      <span className='text-xs text-zinc-400'>
-        Costo {item.unitCost === null ? '—' : formatMoney(item.unitCost)} · Stock {item.stock.toLocaleString('es-AR')}
-      </span>
+      <Detail term={SALE_PRICE_TERM} className='text-zinc-500'>
+        {priceSummary(item)}
+      </Detail>
+      <Detail term={COST_TERM} className='text-xs text-zinc-400'>
+        {item.unitCost === null ? '—' : formatMoney(item.unitCost)} · Stock {item.stock.toLocaleString('es-AR')}
+      </Detail>
     </div>
   );
 }

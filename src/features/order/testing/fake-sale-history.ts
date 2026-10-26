@@ -14,8 +14,8 @@ function viewOf(fake: FakeCheckoutUnitOfWork, sale: FakeSale): SaleView {
     total: money(sale.total),
     discountAmount: money(sale.discountAmount),
     discountPercentage: money(sale.discountPercentage),
-    lines: lines.map(({ group, presentationKey, quantity, unitPrice, subtotal, description }) => ({ group, presentationKey, quantity, unitPrice: money(unitPrice), subtotal: money(subtotal), description })),
-    payments: sale.payments.map(({ type, amount }) => ({ type, amount: money(amount) })),
+    lines: lines.map(({ group, presentationKey, promotionId, quantity, unitPrice, subtotal, description }) => ({ group, presentationKey, promotionId, quantity, unitPrice: money(unitPrice), subtotal: money(subtotal), description })),
+    payments: sale.payments.map(({ type, amount, cardId, installments, surchargeAmount }) => ({ type, amount: money(amount), cardName: fake.cards.state.rows.find((card) => card.id === cardId)?.name ?? null, installments, surchargeAmount: surchargeAmount === null ? null : money(surchargeAmount) })),
   };
 }
 

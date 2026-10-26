@@ -2,16 +2,18 @@
 
 import type { JSX } from 'react';
 import { FormField, inputClass } from '@/components/ui/form-field';
+import type { CardDef } from '@/features/card/domain/card.schema';
 import { PAYMENT_LABELS, PAYMENT_TYPES } from '@/features/order/domain/order-validation';
 import { formatMoney } from '@/lib/format-money';
 import { type CheckoutForm, paymentsOf, toggleMethod } from './checkout-form';
+import { CreditFields } from './credit-fields';
 
-type PaymentPickerProps = { form: CheckoutForm; total: number; onChange: (form: CheckoutForm) => void };
+type PaymentPickerProps = { form: CheckoutForm; total: number; credit: { cards: CardDef[]; surcharge: number }; onChange: (form: CheckoutForm) => void };
 
 const chip = (pressed: boolean): string =>
   `px-3 py-2 rounded-lg border text-sm font-semibold transition ${pressed ? 'bg-brand-600 border-brand-600 text-white' : 'border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300'}`;
 
-export function PaymentPicker({ form, total, onChange }: PaymentPickerProps): JSX.Element {
+export function PaymentPicker({ form, total, credit, onChange }: PaymentPickerProps): JSX.Element {
   const [first, second] = form.methods;
   const rest = paymentsOf(total, form)[1]?.amount ?? 0;
   return (
@@ -34,6 +36,7 @@ export function PaymentPicker({ form, total, onChange }: PaymentPickerProps): JS
           </p>
         </>
       )}
+      {form.methods.includes('credito') && <CreditFields form={form} cards={credit.cards} surcharge={credit.surcharge} onChange={onChange} />}
     </fieldset>
   );
 }

@@ -2,6 +2,7 @@ import type { JSX } from 'react';
 import { FormField, inputClass } from '@/components/ui/form-field';
 import { GROUPS, MENU_GROUPS } from '@/features/menu/domain/menu-groups';
 import type { MenuItemDef } from '@/features/menu/domain/menu-item.schema';
+import { costLabelOf } from '@/features/menu/domain/menu-terms';
 import type { ProviderDef } from '@/features/provider/domain/provider.schema';
 import type { EntryValues, FormErrors } from './stock-forms';
 
@@ -31,10 +32,11 @@ function ItemOptions({ items }: { items: MenuItemDef[] }): JSX.Element {
   );
 }
 
-function CostFields({ values, errors, providers, onChange }: Omit<StockEntryFieldsProps, 'items' | 'isAdmin'>): JSX.Element {
+function CostFields({ values, errors, items, providers, onChange }: Omit<StockEntryFieldsProps, 'isAdmin'>): JSX.Element {
+  const group = items.find((item) => item.id === values.menuItemId)?.group ?? null;
   return (
     <>
-      <FormField label='Costo por unidad (vacío = se mantiene el actual)' error={errors.unitCost}>
+      <FormField label={`${costLabelOf(group)} (vacío = se mantiene el actual)`} error={errors.unitCost}>
         <input inputMode='decimal' value={values.unitCost} onChange={(event) => onChange({ ...values, unitCost: event.target.value })} className={inputClass(Boolean(errors.unitCost))} />
       </FormField>
       <FormField label='Proveedor (opcional)' error={errors.providerId}>

@@ -1,15 +1,16 @@
 import { create } from 'zustand';
+import type { WorkdayStats } from '@/features/stats/domain/stats.schema';
 
-interface StatsState {
-  stats: any | null;
+type StatsState = {
+  stats: WorkdayStats | null;
   isLoaded: boolean;
-  setStats: (stats: any) => void;
-  setLoaded: (val: boolean) => void;
-}
+  setStats: (stats: WorkdayStats | null) => void;
+  setLoaded: (isLoaded: boolean) => void;
+};
 
 export const useStatsStore = create<StatsState>((set) => ({
   stats: null,
   isLoaded: false,
   setStats: (stats) => set({ stats, isLoaded: true }),
-  setLoaded: (val: boolean) => set({ isLoaded: val }),
+  setLoaded: (isLoaded) => set({ isLoaded }),
 }));
