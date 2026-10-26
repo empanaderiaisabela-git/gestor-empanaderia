@@ -4,6 +4,7 @@ export type NavItem = { href: string; label: string };
 
 const SECTIONS = {
   estadisticas: { href: '/', label: 'Estadísticas' },
+  gastos: { href: '/gastos', label: 'Gastos' },
   stock: { href: '/stock', label: 'Stock' },
   ventas: { href: '/ventas', label: 'Ventas/Pedidos' },
   promociones: { href: '/promociones', label: 'Promociones' },
@@ -18,7 +19,7 @@ const SECTIONS = {
 type Section = keyof typeof SECTIONS;
 
 const MENU: Readonly<Record<Role, readonly Section[]>> = {
-  admin: ['estadisticas', 'stock', 'ventas', 'promociones', 'clientes', 'proveedores', 'altaProductos', 'tarjetas', 'usuarios', 'auditoria'],
+  admin: ['estadisticas', 'gastos', 'stock', 'ventas', 'promociones', 'clientes', 'proveedores', 'altaProductos', 'tarjetas', 'usuarios', 'auditoria'],
   vendedor: ['ventas', 'stock', 'clientes'],
 };
 

@@ -1,5 +1,6 @@
 import { useCardStore } from '@/features/card/store/card.store';
 import { useCustomerStore } from '@/features/customer/store/customer.store';
+import { useExpenseStore } from '@/features/expense/store/expense.store';
 import { useMenuStore } from '@/features/menu/store/menu.store';
 import { useAuditStore } from '@/features/audit/store/audit.store';
 import { usePromotionStore } from '@/features/promotion/store/promotion.store';
@@ -14,6 +15,7 @@ import { useUserStore } from '@/features/user/store/user.store';
 export const invalidateAllCaches = () => {
   useCardStore.getState().setLoaded(false);
   useCustomerStore.getState().setLoaded(false);
+  useExpenseStore.getState().setLoaded(false);
   useMenuStore.getState().setLoaded(false);
   useAuditStore.getState().setLoaded(false);
   usePromotionStore.getState().setLoaded(false);

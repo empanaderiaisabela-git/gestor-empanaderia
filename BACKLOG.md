@@ -1836,7 +1836,7 @@ la leen.
 | 4   | [US-11](#us-11--ventas-cobrar-con-crédito-en-cuotas)                             | Ventas: cobrar con crédito en cuotas                        | En revisión | US-10       | 2 h             |
 | 5   | [US-12](#us-12--estadísticas-del-día-dinero-por-comida-ganancia-y-ventas)        | Estadísticas del día: dinero por comida, ganancia y ventas  | En revisión | US-9, US-11 | 3 h             |
 | 6   | [US-13](#us-13--estadísticas-cuadros-de-vendedores-y-de-ventas)                  | Estadísticas: cuadros de vendedores y de ventas             | En revisión | US-12       | 2 h             |
-| 7   | [US-14](#us-14--gastos-anotador-de-facturas)                                     | Gastos: anotador de facturas                                | Pendiente | T-13        | 2 h             |
+| 7   | [US-14](#us-14--gastos-anotador-de-facturas)                                     | Gastos: anotador de facturas                                | En revisión | T-13        | 2 h             |
 | 8   | [BUG-11](#bug-11--la-subida-de-fotos-no-valida-antes-de-subir)                   | La subida de fotos no valida antes de subir                 | Pendiente | BUG-1       | 55 min          |
 | 9   | [BUG-13](#bug-13--alta-y-stock-confunden-el-costo-con-el-precio-de-venta)          | Alta y Stock confunden el costo con el precio de venta      | En revisión | US-3, US-4 | 45 min          |
 | 10  | [BUG-14](#bug-14--cualquier-error-de-la-base-se-muestra-como-datos-desactualizados) | Cualquier error de la base se muestra como "datos desactualizados" | Pendiente | BUG-9 | 35 min          |
@@ -2081,12 +2081,12 @@ de ventas del día, de forma que sepa quién vendió cuánto y cuándo.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
-| Dueño        | —         |
-| Inicio       | —         |
+| Estado       | En revisión |
+| Dueño        | Agente |
+| Inicio       | 2026-10-26 |
 | Tamaño       | M         |
 | Depende de   | T-13      |
-| Plan         | —         |
+| Plan         | [`docs/plans/US-14-gastos.md`](docs/plans/US-14-gastos.md) |
 | Merge        | —         |
 | Horas reales | —         |
 
@@ -2095,15 +2095,19 @@ tenga un registro aparte de lo que se gasta.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · Alta de un gasto con número de factura único (texto de hasta 30 caracteres), título (hasta 100), monto (> 0, con 2 decimales) y fecha de la factura; la fecha de carga es automática; sin foto · Estimación: 45 min · Completado: —
+- [x] **CA-1** · Alta de un gasto con número de factura único (texto de hasta 30 caracteres), título (hasta 100), monto (> 0, con 2 decimales) y fecha de la factura; la fecha de carga es automática; sin foto · Estimación: 45 min · Completado: 2026-10-26 02:34
 
-- [ ] **CA-2** · Lista ordenada por fecha de la factura con búsqueda; editar con `version` y borrar · Estimación: 45 min · Completado: —
+- [x] **CA-2** · Lista ordenada por fecha de la factura con búsqueda; editar con `version` y borrar · Estimación: 45 min · Completado: 2026-10-26 02:34
 
-- [ ] **CA-3** · Un test demuestra que los gastos no cambian Estadísticas; sólo el admin (menú y `proxy.ts`); errores por fila con su test de contrato (también `DUPLICATE` por número repetido); auditoría y README · Estimación: 30 min · Completado: —
+- [x] **CA-3** · Un test demuestra que los gastos no cambian Estadísticas; sólo el admin (menú y `proxy.ts`); errores por fila con su test de contrato (también `DUPLICATE` por número repetido); auditoría y README · Estimación: 30 min · Completado: 2026-10-26 02:34
 
 **Preguntas respondidas** (cliente, 2026-10-25)
 
 - Sin foto. El número de factura es único. Lleva la fecha de la factura, además de la de carga.
+
+**Notas**
+
+- Cierre: `npm run verify` (854 tests, cobertura 96/89, mutación 89,3) y 72 E2E en verde. README en `docs/features/expense/README.md`.
 
 ### BUG-11 · La subida de fotos no valida antes de subir
 

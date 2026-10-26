@@ -27,6 +27,7 @@ export class AuditLogRepository {
             { label: 'venta', value: 'SALE' },
             { label: 'promoción', value: 'PROMOTION' },
             { label: 'tarjeta', value: 'CARD' },
+            { label: 'gasto', value: 'EXPENSE' },
           ];
 
           // Map Action labels for better searchability
