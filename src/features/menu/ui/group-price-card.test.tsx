@@ -11,6 +11,12 @@ describe('precios del grupo en pantalla (US-3 CA-7)', () => {
     expect(screen.getAllByRole('textbox').map((input) => input.closest('label')?.textContent)).toEqual(['1 unidad', '3 unidades', '½ docena', '1 docena']);
   });
 
+  it('aclara que son precios de venta, iguales para todos los gustos (BUG-13)', () => {
+    render(<GroupPriceCard group='ciabattas' current={CIABATTAS} onSave={vi.fn()} />);
+    expect(screen.getByRole('form', { name: 'Precios de venta de Ciabattas' })).toBeDefined();
+    expect(screen.getByText('Lo que paga el cliente. Valen para todos los gustos del grupo.')).toBeDefined();
+  });
+
   it('muestra los precios actuales y guarda con la versión vigente', async () => {
     const onSave = vi.fn(async () => null);
     render(<GroupPriceCard group='ciabattas' current={CIABATTAS} onSave={onSave} />);

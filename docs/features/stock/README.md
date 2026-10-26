@@ -8,7 +8,7 @@
 
 Muestra el stock de cada gusto y bebida activos, agrupados por grupo, y permite:
 
-- **Ingresar stock**: suma unidades a un gusto. El admin puede cargar el costo por unidad (actualiza el costo del
+- **Ingresar stock**: suma unidades a un gusto. El admin puede cargar el costo para el local (por unidad; en la pizza, por pizza entera) (actualiza el costo del
   gusto, que alimenta la ganancia) y el proveedor.
 - **Registrar una merma** (sólo el admin): descuenta stock con un motivo y guarda el costo del momento.
 - **Ver el historial de ingresos** de cada gusto.

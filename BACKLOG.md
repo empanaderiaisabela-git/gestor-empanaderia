@@ -968,6 +968,7 @@ Respuestas a las preguntas de descubrimiento sobre `specs.md`. El detalle y el p
 | Promos | Se arman con grupo + presentación + cantidad; los gustos se eligen al vender |
 | ISR | Revalidación a demanda: el catálogo se regenera sólo cuando cambia |
 | Datos de producción | Sólo demo: el modelo viejo se puede borrar (se conservan los usuarios) |
+| Costo y precio | Campos, columnas y títulos dicen siempre **"Costo para el local"** (lo que le cuesta al local hacerlo o comprarlo) y **"Precio de venta"** (lo que paga el cliente), nunca "costo" o "precio" a secas. La pizza va por pizza entera. El costo es por gusto en todos los grupos (BUG-13) |
 | Marca | Empanadería Isabela, con [`logo-empanaderia.jpeg`](docs/wireframes-ventas-gestor/logo-empanaderia.jpeg) |
 
 ### T-10 · Backlog de los Sprints 1 y 2 desde `specs.md`
@@ -1833,8 +1834,9 @@ Sprint 1. El orden pone primero lo que cambia la venta (promos y tarjetas) y des
 | 5   | [US-13](#us-13--estadísticas-cuadros-de-vendedores-y-de-ventas)                  | Estadísticas: cuadros de vendedores y de ventas             | Pendiente | US-12       | 2 h             |
 | 6   | [US-14](#us-14--gastos-anotador-de-facturas)                                     | Gastos: anotador de facturas                                | Pendiente | T-13        | 2 h             |
 | 7   | [BUG-11](#bug-11--la-subida-de-fotos-no-valida-antes-de-subir)                   | La subida de fotos no valida antes de subir                 | Pendiente | BUG-1       | 55 min          |
-| 8   | [T-14](#t-14--cierre-del-sprint-2)                                               | Cierre del Sprint 2                                         | Pendiente | todos       | 1 h             |
-|     |                                                                                  | **Total del sprint**                                        |           |             | **18 h 10 min** |
+| 8   | [BUG-13](#bug-13--alta-y-stock-confunden-el-costo-con-el-precio-de-venta)          | Alta y Stock confunden el costo con el precio de venta      | En revisión | US-3, US-4 | 45 min          |
+| 9   | [T-14](#t-14--cierre-del-sprint-2)                                               | Cierre del Sprint 2                                         | Pendiente | todos       | 1 h             |
+|     |                                                                                  | **Total del sprint**                                        |           |             | **18 h 55 min** |
 
 ### US-8 · Promociones: armar promos con precio de rebaja
 
@@ -1980,6 +1982,7 @@ del día, de forma que sepa cómo cerró la jornada.
 
 **Detalle**
 
+- Los KPI dicen "Costo para el local" y "Precio de venta", nunca "costo" o "precio" a secas (BUG-13).
 - Hoy Estadísticas (ex Dashboard) arranca con todo el historial y arma el día con la hora del servidor (brecha de
   fechas de `docs/architecture.md`). CA-1 lo corrige.
 
@@ -2088,6 +2091,43 @@ subir y borrar quedan auditados.
   tamaño antes de llamar a Cloudinary, borra la imagen si falla el guardado y audita subir y borrar. Mientras no
   respondas la pregunta, acepta JPG, PNG o WEBP de hasta 5 MB. Al confirmar, este ítem se cierra sin código nuevo
   o con el ajuste de esos límites.
+
+### BUG-13 · Alta y Stock confunden el costo con el precio de venta
+
+| Campo        | Valor                                                                    |
+| ------------ | ------------------------------------------------------------------------ |
+| Estado       | En revisión                                                              |
+| Dueño        | Agente                                                                   |
+| Inicio       | 2026-10-25                                                               |
+| Tamaño       | S                                                                        |
+| Depende de   | US-3, US-4                                                               |
+| Plan         | [`docs/plans/BUG-13-costo-y-precio-de-venta.md`](docs/plans/BUG-13-costo-y-precio-de-venta.md) |
+| Merge        | —                                                                        |
+| Horas reales | —                                                                        |
+
+**Actual**:
+- En el alta de una pizza, "Costo por unidad" y "Precio pizza entera" parecen el mismo dato, y "por unidad" se lee
+  como "por porción". El dev: "el precio de la pizza es entera, no por porciones".
+- En Empanadas y Ciabattas, el costo de cada gusto se confunde con un precio por gusto que contradice el precio del
+  grupo.
+- Las grillas dicen "Costo" y "Precio" a secas.
+
+**Esperado**: el costo es siempre **"Costo para el local"** (lo que le cuesta al local hacerlo o comprarlo) y el
+precio, **"Precio de venta"** (lo que paga el cliente), en campos, columnas y títulos. La pizza lleva el costo y el
+precio de la pizza entera. Nada cambia en la base ni en los cálculos.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · Alta de productos: el costo dice "Costo para el local, por unidad" (en la pizza, "por pizza entera") con la aclaración "Lo que te cuesta hacerlo o comprarlo. No es el precio de venta."; los precios dicen "Precio de venta, <presentación>"; en Empanadas y Ciabattas avisa que el precio de venta se carga arriba, en "Precios de venta de <grupo>" · Estimación: 20 min · Completado: 2026-10-25 22:16
+
+- [x] **CA-2** · Stock: el ingreso pide "Costo para el local" por unidad o por pizza entera según el gusto elegido, y el historial muestra "Costo para el local $X" · Estimación: 15 min · Completado: 2026-10-25 22:16
+
+- [x] **CA-3** · Las grillas y tarjetas de Alta y de Stock dicen "Costo para el local" y "Precio de venta"; los gustos de Empanadas y Ciabattas muestran "Igual para todas las <grupo>" · Estimación: 10 min · Completado: 2026-10-25 22:16
+
+**Notas**
+
+- `npm run verify` y los 63 E2E en verde. De paso, `order-board.test.tsx` espera la lista de gustos en vez de buscarla al instante: fallaba con la PC cargada.
+- Las Estadísticas (US-12) usan el mismo vocabulario al rehacer sus KPI.
 
 ### T-14 · Cierre del Sprint 2
 

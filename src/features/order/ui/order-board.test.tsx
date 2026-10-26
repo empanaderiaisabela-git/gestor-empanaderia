@@ -24,7 +24,7 @@ describe('tablero de ventas (US-5 CA-1)', () => {
   it('del botón a la lista de gustos y al pedido', async () => {
     render(<OrderBoard />);
     fireEvent.click(within(await screen.findByRole('region', { name: 'Empanadas' })).getByRole('button', { name: /1 docena/ }));
-    fireEvent.click(within(screen.getByText('Carne').closest('li') ?? document.body).getByRole('button', { name: 'Completar' }));
+    fireEvent.click(within((await screen.findByText('Carne')).closest('li') ?? document.body).getByRole('button', { name: 'Completar' }));
     fireEvent.click(screen.getByRole('button', { name: 'Listo' }));
     expect(within(screen.getByRole('region', { name: 'Pedido actual' })).getByText('Carne')).toBeDefined();
     expect(screen.getByText('12 en pedido')).toBeDefined();

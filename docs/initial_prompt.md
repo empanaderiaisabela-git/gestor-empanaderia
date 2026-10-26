@@ -352,3 +352,5 @@ las cuentas reales y se borran esas.
 | Grupo y presentación | Grupo fijo (Empanadas, Pizzas, Sanguches, Ciabattas, Coca-Cola, Pepsi) y cantidad en que se vende (1, 3, 6, 12 u; pizza de 1 o 2 sabores). |
 | Línea del pedido | Una presentación con sus gustos y su cantidad. En el código, `sale_lines` y `sale_line_items`. |
 | Surtida | Una presentación de varias unidades con gustos distintos, armada con "Agregar uno" y "Completar". |
+| Costo para el local | Lo que le cuesta al local hacer o comprar una unidad (en la pizza, la pizza entera). Va por gusto y sirve para la ganancia. En el código, `unitCost`. Los campos, columnas y títulos nunca dicen "costo" a secas. |
+| Precio de venta | Lo que paga el cliente. Va por grupo en Empanadas y Ciabattas y por gusto en el resto. En el código, `price1` a `price12`. Los campos, columnas y títulos nunca dicen "precio" a secas. |

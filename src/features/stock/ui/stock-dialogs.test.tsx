@@ -39,7 +39,7 @@ describe('merma e historial (US-4 CA-3 y CA-4)', () => {
     render(<StockHistoryModal model={model({ dialog: { kind: 'history', item: PIZZA } })} />);
     expect(await screen.findByText('+4')).toBeDefined();
     expect(screen.getByText('25/10/2026, 12:00')).toBeDefined();
-    expect(screen.getByText(/\$3\.000 · Molino del Sur · admin/)).toBeDefined();
+    expect(screen.getByText(/Costo para el local \$3\.000 · Molino del Sur · admin/)).toBeDefined();
   });
 
   it('sin ingresos lo dice', async () => {

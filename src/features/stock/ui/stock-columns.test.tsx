@@ -7,8 +7,8 @@ const ITEM: MenuItemDef = { id: 'a', group: 'sanguches', name: 'Primavera', unit
 
 describe('grilla de Stock (US-4 CA-1)', () => {
   it('el admin ve el costo; el vendedor no', () => {
-    expect(getStockColumns({ isAdmin: true, open: vi.fn() }).map((column) => column.header)).toEqual(['Grupo', 'Gusto / bebida', 'Stock', 'Precio', 'Costo', 'Acciones']);
-    expect(getStockColumns({ isAdmin: false, open: vi.fn() }).map((column) => column.header)).toEqual(['Grupo', 'Gusto / bebida', 'Stock', 'Precio', 'Acciones']);
+    expect(getStockColumns({ isAdmin: true, open: vi.fn() }).map((column) => column.header)).toEqual(['Grupo', 'Gusto / bebida', 'Stock', 'Precio de venta', 'Costo para el local', 'Acciones']);
+    expect(getStockColumns({ isAdmin: false, open: vi.fn() }).map((column) => column.header)).toEqual(['Grupo', 'Gusto / bebida', 'Stock', 'Precio de venta', 'Acciones']);
   });
 
   it('cada celda muestra grupo, gusto, stock, precio y costo', () => {

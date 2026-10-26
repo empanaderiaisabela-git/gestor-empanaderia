@@ -12,9 +12,9 @@ function rowActions(): MenuItemRowActions {
 }
 
 describe('resumen de precios de la grilla', () => {
-  it('los gustos de empanadas y ciabattas remiten al precio del grupo', () => {
-    expect(priceSummary(BASE)).toBe('Precio de Empanadas');
-    expect(priceSummary({ ...BASE, group: 'ciabattas' })).toBe('Precio de Ciabattas');
+  it('los gustos de empanadas y ciabattas avisan que el precio de venta es el del grupo (BUG-13)', () => {
+    expect(priceSummary(BASE)).toBe('Igual para todas las Empanadas');
+    expect(priceSummary({ ...BASE, group: 'ciabattas' })).toBe('Igual para todas las Ciabattas');
   });
 
   it('un sanguche lista sus cuatro precios y una pizza el de la entera', () => {
@@ -27,8 +27,8 @@ describe('fila de la grilla y tarjeta mobile (US-3 CA-5)', () => {
   it('muestra grupo, gusto, costo, precio y stock, y marca los inactivos', () => {
     const columns = getMenuItemColumns(rowActions());
     render(<div>{columns.slice(0, 5).map((column, index) => <span key={index}>{column.cell({ ...BASE, isActive: false })}</span>)}</div>);
-    expect(columns.map((column) => column.header)).toEqual(['Grupo', 'Gusto / bebida', 'Costo', 'Precio', 'Stock', 'Acciones']);
-    ['Empanadas', 'Carne', 'Inactivo', '$400', 'Precio de Empanadas', '24'].forEach((text) => expect(screen.getByText(text)).toBeDefined());
+    expect(columns.map((column) => column.header)).toEqual(['Grupo', 'Gusto / bebida', 'Costo para el local', 'Precio de venta', 'Stock', 'Acciones']);
+    ['Empanadas', 'Carne', 'Inactivo', '$400', 'Igual para todas las Empanadas', '24'].forEach((text) => expect(screen.getByText(text)).toBeDefined());
   });
 
   it('los botones de la fila editan, desactivan y borran', () => {
@@ -47,6 +47,7 @@ describe('fila de la grilla y tarjeta mobile (US-3 CA-5)', () => {
     render(renderMenuItemCard(actions)({ ...BASE, group: 'pizzas', name: 'Muzza', price1: 11000, isActive: false }));
     expect(screen.getByText('Pizzas')).toBeDefined();
     expect(screen.getByText('pizza entera: $11.000')).toBeDefined();
+    ['Precio de venta', 'Costo para el local', '$400 · Stock 24'].forEach((text) => expect(screen.getByText(text)).toBeDefined());
     fireEvent.click(screen.getByRole('button', { name: 'Acciones' }));
     fireEvent.click(screen.getByText('Activar'));
     expect(actions.onToggleActive).toHaveBeenCalled();

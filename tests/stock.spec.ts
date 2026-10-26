@@ -6,7 +6,7 @@ test.describe('Stock (US-4)', () => {
     await page.getByRole('button').filter({ hasText: 'Ingresar stock' }).click();
     await page.getByLabel('Gusto o bebida').selectOption({ label: 'Humita (stock 48)' });
     await page.getByLabel('Cantidad que entra').fill('12');
-    await page.getByLabel(/Costo por unidad/).fill('460');
+    await page.getByLabel(/Costo para el local, por unidad/).fill('460');
     await page.getByRole('button', { name: 'Ingresar', exact: true }).click();
 
     await expect(page.getByText('Stock ingresado: Humita queda con 60')).toBeVisible();
@@ -24,6 +24,6 @@ test.describe('Stock (US-4)', () => {
 
     await page.getByRole('row', { name: /Verdura/ }).getByTitle('Historial de ingresos').click();
     await expect(page.getByText('+6')).toBeVisible();
-    await expect(page.getByText(/\$450 · Sin proveedor · admin/)).toBeVisible();
+    await expect(page.getByText(/Costo para el local \$450 · Sin proveedor · admin/)).toBeVisible();
   });
 });

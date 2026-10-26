@@ -31,9 +31,9 @@ describe('pantalla de Alta de productos (US-3 CA-5 y CA-7)', () => {
 
   it('carga los precios de cada grupo: las empanadas todavía no tienen y las ciabattas sí', async () => {
     render(<MenuPanel />);
-    const empanadas = await screen.findByRole('form', { name: 'Precios de Empanadas' });
+    const empanadas = await screen.findByRole('form', { name: 'Precios de venta de Empanadas' });
     expect(within(empanadas).getByText('Sin precio: todavía no se puede vender')).toBeDefined();
-    expect(within(screen.getByRole('form', { name: 'Precios de Ciabattas' })).getByRole('textbox').getAttribute('value')).toBe('6000');
+    expect(within(screen.getByRole('form', { name: 'Precios de venta de Ciabattas' })).getByRole('textbox').getAttribute('value')).toBe('6000');
   });
 
   it('da de alta un sanguche con sus cuatro precios', async () => {
@@ -41,8 +41,8 @@ describe('pantalla de Alta de productos (US-3 CA-5 y CA-7)', () => {
     fireEvent.click(await screen.findByRole('button', { name: 'Nuevo gusto o bebida' }));
     fireEvent.change(screen.getByLabelText('Grupo'), { target: { value: 'sanguches' } });
     fireEvent.change(screen.getByLabelText('Nombre del gusto o bebida'), { target: { value: 'Primavera' } });
-    fireEvent.change(screen.getByLabelText('Costo por unidad'), { target: { value: '500' } });
-    ['1 unidad', '3 unidades', '6 unidades', '12 unidades'].forEach((label, index) => fireEvent.change(screen.getByLabelText(`Precio ${label}`), { target: { value: String((index + 1) * 1000) } }));
+    fireEvent.change(screen.getByLabelText('Costo para el local, por unidad'), { target: { value: '500' } });
+    ['1 unidad', '3 unidades', '6 unidades', '12 unidades'].forEach((label, index) => fireEvent.change(screen.getByLabelText(`Precio de venta, ${label}`), { target: { value: String((index + 1) * 1000) } }));
     fireEvent.click(screen.getByRole('button', { name: 'Dar de alta' }));
     await waitFor(() => expect(actions.createMenuItemAction).toHaveBeenCalledWith({ group: 'sanguches', name: 'Primavera', unitCost: 500, prices: { price1: 1000, price3: 2000, price6: 3000, price12: 4000 } }), { timeout: 5000 });
   });
@@ -57,7 +57,7 @@ describe('pantalla de Alta de productos (US-3 CA-5 y CA-7)', () => {
 
   it('guarda los precios de las empanadas desde su tarjeta', async () => {
     render(<MenuPanel />);
-    const card = await screen.findByRole('form', { name: 'Precios de Empanadas' });
+    const card = await screen.findByRole('form', { name: 'Precios de venta de Empanadas' });
     within(card).getAllByRole('textbox').forEach((input, index) => fireEvent.change(input, { target: { value: String((index + 1) * 1000) } }));
     fireEvent.click(within(card).getByRole('button', { name: 'Guardar precios' }));
     await waitFor(() => expect(actions.saveMenuGroupPricesAction).toHaveBeenCalledWith({ group: 'empanadas', prices: { price1: 1000, price3: 2000, price6: 3000, price12: 4000 }, version: 0 }), { timeout: 5000 });

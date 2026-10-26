@@ -8,13 +8,18 @@
 
 ## Qué hace
 
-El admin da de alta los gustos de cada comida y las bebidas de Coca-Cola y Pepsi, con su costo por unidad, y carga
-los precios:
+El admin da de alta los gustos de cada comida y las bebidas de Coca-Cola y Pepsi, con su **costo para el local**
+(lo que le cuesta hacerlo o comprarlo; con él se calcula la ganancia), y carga los **precios de venta** (lo que paga
+el cliente):
 
 - **Empanadas y Ciabattas** tienen un precio por presentación **para todo el grupo**: todos los gustos valen lo
   mismo. Se cargan una sola vez, arriba de la grilla.
 - **Sanguches, Pizzas y bebidas** tienen precio **por gusto**: Primavera no vale lo mismo que Jamón y queso, y cada
   pizza tiene el suyo.
+
+Los campos, columnas y títulos dicen siempre **"Costo para el local"** y **"Precio de venta"**, nunca "costo" o
+"precio" a secas, para que no se confundan (BUG-13). El costo es siempre por gusto, también en Empanadas y Ciabattas. La pizza lleva el
+costo y el precio de la pizza entera.
 
 Un gusto nace sin stock. El stock entra por "Ingresar stock" (US-4).
 
@@ -114,12 +119,14 @@ Si Cloudinary sube la foto pero falla el guardado en la base, la imagen se borra
 
 `src/app/(main)/alta-de-productos/page.tsx` → `MenuPanel`:
 
-- Arriba, las tarjetas de precios de Empanadas y Ciabattas (`GroupPriceCard`). Sin precio cargado, muestran
-  "Sin precio: todavía no se puede vender".
+- Arriba, las tarjetas "Precios de venta de Empanadas" y "Precios de venta de Ciabattas" (`GroupPriceCard`). Sin
+  precio cargado, muestran "Sin precio: todavía no se puede vender".
 - Debajo, la barra con búsqueda, filtro por grupo y "Ver inactivos", y la grilla: tabla en escritorio y tarjetas en
   mobile.
-- El formulario (`MenuItemFormModal`) muestra los campos de precio que corresponden al grupo elegido. El grupo no se
-  cambia al editar.
+- El formulario (`MenuItemFormModal`) pide el costo ("Costo para el local, por unidad"; en la pizza, "por pizza
+  entera") y los precios de venta que corresponden al grupo elegido ("Precio de venta, 6 unidades"), cada uno con su
+  aclaración. En Empanadas y Ciabattas avisa que el precio de venta se carga arriba. El grupo no se cambia al editar.
+  Los textos salen de `domain/menu-terms.ts`.
 - Cada fila tiene "Mostrar en el catálogo" / "Ocultar del catálogo" y "Fotos" (`MenuPhotosModal`, `use-menu-photos.ts`).
   Los visibles llevan la marca "En catálogo".
 - Estados: esqueleto mientras carga, mensaje cuando el grupo no tiene gustos, y errores del servidor en el

@@ -12,7 +12,7 @@ export function priceList(group: MenuGroup, prices: PriceValues): PriceRow[] {
 }
 
 export function priceSummary(item: { group: MenuGroup } & PriceValues): string {
-  if (isPricedByGroup(item.group)) return `Precio de ${GROUPS[item.group].label}`;
+  if (isPricedByGroup(item.group)) return `Igual para todas las ${GROUPS[item.group].label}`;
   return priceList(item.group, item)
     .map(({ label, value }) => `${label}: ${formatMoney(value)}`)
     .join(' · ');
