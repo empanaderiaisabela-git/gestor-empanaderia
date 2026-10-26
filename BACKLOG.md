@@ -1839,7 +1839,7 @@ la leen.
 | 7   | [US-14](#us-14--gastos-anotador-de-facturas)                                     | Gastos: anotador de facturas                                | En revisión | T-13        | 2 h             |
 | 8   | [BUG-11](#bug-11--la-subida-de-fotos-no-valida-antes-de-subir)                   | La subida de fotos no valida antes de subir                 | Pendiente | BUG-1       | 55 min          |
 | 9   | [BUG-13](#bug-13--alta-y-stock-confunden-el-costo-con-el-precio-de-venta)          | Alta y Stock confunden el costo con el precio de venta      | En revisión | US-3, US-4 | 45 min          |
-| 10  | [BUG-14](#bug-14--cualquier-error-de-la-base-se-muestra-como-datos-desactualizados) | Cualquier error de la base se muestra como "datos desactualizados" | Pendiente | BUG-9 | 35 min          |
+| 10  | [BUG-14](#bug-14--cualquier-error-de-la-base-se-muestra-como-datos-desactualizados) | Cualquier error de la base se muestra como "datos desactualizados" | En revisión | BUG-9 | 35 min          |
 | 11  | [T-14](#t-14--cierre-del-sprint-2)                                               | Cierre del Sprint 2                                         | Pendiente | todos       | 1 h             |
 |     |                                                                                  | **Total del sprint**                                        |           |             | **20 h 5 min**  |
 
@@ -2191,12 +2191,12 @@ precio de la pizza entera. Nada cambia en la base ni en los cálculos.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
-| Dueño        | —         |
-| Inicio       | —         |
+| Estado       | En revisión |
+| Dueño        | Agente |
+| Inicio       | 2026-10-26 |
 | Tamaño       | S         |
 | Depende de   | BUG-9     |
-| Plan         | —         |
+| Plan         | [`docs/plans/BUG-14-errores-de-base.md`](docs/plans/BUG-14-errores-de-base.md) |
 | Merge        | —         |
 | Horas reales | —         |
 
@@ -2214,14 +2214,19 @@ detalle va al log del servidor, nunca al cliente.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · Un `Failed query` sin código conocido devuelve `UNEXPECTED` (tabla de `db-errors.test.ts`, con un 42P01 de tabla inexistente y un error de conexión) · Estimación: 20 min · Completado: —
+- [x] **CA-1** · Un `Failed query` sin código conocido devuelve `UNEXPECTED` (tabla de `db-errors.test.ts`, con un 42P01 de tabla inexistente y un error de conexión) · Estimación: 20 min · Completado: 2026-10-26 02:48
 
-- [ ] **CA-2** · Una versión vieja sigue devolviendo `STALE_VERSION` en los services y en el código heredado (contratos de proveedores, menú y stock, y el `ConcurrencyError`) · Estimación: 15 min · Completado: —
+- [x] **CA-2** · Una versión vieja sigue devolviendo `STALE_VERSION` en los services y en el código heredado (contratos de proveedores, menú y stock, y el `ConcurrencyError`) · Estimación: 15 min · Completado: 2026-10-26 02:48
 
 **Notas**
 
 - Revisar si un `CHECK` que falla (23514) o un `NOT NULL` (23502) deberían ser `VALIDATION`. Si se decide, va en
   este ítem.
+- **Decisión provisoria del agente (D-4 de [`sprint-2.md`](docs/plans/sprint-2.md#d-4--un-dato-que-la-base-rechaza-bug-14))**:
+  23502 (`NOT NULL`), 23514 (`CHECK`), 22P02 (formato), 22001 (texto largo) y 22003 (número fuera de rango) son
+  `VALIDATION` ("Los datos proporcionados no son válidos."). Cualquier otro error de la base es `UNEXPECTED` y su
+  detalle queda en el log del servidor, también en el código heredado (`handleDatabaseError`).
+- Cierre: `npm run verify` (861 tests, cobertura 96/88,7, mutación 89,3) y 72 E2E en verde. `docs/architecture.md` describe la traducción nueva.
 
 ### T-14 · Cierre del Sprint 2
 

@@ -185,3 +185,10 @@ responde otra cosa. También figura en las notas del ítem del backlog.
 - **Situación**: Un pedido de $10.000 se paga con $4.000 en efectivo y $6.000 con Visa en 3 cuotas al 10 %. El recargo es $600 y el cliente paga $10.600.
 - **Qué elegí y por qué**: El total de la venta es $10.600: lo que realmente cobró el local. El comprobante lo desglosa: subtotal $10.000, recargo de cuotas $600, total $10.600, y el pago con Visa figura por $6.600. El dinero por comida de Estadísticas sigue usando el precio de los productos ($10.000) y el recargo suma a la ganancia y a lo facturado con crédito.
 - **Si respondés otra cosa**: Si el total debe ser $10.000, se guarda el total sin el recargo en `checkout.service.ts` y el recargo queda sólo en el pago; el comprobante (`sale-receipt.tsx`) y los cuadros de US-12 y US-13 lo suman aparte.
+
+### D-4 · Un dato que la base rechaza (BUG-14)
+
+- **Pregunta**: Cuando la base rechaza un dato (por ejemplo, un precio que no cumple una regla de la base), ¿qué querés que lea el usuario: "Los datos proporcionados no son válidos." o "Ocurrió un error inesperado…"?
+- **Situación**: Con la base local sin migrar, guardar un precio decía "Los datos en el servidor han cambiado. Por favor, sincroniza la lista…", y sincronizar no arreglaba nada. Otro caso: alguien arma a mano un pedido al servidor con un monto negativo que el formulario no deja escribir, y la regla de la base lo frena.
+- **Qué elegí y por qué**: Si la base rechaza el dato por su forma o por una regla (vacío, formato, texto largo, número fuera de rango o una regla `CHECK`), se ve "Los datos proporcionados no son válidos.". Cualquier otro error (tabla que falta, base caída) muestra "Ocurrió un error inesperado…" y el detalle queda sólo en el log del servidor, nunca en la pantalla. "Sincroniza" aparece únicamente cuando otra persona cambió el dato de verdad. Es lo más honesto con el usuario y no muestra SQL.
+- **Si respondés otra cosa**: Se cambia la lista `INVALID_DATA` de `src/lib/db-errors.ts` (y su tabla de tests en `db-errors.test.ts`): vaciarla hace que todo sea "error inesperado".

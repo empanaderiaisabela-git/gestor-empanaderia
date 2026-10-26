@@ -3,6 +3,7 @@ import { AppError, type ErrorCode, errorMessage } from './errors';
 
 const FOREIGN_KEY = '23503';
 const UNIQUE = '23505';
+const INVALID_DATA = ['23502', '23514', '22P02', '22001', '22003'];
 
 type ErrorFacts = { code: string; detail: string; message: string; name: string };
 
@@ -39,19 +40,28 @@ export function databaseErrorCode(error: unknown): ErrorCode | null {
   const facts = factsOf(error);
   if (isForeignKey(facts)) return facts.detail.includes('is still referenced') ? 'HAS_RELATIONS' : 'RELATION_NOT_FOUND';
   if (isUnique(facts) || facts.name === 'DuplicateEntityError') return 'DUPLICATE';
-  if (facts.message.includes('failed query') || facts.name === 'ConcurrencyError') return 'STALE_VERSION';
+  if (facts.name === 'ConcurrencyError') return 'STALE_VERSION';
+  if (INVALID_DATA.includes(facts.code)) return 'VALIDATION';
+  if (facts.message.includes('failed query')) return 'UNEXPECTED';
   return null;
+}
+
+function logUnexpected(code: ErrorCode | null, error: unknown): void {
+  if (code === 'UNEXPECTED' || code === null) console.error('Error inesperado de la base:', error);
 }
 
 export function handleDatabaseError(error: unknown, entityName: string): string {
   if (error instanceof AppError) return error.message;
   const code = databaseErrorCode(error);
+  if (code === 'UNEXPECTED') logUnexpected(code, error);
   if (code !== null) return errorMessage(code, entityName);
   return text(error, 'message') || errorMessage('UNEXPECTED', entityName);
 }
 
 export function toActionFailure(error: unknown, entityName: string): ActionFailure {
   if (error instanceof AppError) return { success: false, code: error.code, error: error.message };
-  const code = databaseErrorCode(error) ?? 'UNEXPECTED';
+  const known = databaseErrorCode(error);
+  logUnexpected(known, error);
+  const code = known ?? 'UNEXPECTED';
   return { success: false, code, error: errorMessage(code, entityName) };
 }
