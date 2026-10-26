@@ -1,76 +1,71 @@
-# Feature: estadísticas del dashboard
+# Feature: estadísticas de la jornada
 
-- **US relacionadas**: ninguna todavía. Lo tocaron BUG-5 (consultas en paralelo) y BUG-12 (sólo admin).
+- **US relacionadas**: US-12 (KPI de la jornada) y US-13 (cuadros de vendedores y de ventas). Antes la tocaron
+  BUG-5 (consultas en paralelo), BUG-7 (sin `password_hash`) y BUG-12 (sólo admin).
 - **Código**: `src/features/stats/`:
-  - `domain/stats.schema.ts`: tipos del rango, la foto de datos y los totales.
-  - `repository/stats.repository.ts`: `getDashboardSnapshot`.
-  - `services/compute-dashboard-stats.ts`: cálculo puro y rango de fechas.
-  - `services/dashboard-stats.service.ts`: `getDashboardStats`.
-  - `actions/stats.actions.ts`: `fetchDashboardStats`.
+  - `domain/workday.ts`: la jornada de una fecha, la fecha de una jornada y su schema.
+  - `domain/stats.schema.ts`: tipos del resumen de la jornada y de los KPI.
+  - `repository/stats.repository.ts`: `getWorkdaySnapshot`.
+  - `services/compute-workday-stats.ts`: cálculo puro de los KPI; `workday-stats.service.ts`: `getWorkdayStats`.
+  - `actions/fetch-workday-stats.ts`: `fetchWorkdayStats`.
   - `store/stats.store.ts`: caché en Zustand.
-- **Pantalla**: `src/app/(main)/page.tsx`.
+  - `ui/`: `StatsPanel`, los cuadros (`workday-kpis.tsx`, `kpi-card.tsx`) y `use-workday-stats.ts`.
+- **Pantalla**: `src/app/(main)/page.tsx` ("Estadísticas", la primera del menú del admin).
 
 ## Qué hace
 
-Muestra los números del negocio para un rango de fechas: unidades en stock, cantidad de productos, valor del
-inventario a precio de compra, ingresos, costo de lo vendido, mermas, ganancia neta, lo cobrado en efectivo y por
-transferencia, y los 5 vendedores que más vendieron.
+Muestra los números de una **jornada** del local, por defecto la de hoy, con un selector para elegir otra:
+
+- **Ganancia en limpio**: lo facturado menos el costo para el local de lo vendido y las mermas de la jornada.
+- **Ventas registradas**: cuántas ventas hubo.
+- **Total facturado**: lo que pagaron los clientes, con el recargo de las cuotas.
+- **Dinero generado por comida**: Empanadas, Pizzas, Sanguches, Ciabattas, Coca-Cola y Pepsi, cada cuadro con el color
+  y el emoji de su grupo (US-15), y un cuadro aparte para las **Promos**.
+- **Facturado por medio de pago**: Efectivo, Transferencia, Débito y Crédito.
+
+Se quitaron los KPI heredados que el cliente no nombró: valor del stock, unidades, pérdidas, órdenes procesadas y
+mejores vendedores (cliente, 2026-10-25).
 
 ## Reglas de negocio
 
-- **Inventario** (no depende del rango):
-  - Unidades = suma del stock.
-  - Productos = cantidad de productos.
-  - Valor = Σ precio de compra × stock.
-- **Ventas y mermas del rango**:
-  - Ganancia neta = ingresos − costo de lo vendido − costo de las mermas.
-  - El costo de lo vendido usa el costo unitario congelado al momento de la venta (`sale_line_items.unit_cost`; en la mitad y mitad, la mitad del costo de cada gusto).
-  - Una merma vale precio de compra actual × cantidad. Si el producto ya no existe, no suma.
-- **Vendedores**:
-  - Se agrupan por vendedor y se muestran los 5 con más ventas en pesos.
-  - Una venta sin vendedor figura como "Sistema".
-- **Rango**: sin fechas, va desde el comienzo hasta ahora. Con fechas, va desde las 00:00:00 del primer día hasta las
-  23:59:59 del último, **en la hora local del servidor** (brecha de fechas conocida, ver `docs/architecture.md`).
-- **Consistencia**: las tres consultas corren de a una, en una transacción `repeatable read` de sólo lectura. Así ven
-  la misma foto de la base y no se lanzan consultas simultáneas sobre la misma conexión (BUG-5).
+- **Jornada**: de 7:00 a 6:59 del día siguiente, en hora de Argentina (UTC−3, sin horario de verano). Una venta de la
+  0:30 cuenta para la jornada que empezó a las 7 (dev, 2026-10-25).
+- **Dinero por comida**: cada línea suma en su grupo. El descuento de la venta se reparte entre las comidas en
+  proporción a lo que pesa cada una (dev, 2026-10-25): la suma de los cuadros es lo cobrado por los productos. Las
+  líneas de promo van al cuadro Promos. El recargo de las cuotas no es de ninguna comida.
+- **Ganancia en limpio** = total facturado (con recargo) − Σ unidades × costo congelado (también lo que usó cada
+  promo) − Σ mermas de la jornada × su costo. Ejemplo del cliente: comprada a $10 y vendida a $30 ⇒ $20.
+- **Por medio de pago**: cada pago suma su monto y, en crédito, su recargo.
+- Montos redondeados a 2 decimales al final.
 
 ## Roles y permisos
 
 | Acción | admin | vendedor | público (sin sesión) |
 |---|---|---|---|
-| Ver el dashboard (`/`) | Sí | No: `proxy.ts` lo redirige a `/productos` | No |
-| Invocar `fetchDashboardStats` | Sí | No: `FORBIDDEN` (BUG-12; el vendedor no tiene Estadísticas, `specs.md`) | No: `UNAUTHENTICATED` |
+| Ver Estadísticas | Sí | No (`FORBIDDEN`; el menú no la muestra y el `proxy` lo redirige) | No (`UNAUTHENTICATED`) |
 
 ## Server Actions
 
 | Action | Acceso | Entrada | Respuesta |
 |---|---|---|---|
-| `fetchDashboardStats(startDate?, endDate?)` | `verifyAuthOrAdmin(true)`: sólo admin | Fechas `AAAA-MM-DD` opcionales | `ActionResult<DashboardStats>` |
+| `fetchWorkdayStats(day?)` | admin | `day` AAAA-MM-DD (`workdaySchema`); sin día, la jornada de hoy | `ActionResult<WorkdayStats>` |
 
 ## Datos
 
-Sólo lectura de `menu_items` activos (stock y costo), `sales` (total y vendedor), `sale_line_items` (unidades y costo
-congelado), `sale_payments` (los 4 medios), `stock_losses` (cantidad y costo congelado) y `users` (sólo `username` del
-vendedor). Desde T-12 ya no lee el modelo de la casa de celulares.
+Sólo lee, en una transacción `repeatable read` de sólo lectura y con consultas secuenciales (BUG-5): las ventas de la
+jornada con su vendedor (sin `password_hash`, BUG-7), sus líneas (grupo y subtotal), lo consumido (`sale_line_items`
+con el costo congelado) y los pagos (con el recargo); y las mermas de la jornada.
 
 ## Errores
 
-| Acción inválida | code | Mensaje | Test |
+| Situación | code | Mensaje | Test |
 |---|---|---|---|
-| Sin sesión | `UNAUTHENTICATED` | No autorizado (Token faltante) | `actions/stats.contract.test.ts` |
-| Un vendedor pide las estadísticas | `FORBIDDEN` | Solo los administradores pueden realizar esta acción | `actions/stats.contract.test.ts` (`regression BUG-12`) |
-| Falla inesperada al leer | `UNEXPECTED` | Ocurrió un error inesperado al procesar el/la panel de estadísticas. | `actions/stats.contract.test.ts` (`regression BUG-12`) |
+| Sin sesión | `UNAUTHENTICATED` | No autorizado (Token faltante) | `workday-stats.contract.test.ts` |
+| El vendedor la pide | `FORBIDDEN` | Solo los administradores pueden realizar esta acción | `workday-stats.contract.test.ts` |
+| Jornada inválida | `VALIDATION` | Los datos proporcionados no son válidos. | `workday-stats.contract.test.ts` |
+| Falla inesperada | `UNEXPECTED` | Ocurrió un error inesperado al procesar el/la panel de estadísticas. | `workday-stats.contract.test.ts` |
 
 ## Pantallas
 
-`src/app/(main)/page.tsx`: filtros de fecha y tarjetas de totales.
-
-## Tests
-
-- `actions/stats.contract.test.ts` (contrato): permisos por rol y forma del error (BUG-12).
-- `services/compute-dashboard-stats.test.ts` (unit): totales, mermas sin producto, cobros por tipo, ranking de
-  vendedores, "Sistema" y rango de fechas.
-- `repository/stats.repository.int.test.ts` (integración contra `db-test`):
-  - `regression BUG-5`: sin el aviso de consultas simultáneas de `pg`.
-  - La foto del rango.
-  - Los totales calculados sobre datos sembrados (BUG-5 CA-2).
+`StatsPanel`: selector "Jornada" y "Sincronizar"; mientras carga, un esqueleto; si la jornada no tuvo ventas, "No
+hubo ventas en esta jornada." con los cuadros en $0; si el servidor falla, el motivo.

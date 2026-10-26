@@ -1834,7 +1834,7 @@ la leen.
 | 2   | [US-9](#us-9--ventas-subdivisión-promos)                                         | Ventas: subdivisión Promos                                  | En revisión | US-8        | 3 h             |
 | 3   | [US-10](#us-10--tarjetas-tarjetas-aceptadas-y-planes-de-cuotas-con-recargo)      | Tarjetas: tarjetas aceptadas y planes de cuotas con recargo | En revisión | T-13        | 2 h             |
 | 4   | [US-11](#us-11--ventas-cobrar-con-crédito-en-cuotas)                             | Ventas: cobrar con crédito en cuotas                        | En revisión | US-10       | 2 h             |
-| 5   | [US-12](#us-12--estadísticas-del-día-dinero-por-comida-ganancia-y-ventas)        | Estadísticas del día: dinero por comida, ganancia y ventas  | Pendiente | US-9, US-11 | 3 h             |
+| 5   | [US-12](#us-12--estadísticas-del-día-dinero-por-comida-ganancia-y-ventas)        | Estadísticas del día: dinero por comida, ganancia y ventas  | En revisión | US-9, US-11 | 3 h             |
 | 6   | [US-13](#us-13--estadísticas-cuadros-de-vendedores-y-de-ventas)                  | Estadísticas: cuadros de vendedores y de ventas             | Pendiente | US-12       | 2 h             |
 | 7   | [US-14](#us-14--gastos-anotador-de-facturas)                                     | Gastos: anotador de facturas                                | Pendiente | T-13        | 2 h             |
 | 8   | [BUG-11](#bug-11--la-subida-de-fotos-no-valida-antes-de-subir)                   | La subida de fotos no valida antes de subir                 | Pendiente | BUG-1       | 55 min          |
@@ -2003,12 +2003,12 @@ recargo del plan.
 
 | Campo        | Valor       |
 | ------------ | ----------- |
-| Estado       | Pendiente   |
-| Dueño        | —           |
-| Inicio       | —           |
+| Estado       | En revisión |
+| Dueño        | Agente |
+| Inicio       | 2026-10-26 |
 | Tamaño       | M           |
 | Depende de   | US-9, US-11 |
-| Plan         | —           |
+| Plan         | [`docs/plans/US-12-estadisticas-del-dia.md`](docs/plans/US-12-estadisticas-del-dia.md) |
 | Merge        | —           |
 | Horas reales | —           |
 
@@ -2017,15 +2017,15 @@ del día, de forma que sepa cómo cerró la jornada.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · Estadísticas abre con la jornada de hoy y un calendario para elegir otra; la jornada va de 7:00 a 6:59 del día siguiente en `America/Argentina/Buenos_Aires` (una venta de la 0:30 cuenta para la jornada que empezó a las 7) · Estimación: 45 min · Completado: —
+- [x] **CA-1** · Estadísticas abre con la jornada de hoy y un calendario para elegir otra; la jornada va de 7:00 a 6:59 del día siguiente en `America/Argentina/Buenos_Aires` (una venta de la 0:30 cuenta para la jornada que empezó a las 7) · Estimación: 45 min · Completado: 2026-10-26 02:02
 
-- [ ] **CA-2** · KPI de dinero generado por Empanadas, Pizzas, Ciabattas, Sándwiches de miga, Coca-Cola y Pepsi, cada cuadro relleno con el color de su grupo (US-15), y un cuadro aparte "Promos" con lo facturado en promos · Estimación: 45 min · Completado: —
+- [x] **CA-2** · KPI de dinero generado por Empanadas, Pizzas, Ciabattas, Sándwiches de miga, Coca-Cola y Pepsi, cada cuadro relleno con el color de su grupo (US-15), y un cuadro aparte "Promos" con lo facturado en promos · Estimación: 45 min · Completado: 2026-10-26 02:02
 
-- [ ] **CA-3** · KPI de ganancia en limpio = ventas (con el recargo de las cuotas) − costo para el local congelado de lo vendido (también lo que usó cada promo) − mermas (ejemplo del cliente: comprada a $10 y vendida a $30 → $20) · Estimación: 30 min · Completado: —
+- [x] **CA-3** · KPI de ganancia en limpio = ventas (con el recargo de las cuotas) − costo para el local congelado de lo vendido (también lo que usó cada promo) − mermas (ejemplo del cliente: comprada a $10 y vendida a $30 → $20) · Estimación: 30 min · Completado: 2026-10-26 02:02
 
-- [ ] **CA-4** · KPI de ventas registradas; estados de carga, día sin ventas y error; tests sobre datos sembrados · Estimación: 30 min · Completado: —
+- [x] **CA-4** · KPI de ventas registradas; estados de carga, día sin ventas y error; tests sobre datos sembrados · Estimación: 30 min · Completado: 2026-10-26 02:02
 
-- [ ] **CA-5** · Lo facturado por Efectivo, Transferencia, Débito y Crédito, cada uno en su cuadro; se quitan los KPI heredados que el cliente no nombró (valor del stock, unidades, pérdidas y órdenes procesadas) · Estimación: 30 min · Completado: —
+- [x] **CA-5** · Lo facturado por Efectivo, Transferencia, Débito y Crédito, cada uno en su cuadro; se quitan los KPI heredados que el cliente no nombró (valor del stock, unidades, pérdidas y órdenes procesadas) · Estimación: 30 min · Completado: 2026-10-26 02:02
 
 **Detalle**
 
@@ -2039,6 +2039,10 @@ del día, de forma que sepa cómo cerró la jornada.
   para el local de lo que se usó (cliente y dev).
 - KPI que el cliente no nombró: se quitan. Lo facturado va por cada uno de los 4 medios de pago (cliente).
 - El día es la jornada del local, de 7:00 a 6:59 (dev).
+
+**Notas**
+
+- Cierre: `npm run verify` (797 tests, cobertura 96/89, mutación 89,1) y 70 E2E en verde. La página de Estadísticas y su store salieron de `eslint-legacy.json` (78 archivos). README en `docs/features/stats/README.md`.
 
 ### US-13 · Estadísticas: cuadros de vendedores y de ventas
 
