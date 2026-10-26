@@ -3,7 +3,7 @@ import { databaseErrorCode } from '@/lib/db-errors';
 import type { CardRepository } from '@/features/card/repository/card.repository';
 
 export const CARD_INPUT = { name: 'Visa', plans: [{ installments: 3, surchargePct: 10.5 }, { installments: 1, surchargePct: 0 }] };
-export type CardRepositoryHarness = { repository: CardRepository };
+export type CardRepositoryHarness = { repository: CardRepository; linkPayment(cardId: string): Promise<void> };
 
 async function failureCode(operation: Promise<unknown>): Promise<string | null> {
   return operation.then(
@@ -45,6 +45,12 @@ export function describeCardRepository(label: string, setup: () => Promise<CardR
       expect(await harness.repository.remove({ id: created.id, version: 9 })).toBe(false);
       expect(await harness.repository.remove({ id: created.id, version: 1 })).toBe(true);
       expect(await harness.repository.findById(created.id)).toBeNull();
+    });
+
+    it('no deja borrar una tarjeta que ya se usó en un cobro (US-11)', async () => {
+      const created = await harness.repository.insert(CARD_INPUT);
+      await harness.linkPayment(created.id);
+      expect(await failureCode(harness.repository.remove({ id: created.id, version: 1 }))).toBe('HAS_RELATIONS');
     });
 
     it('lista por nombre', async () => {

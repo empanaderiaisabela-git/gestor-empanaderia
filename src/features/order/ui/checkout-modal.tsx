@@ -9,6 +9,7 @@ import { orderSubtotal } from '@/features/order/domain/promo-line';
 import { useOrderStore } from '@/features/order/store/order.store';
 import { formatMoney } from '@/lib/format-money';
 import { BLANK_CHECKOUT, type CheckoutForm, checkCheckout } from './checkout-form';
+import { useActiveCards } from './credit-fields';
 import { PaymentPicker } from './payment-picker';
 import type { CheckoutModel } from './use-checkout';
 import type { OrderBoardModel } from './use-order-board';
@@ -34,8 +35,9 @@ export function CheckoutModal({ model, board }: CheckoutModalProps): JSX.Element
   const [form, setForm] = useState(BLANK_CHECKOUT);
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
+  const cards = useActiveCards();
   const subtotal = orderSubtotal(lines.filter((line) => line.flavors.length > 0), promos, board.book) ?? 0;
-  const check = checkCheckout(subtotal, form);
+  const check = checkCheckout(subtotal, form, cards);
 
   useEffect(() => {
     setForm(BLANK_CHECKOUT);
@@ -51,17 +53,17 @@ export function CheckoutModal({ model, board }: CheckoutModalProps): JSX.Element
   };
 
   return (
-    <ResponsiveModal isOpen={model.isOpen} onClose={model.close} title='Cobrar pedido' icon={<Wallet className='w-5 h-5 text-brand-600' />} width='sm' onSubmit={submit} submitLabel={`Confirmar ${formatMoney(check.total)}`} isPending={pending}>
+    <ResponsiveModal isOpen={model.isOpen} onClose={model.close} title='Cobrar pedido' icon={<Wallet className='w-5 h-5 text-brand-600' />} width='sm' onSubmit={submit} submitLabel={`Confirmar ${formatMoney(check.charged)}`} isPending={pending}>
       <ErrorAlert error={error} />
       <div className='space-y-4'>
         <p className='text-sm text-zinc-500'>
           Comprador: {buyerName.trim() || 'Sin nombre'} · Subtotal {formatMoney(subtotal)}
         </p>
         <DiscountFields form={form} onChange={setForm} />
-        <PaymentPicker form={form} total={check.total} onChange={setForm} />
+        <PaymentPicker form={form} total={check.total} credit={{ cards, surcharge: check.surcharge }} onChange={setForm} />
         <p className='text-right'>
           <span className='block text-xs font-bold uppercase text-zinc-500'>Total a cobrar</span>
-          <span className='text-2xl font-black text-zinc-900 dark:text-zinc-100'>{formatMoney(check.total)}</span>
+          <span className='text-2xl font-black text-zinc-900 dark:text-zinc-100'>{formatMoney(check.charged)}</span>
         </p>
       </div>
     </ResponsiveModal>

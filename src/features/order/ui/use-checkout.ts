@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { useMenuStore } from '@/features/menu/store/menu.store';
 import { checkoutAction } from '@/features/order/actions/checkout';
-import type { Discount, Payment } from '@/features/order/domain/order-validation';
+import type { Discount } from '@/features/order/domain/order-validation';
 import { useOrderStore } from '@/features/order/store/order.store';
+import type { FormPayment } from './checkout-form';
 
 export type Notice = { type: 'success' | 'error'; text: string };
-export type CheckoutDraft = { discount: Discount; payments: Payment[] };
+export type CheckoutDraft = { discount: Discount; payments: FormPayment[] };
 
 export type CheckoutModel = {
   isOpen: boolean;

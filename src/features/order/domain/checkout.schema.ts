@@ -27,10 +27,21 @@ const promoLineSchema = z.strictObject({
 
 const money = z.number('Ingresá un monto').max(MAX_AMOUNT, 'El monto es demasiado grande');
 
-const paymentSchema = z.strictObject({
-  type: z.enum(PAYMENT_TYPES, 'Elegí un medio de pago'),
-  amount: money.positive('El monto debe ser mayor a 0'),
-});
+type CardChoice = { type: string; cardId?: string; installments?: number };
+
+const cardFits = ({ type, cardId, installments }: CardChoice): boolean => {
+  const complete = cardId !== undefined && installments !== undefined;
+  return type === 'credito' ? complete : cardId === undefined && installments === undefined;
+};
+
+const paymentSchema = z
+  .strictObject({
+    type: z.enum(PAYMENT_TYPES, 'Elegí un medio de pago'),
+    amount: money.positive('El monto debe ser mayor a 0'),
+    cardId: z.uuid('Elegí una tarjeta válida').optional(),
+    installments: z.number('Elegí las cuotas').int('Elegí las cuotas').optional(),
+  })
+  .refine(cardFits, { message: 'Elegí la tarjeta y las cuotas', path: ['cardId'] });
 
 const distinctTypes = (payments: { type: string }[]): boolean => new Set(payments.map((payment) => payment.type)).size === payments.length;
 

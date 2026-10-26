@@ -55,6 +55,13 @@ describe('tabla de errores de Tarjetas (US-10 CA-2)', () => {
     expect(await createCardAction(CARD_INPUT)).toEqual({ success: false, code: 'DUPLICATE', error: DATABASE.UNIQUE_VIOLATION });
   });
 
+  it('HAS_RELATIONS: no deja borrar una tarjeta que ya se usó en un cobro (US-11)', async () => {
+    const id = await existingCard();
+    fakeCards.state.withPayments.add(id);
+    await asUser({ role: 'admin' });
+    expect(await deleteCardAction({ id, version: 1 })).toEqual({ success: false, code: 'HAS_RELATIONS', error: DATABASE.FOREIGN_KEY_VIOLATION });
+  });
+
   it('STALE_VERSION: editar, activar o borrar con una versión vieja', async () => {
     const id = await existingCard();
     await asUser({ role: 'admin' });

@@ -1,5 +1,6 @@
-import { pgTable, uuid, varchar, timestamp, pgEnum, numeric, integer, jsonb, index, boolean } from 'drizzle-orm/pg-core';
+import { pgTable, uuid, varchar, timestamp, pgEnum, numeric, integer, jsonb, index, boolean, check } from 'drizzle-orm/pg-core';
 import { sql, relations } from 'drizzle-orm';
+import { cards } from './card-schema';
 
 export const roleEnum = pgEnum('role', ['admin', 'vendedor']);
 export const paymentTypeEnum = pgEnum('payment_type', ['efectivo', 'transferencia', 'debito', 'credito']);
@@ -90,9 +91,22 @@ export const salePayments = pgTable(
       .references(() => sales.id),
     type: paymentTypeEnum('type').notNull(),
     amount: numeric('amount', { precision: 10, scale: 2 }).notNull(),
+    cardId: uuid('card_id').references(() => cards.id),
+    installments: integer('installments'),
+    surchargePct: numeric('surcharge_pct', { precision: 5, scale: 2 }),
+    surchargeAmount: numeric('surcharge_amount', { precision: 10, scale: 2 }),
     createdAt: timestamp('created_at').defaultNow().notNull(),
   },
-  (table) => [index('sale_payments_sale_id_idx').on(table.saleId)]
+  (table) => [
+    index('sale_payments_sale_id_idx').on(table.saleId),
+    index('sale_payments_card_id_idx').on(table.cardId),
+    check(
+      'sale_payments_card_check',
+      sql`(${table.cardId} is null and ${table.installments} is null and ${table.surchargePct} is null and ${table.surchargeAmount} is null)
+        or (${table.type}::text = 'credito' and ${table.cardId} is not null and ${table.installments} is not null and ${table.surchargePct} is not null and ${table.surchargeAmount} is not null
+          and ${table.installments} in (1, 3, 6, 12) and ${table.surchargePct} >= 0 and ${table.surchargeAmount} >= 0)`
+    ),
+  ]
 );
 
 export const salesRelations = relations(sales, ({ one, many }) => ({

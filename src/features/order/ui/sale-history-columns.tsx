@@ -3,7 +3,7 @@ import type { JSX } from 'react';
 import { EntityCard } from '@/components/ui/entity-card';
 import type { ColumnDef } from '@/components/ui/virtualized-data-table';
 import { describeSaleLine } from '@/features/order/domain/order-describe';
-import { PAYMENT_LABELS } from '@/features/order/domain/order-validation';
+import { chargedAmount, describePayment } from '@/features/order/domain/payment-describe';
 import { buyerLabel, type SaleDef } from '@/features/order/domain/sale-history.schema';
 import { formatDateTime } from '@/lib/format-date-time';
 import { formatMoney } from '@/lib/format-money';
@@ -16,8 +16,8 @@ export function PaymentChips({ sale }: { sale: SaleDef }): JSX.Element {
   return (
     <span className='flex flex-wrap gap-1'>
       {sale.payments.map((payment) => (
-        <span key={payment.type} className={chip} title={formatMoney(payment.amount)}>
-          {PAYMENT_LABELS[payment.type]}
+        <span key={payment.type} className={chip} title={`${describePayment(payment)}: ${formatMoney(chargedAmount(payment))}`}>
+          {describePayment(payment)}
         </span>
       ))}
     </span>

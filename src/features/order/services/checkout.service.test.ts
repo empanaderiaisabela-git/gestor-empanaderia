@@ -12,6 +12,7 @@ describe('cobrar el pedido (US-6)', () => {
 
   it('cobra una ½ docena surtida y una pizza mitad y mitad con dos medios de pago (CA-1, CA-3)', async () => {
     const payments = [{ type: 'efectivo' as const, amount: 10000 }, { type: 'debito' as const, amount: 8000 }];
+    const saved = payments.map((payment) => ({ ...payment, cardId: null, installments: null, surchargePct: null, surchargeAmount: null }));
     const result = await service.checkout(CALLER, checkoutOf([halfDozen, halfAndHalf], { buyerName: 'Marta', payments }));
     expect(result.total).toBe(18000);
     expect(fake.sales).toEqual([
@@ -23,14 +24,14 @@ describe('cobrar el pedido (US-6)', () => {
         total: 18000,
         discountAmount: 0,
         discountPercentage: 0,
-        payments,
+        payments: saved,
         lines: [
           { group: 'empanadas', presentationKey: 'u6', promotionId: null, quantity: 1, unitPrice: 8000, subtotal: 8000, description: '2 Carne + 4 Pollo', position: 0, items: [{ menuItemId: CARNE.id, units: 2, unitCost: 400 }, { menuItemId: POLLO.id, units: 4, unitCost: 350 }] },
           { group: 'pizzas', presentationKey: 'pizza_2', promotionId: null, quantity: 1, unitPrice: 10000, subtotal: 10000, description: 'Muzza / Napolitana', position: 1, items: [{ menuItemId: MUZZA.id, units: 0.5, unitCost: 2000 }, { menuItemId: NAPO.id, units: 0.5, unitCost: 1500 }] },
         ],
       },
     ]);
-    expect(fake.audits).toEqual([{ userId: CALLER.id, action: 'CREAR', entity: 'SALE', entityId: result.saleId, detail: { total: 18000, buyerName: 'Marta', lines: 2, payments } }]);
+    expect(fake.audits).toEqual([{ userId: CALLER.id, action: 'CREAR', entity: 'SALE', entityId: result.saleId, detail: { total: 18000, buyerName: 'Marta', lines: 2, payments: saved } }]);
   });
 
   it('descuenta el stock de cada gusto, también media pizza (CA-4)', async () => {

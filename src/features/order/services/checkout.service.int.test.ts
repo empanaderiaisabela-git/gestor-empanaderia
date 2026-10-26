@@ -7,6 +7,7 @@ import { auditLogs, salePayments, sales } from '@/lib/db/schema';
 import { TEST_USER_IDS } from '@/test/as-user';
 import { seedTestUser } from '@/test/seed-test-user';
 import { truncateAll } from '@/test/truncate-all';
+import { drizzleCardRepository } from '@/features/card/repository/card.repository';
 import { drizzlePromotionRepository } from '@/features/promotion/repository/promotion.repository';
 import { checkoutService } from './checkout.service';
 
@@ -60,6 +61,16 @@ describe('cobro contra Postgres (US-6 CA-3 y CA-4)', () => {
     expect(await db.select({ promotionId: saleLines.promotionId, group: saleLines.group, subtotal: saleLines.subtotal, description: saleLines.description }).from(saleLines)).toEqual([{ promotionId: promo.id, group: null, subtotal: '2000.00', description: 'Coca promo: Coca 500' }]);
     expect(await db.select({ units: saleLineItems.units, unitCost: saleLineItems.unitCost }).from(saleLineItems)).toEqual([{ units: '1.0', unitCost: '1200.00' }]);
     expect(await stockOf(coca)).toBe(0);
+  });
+
+  it('cobra con crédito en 3 cuotas: guarda la tarjeta, el % y el recargo, y el total los incluye (US-11)', async () => {
+    const card = await drizzleCardRepository(db).insert({ name: 'Visa', plans: [{ installments: 3, surchargePct: 10 }] });
+    const { total } = await checkoutService.checkout(CALLER, { ...order([line(coca)], 2500), payments: [{ type: 'credito', amount: 2500, cardId: card.id, installments: 3 }] });
+    expect(total).toBe(2750);
+    expect(await db.select({ total: sales.total }).from(sales)).toEqual([{ total: '2750.00' }]);
+    expect(await db.select({ cardId: salePayments.cardId, installments: salePayments.installments, surchargePct: salePayments.surchargePct, surchargeAmount: salePayments.surchargeAmount }).from(salePayments)).toEqual([
+      { cardId: card.id, installments: 3, surchargePct: '10.00', surchargeAmount: '250.00' },
+    ]);
   });
 
   it('dos cobros simultáneos de la última Coca: uno gana y el otro recibe INSUFFICIENT_STOCK', async () => {

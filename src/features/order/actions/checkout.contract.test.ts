@@ -11,7 +11,7 @@ vi.mock('@/features/order/repository/checkout-unit-of-work', async () => {
   return { drizzleCheckoutUnitOfWork: fake };
 });
 
-const ORDER = checkoutOf([halfDozen, halfAndHalf], { payments: [{ type: 'efectivo', amount: 10000 }, { type: 'credito', amount: 8000 }] });
+const ORDER = checkoutOf([halfDozen, halfAndHalf], { payments: [{ type: 'efectivo', amount: 10000 }, { type: 'transferencia', amount: 8000 }] });
 
 describe('acción de cobro (US-6)', () => {
   beforeEach(() => loadMenu(fakeCheckout));

@@ -15,7 +15,7 @@ describe('lo que el navegador puede mandar al cobrar (US-6 CA-1 y CA-2)', () => 
   });
 
   it('acepta los 4 medios de pago, hasta 2 y distintos', () => {
-    const payments = [{ type: 'debito', amount: 1000 }, { type: 'credito', amount: 2000 }];
+    const payments = [{ type: 'debito', amount: 1000 }, { type: 'credito', amount: 2000, cardId: ITEM, installments: 3 }];
     expect(checkoutSchema.parse({ ...VALID, payments }).payments).toEqual(payments);
     expect(checkoutSchema.parse({ ...VALID, payments: [{ type: 'transferencia', amount: 3000 }] }).payments).toHaveLength(1);
   });
@@ -23,7 +23,11 @@ describe('lo que el navegador puede mandar al cobrar (US-6 CA-1 y CA-2)', () => 
   it.each([
     { caso: 'pedido vacío', input: { ...VALID, lines: [] }, message: 'El pedido está vacío' },
     { caso: 'sin pagos', input: { ...VALID, payments: [] }, message: 'Elegí un medio de pago' },
-    { caso: '3 pagos', input: { ...VALID, payments: [{ type: 'efectivo', amount: 1 }, { type: 'debito', amount: 1 }, { type: 'credito', amount: 1 }] }, message: 'Se aceptan hasta 2 medios de pago' },
+    { caso: '3 pagos', input: { ...VALID, payments: [{ type: 'efectivo', amount: 1 }, { type: 'debito', amount: 1 }, { type: 'transferencia', amount: 1 }] }, message: 'Se aceptan hasta 2 medios de pago' },
+    { caso: 'crédito sin tarjeta', input: { ...VALID, payments: [{ type: 'credito', amount: 3000 }] }, message: 'Elegí la tarjeta y las cuotas' },
+    { caso: 'crédito sin cuotas', input: { ...VALID, payments: [{ type: 'credito', amount: 3000, cardId: ITEM }] }, message: 'Elegí la tarjeta y las cuotas' },
+    { caso: 'tarjeta en efectivo', input: { ...VALID, payments: [{ type: 'efectivo', amount: 3000, cardId: ITEM, installments: 1 }] }, message: 'Elegí la tarjeta y las cuotas' },
+    { caso: 'tarjeta inválida', input: { ...VALID, payments: [{ type: 'credito', amount: 3000, cardId: 'x', installments: 1 }] }, message: 'Elegí una tarjeta válida' },
     { caso: 'dos pagos en efectivo', input: { ...VALID, payments: [{ type: 'efectivo', amount: 1 }, { type: 'efectivo', amount: 1 }] }, message: 'Usá medios de pago distintos' },
     { caso: 'medio desconocido', input: { ...VALID, payments: [{ type: 'cheque', amount: 1 }] }, message: 'Elegí un medio de pago' },
     { caso: 'pago en 0', input: { ...VALID, payments: [{ type: 'efectivo', amount: 0 }] }, message: 'El monto debe ser mayor a 0' },

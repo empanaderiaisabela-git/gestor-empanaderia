@@ -20,7 +20,7 @@ vi.mock('@/features/order/repository/sale-history-unit-of-work', async () => {
 
 async function sellTwoCokes(): Promise<string> {
   await asUser({ role: 'vendedor' });
-  const result = await checkoutAction(checkoutOf([cokes(2)], { buyerName: 'Rocío', payments: [{ type: 'credito', amount: 5000 }] }));
+  const result = await checkoutAction(checkoutOf([cokes(2)], { buyerName: 'Rocío', payments: [{ type: 'debito', amount: 5000 }] }));
   if (!result.success) throw new Error(result.error);
   return result.data.saleId;
 }
@@ -34,7 +34,7 @@ describe('historial y anulación de ventas (US-7)', () => {
   it('el vendedor ve el historial, con importes como números y sin costos', async () => {
     const saleId = await sellTwoCokes();
     const [sale] = await fetchSaleHistory();
-    expect(sale).toMatchObject({ id: saleId, buyerName: 'Rocío', vendorName: 'vendedor', total: 5000, payments: [{ type: 'credito', amount: 5000 }], lines: [{ group: 'coca_cola', quantity: 2, unitPrice: 2500, subtotal: 5000, description: 'Coca 500' }] });
+    expect(sale).toMatchObject({ id: saleId, buyerName: 'Rocío', vendorName: 'vendedor', total: 5000, payments: [{ type: 'debito', amount: 5000 }], lines: [{ group: 'coca_cola', quantity: 2, unitPrice: 2500, subtotal: 5000, description: 'Coca 500' }] });
     expect(JSON.stringify(sale)).not.toMatch(/unitCost|cost/i);
   });
 

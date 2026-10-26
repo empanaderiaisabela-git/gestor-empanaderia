@@ -3,21 +3,23 @@ import { saleLineItems, saleLines } from '@/lib/db/order-schema';
 import { salePayments, sales } from '@/lib/db/schema';
 import type { DbTransaction } from '@/lib/db/transaction';
 import type { MenuGroup } from '@/features/menu/domain/menu-groups';
-import type { Payment } from '@/features/order/domain/order-validation';
+import type { PaymentType } from '@/features/order/domain/order-validation';
 
 export type NewSale = { vendorId: string; buyerName: string | null; total: number; discountAmount: number; discountPercentage: number };
+export type NewPayment = { type: PaymentType; amount: number; cardId: string | null; installments: number | null; surchargePct: number | null; surchargeAmount: number | null };
 export type NewSaleItem = { menuItemId: string; units: number; unitCost: number };
 export type NewSaleLine = { group: MenuGroup | null; presentationKey: string | null; promotionId: string | null; quantity: number; unitPrice: number; subtotal: number; description: string; position: number; items: NewSaleItem[] };
 
 export type SaleWriter = {
   insertSale(sale: NewSale): Promise<string>;
   insertLine(saleId: string, line: NewSaleLine): Promise<string>;
-  insertPayments(saleId: string, payments: Payment[]): Promise<void>;
+  insertPayments(saleId: string, payments: NewPayment[]): Promise<void>;
 };
 
 type Executor = typeof db | DbTransaction;
 
 const money = (value: number): string => value.toFixed(2);
+const optionalMoney = (value: number | null): string | null => (value === null ? null : money(value));
 
 export function drizzleSaleWriter(executor: Executor = db): SaleWriter {
   return {
@@ -37,7 +39,8 @@ export function drizzleSaleWriter(executor: Executor = db): SaleWriter {
       return row.id;
     },
     insertPayments: async (saleId, payments) => {
-      await executor.insert(salePayments).values(payments.map(({ type, amount }) => ({ saleId, type, amount: money(amount) })));
+      const rows = payments.map(({ amount, surchargePct, surchargeAmount, ...payment }) => ({ ...payment, saleId, amount: money(amount), surchargePct: optionalMoney(surchargePct), surchargeAmount: optionalMoney(surchargeAmount) }));
+      await executor.insert(salePayments).values(rows);
     },
   };
 }

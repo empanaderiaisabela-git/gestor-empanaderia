@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useMenuStore } from '@/features/menu/store/menu.store';
 import { checkoutAction } from '@/features/order/actions/checkout';
@@ -9,6 +9,9 @@ import { OrderBoard } from './order-board';
 vi.mock('@/features/menu/actions/fetch-menu-items', () => ({ fetchMenuItems: vi.fn(async () => ITEMS) }));
 vi.mock('@/features/menu/actions/fetch-menu-group-prices', () => ({ fetchMenuGroupPrices: vi.fn(async () => GROUP_PRICES) }));
 vi.mock('@/features/order/actions/checkout', () => ({ checkoutAction: vi.fn() }));
+vi.mock('@/features/card/actions/fetch-cards', () => ({
+  fetchCards: vi.fn(async () => [{ id: 'v1', name: 'Visa', isActive: true, version: 1, plans: [{ installments: 3, surchargePct: 10 }], createdAt: '', updatedAt: '' }]),
+}));
 
 const store = () => useOrderStore.getState();
 const PIZZA = { group: 'pizzas', presentationKey: 'pizza_2', flavors: [{ menuItemId: 'muzza', units: 0.5 }, { menuItemId: 'napo', units: 0.5 }], quantity: 1 };
@@ -68,6 +71,18 @@ describe('cobrar desde el tablero (US-6 CA-1 y CA-5)', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Confirmar $0' }));
     expect(await screen.findByText('El descuento no puede dejar el total en $0')).toBeDefined();
     expect(checkoutAction).not.toHaveBeenCalled();
+  });
+
+  it('crédito en cuotas: elige tarjeta y plan, ve el recargo y cobra el total con recargo (US-11)', async () => {
+    vi.mocked(checkoutAction).mockResolvedValue({ success: true, message: 'Venta registrada por $17.050', data: { saleId: 's1', total: 17050 } });
+    await openCheckout();
+    fireEvent.click(screen.getByRole('button', { name: 'Efectivo' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Crédito' }));
+    fireEvent.change(await screen.findByLabelText('Tarjeta'), { target: { value: 'v1' } });
+    fireEvent.change(screen.getByLabelText('Cuotas'), { target: { value: '3' } });
+    expect(screen.getByText('Recargo de cuotas: $1.550')).toBeDefined();
+    fireEvent.click(screen.getByRole('button', { name: 'Confirmar $17.050' }));
+    await waitFor(() => expect(checkoutAction).toHaveBeenCalledWith(expect.objectContaining({ payments: [{ type: 'credito', amount: 15500, cardId: 'v1', installments: 3 }] })));
   });
 
   it('con un descuento en $, el total baja y se muestra el comprador', async () => {

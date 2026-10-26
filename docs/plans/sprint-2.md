@@ -178,3 +178,10 @@ responde otra cosa. También figura en las notas del ítem del backlog.
 - **Situación**: Un cliente lleva la promo "Media + Coca" a $9.000 y una Coca suelta a $2.500 (total $11.500). El vendedor le hace un 10 % de descuento.
 - **Qué elegí y por qué**: El descuento se aplica sobre el total de la venta, promos incluidas: $11.500 − 10 % = $10.350. Es como funcionaba el descuento antes de las promos, no frena una venta y no toca datos guardados.
 - **Si respondés otra cosa**: Si la promo no admite más descuento, el descuento se calcularía sólo sobre las líneas comunes ($2.500 − 10 % = $2.250, total $11.250): se cambia el cálculo del total en `checkout.service.ts` y en el modal de cobro (`checkout-modal.tsx`).
+
+### D-3 · Importe de una venta con recargo de cuotas (US-11)
+
+- **Pregunta**: En una venta con crédito en cuotas, ¿el total de la venta (el que se ve en Ventas/Pedidos, en el comprobante y en los cuadros de Estadísticas) es lo que pagó el cliente con el recargo, o el precio de los productos sin el recargo?
+- **Situación**: Un pedido de $10.000 se paga con $4.000 en efectivo y $6.000 con Visa en 3 cuotas al 10 %. El recargo es $600 y el cliente paga $10.600.
+- **Qué elegí y por qué**: El total de la venta es $10.600: lo que realmente cobró el local. El comprobante lo desglosa: subtotal $10.000, recargo de cuotas $600, total $10.600, y el pago con Visa figura por $6.600. El dinero por comida de Estadísticas sigue usando el precio de los productos ($10.000) y el recargo suma a la ganancia y a lo facturado con crédito.
+- **Si respondés otra cosa**: Si el total debe ser $10.000, se guarda el total sin el recargo en `checkout.service.ts` y el recargo queda sólo en el pago; el comprobante (`sale-receipt.tsx`) y los cuadros de US-12 y US-13 lo suman aparte.

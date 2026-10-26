@@ -1833,7 +1833,7 @@ la leen.
 | 1   | [US-8](#us-8--promociones-armar-promos-con-precio-de-rebaja)                     | Promociones: armar promos con precio de rebaja              | En revisión | T-13        | 2 h 20 min      |
 | 2   | [US-9](#us-9--ventas-subdivisión-promos)                                         | Ventas: subdivisión Promos                                  | En revisión | US-8        | 3 h             |
 | 3   | [US-10](#us-10--tarjetas-tarjetas-aceptadas-y-planes-de-cuotas-con-recargo)      | Tarjetas: tarjetas aceptadas y planes de cuotas con recargo | En revisión | T-13        | 2 h             |
-| 4   | [US-11](#us-11--ventas-cobrar-con-crédito-en-cuotas)                             | Ventas: cobrar con crédito en cuotas                        | Pendiente | US-10       | 2 h             |
+| 4   | [US-11](#us-11--ventas-cobrar-con-crédito-en-cuotas)                             | Ventas: cobrar con crédito en cuotas                        | En revisión | US-10       | 2 h             |
 | 5   | [US-12](#us-12--estadísticas-del-día-dinero-por-comida-ganancia-y-ventas)        | Estadísticas del día: dinero por comida, ganancia y ventas  | Pendiente | US-9, US-11 | 3 h             |
 | 6   | [US-13](#us-13--estadísticas-cuadros-de-vendedores-y-de-ventas)                  | Estadísticas: cuadros de vendedores y de ventas             | Pendiente | US-12       | 2 h             |
 | 7   | [US-14](#us-14--gastos-anotador-de-facturas)                                     | Gastos: anotador de facturas                                | Pendiente | T-13        | 2 h             |
@@ -1969,12 +1969,12 @@ plan, de forma que el vendedor cobre en cuotas con el importe correcto.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
-| Dueño        | —         |
-| Inicio       | —         |
+| Estado       | En revisión |
+| Dueño        | Agente |
+| Inicio       | 2026-10-26 |
 | Tamaño       | M         |
 | Depende de   | US-10     |
-| Plan         | —         |
+| Plan         | [`docs/plans/US-11-credito-en-cuotas.md`](docs/plans/US-11-credito-en-cuotas.md) |
 | Merge        | —         |
 | Horas reales | —         |
 
@@ -1983,16 +1983,21 @@ recargo del plan.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · Al elegir Crédito se elige una tarjeta activa y uno de sus planes; el pago suma el recargo y el importe final se ve antes de confirmar; el Débito no pide tarjeta · Estimación: 45 min · Completado: —
+- [x] **CA-1** · Al elegir Crédito se elige una tarjeta activa y uno de sus planes; el pago suma el recargo y el importe final se ve antes de confirmar; el Débito no pide tarjeta · Estimación: 45 min · Completado: 2026-10-26 01:44
 
-- [ ] **CA-2** · El servidor recalcula el recargo desde la tarjeta (ignora el del navegador) y guarda tarjeta, cuotas, porcentaje y monto del recargo · Estimación: 45 min · Completado: —
+- [x] **CA-2** · El servidor recalcula el recargo desde la tarjeta (ignora el del navegador) y guarda tarjeta, cuotas, porcentaje y monto del recargo · Estimación: 45 min · Completado: 2026-10-26 01:44
 
-- [ ] **CA-3** · Una tarjeta o un plan inexistente o inactivo da error con su test de contrato; el comprobante y el historial muestran la tarjeta y las cuotas · Estimación: 30 min · Completado: —
+- [x] **CA-3** · Una tarjeta o un plan inexistente o inactivo da error con su test de contrato; el comprobante y el historial muestran la tarjeta y las cuotas · Estimación: 30 min · Completado: 2026-10-26 01:44
 
 **Preguntas respondidas** (cliente, 2026-10-25)
 
 - El recargo cuenta como ganancia en Estadísticas (US-12 CA-3).
 - El Débito no pide tarjeta.
+
+**Notas**
+
+- Decisión provisoria D-3 (`docs/plans/sprint-2.md`): el total de la venta incluye el recargo de cuotas (lo que pagó el cliente).
+- Cierre: `npm run verify` (784 tests, cobertura 96/89, mutación 89) y 69 E2E en verde. Hallazgo: en una base nueva todas las migraciones corren en una sola transacción, y Postgres no deja usar el valor `credito` del enum en la misma transacción en que se agregó (0008). El `CHECK` de 0015 compara `type::text`; se probó migrar desde cero, como pasará en Supabase.
 
 ### US-12 · Estadísticas del día: dinero por comida, ganancia y ventas
 

@@ -14,7 +14,7 @@ export const saleLineRowSchema = z.object({
   description: z.string(),
 });
 
-export const salePaymentRowSchema = z.object({ type: z.enum(PAYMENT_TYPES), amount });
+export const salePaymentRowSchema = z.object({ type: z.enum(PAYMENT_TYPES), amount, cardName: z.string().nullable(), installments: z.number().nullable(), surchargeAmount: amount.nullable() });
 
 export const saleRowSchema = z.object({
   id: z.uuid(),

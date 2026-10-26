@@ -55,6 +55,7 @@ recargo · 3 cuotas +10 %").
 | Un vendedor crea, edita, activa o borra | `FORBIDDEN` | Solo los administradores pueden realizar esta acción | `card-errors.contract.test.ts` |
 | Sin planes, cuotas que no son 1, 3, 6 o 12, cuotas repetidas, recargo fuera de 0–100, nombre inválido | `VALIDATION` | Los datos proporcionados no son válidos. | `card-errors.contract.test.ts`, `card.schema.test.ts` |
 | Nombre de otra tarjeta | `DUPLICATE` | Ya existe un registro con esos datos (DNI, nombre o código duplicado). | `card-errors.contract.test.ts` |
+| Borrar una tarjeta ya usada en un cobro (US-11) | `HAS_RELATIONS` | No se puede completar la operación porque existen registros relacionados. | `card-errors.contract.test.ts` |
 | Editar, activar o borrar con una versión vieja | `STALE_VERSION` | Los datos en el servidor han cambiado. Por favor, sincroniza la lista e intenta nuevamente. | `card-errors.contract.test.ts` |
 
 ## Pantallas
