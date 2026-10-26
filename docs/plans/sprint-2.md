@@ -121,6 +121,8 @@ US-14, BUG-11 y BUG-14 no dependen de los demás: se pueden adelantar si un íte
 
 - Sin cambios respecto de lo cargado. Pasó del Sprint 1 al 2 porque las fotos son del catálogo público, que hoy no
   es prioridad. Después de T-12, las fotos apuntan al modelo nuevo.
+- Se cerró sin código de producción: T-12 ya cumplía los tres CA. Se sumó un contrato que prueba que nada llega a
+  Cloudinary sin validar, y los límites quedan en JPG, PNG o WEBP de hasta 5 MB (D-5).
 
 ## 9 · BUG-13 Costo para el local y precio de venta (S, 45 min)
 
@@ -192,3 +194,10 @@ responde otra cosa. También figura en las notas del ítem del backlog.
 - **Situación**: Con la base local sin migrar, guardar un precio decía "Los datos en el servidor han cambiado. Por favor, sincroniza la lista…", y sincronizar no arreglaba nada. Otro caso: alguien arma a mano un pedido al servidor con un monto negativo que el formulario no deja escribir, y la regla de la base lo frena.
 - **Qué elegí y por qué**: Si la base rechaza el dato por su forma o por una regla (vacío, formato, texto largo, número fuera de rango o una regla `CHECK`), se ve "Los datos proporcionados no son válidos.". Cualquier otro error (tabla que falta, base caída) muestra "Ocurrió un error inesperado…" y el detalle queda sólo en el log del servidor, nunca en la pantalla. "Sincroniza" aparece únicamente cuando otra persona cambió el dato de verdad. Es lo más honesto con el usuario y no muestra SQL.
 - **Si respondés otra cosa**: Se cambia la lista `INVALID_DATA` de `src/lib/db-errors.ts` (y su tabla de tests en `db-errors.test.ts`): vaciarla hace que todo sea "error inesperado".
+
+### D-5 · Formatos y tamaño de las fotos (BUG-11)
+
+- **Pregunta**: ¿Qué formatos y qué tamaño máximo aceptamos para las fotos de los gustos y bebidas?
+- **Situación**: El admin le saca una foto con el celular a la pizza de muzzarella: un JPG de 3 MB entra. Si intenta subir un GIF animado, una foto de 8 MB o pegar el link de una imagen de internet, el sistema la rechaza antes de mandarla a Cloudinary.
+- **Qué elegí y por qué**: JPG, PNG o WEBP de hasta 5 MB, lo que ya regía desde T-12 y anunciaba el botón "Agregar foto (JPG, PNG o WEBP, hasta 5 MB)". Una foto de celular entra sin problema, y Cloudinary la achica a 800 × 800 al guardarla.
+- **Si respondés otra cosa**: Se cambian `PHOTO_MAX_BYTES` y los formatos de `DATA_URL` en `src/features/menu/domain/menu-photo.schema.ts`, el texto del botón en `menu-photos-modal.tsx` y los casos de `catalog.test.ts` y `upload-menu-photo.contract.test.ts`.

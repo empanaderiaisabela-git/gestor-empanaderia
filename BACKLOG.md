@@ -1837,7 +1837,7 @@ la leen.
 | 5   | [US-12](#us-12--estadísticas-del-día-dinero-por-comida-ganancia-y-ventas)        | Estadísticas del día: dinero por comida, ganancia y ventas  | En revisión | US-9, US-11 | 3 h             |
 | 6   | [US-13](#us-13--estadísticas-cuadros-de-vendedores-y-de-ventas)                  | Estadísticas: cuadros de vendedores y de ventas             | En revisión | US-12       | 2 h             |
 | 7   | [US-14](#us-14--gastos-anotador-de-facturas)                                     | Gastos: anotador de facturas                                | En revisión | T-13        | 2 h             |
-| 8   | [BUG-11](#bug-11--la-subida-de-fotos-no-valida-antes-de-subir)                   | La subida de fotos no valida antes de subir                 | Pendiente | BUG-1       | 55 min          |
+| 8   | [BUG-11](#bug-11--la-subida-de-fotos-no-valida-antes-de-subir)                   | La subida de fotos no valida antes de subir                 | En revisión | BUG-1       | 55 min          |
 | 9   | [BUG-13](#bug-13--alta-y-stock-confunden-el-costo-con-el-precio-de-venta)          | Alta y Stock confunden el costo con el precio de venta      | En revisión | US-3, US-4 | 45 min          |
 | 10  | [BUG-14](#bug-14--cualquier-error-de-la-base-se-muestra-como-datos-desactualizados) | Cualquier error de la base se muestra como "datos desactualizados" | En revisión | BUG-9 | 35 min          |
 | 11  | [T-14](#t-14--cierre-del-sprint-2)                                               | Cierre del Sprint 2                                         | Pendiente | todos       | 1 h             |
@@ -2113,12 +2113,12 @@ tenga un registro aparte de lo que se gasta.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
-| Dueño        | —         |
-| Inicio       | —         |
+| Estado       | En revisión |
+| Dueño        | Agente |
+| Inicio       | 2026-10-26 |
 | Tamaño       | S         |
 | Depende de   | BUG-1     |
-| Plan         | —         |
+| Plan         | [`docs/plans/BUG-11-validar-fotos.md`](docs/plans/BUG-11-validar-fotos.md) |
 | Merge        | —         |
 | Horas reales | —         |
 
@@ -2133,15 +2133,17 @@ subir y borrar quedan auditados.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · Se rechazan un producto inexistente, un tipo no permitido y un archivo demasiado grande, sin llamar a Cloudinary (test de contrato con un fake) · Estimación: 25 min · Completado: —
+- [x] **CA-1** · Se rechazan un producto inexistente, un tipo no permitido y un archivo demasiado grande, sin llamar a Cloudinary (test de contrato con un fake) · Estimación: 25 min · Completado: 2026-10-26 03:00
 
-- [ ] **CA-2** · Si falla el insert, la imagen se borra de Cloudinary · Estimación: 15 min · Completado: —
+- [x] **CA-2** · Si falla el insert, la imagen se borra de Cloudinary · Estimación: 15 min · Completado: 2026-10-26 03:00
 
-- [ ] **CA-3** · Subir y borrar una foto registran auditoría · Estimación: 15 min · Completado: —
+- [x] **CA-3** · Subir y borrar una foto registran auditoría · Estimación: 15 min · Completado: 2026-10-26 03:00
 
 **Preguntas abiertas**
 
-- ¿Qué tamaño máximo y qué formatos se aceptan?
+- ¿Qué tamaño máximo y qué formatos se aceptan? **Respondida en forma provisoria por el agente** (D-5 de
+  [`sprint-2.md`](docs/plans/sprint-2.md#d-5--formatos-y-tamaño-de-las-fotos-bug-11)): JPG, PNG o WEBP de hasta
+  5 MB, lo vigente desde T-12. Espera la confirmación del dev.
 
 **Notas**
 
@@ -2149,6 +2151,11 @@ subir y borrar quedan auditados.
   tamaño antes de llamar a Cloudinary, borra la imagen si falla el guardado y audita subir y borrar. Mientras no
   respondas la pregunta, acepta JPG, PNG o WEBP de hasta 5 MB. Al confirmar, este ítem se cierra sin código nuevo
   o con el ajuste de esos límites.
+- Cierre (2026-10-26): sin cambios de código de producción. Se sumó `upload-menu-photo.contract.test.ts`, que
+  prueba que un gusto inexistente, un GIF, una URL y una foto de más de 5 MB se rechazan **sin llamar** a
+  Cloudinary (el contrato anterior no probaba el tamaño ni que Cloudinary quedara sin tocar). Se comprobó que el
+  test falla si la subida pasa antes de validar. CA-2 y CA-3 ya estaban probados en `menu-photo.service.test.ts`.
+- `npm run verify` (865 tests, cobertura 96/88,7, mutación 89,3) y 72 E2E en verde.
 
 ### BUG-13 · Alta y Stock confunden el costo con el precio de venta
 
