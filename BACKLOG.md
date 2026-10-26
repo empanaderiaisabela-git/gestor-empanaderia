@@ -1835,8 +1835,9 @@ Sprint 1. El orden pone primero lo que cambia la venta (promos y tarjetas) y des
 | 6   | [US-14](#us-14--gastos-anotador-de-facturas)                                     | Gastos: anotador de facturas                                | Pendiente | T-13        | 2 h             |
 | 7   | [BUG-11](#bug-11--la-subida-de-fotos-no-valida-antes-de-subir)                   | La subida de fotos no valida antes de subir                 | Pendiente | BUG-1       | 55 min          |
 | 8   | [BUG-13](#bug-13--alta-y-stock-confunden-el-costo-con-el-precio-de-venta)          | Alta y Stock confunden el costo con el precio de venta      | En revisión | US-3, US-4 | 45 min          |
-| 9   | [T-14](#t-14--cierre-del-sprint-2)                                               | Cierre del Sprint 2                                         | Pendiente | todos       | 1 h             |
-|     |                                                                                  | **Total del sprint**                                        |           |             | **18 h 55 min** |
+| 9   | [BUG-14](#bug-14--cualquier-error-de-la-base-se-muestra-como-datos-desactualizados) | Cualquier error de la base se muestra como "datos desactualizados" | Pendiente | BUG-9 | 35 min          |
+| 10  | [T-14](#t-14--cierre-del-sprint-2)                                               | Cierre del Sprint 2                                         | Pendiente | todos       | 1 h             |
+|     |                                                                                  | **Total del sprint**                                        |           |             | **19 h 30 min** |
 
 ### US-8 · Promociones: armar promos con precio de rebaja
 
@@ -2128,6 +2129,42 @@ precio de la pizza entera. Nada cambia en la base ni en los cálculos.
 
 - `npm run verify` y los 63 E2E en verde. De paso, `order-board.test.tsx` espera la lista de gustos en vez de buscarla al instante: fallaba con la PC cargada.
 - Las Estadísticas (US-12) usan el mismo vocabulario al rehacer sus KPI.
+
+### BUG-14 · Cualquier error de la base se muestra como "datos desactualizados"
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Pendiente |
+| Dueño        | —         |
+| Inicio       | —         |
+| Tamaño       | S         |
+| Depende de   | BUG-9     |
+| Plan         | —         |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Actual**:
+- Drizzle 0.45 envuelve todo error de la base en un mensaje que empieza con `Failed query:`.
+- `databaseErrorCode` (`src/lib/db-errors.ts`) traduce ese texto a `STALE_VERSION`, así que un error sin código
+  conocido (una tabla que no existe, la base caída, un `CHECK` que falla) se muestra como "Los datos en el servidor
+  han cambiado. Por favor, sincroniza la lista e intenta nuevamente."
+- Sincronizar no lo arregla, y el usuario no sabe qué pasa. El dev lo vio al guardar un precio con la base local sin
+  migrar (2026-10-25).
+
+**Esperado**: `STALE_VERSION` sale sólo de una versión vieja de verdad (`AppError('STALE_VERSION')` o el
+`ConcurrencyError` heredado). Un error sin código conocido es `UNEXPECTED` ("Ocurrió un error inesperado…"), y el
+detalle va al log del servidor, nunca al cliente.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · Un `Failed query` sin código conocido devuelve `UNEXPECTED` (tabla de `db-errors.test.ts`, con un 42P01 de tabla inexistente y un error de conexión) · Estimación: 20 min · Completado: —
+
+- [ ] **CA-2** · Una versión vieja sigue devolviendo `STALE_VERSION` en los services y en el código heredado (contratos de proveedores, menú y stock, y el `ConcurrencyError`) · Estimación: 15 min · Completado: —
+
+**Notas**
+
+- Revisar si un `CHECK` que falla (23514) o un `NOT NULL` (23502) deberían ser `VALIDATION`. Si se decide, va en
+  este ítem.
 
 ### T-14 · Cierre del Sprint 2
 
