@@ -1,3 +1,4 @@
+import { useCardStore } from '@/features/card/store/card.store';
 import { useCustomerStore } from '@/features/customer/store/customer.store';
 import { useMenuStore } from '@/features/menu/store/menu.store';
 import { useAuditStore } from '@/features/audit/store/audit.store';
@@ -11,6 +12,7 @@ import { useUserStore } from '@/features/user/store/user.store';
  * Call this after any CRUD operation to ensure data consistency across stores.
  */
 export const invalidateAllCaches = () => {
+  useCardStore.getState().setLoaded(false);
   useCustomerStore.getState().setLoaded(false);
   useMenuStore.getState().setLoaded(false);
   useAuditStore.getState().setLoaded(false);

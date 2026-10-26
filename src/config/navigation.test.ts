@@ -9,7 +9,7 @@ describe('menú por rol (US-2 CA-1)', () => {
   });
 
   it('el admin ve las secciones que ya existen en el orden del local', () => {
-    expect(labels('admin')).toEqual(['Estadísticas', 'Stock', 'Ventas/Pedidos', 'Promociones', 'Clientes', 'Proveedores', 'Alta de productos', 'Usuarios', 'Auditoría']);
+    expect(labels('admin')).toEqual(['Estadísticas', 'Stock', 'Ventas/Pedidos', 'Promociones', 'Clientes', 'Proveedores', 'Alta de productos', 'Tarjetas', 'Usuarios', 'Auditoría']);
   });
 
   it('"Dashboard" pasó a llamarse "Estadísticas" (CA-2)', () => {
@@ -27,7 +27,7 @@ describe('a dónde entra y a dónde puede ir cada rol (US-2 CA-4)', () => {
     expect(canVisit('vendedor', path)).toBe(true);
   });
 
-  it.each(['/', '/logs', '/usuarios', '/proveedores', '/categorias', '/alta-de-productos', '/productos', '/ventasx', '/promociones'])('el vendedor no puede entrar a %s', (path) => {
+  it.each(['/', '/logs', '/usuarios', '/proveedores', '/categorias', '/alta-de-productos', '/productos', '/ventasx', '/promociones', '/tarjetas'])('el vendedor no puede entrar a %s', (path) => {
     expect(canVisit('vendedor', path)).toBe(false);
   });
 

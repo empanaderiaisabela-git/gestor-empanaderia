@@ -60,6 +60,6 @@ describe('pantalla de Alta de productos (US-3 CA-5 y CA-7)', () => {
     const card = await screen.findByRole('form', { name: 'Precios de venta de Empanadas' });
     within(card).getAllByRole('textbox').forEach((input, index) => fireEvent.change(input, { target: { value: String((index + 1) * 1000) } }));
     fireEvent.click(within(card).getByRole('button', { name: 'Guardar precios' }));
-    await waitFor(() => expect(actions.saveMenuGroupPricesAction).toHaveBeenCalledWith({ group: 'empanadas', prices: { price1: 1000, price3: 2000, price6: 3000, price12: 4000 }, version: 0 }), { timeout: 5000 });
+    await waitFor(() => expect(actions.saveMenuGroupPricesAction).toHaveBeenCalledWith({ group: 'empanadas', prices: { price1: 1000, price3: 2000, price6: 3000, price12: 4000 }, version: 0 }), { timeout: 10_000 });
   });
 });

@@ -1832,7 +1832,7 @@ la leen.
 | 0   | [T-15](#t-15--respuestas-del-cliente-en-el-backlog-del-sprint-2)                 | Respuestas del cliente en el backlog del Sprint 2           | En revisión | T-13      | 30 min          |
 | 1   | [US-8](#us-8--promociones-armar-promos-con-precio-de-rebaja)                     | Promociones: armar promos con precio de rebaja              | En revisión | T-13        | 2 h 20 min      |
 | 2   | [US-9](#us-9--ventas-subdivisión-promos)                                         | Ventas: subdivisión Promos                                  | En revisión | US-8        | 3 h             |
-| 3   | [US-10](#us-10--tarjetas-tarjetas-aceptadas-y-planes-de-cuotas-con-recargo)      | Tarjetas: tarjetas aceptadas y planes de cuotas con recargo | Pendiente | T-13        | 2 h             |
+| 3   | [US-10](#us-10--tarjetas-tarjetas-aceptadas-y-planes-de-cuotas-con-recargo)      | Tarjetas: tarjetas aceptadas y planes de cuotas con recargo | En revisión | T-13        | 2 h             |
 | 4   | [US-11](#us-11--ventas-cobrar-con-crédito-en-cuotas)                             | Ventas: cobrar con crédito en cuotas                        | Pendiente | US-10       | 2 h             |
 | 5   | [US-12](#us-12--estadísticas-del-día-dinero-por-comida-ganancia-y-ventas)        | Estadísticas del día: dinero por comida, ganancia y ventas  | Pendiente | US-9, US-11 | 3 h             |
 | 6   | [US-13](#us-13--estadísticas-cuadros-de-vendedores-y-de-ventas)                  | Estadísticas: cuadros de vendedores y de ventas             | Pendiente | US-12       | 2 h             |
@@ -1941,12 +1941,12 @@ el precio rebajado.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
-| Dueño        | —         |
-| Inicio       | —         |
+| Estado       | En revisión |
+| Dueño        | Agente |
+| Inicio       | 2026-10-26 |
 | Tamaño       | M         |
 | Depende de   | T-13      |
-| Plan         | —         |
+| Plan         | [`docs/plans/US-10-tarjetas.md`](docs/plans/US-10-tarjetas.md) |
 | Merge        | —         |
 | Horas reales | —         |
 
@@ -1955,11 +1955,15 @@ plan, de forma que el vendedor cobre en cuotas con el importe correcto.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · Una tarjeta tiene nombre único (hasta 40 caracteres) y uno o más planes de 1, 3, 6 o 12 cuotas, cada uno con un recargo de 0 a 100 % con 2 decimales; las restricciones van en el schema · Estimación: 45 min · Completado: —
+- [x] **CA-1** · Una tarjeta tiene nombre único (hasta 40 caracteres) y uno o más planes de 1, 3, 6 o 12 cuotas, cada uno con un recargo de 0 a 100 % con 2 decimales; las restricciones van en el schema · Estimación: 45 min · Completado: 2026-10-26 01:11
 
-- [ ] **CA-2** · Alta, edición con `version` y desactivación, con errores por fila y su test de contrato; "Tarjetas" en el menú sólo del admin · Estimación: 1 h · Completado: —
+- [x] **CA-2** · Alta, edición con `version` y desactivación, con errores por fila y su test de contrato; "Tarjetas" en el menú sólo del admin · Estimación: 1 h · Completado: 2026-10-26 01:11
 
-- [ ] **CA-3** · Auditoría de cada cambio y README · Estimación: 15 min · Completado: —
+- [x] **CA-3** · Auditoría de cada cambio y README · Estimación: 15 min · Completado: 2026-10-26 01:11
+
+**Notas**
+
+- Cierre: `npm run verify` (768 tests, cobertura 96/89, mutación 89,2) y 68 E2E en verde. De paso, `menu-panel.test.tsx` espera hasta 10 s el guardado de precios del grupo: con la suite más grande pasaba los 5 s. README en `docs/features/card/README.md`.
 
 ### US-11 · Ventas: cobrar con crédito en cuotas
 

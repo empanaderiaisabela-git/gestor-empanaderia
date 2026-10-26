@@ -99,6 +99,13 @@
       "when": 1792984935994,
       "tag": "0013_sale-lines-promotions",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1792986663097,
+      "tag": "0014_cards",
+      "breakpoints": true
     }
   ]
 }
