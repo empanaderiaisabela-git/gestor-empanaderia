@@ -2441,7 +2441,7 @@ decisiones provisorias D-1 y D-2, el orden y la trazabilidad de cada línea de `
 | 1   | [T-19](#t-19--tests-por-nivel-según-el-tamaño-del-cambio)              | Tests por nivel según el tamaño del cambio                 | En revisión | T-17       | 30 min           |
 | 2   | [BUG-18](#bug-18--franja-vacía-arriba-de-cada-página)                  | Franja vacía arriba de cada página                         | En revisión | T-17       | 30 min           |
 | 3   | [BUG-17](#bug-17--el-nombre-del-gusto-se-corta-en-alta-de-productos)   | El nombre del gusto se corta en Alta de productos          | En revisión | T-17       | 20 min           |
-| 4   | [US-16](#us-16--stock-sólo-para-el-administrador)                      | Stock sólo para el administrador                           | Pendiente   | T-17       | 45 min           |
+| 4   | [US-16](#us-16--stock-sólo-para-el-administrador)                      | Stock sólo para el administrador                           | En revisión | T-17       | 45 min           |
 | 5   | [US-17](#us-17--alta-pide-grupo-y-nombre-costo-y-precio-en-ingresar-stock) | Alta pide grupo y nombre; costo y precio en Ingresar stock | Pendiente   | US-16      | 3 h              |
 | 6   | [US-18](#us-18--ingresar-stock-primero-la-categoría-después-el-gusto)  | Ingresar stock: primero la categoría, después el gusto     | Pendiente   | US-17      | 45 min           |
 | 7   | [US-19](#us-19--ventas-muestra-sólo-gustos-con-stock)                  | Ventas muestra sólo gustos con stock                       | Pendiente   | US-17      | 40 min           |
@@ -2571,9 +2571,9 @@ padding doble. En Estadísticas obliga a scrollear para ver datos (`espacio-inec
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
-| Dueño        | —         |
-| Inicio       | —         |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-27 |
 | Tamaño       | S         |
 | Depende de   | T-17      |
 | Plan         | [`docs/plans/sprint-3.md`](docs/plans/sprint-3.md#4--us-16-stock-sólo-para-el-administrador-s-45-min) |
@@ -2585,11 +2585,21 @@ siempre quien los conoce.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · El menú del vendedor no muestra Stock y `/stock` lo redirige como cualquier página sin permiso (test de navegación y E2E) · Estimación: 15 min · Completado: —
+- [x] **CA-1** · El menú del vendedor no muestra Stock y `/stock` lo redirige como cualquier página sin permiso (test de navegación y E2E) · Estimación: 15 min · Completado: 2026-10-27 00:53
 
-- [ ] **CA-2** · Ingresar stock, registrar merma y las lecturas de Stock devuelven `FORBIDDEN` al vendedor (tests de contrato) · Estimación: 20 min · Completado: —
+- [x] **CA-2** · Ingresar stock, registrar merma y las lecturas de Stock devuelven `FORBIDDEN` al vendedor (tests de contrato) · Estimación: 20 min · Completado: 2026-10-27 00:53
 
-- [ ] **CA-3** · La UI de Stock ya no bifurca por rol y `docs/features/stock/README.md` lo dice · Estimación: 10 min · Completado: —
+- [x] **CA-3** · La UI de Stock ya no bifurca por rol y `docs/features/stock/README.md` lo dice · Estimación: 10 min · Completado: 2026-10-27 00:53
+
+**Notas**
+
+- El vendedor ya no tiene Stock en el menú (`src/config/navigation.ts`), y `proxy.ts` lo manda a Ventas/Pedidos
+  si entra a `/stock`. `registerStockEntryAction` y `fetchStockEntries` exigen admin, igual que la merma.
+- La UI de Stock dejó de bifurcar por rol: siempre muestra costo, proveedor, merma e historial completo. La limpieza
+  de la UI la hizo un subagente (Sonnet) y se revisó el diff.
+- Nivel 3: `npm run verify` en verde (867 tests, cobertura 95,96/88,54, 83 de integración, mutación 89,22 y build)
+  y E2E de stock, navegación y concurrencia en verde (8 casos). El primer `verify` encontró `proxy.test.ts`
+  esperando que el vendedor entrara a `/stock`; se corrigió.
 
 ### US-17 · Alta pide grupo y nombre; costo y precio en Ingresar stock
 

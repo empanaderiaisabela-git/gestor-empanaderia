@@ -8,7 +8,7 @@ import { COST_TERM, SALE_PRICE_TERM } from '@/features/menu/domain/menu-terms';
 import { formatMoney } from '@/lib/format-money';
 import type { StockDialog } from './use-stock-panel';
 
-export type StockRowActions = { isAdmin: boolean; open: (dialog: StockDialog) => void };
+export type StockRowActions = { open: (dialog: StockDialog) => void };
 
 export function StockBadge({ item }: { item: MenuItemDef }): JSX.Element {
   const empty = item.stock <= 0;
@@ -23,11 +23,9 @@ export function StockButtons({ item, actions }: { item: MenuItemDef; actions: St
       <button onClick={() => actions.open({ kind: 'entry', item })} className={`${button} text-emerald-700 dark:text-emerald-400`} title='Ingresar stock'>
         <PackagePlus className='w-4 h-4' />
       </button>
-      {actions.isAdmin && (
-        <button onClick={() => actions.open({ kind: 'loss', item })} className={`${button} text-amber-700 dark:text-amber-400`} title='Registrar merma'>
-          <PackageMinus className='w-4 h-4' />
-        </button>
-      )}
+      <button onClick={() => actions.open({ kind: 'loss', item })} className={`${button} text-amber-700 dark:text-amber-400`} title='Registrar merma'>
+        <PackageMinus className='w-4 h-4' />
+      </button>
       <button onClick={() => actions.open({ kind: 'history', item })} className={`${button} text-brand-600 dark:text-brand-400`} title='Historial de ingresos'>
         <History className='w-4 h-4' />
       </button>
@@ -42,6 +40,6 @@ export function getStockColumns(actions: StockRowActions): ColumnDef<MenuItemDef
     { header: 'Stock', cell: (item) => <StockBadge item={item} /> },
     { header: SALE_PRICE_TERM, cellClassName: 'text-zinc-600 dark:text-zinc-300 text-sm', cell: (item) => priceSummary(item) },
   ];
-  const cost: ColumnDef<MenuItemDef>[] = actions.isAdmin ? [{ header: COST_TERM, cellClassName: 'text-zinc-500', cell: (item) => (item.unitCost === null ? '—' : formatMoney(item.unitCost)) }] : [];
-  return [...columns, ...cost, { header: 'Acciones', headerClassName: 'text-right', cellClassName: 'flex gap-1 justify-end', cell: (item) => <StockButtons item={item} actions={actions} /> }];
+  const cost: ColumnDef<MenuItemDef> = { header: COST_TERM, cellClassName: 'text-zinc-500', cell: (item) => (item.unitCost === null ? '—' : formatMoney(item.unitCost)) };
+  return [...columns, cost, { header: 'Acciones', headerClassName: 'text-right', cellClassName: 'flex gap-1 justify-end', cell: (item) => <StockButtons item={item} actions={actions} /> }];
 }

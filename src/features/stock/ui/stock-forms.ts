@@ -18,8 +18,8 @@ function errorsOf(issues: readonly Issue[]): FormErrors {
   return errors;
 }
 
-export function parseEntry(values: EntryValues, isAdmin: boolean): Parsed<StockEntryInput> {
-  const costs = isAdmin ? { unitCost: values.unitCost.trim() === '' ? undefined : toNumber(values.unitCost), providerId: values.providerId || null } : {};
+export function parseEntry(values: EntryValues): Parsed<StockEntryInput> {
+  const costs = { unitCost: values.unitCost.trim() === '' ? undefined : toNumber(values.unitCost), providerId: values.providerId || null };
   const result = stockEntrySchema.safeParse({ menuItemId: values.menuItemId, quantity: toNumber(values.quantity), ...costs });
   return result.success ? { ok: true, input: result.data } : { ok: false, errors: errorsOf(result.error.issues) };
 }

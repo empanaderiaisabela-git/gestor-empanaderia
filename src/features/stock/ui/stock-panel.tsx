@@ -40,7 +40,7 @@ const renderCard = (actions: StockRowActions) =>
 export function StockPanel(): JSX.Element {
   const model = useStockPanel();
   if (model.loading) return <TableSkeleton />;
-  const actions: StockRowActions = { isAdmin: model.isAdmin, open: model.setDialog };
+  const actions: StockRowActions = { open: model.setDialog };
   const addButton = (
     <Button variant='primary' onClick={() => model.setDialog({ kind: 'entry', item: null })} leftIcon={<PackagePlus className='w-5 h-5' />} className='h-11 w-full sm:w-auto shrink-0' data-testid={TEST_IDS.general.btnAgregar}>
       Ingresar stock

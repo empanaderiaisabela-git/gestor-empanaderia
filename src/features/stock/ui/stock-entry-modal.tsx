@@ -27,7 +27,7 @@ export function StockEntryModal({ model }: { model: StockPanelModel }): JSX.Elem
 
   const submit = async (event: FormEvent): Promise<void> => {
     event.preventDefault();
-    const parsed = parseEntry(values, model.isAdmin);
+    const parsed = parseEntry(values);
     setErrors(parsed.ok ? {} : parsed.errors);
     if (!parsed.ok) return;
     setPending(true);
@@ -38,7 +38,7 @@ export function StockEntryModal({ model }: { model: StockPanelModel }): JSX.Elem
   return (
     <ResponsiveModal isOpen={isOpen} onClose={() => model.setDialog(null)} title='Ingresar stock' icon={<PackagePlus className='w-5 h-5 text-brand-500' />} width='md' onSubmit={submit} submitLabel='Ingresar' isPending={pending}>
       <ErrorAlert error={serverError} />
-      <StockEntryFields values={values} errors={errors} items={model.activeItems} providers={model.providers} isAdmin={model.isAdmin} onChange={setValues} />
+      <StockEntryFields values={values} errors={errors} items={model.activeItems} providers={model.providers} onChange={setValues} />
     </ResponsiveModal>
   );
 }

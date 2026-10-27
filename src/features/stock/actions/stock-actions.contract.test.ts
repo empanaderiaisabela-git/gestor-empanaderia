@@ -30,21 +30,13 @@ describe('acciones de Stock (US-4)', () => {
     expect(await fetchStockEntries(ITEM.id)).toMatchObject([{ quantity: 12, unitCost: 450, providerName: 'Molino del Sur', username: 'admin' }]);
   });
 
-  it('el vendedor ingresa sólo la cantidad y no ve costos ni proveedores en el historial', async () => {
+  it('FORBIDDEN: el vendedor no entra a Stock: no ingresa, no lee el historial ni registra mermas (US-16)', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
     await asUser({ role: 'admin' });
     await registerStockEntryAction({ menuItemId: ITEM.id, quantity: 12, unitCost: 450, providerId: PROVIDER });
     await asUser({ role: 'vendedor' });
-    expect(await registerStockEntryAction({ menuItemId: ITEM.id, quantity: 6 })).toMatchObject({ success: true, data: { stock: 28 } });
-    expect(await fetchStockEntries(ITEM.id)).toMatchObject([
-      { quantity: 6, unitCost: null, providerName: null, username: 'vendedor' },
-      { quantity: 12, unitCost: null, providerName: null },
-    ]);
-  });
-
-  it('FORBIDDEN: el vendedor no carga costo ni proveedor, ni registra mermas', async () => {
-    await asUser({ role: 'vendedor' });
-    expect(await registerStockEntryAction({ menuItemId: ITEM.id, quantity: 1, unitCost: 1 })).toMatchObject({ code: 'FORBIDDEN' });
-    expect(await registerStockEntryAction({ menuItemId: ITEM.id, quantity: 1, providerId: PROVIDER })).toMatchObject({ code: 'FORBIDDEN' });
+    expect(await registerStockEntryAction({ menuItemId: ITEM.id, quantity: 1 })).toMatchObject({ code: 'FORBIDDEN' });
+    expect(await fetchStockEntries(ITEM.id)).toEqual([]);
     expect(await registerStockLossAction({ menuItemId: ITEM.id, quantity: 1, reason: 'x' })).toMatchObject({ code: 'FORBIDDEN' });
   });
 

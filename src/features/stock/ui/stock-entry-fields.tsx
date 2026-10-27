@@ -11,7 +11,6 @@ type StockEntryFieldsProps = {
   errors: FormErrors;
   items: MenuItemDef[];
   providers: ProviderDef[];
-  isAdmin: boolean;
   onChange: (values: EntryValues) => void;
 };
 
@@ -32,7 +31,7 @@ function ItemOptions({ items }: { items: MenuItemDef[] }): JSX.Element {
   );
 }
 
-function CostFields({ values, errors, items, providers, onChange }: Omit<StockEntryFieldsProps, 'isAdmin'>): JSX.Element {
+function CostFields({ values, errors, items, providers, onChange }: StockEntryFieldsProps): JSX.Element {
   const group = items.find((item) => item.id === values.menuItemId)?.group ?? null;
   return (
     <>
@@ -54,7 +53,7 @@ function CostFields({ values, errors, items, providers, onChange }: Omit<StockEn
 }
 
 export function StockEntryFields(props: StockEntryFieldsProps): JSX.Element {
-  const { values, errors, items, isAdmin, onChange } = props;
+  const { values, errors, items, onChange } = props;
   return (
     <div className='space-y-4'>
       <FormField label='Gusto o bebida' error={errors.menuItemId}>
@@ -65,7 +64,7 @@ export function StockEntryFields(props: StockEntryFieldsProps): JSX.Element {
       <FormField label='Cantidad que entra' error={errors.quantity}>
         <input inputMode='numeric' value={values.quantity} onChange={(event) => onChange({ ...values, quantity: event.target.value })} placeholder='Ej: 24' className={inputClass(Boolean(errors.quantity))} />
       </FormField>
-      {isAdmin && <CostFields {...props} />}
+      <CostFields {...props} />
     </div>
   );
 }

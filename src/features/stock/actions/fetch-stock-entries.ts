@@ -7,10 +7,9 @@ import { verifyAuthOrAdmin } from '@/lib/auth/utils';
 
 export async function fetchStockEntries(menuItemId: string): Promise<StockEntryDef[]> {
   try {
-    const caller = await verifyAuthOrAdmin(false);
+    await verifyAuthOrAdmin(true);
     const id = z.uuid().parse(menuItemId);
-    const entries = z.array(stockEntryRowSchema).parse(await stockService.entriesOf(id));
-    return caller.role === 'admin' ? entries : entries.map((entry) => ({ ...entry, unitCost: null, providerName: null }));
+    return z.array(stockEntryRowSchema).parse(await stockService.entriesOf(id));
   } catch (error) {
     console.error('fetchStockEntries error:', error);
     return [];

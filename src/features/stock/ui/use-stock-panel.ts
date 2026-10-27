@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useAuthStore } from '@/features/auth/store/auth.store';
 import { fetchMenuItems } from '@/features/menu/actions/fetch-menu-items';
 import type { MenuGroup } from '@/features/menu/domain/menu-groups';
 import type { MenuItemDef } from '@/features/menu/domain/menu-item.schema';
@@ -15,7 +14,6 @@ export type StockDialog = { kind: 'entry' | 'loss' | 'history'; item: MenuItemDe
 type Message = { type: 'success' | 'error'; text: string } | null;
 
 export type StockPanelModel = {
-  isAdmin: boolean;
   loading: boolean;
   items: MenuItemDef[];
   activeItems: MenuItemDef[];
@@ -31,25 +29,24 @@ export type StockPanelModel = {
   submitLoss: (input: StockLossInput) => Promise<string | null>;
 };
 
-function useStockData(isAdmin: boolean): { loading: boolean; providers: ProviderDef[]; reload: () => Promise<void> } {
+function useStockData(): { loading: boolean; providers: ProviderDef[]; reload: () => Promise<void> } {
   const { isLoaded, setItems } = useMenuStore();
   const [loading, setLoading] = useState(!isLoaded);
   const [providers, setProviders] = useState<ProviderDef[]>([]);
   const reload = async (): Promise<void> => setItems(await fetchMenuItems());
   useEffect(() => {
-    if (isAdmin) fetchProviders().then(setProviders);
+    fetchProviders().then(setProviders);
     if (isLoaded) return setLoading(false);
     fetchMenuItems()
       .then(setItems)
       .finally(() => setLoading(false));
-  }, [isAdmin, isLoaded, setItems]);
+  }, [isLoaded, setItems]);
   return { loading, providers, reload };
 }
 
 export function useStockPanel(): StockPanelModel {
-  const isAdmin = useAuthStore((state) => state.user?.role) === 'admin';
   const allItems = useMenuStore((state) => state.items);
-  const { loading, providers, reload } = useStockData(isAdmin);
+  const { loading, providers, reload } = useStockData();
   const [search, setSearch] = useState('');
   const [groupFilter, setGroupFilter] = useState<MenuGroup | 'todos'>('todos');
   const [dialog, setDialog] = useState<StockDialog>(null);
@@ -69,5 +66,5 @@ export function useStockPanel(): StockPanelModel {
   };
   const submitEntry = (input: StockEntryInput): Promise<string | null> => submit(registerStockEntryAction(input));
   const submitLoss = (input: StockLossInput): Promise<string | null> => submit(registerStockLossAction(input));
-  return { isAdmin, loading, items, activeItems, providers, search, setSearch, groupFilter, setGroupFilter, dialog, setDialog, message, submitEntry, submitLoss };
+  return { loading, items, activeItems, providers, search, setSearch, groupFilter, setGroupFilter, dialog, setDialog, message, submitEntry, submitLoss };
 }
