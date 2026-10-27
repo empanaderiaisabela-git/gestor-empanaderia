@@ -18,7 +18,7 @@ el OK del dev. El CI corre en cada push a `develop` y `main`.
 Reglas:
 
 - Una rama = un ítem del backlog. Ramas cortas (idealmente ≤ 3 días). Borrarla después del merge.
-- Antes de integrar: `git fetch && git rebase origin/develop` y `npm run verify`.
+- Antes de integrar: `git fetch && git rebase origin/develop` y los tests del nivel del ítem (`docs/testing.md`).
 - Nunca se reescribe la historia de `main` ni de `develop` (`push --force` prohibido ahí).
 
 ## Flujo

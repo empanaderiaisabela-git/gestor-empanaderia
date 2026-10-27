@@ -124,8 +124,25 @@ Reglas:
 | `git push` (hook) | `npm run test:coverage` | Unit, tipos, contrato, fuzz y componente, con umbrales de cobertura |
 | Si tocaste un repositorio o el schema | `npm run test:int` | Integración contra `db-test` |
 | Si tocaste un flujo cubierto por E2E | `npm run test:e2e` | Playwright en Chromium |
-| Antes de integrar a `develop` | `npm run verify` | Lint, tipos, cobertura, integración, mutación y `next build` |
+| Antes de integrar a `develop` | Lo que pide el nivel del ítem ([abajo](#nivel-de-tests-de-cada-ítem)) | En nivel 3, `npm run verify`: lint, tipos, cobertura, integración, mutación y `next build` |
+| Cierre del sprint | `npm run verify` y `npm run test:e2e` | Todo, siempre, sin importar el nivel de los ítems |
 | Push a `develop` o `main` | GitHub Actions | Lo mismo que `verify` más E2E, en jobs paralelos |
+
+## Nivel de tests de cada ítem
+
+Cada cambio se prueba en proporción a su tamaño. El plan del ítem declara su nivel; ante la duda, el de arriba. Si
+el cambio crece mientras se hace, sube de nivel.
+
+| Nivel | Cuándo | Qué se corre antes de integrar |
+|---|---|---|
+| 1 · Texto o estilo | Sin lógica nueva: textos, clases de Tailwind, docs, skills | `npm run lint && npm run typecheck`, los tests relacionados y los E2E que miran ese texto |
+| 2 · Lógica acotada | Una función, un componente, un bug de causa conocida | Lo del nivel 1 + `npm run test:coverage`; `npm run test:int` si tocó un repositorio |
+| 3 · Profundo | Schema o migración, seguridad (sesión, roles, `proxy.ts`), cambios que cruzan capas | `npm run verify` completo, con mutación, y los E2E del flujo |
+
+- Tests relacionados: `npx vitest related --run --project unit --project component <archivos tocados>`. Corre sólo
+  los tests que importan esos archivos.
+- Los hooks no cambian: el commit corre lint y typecheck, y el push corre `test:coverage`.
+- Las salidas largas (tests, mutación, build) van a un log, y se lee sólo el resumen o los fallos.
 
 Scripts de `package.json`:
 

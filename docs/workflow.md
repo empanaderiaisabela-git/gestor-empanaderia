@@ -54,7 +54,7 @@ la US, en `docs/features/` o en `docs/requerimientos/specs.md` **se pregunta, no
    `docs/plans/US-3-categorias-de-productos.md`).
 2. Completá: objetivo, respuestas del descubrimiento, cambios por capa (domain → repository → service → actions →
    ui), tabla de errores,
-   tests que se van a escribir, riesgos.
+   tests que se van a escribir, **nivel de tests** ([`testing.md`](testing.md#nivel-de-tests-de-cada-ítem)), riesgos.
 3. El dev aprueba el plan **antes** de escribir código. Si el agente es quien planifica, se detiene y espera.
 
 ## 4. Rama
@@ -85,7 +85,8 @@ Ciclo por comportamiento: test que falla → código mínimo → refactor. Detal
 | `git commit` | bloqueo de `.env`, ESLint (incluye tope de 100 líneas en **todos** los archivos), typecheck | lefthook |
 | Mensaje de commit | commitlint (Conventional Commits) | lefthook |
 | `git push` | unit + contrato + fuzz + cobertura | lefthook |
-| Antes de integrar a `develop` | `npm run verify` (todo + integración + mutación + build) | manual, **obligatorio** |
+| Antes de integrar a `develop` | los tests del nivel del ítem ([`testing.md`](testing.md#nivel-de-tests-de-cada-ítem)); en nivel 3, `npm run verify` | manual, **obligatorio** |
+| Cierre del sprint | `npm run verify` (todo + integración + mutación + build) + E2E | manual, **obligatorio** |
 | Push a `develop` o `main` | lo mismo que `npm run verify` + E2E, en jobs paralelos | GitHub Actions |
 
 Nunca `--no-verify`. Si un gate falla, se arregla la causa.

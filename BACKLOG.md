@@ -2436,7 +2436,7 @@ decisiones provisorias D-1 y D-2, el orden y la trazabilidad de cada línea de `
 | #   | ID                                                                     | Título                                                     | Estado      | Depende de | Estimación       |
 | --- | ---------------------------------------------------------------------- | ---------------------------------------------------------- | ----------- | ---------- | ---------------- |
 | 0   | [T-17](#t-17--backlog-del-sprint-3-desde-specsmd)                      | Backlog del Sprint 3 desde `specs.md`                      | En revisión | —          | 30 min           |
-| 1   | [T-19](#t-19--tests-por-nivel-según-el-tamaño-del-cambio)              | Tests por nivel según el tamaño del cambio                 | Pendiente   | T-17       | 30 min           |
+| 1   | [T-19](#t-19--tests-por-nivel-según-el-tamaño-del-cambio)              | Tests por nivel según el tamaño del cambio                 | En revisión | T-17       | 30 min           |
 | 2   | [BUG-18](#bug-18--franja-vacía-arriba-de-cada-página)                  | Franja vacía arriba de cada página                         | Pendiente   | T-17       | 30 min           |
 | 3   | [BUG-17](#bug-17--el-nombre-del-gusto-se-corta-en-alta-de-productos)   | El nombre del gusto se corta en Alta de productos          | Pendiente   | T-17       | 20 min           |
 | 4   | [US-16](#us-16--stock-sólo-para-el-administrador)                      | Stock sólo para el administrador                           | Pendiente   | T-17       | 45 min           |
@@ -2475,9 +2475,9 @@ criterio, su estimación y su rama.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
-| Dueño        | —         |
-| Inicio       | —         |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-27 |
 | Tamaño       | S         |
 | Depende de   | T-17      |
 | Plan         | [`docs/plans/sprint-3.md`](docs/plans/sprint-3.md#1--t-19-tests-por-nivel-según-el-tamaño-del-cambio-s-30-min) |
@@ -2489,13 +2489,15 @@ tiempo ni tokens como un cambio de base.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · `AGENTS.md`, `docs/testing.md`, `docs/definition-of-done.md`, `start-task` y `finish-task` definen 3 niveles (texto o estilo: lint, typecheck, tests relacionados y E2E del texto; lógica acotada: + `test:coverage` y `test:int` si tocó un repositorio; profundo: `npm run verify`) y el plan de cada ítem declara el suyo · Estimación: 20 min · Completado: —
+- [x] **CA-1** · `AGENTS.md`, `docs/testing.md`, `docs/definition-of-done.md`, `start-task` y `finish-task` definen 3 niveles (texto o estilo: lint, typecheck, tests relacionados y E2E del texto; lógica acotada: + `test:coverage` y `test:int` si tocó un repositorio; profundo: `npm run verify`) y el plan de cada ítem declara el suyo · Estimación: 20 min · Completado: 2026-10-27 03:02
 
-- [ ] **CA-2** · `npm run verify` completo queda obligatorio en el cierre de cada sprint, y `AGENTS.md` pide el diff más chico que resuelva el problema; `skills:check` en verde · Estimación: 10 min · Completado: —
+- [x] **CA-2** · `npm run verify` completo queda obligatorio en el cierre de cada sprint, y `AGENTS.md` pide el diff más chico que resuelva el problema; `skills:check` en verde · Estimación: 10 min · Completado: 2026-10-27 03:02
 
 **Notas**
 
 - Pedido del dev al cerrar BUG-19: cambiar un cartel tocó 80 archivos y corrió el `verify` completo.
+- Nivel 1 (sólo docs y skills): `skills:check` en verde y lint y typecheck en el hook del commit. El comando de
+  tests relacionados se probó con `src/config/messages.ts`: corrió 343 tests de 50 archivos en lugar de los 871.
 
 ### BUG-18 · Franja vacía arriba de cada página
 

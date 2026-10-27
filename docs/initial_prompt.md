@@ -287,7 +287,8 @@ Requerimiento → Ítem de backlog → Descubrimiento → Plan aprobado → Rama
 5. **`finish-task`**:
    - Recorré la [Definition of Done](definition-of-done.md) **con evidencia**, es decir, mostrando la salida de
      los comandos.
-   - `npm run verify` en verde: cobertura ≥ 90/85 y mutación ≥ 70.
+   - Los tests del nivel del ítem en verde ([`testing.md`](testing.md#nivel-de-tests-de-cada-ítem)). En nivel 3,
+     `npm run verify`: cobertura ≥ 90/85 y mutación ≥ 70.
    - Actualizá `docs/features/<f>/README.md` con `docs/templates/feature.md`, que incluye la tabla
      *acción inválida → code → mensaje → test*.
    - Escribí un ADR si hubo una decisión de arquitectura.
@@ -318,7 +319,8 @@ Requerimiento → Ítem de backlog → Descubrimiento → Plan aprobado → Rama
 - **Este prompt también es doc.** Si tu tarea es un avance significativo, es decir, si vuelve falsa alguna línea
   de este archivo, lo adaptás en el mismo cambio y actualizás la fecha de la foto.
 - **Contradicciones entre docs:** avisá y proponé cuál corregir; `AGENTS.md` es la fuente canónica.
-- **Cambios mínimos y enfocados.** Nada de refactors, dependencias ni "mejoras" que nadie pidió.
+- **Cambios mínimos y enfocados.** Nada de refactors, dependencias ni "mejoras" que nadie pidió. El cambio más
+  chico que resuelva el problema: un texto mal armado se arregla en su plantilla, no en cada llamada.
 - **Skills:** las propias (`start-task`, `finish-task`, `delegate-task`) se editan en `.agents/skills/` y después
   se corre `npm run skills:sync`.
 - **Subagentes:** con `delegate-task`, cada parte del trabajo va al modelo más barato que pueda hacerla (Haiku,
@@ -339,7 +341,7 @@ Requerimiento → Ítem de backlog → Descubrimiento → Plan aprobado → Rama
 | E2E | `docker compose up -d --wait db-test` → `npm run test:e2e` (Chromium) o `npm run test:e2e:all` (tres navegadores) |
 | Skills | `npm run skills:sync` · `npm run skills:check` |
 | Mutación | `npm run test:mutation` (Stryker, score ≥ 70) |
-| Antes de integrar a `develop` | `npm run verify` (lint, tipos, cobertura, integración, mutación y build) |
+| Antes de integrar a `develop` | Los tests del nivel del ítem; en nivel 3 y al cerrar el sprint, `npm run verify` (lint, tipos, cobertura, integración, mutación y build) |
 
 La configuración local va en `.env.local` (plantilla: `.env.example`): `LOCAL_DATABASE_URL`, `JWT_SECRET`
 (**obligatoria**) y `CLOUDINARY_URL`. Usuarios del seed: `admin`/`admin` y `vendedor`/`vendedor`. Son temporales: después se crean

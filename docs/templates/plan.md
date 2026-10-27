@@ -3,6 +3,7 @@
 - **Ítem del backlog**: <US-N / T-N / BUG-N>
 - **Autor**: <nombre> · **Fecha**: <AAAA-MM-DD> · **Estado**: Borrador | Aprobado
 - **Rama**: `feat/<id>-<slug>`
+- **Nivel de tests**: 1 · texto o estilo / 2 · lógica acotada / 3 · profundo (`docs/testing.md` § Nivel de tests)
 
 ## Objetivo
 

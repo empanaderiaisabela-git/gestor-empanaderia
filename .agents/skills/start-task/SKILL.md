@@ -38,6 +38,11 @@ Copiá `docs/templates/plan.md` a `docs/plans/<ID>-<slug>.md` y completalo: camb
 (domain → repository → service → actions → ui), tabla de errores, restricciones de DB, tests por tipo, riesgos, archivos a crear/modificar
 (respetando 100 líneas por archivo y responsabilidad única).
 
+- Elegí el cambio más chico que resuelva el problema: un texto mal armado se arregla en su plantilla, no en cada
+  llamada que la usa.
+- Declará el **nivel de tests** (1 texto o estilo, 2 lógica acotada, 3 profundo; `docs/testing.md` § Nivel de
+  tests). Ante la duda, el de arriba.
+
 ## 5. Aprobación
 
 Mostrale el plan al dev y **esperá su aprobación explícita**. Con la aprobación:

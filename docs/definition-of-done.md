@@ -26,9 +26,12 @@ Un ítem del backlog se puede tomar cuando:
 - [ ] La UI muestra estados de carga, vacío y error; ningún error deja la pantalla en blanco.
 
 ### Tests
-- [ ] Unit + contrato + fuzz; integración si cambió un repositorio o el schema; regresión si es un bug.
+- [ ] Unit + contrato + fuzz para la lógica nueva; integración si cambió un repositorio o el schema; regresión si es
+      un bug.
 - [ ] Cada criterio de aceptación tiene su test.
-- [ ] `npm run verify` en verde: cobertura ≥ 90/85, mutación ≥ 70, build OK.
+- [ ] Los tests del nivel del ítem en verde (`testing.md` § Nivel de tests). En nivel 3, `npm run verify`: cobertura
+      ≥ 90/85, mutación ≥ 70, build OK.
+- [ ] Al cerrar el sprint: `npm run verify` y todos los E2E en verde, sin importar el nivel de los ítems.
 
 ### Documentación
 - [ ] `docs/features/<f>/README.md` actualizado (comportamiento vigente, Server Actions, pantallas, roles).

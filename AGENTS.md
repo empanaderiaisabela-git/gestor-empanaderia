@@ -13,7 +13,10 @@ requerimientos del cliente, textuales, en [`docs/requerimientos/specs.md`](docs/
 2. Identificá el ítem de `BACKLOG.md`. Si no existe, **no se programa**: se agrega primero.
 3. Hacé las **preguntas de descubrimiento** al dev (lista en `docs/workflow.md` §2). No asumas reglas de negocio:
    si algo no está en la US ni en `docs/features/`, se pregunta.
-4. Escribí el plan en `docs/plans/<ID>-<slug>.md` (plantilla `docs/templates/plan.md`) y esperá aprobación.
+4. Escribí el plan en `docs/plans/<ID>-<slug>.md` (plantilla `docs/templates/plan.md`), con su **nivel de tests**
+   (`docs/testing.md`), y esperá aprobación.
+5. Elegí **el cambio más chico que resuelva el problema**. Un texto mal armado se arregla en su plantilla, no en
+   cada llamada que la usa.
 
 ## Reglas duras (el lint/CI las hace cumplir)
 
@@ -44,14 +47,15 @@ npm run test:coverage    # unit + contrato + fuzz + componentes + cobertura (lo 
 npm run test:int         # integración de repositorios (requiere `docker compose up -d --wait db-test`)
 npm run test:e2e         # Playwright en Chromium
 npm run test:mutation    # Stryker (score ≥ 70)
-npm run verify           # lint, tipos, cobertura, integración, mutación y build. Obligatorio antes de integrar a develop.
+npm run verify           # lint, tipos, cobertura, integración, mutación y build. Obligatorio en nivel 3 y al cerrar el sprint.
 ```
 
 ## Definition of Done (resumen — completo en `docs/definition-of-done.md`)
 
-- [ ] Tests nuevos: unit + contrato (caja negra) + fuzz + integración si tocó repositorio/schema.
+- [ ] Tests nuevos para la lógica nueva: unit + contrato (caja negra) + fuzz + integración si tocó repositorio/schema.
 - [ ] Cada acción inválida tiene su error, su mensaje y su test (tabla en `docs/features/<f>/README.md`).
-- [ ] `npm run verify` verde (cobertura ≥ 90/85, mutación ≥ 70).
+- [ ] Los tests del **nivel del ítem** en verde (`docs/testing.md`): 1 texto o estilo, 2 lógica acotada, 3 profundo
+      con `npm run verify` (cobertura ≥ 90/85, mutación ≥ 70). Al cerrar el sprint, `npm run verify` siempre.
 - [ ] Docs del feature, ADR si hubo decisión, `.env.example` y seed actualizados si aplica.
 - [ ] `docs/initial_prompt.md` adaptado si fue un avance significativo (criterios en `docs/how-to-document.md`).
 - [ ] `BACKLOG.md` actualizado: estado, fecha y hora de cierre de cada criterio, y horas reales del ítem.
