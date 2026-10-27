@@ -20,8 +20,8 @@ proveedores, usuarios y auditoría para la empanadería de un cliente. Next.js 1
 | `/ventas` | Ventas/Pedidos: historial con comprobante y anulación (sólo admin); "Nuevo pedido" abre el tablero |
 | `/ventas/nueva` | Tablero de pedidos por grupo, con colores e íconos de lucide, sólo los gustos con stock, surtidas, mitad y mitad y promos; "Quitar uno" en cada línea; cobro en 4 medios de pago, con crédito en cuotas (el recargo es de la tarjeta: la venta y los pagos quedan al precio original) |
 | `/promociones` | Promociones: presentaciones con un precio de venta propio, que aparecen en el tablero (sólo admin) |
-| `/stock` | Stock por gusto, sólo admin: ingresos (se elige la categoría y después el gusto) con costo, precio de venta y proveedor, mermas e historial |
-| `/alta-de-productos` | Gustos y bebidas (sólo grupo y nombre; el costo y el precio se cargan en Ingresar stock), fotos y visibilidad en el catálogo (sólo admin) |
+| `/stock` | Stock por gusto, sólo admin: ingresos (se elige la categoría y después el gusto) con costo, precio de venta (salvo Empanadas y Ciabattas) y proveedor, pérdidas e historial |
+| `/alta-de-productos` | Gustos y bebidas (sólo grupo y nombre; el costo y el precio se cargan en Ingresar stock), el precio único de Empanadas y Ciabattas, fotos y visibilidad en el catálogo (sólo admin) |
 | `/tarjetas` | Tarjetas de crédito aceptadas y sus planes de 1, 3, 6 o 12 cuotas con recargo (sólo admin) |
 | `/clientes` | Directorio de clientes |
 | `/proveedores` | Proveedores, sólo admin (feature molde de la arquitectura: [`docs/features/provider/`](docs/features/provider/README.md)) |

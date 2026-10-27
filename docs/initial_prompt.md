@@ -30,10 +30,11 @@ Sistema de **gestión de stock y punto de venta + catálogo web** para la rotise
 | Panel de gestión | `/` (Estadísticas), `/gastos`, `/ventas` (Ventas/Pedidos: historial, comprobante y anulación), `/ventas/nueva` (tablero de pedidos y cobro), `/promociones`, `/stock`, `/alta-de-productos`, `/tarjetas`, `/clientes`, `/proveedores`, `/usuarios`, `/logs` (Auditoría) | `admin`: todo. `vendedor`: sólo Ventas/Pedidos y Clientes, y entra a Ventas/Pedidos. El menú y `proxy.ts` salen de `src/config/navigation.ts` (US-2). |
 
 Funciones que ya existen (Sprints 1 a 3):
-- Alta de gustos y bebidas por grupo fijo: sólo grupo y nombre, con fotos y visibilidad en el catálogo (US-17).
+- Alta de gustos y bebidas por grupo fijo: sólo grupo y nombre, con fotos y visibilidad en el catálogo (US-17), y
+  las tarjetas del precio único de Empanadas y Ciabattas (US-23).
 - Stock por gusto, sólo admin: ingresos (primero la categoría, después el gusto) con costo, precio de venta
-  (del grupo en Empanadas y Ciabattas, por gusto en el resto) y proveedor, mermas e historial (US-16 a US-18).
-- Tablero de pedidos con colores e íconos de lucide por grupo (US-20), sólo con los gustos con stock (US-19), "Quitar uno" en cada línea (US-22), surtidas ("Agregar uno" / "Completar") y pizzas mitad y mitad.
+  (por gusto; Empanadas y Ciabattas sólo costo) y proveedor, pérdidas (mermas) e historial (US-16 a US-18, US-23).
+- Tablero de pedidos con colores e íconos de lucide por grupo (US-20), sólo con los gustos con stock (US-19), el pedido en un carrito desplegable (US-24), "Quitar uno" en cada línea (US-22), surtidas ("Agregar uno" / "Completar") y pizzas mitad y mitad.
 - Cobro con efectivo, transferencia, débito o crédito (hasta 2 medios) y descuentos, con precios recalculados en el
   servidor. Historial en Ventas/Pedidos, comprobante imprimible y anulación con reposición de stock.
 - Promociones con precio de venta a mano, que se venden desde el tablero eligiendo los gustos de cada parte
@@ -383,7 +384,7 @@ las cuentas reales y se borran esas.
 | Línea del pedido | Una presentación con sus gustos y su cantidad. En el código, `sale_lines` y `sale_line_items`. |
 | Surtida | Una presentación de varias unidades con gustos distintos, armada con "Agregar uno" y "Completar". |
 | Costo para el local | Lo que le cuesta al local hacer o comprar una unidad (en la pizza, la pizza entera). Va por gusto y sirve para la ganancia. En el código, `unitCost`. Los campos, columnas y títulos nunca dicen "costo" a secas. |
-| Precio de venta | Lo que paga el cliente. Va por grupo en Empanadas y Ciabattas y por gusto en el resto; se carga en Ingresar stock. En el código, `price1` a `price12`. Los campos, columnas y títulos nunca dicen "precio" a secas. |
+| Precio de venta | Lo que paga el cliente. Va por grupo en Empanadas y Ciabattas (se carga en Alta de productos) y por gusto en el resto (se carga en Ingresar stock). En el código, `price1` a `price12`. Los campos, columnas y títulos nunca dicen "precio" a secas. |
 | Promo | Presentaciones con un precio de venta propio que escribe el admin; al venderla se eligen los gustos de cada parte (US-8 y US-9). En el código, `promotions`. |
 | Recargo de cuotas | El % del plan de la tarjeta sobre la parte pagada con crédito. Es de la tarjeta, no del local: no suma al total de la venta ni a la ganancia, sólo se guarda como dato (US-11, BUG-20). |
 | Jornada | El día del local para Estadísticas: de 7:00 a 6:59 del día siguiente, en hora de Argentina (US-12). |

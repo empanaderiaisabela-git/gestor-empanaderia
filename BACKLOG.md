@@ -2349,6 +2349,12 @@ desactivado, la búsqueda por DNI no lo encuentra en 15 s. En local nunca falló
 - ¿Podés bajar el artefacto `playwright-report` de una corrida fallida (c67ae43 o 3c28a35) y dejarlo en el repo local,
   sin commitearlo? Sin el trace, la causa no se puede ver.
 
+**Notas**
+
+- 2026-10-27: falló por primera vez en local, en la corrida completa del cierre del Sprint 3 (4 workers): la prueba
+  se quedó esperando la grilla (`getByTestId('virtuoso-scroller')`) hasta los 60 s. Corrido solo, `clientes.spec.ts`
+  pasó entero (16 casos). Queda en `test-results/` hasta la próxima corrida.
+
 ### T-16 · Skill para delegar en subagentes según el costo
 
 | Campo        | Valor     |
@@ -2849,6 +2855,9 @@ probó.
   revisó). Falta el merge local `develop → main` con el tag `sprint-3`, que el dev pidió dejar para su OK.
 - Se corrigieron las horas de cierre de BUG-19, T-17, T-19, BUG-18 y BUG-21: se habían cargado en UTC.
 - El resumen del sprint, en lenguaje simple, está al final de `docs/plans/sprint-3.md`.
+- Cierre de nuevo tras los ajustes de la revisión (T-20, US-25, US-24 y US-23, 2026-10-27): `npm run verify` en verde
+  sobre el código final (mutación 89,88 y build) y 65 E2E en verde. Uno de Clientes falló una vez y pasó al
+  repetirlo (BUG-16). El cambio 5 de la revisión ("2 de 4" en la promo) se descartó: el dev vio que no es un bug.
 
 ### BUG-21 · La carga inicial de datos falla si quedaron gastos
 

@@ -347,6 +347,11 @@ hacer push de cada ítem sin esperar su OK, con estas listas simples para revisa
 | US-22 | `ad3c3e2` | "Quitar uno" en el pedido |
 | US-20 | `a7ee8c5` | Íconos de lucide (y la empanada y la ciabatta propias) |
 | US-21 | `e1225e6` | Estadísticas como el panel de referencia |
+| T-18 | `ea1459f` | Cierre: pruebas completas y docs al día |
+| T-20 | `58d39d9` | Ajustes: "Registrar pérdida", pedido completo en Ventas/Pedidos, títulos de Estadísticas |
+| US-25 | `e68ea0b` | Ajustes: proveedor sin teléfono ni correo obligatorios |
+| US-24 | `5bfa5fb` | Ajustes: el pedido en un carrito desplegable y Cobrar en verde |
+| US-23 | `e78bd12` | Ajustes: precio único de Empanadas y Ciabattas en Alta |
 
 #### T-17 · 3c3cd07
 - Tus pedidos del Sprint 3 quedaron guardados tal cual (texto e imágenes) y pasaron a la lista de tareas.
@@ -409,6 +414,30 @@ hacer push de cada ítem sin esperar su OK, con estas listas simples para revisa
 - Empanadas y Ciabattas usan íconos propios hechos a partir de tus dibujos: la empanada con su repulgue y la
   ciabatta alargada con los cortes del pan.
 
+#### T-20 · 58d39d9 (ajuste de la revisión)
+- El botón naranja de Stock dice "Registrar pérdida", y el diálogo y el mensaje también hablan de pérdida.
+- En Ventas/Pedidos el pedido se lee completo: las columnas cortas se achicaron y, si no entra en una línea, sigue
+  en la siguiente.
+- Estadísticas se titula "Resumen de la actividad" y tiene los subtítulos "Venta por categoría" y "Cantidad de
+  ventas y sus ganancias".
+
+#### US-25 · e68ea0b (ajuste de la revisión)
+- Un proveedor se guarda sin teléfono ni correo. Si se carga un correo, tiene que estar bien escrito.
+- Los campos se llaman "Teléfono" y "Correo electrónico".
+
+#### US-24 · 5bfa5fb (ajuste de la revisión)
+- El pedido actual se abre desde la derecha con el botón del ticket, abajo a la derecha. El número del botón cuenta
+  lo agregado: una docena suma 1 y una promo suma 1.
+- Se cierra con la X, con Escape o tocando afuera. Al tocar Cobrar se cierra y se abre el cobro.
+- El botón Cobrar es verde.
+
+#### US-23 · e78bd12 (ajuste de la revisión)
+- El precio único de Empanadas (1, 3, 6 y 12) y de Ciabattas (unidad) se carga una sola vez, en las tarjetas de
+  arriba de Alta de productos. Reemplaza la decisión D-1.
+- Ingresar stock de una empanada o una ciabatta pide sólo el costo y la cantidad.
+- La columna "Precio de venta" de Stock muestra los precios de verdad (por ejemplo, "1 docena: $32.000") en lugar de
+  "Igual para todas las Empanadas".
+
 #### US-21 · e1225e6
 - Estadísticas quedó como el panel de referencia: arriba las comidas (Empanadas, Pizzas, Sanguches, Ciabattas; luego
   Coca-Cola, Pepsi y Promos), después Ventas registradas y Ganancia, y abajo los medios de pago.
@@ -421,17 +450,24 @@ hacer push de cada ítem sin esperar su OK, con estas listas simples para revisa
 
 | D | Decisión | Si el dev responde otra cosa |
 |---|---|---|
-| D-1 | Los precios de Empanadas y Ciabattas se cargan en Ingresar stock y cambian el precio del grupo | Las tarjetas de precio quedan fijas arriba de Stock (sólo UI) |
+| D-1 | ~~Los precios de Empanadas y Ciabattas se cargan en Ingresar stock~~. Respondida: van en Alta (US-23) | — |
 | D-2 | Con una sola unidad, "Quitar uno" saca la línea | El "−" se deshabilita con una unidad |
 | D-3 | El margen interno de la tarjeta de cada página no se tocó (sólo la franja) | Se achica `p-6` a `p-4` en las páginas |
 | D-4 | La grilla de Alta no muestra costo ni precio (se ven en Stock) | Se vuelven a agregar las dos columnas |
 | D-5 | El cobro y el comprobante no muestran el recargo de la tarjeta | Se muestra como dato, sin sumarlo |
+| R-1 | La columna de Stock muestra todos los precios del grupo | Muestra un solo precio |
+| R-2 | "Pérdida" en todos los textos de Stock, no sólo en el botón | Vuelve "merma" en el diálogo y el mensaje |
+| R-3 | Ingresar stock de una empanada no exige que el grupo tenga precio | Se rechaza con un error que manda a Alta |
+| R-4 | El cambio 4 es la columna Pedido del historial de ventas (el wireframe no estaba) | Se ajusta la tabla del wireframe |
+| R-5 | El botón del carrito flota abajo a la derecha; Cobrar cierra el carrito | El botón pasa al encabezado de Ventas |
 
 ### Para la mañana
 
 - Revisar y, si está todo bien, pasar `develop` a `main` con la etiqueta `sprint-3` (T-18 CA-2).
-- Sigue sin commitear el cambio de la skill `delegate-task` (espera tu OK aparte) y quedó sin versionar
-  `.claude/launch.json` (configuración local para levantar la app en el panel de previsualización).
+- El cambio de la skill `delegate-task` ya está en `develop` (`a81d550`). Sigue sin versionar `.claude/launch.json`
+  (configuración local para levantar la app en el panel de previsualización).
+- Ajustes de la revisión (2026-10-27): T-20, US-25, US-24 y US-23. El cambio 5 ("2 de 4" en la promo) se descartó.
+  Al cerrarlos, `npm run verify` y los 65 E2E en verde (uno de Clientes falló una vez y pasó al repetirlo: es BUG-16).
 - La tarea programada "Retomar trabajo del Gestor empanadería" quedó desactivada; se puede borrar.
 - Entre la 01:25 y las 03:42 el trabajo se pausó por el límite de uso de 5 horas y siguió solo.
 
