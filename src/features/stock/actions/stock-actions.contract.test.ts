@@ -70,7 +70,7 @@ describe('acciones de Stock (US-4)', () => {
   it('INSUFFICIENT_STOCK: la merma supera el stock (CA-5)', async () => {
     await asUser({ role: 'admin' });
     expect(await registerStockLossAction({ menuItemId: ITEM.id, quantity: 11, reason: 'Se cayó' })).toEqual({ success: false, code: 'INSUFFICIENT_STOCK', error: 'No hay stock suficiente de Carne suave.' });
-    expect(await registerStockLossAction({ menuItemId: ITEM.id, quantity: 4, reason: 'Se cayó' })).toEqual({ success: true, message: 'Merma registrada: Carne suave queda con 6', data: { menuItemId: ITEM.id, stock: 6, version: 2 } });
+    expect(await registerStockLossAction({ menuItemId: ITEM.id, quantity: 4, reason: 'Se cayó' })).toEqual({ success: true, message: 'Pérdida registrada: Carne suave queda con 6', data: { menuItemId: ITEM.id, stock: 6, version: 2 } });
   });
 
   it('fuzz: ninguna entrada hace lanzar ni devuelve un error fuera del catálogo', async () => {

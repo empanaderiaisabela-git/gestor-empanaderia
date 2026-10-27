@@ -17,11 +17,14 @@ export function GroupKpis({ stats }: { stats: WorkdayStats }): JSX.Element {
     return <KpiCard key={group} label={GROUPS[group].label} value={stats.byGroup[group]} icon={theme.icon} chip={theme.chip} tone={`${NEUTRAL_CARD} ${theme.outline}`} />;
   };
   return (
-    <div className='space-y-4'>
-      <div className={FOUR}>{MENU_GROUPS.slice(0, 4).map(card)}</div>
-      <div className={THREE}>
-        {MENU_GROUPS.slice(4).map(card)}
-        <KpiCard label='Promos' value={stats.promos} icon={STAT_THEME.promos.icon} chip={STAT_THEME.promos.chip} tone={STAT_THEME.promos.card} />
+    <div className='space-y-3'>
+      <h2 className={title}>Venta por categoría</h2>
+      <div className='space-y-4'>
+        <div className={FOUR}>{MENU_GROUPS.slice(0, 4).map(card)}</div>
+        <div className={THREE}>
+          {MENU_GROUPS.slice(4).map(card)}
+          <KpiCard label='Promos' value={stats.promos} icon={STAT_THEME.promos.icon} chip={STAT_THEME.promos.chip} tone={STAT_THEME.promos.card} />
+        </div>
       </div>
     </div>
   );
@@ -30,9 +33,12 @@ export function GroupKpis({ stats }: { stats: WorkdayStats }): JSX.Element {
 export function SummaryKpis({ stats }: { stats: WorkdayStats }): JSX.Element {
   const { sales, profit } = STAT_THEME;
   return (
-    <div className={TWO}>
-      <KpiCard label='Ventas registradas' value={stats.salesCount} count icon={sales.icon} chip={sales.chip} tone={sales.card} />
-      <KpiCard label='Ganancia' value={stats.profit} icon={profit.icon} chip={profit.chip} tone={profit.card} />
+    <div className='space-y-3'>
+      <h2 className={title}>Cantidad de ventas y sus ganancias</h2>
+      <div className={TWO}>
+        <KpiCard label='Ventas registradas' value={stats.salesCount} count icon={sales.icon} chip={sales.chip} tone={sales.card} />
+        <KpiCard label='Ganancia' value={stats.profit} icon={profit.icon} chip={profit.chip} tone={profit.card} />
+      </div>
     </div>
   );
 }

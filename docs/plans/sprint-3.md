@@ -45,6 +45,8 @@ cambio de base.
   el precio del grupo. Si ya hay precio, se pueden dejar vacíos. Así se respeta "sólo en Ingresar stock".
 - **Si el dev responde otra cosa**: las tarjetas pueden quedar fijas arriba de la grilla de Stock. Cambia sólo la UI
   de US-17, no la base.
+- **Respuesta del dev (2026-10-27)**: el precio único se carga en Alta de productos, en una tarjeta por grupo. Stock no
+  lo pide. Lo hace US-23.
 
 ### D-2 · Quitar de a uno cuando queda una sola unidad
 
@@ -225,6 +227,82 @@ demás: se pueden adelantar si un ítem queda bloqueado.
 - `npm run verify` completo y todos los E2E.
 - README, `docs/architecture.md` y `docs/initial_prompt.md` al día.
 - Merge local `develop → main` con el tag `sprint-3`.
+
+## Ajustes de la revisión del dev (2026-10-27)
+
+El dev revisó el sprint antes de pasarlo a `main` y pidió 10 cambios breves, con wireframes en
+`docs/wireframes-ventas-gestor/`. Cada ítem va en su rama y su commit; `main` espera el OK del dev.
+
+| Cambio | Pedido | Ítem |
+|---|---|---|
+| 1 | La columna "Precio de venta" de Stock muestra el precio, no "Igual para todas las Empanadas" | US-23 |
+| 2 | El botón naranja de Stock dice "Registrar pérdida" en lugar de "merma" | T-20 |
+| 3 | El precio único de Empanadas (unidad, 3, 6 y 12) y Ciabattas (unidad) se elige en Alta; Stock no lo pide | US-23 |
+| 4 | El pedido se corta muy rápido en Ventas/Pedidos: correr Desc. a la derecha | T-20 |
+| 5 | El "(2 de 4)" del form de la promo | Se descarta: el dev vio que cuenta las comidas de la promo |
+| 6 | El botón Cobrar es verde | US-24 |
+| 7 | El pedido actual en un carrito que se abre desde la derecha, con ícono de ticket y un contador | US-24 |
+| 8 | El título de Estadísticas pasa a "Resumen de la actividad" | T-20 |
+| 9 | Subtítulos "Venta por categoría" y "Cantidad de ventas y sus ganancias" | T-20 |
+| 10 | Proveedor sin teléfono ni correo obligatorios; etiquetas "Teléfono" y "Correo electrónico" | US-25 |
+
+Respuestas del dev a las preguntas:
+
+- **Cambio 3:** una tarjeta por grupo arriba de la grilla de Alta. Es lo que había antes de US-17.
+- **Cambio 7:** el contador cuenta productos: una docena suma 1 y una promo suma 1.
+- **Cambio 8:** "Resumen de la actividad" reemplaza al título. El menú lateral sigue diciendo "Estadísticas".
+
+### Decisiones provisorias de los ajustes
+
+#### R-1 · Qué muestra la columna "Precio de venta" de Stock para Empanadas
+
+- **Pregunta**: ¿muestra sólo un precio o todos?
+- **Situación**: la docena de empanadas está a $32.000 y la unidad a $2.000.
+- **Elegido**: todos los precios del grupo, con el mismo formato que Sanguches: "1 unidad: $2.000 · … · 12 unidades:
+  $32.000".
+- **Si el dev responde otra cosa**: la columna muestra un solo precio. Es un cambio de nivel 1 en `stock-columns.tsx`.
+
+#### R-2 · Hasta dónde llega "pérdida"
+
+- **Pregunta**: ¿cambia sólo el botón o todos los textos de Stock que dicen "merma"?
+- **Situación**: el botón abre un diálogo "Registrar merma · Carne suave" y al guardar dice "Merma registrada".
+- **Elegido**: todos los textos visibles de Stock dicen "pérdida". El código interno (`loss`, `STOCK_LOSS`) no cambia.
+- **Si el dev responde otra cosa**: se vuelve a "merma" en el diálogo y el mensaje. Nivel 1.
+
+#### R-3 · Ingresar stock de un grupo sin precio
+
+- **Pregunta**: si todavía no se cargó el precio de las Empanadas en Alta, ¿se puede ingresar stock de una empanada?
+- **Situación**: el dev da de alta "Carne suave" e ingresa 24 antes de cargar el precio del grupo.
+- **Elegido**: sí. Ventas ya muestra "Falta cargar el precio del grupo" y no deja venderla hasta que tenga precio.
+- **Si el dev responde otra cosa**: Ingresar stock rechaza el ingreso con un error que manda a Alta. Nivel 2.
+
+#### R-4 · El wireframe "mas-espacio-nombre-pedido"
+
+- **Pregunta**: el wireframe no está en la carpeta. ¿De qué tabla es?
+- **Situación**: el único lugar con columna de descuento es el historial de Ventas/Pedidos.
+- **Elegido**: la columna Pedido del historial. Las columnas cortas tienen ancho fijo y Pedido usa el resto; si no
+  entra en una línea, sigue en la siguiente.
+- **Si el dev responde otra cosa**: se ajusta la tabla que muestre el wireframe. Nivel 1.
+
+#### R-5 · Dónde va el botón del carrito
+
+- **Pregunta**: ¿dónde va el botón que abre el carrito y qué pasa al cobrar?
+- **Situación**: el vendedor suma una docena y quiere ver el pedido.
+- **Elegido**: el botón flota abajo a la derecha. "Cobrar" cierra el carrito y abre el cobro.
+- **Si el dev responde otra cosa**: el botón pasa al encabezado de Ventas. Nivel 1.
+
+### Ítems de los ajustes
+
+- **T-20 · Textos y estilos (cambios 2, 4, 8 y 9), nivel 1.** "Pérdida" en Stock, anchos de Ventas/Pedidos, título y
+  subtítulos de Estadísticas.
+- **US-25 · Proveedor (cambio 10), nivel 2.** El schema acepta teléfono y correo vacíos, y un correo cargado se sigue
+  validando. La base ya tiene `default('')`, así que no hay migración.
+- **US-24 · Carrito (cambios 6 y 7), nivel 2.** `order-drawer.tsx` tiene el botón con `Ticket` y el contador, y el
+  panel con `framer-motion`, que muestra `CurrentOrder` sin cambios. Cobrar en `bg-emerald-700`, que da 5,5:1 con texto
+  blanco. Los 7 E2E de Ventas abren el carrito.
+- **US-23 · Precios del grupo en Alta (cambios 1 y 3), nivel 3.** Vuelven la acción, el schema, el `save` del
+  servicio y la tarjeta que sacó US-17 (`16b4cd2`), con textos mínimos. Stock deja de pedir y guardar el precio de
+  esos grupos, y su columna muestra los precios reales.
 
 ## Trazabilidad: `specs.md` → ítems
 

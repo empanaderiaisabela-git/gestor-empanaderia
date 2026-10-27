@@ -49,7 +49,7 @@ describe('grilla de Stock (US-4 CA-1)', () => {
     const open = vi.fn();
     render(<StockButtons item={ITEM} actions={{ open }} />);
     fireEvent.click(screen.getByTitle('Ingresar stock'));
-    fireEvent.click(screen.getByTitle('Registrar merma'));
+    fireEvent.click(screen.getByTitle('Registrar pérdida'));
     fireEvent.click(screen.getByTitle('Historial de ingresos'));
     expect(open.mock.calls).toEqual([[{ kind: 'entry', item: ITEM }], [{ kind: 'loss', item: ITEM }], [{ kind: 'history', item: ITEM }]]);
   });

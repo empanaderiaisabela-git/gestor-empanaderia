@@ -2443,7 +2443,8 @@ en Stock; Stock por categoría y sólo para el administrador; Estadísticas con 
 de lucide; quitar de a uno en el pedido; y tests según el tamaño del cambio.
 
 **Plan del sprint**: [`docs/plans/sprint-3.md`](docs/plans/sprint-3.md). Tiene las decisiones del dev (2026-10-26), las
-decisiones provisorias D-1 y D-2, el orden y la trazabilidad de cada línea de `specs.md` a su ítem.
+decisiones provisorias D-1 y D-2, el orden y la trazabilidad de cada línea de `specs.md` a su ítem. Los ítems 14 a 17
+son los ajustes que pidió el dev al revisar el sprint (2026-10-27), con sus decisiones R-1 a R-5 en el mismo plan.
 
 ### Resumen del Sprint 3
 
@@ -2463,7 +2464,11 @@ decisiones provisorias D-1 y D-2, el orden y la trazabilidad de cada línea de `
 | 11  | [T-18](#t-18--cierre-del-sprint-3)                                     | Cierre del Sprint 3                                        | En progreso | todos      | 1 h              |
 | 12  | [BUG-21](#bug-21--la-carga-inicial-de-datos-falla-si-quedaron-gastos)   | La carga inicial de datos falla si quedaron gastos         | En revisión | US-14      | 15 min           |
 | 13  | [BUG-20](#bug-20--el-recargo-de-cuotas-se-cuenta-como-plata-del-local)   | El recargo de cuotas se cuenta como plata del local        | En revisión | US-11      | 1 h 30 min       |
-|     |                                                                        | **Total del sprint**                                       |             |            | **14 h 25 min**  |
+| 14  | [T-20](#t-20--textos-y-estilos-de-la-revisión-del-sprint-3)              | Textos y estilos de la revisión del Sprint 3               | En revisión | T-18       | 30 min           |
+| 15  | [US-25](#us-25--proveedor-sin-teléfono-ni-correo-obligatorios)           | Proveedor sin teléfono ni correo obligatorios              | Pendiente   | T-18       | 30 min           |
+| 16  | [US-24](#us-24--ventas-el-pedido-en-un-carrito-desplegable)              | Ventas: el pedido en un carrito desplegable                | Pendiente   | T-18       | 1 h 30 min       |
+| 17  | [US-23](#us-23--precios-de-empanadas-y-ciabattas-en-alta)                | Precios de Empanadas y Ciabattas en Alta                   | Pendiente   | US-17      | 1 h 30 min       |
+|     |                                                                        | **Total del sprint**                                       |             |            | **18 h 25 min**  |
 
 ### T-17 · Backlog del Sprint 3 desde `specs.md`
 
@@ -2909,3 +2914,109 @@ venta es de $10.000 y el pago con Visa, de $6.000.
 - Nivel 3: `npm run verify` en verde (870 tests, cobertura 95,97/88,64, 83 de integración, mutación 89,22 y build) y
   E2E de crédito, cobro y promo en verde (5 casos). La revisión con `/ponytail-review` sumó un test del comprobante
   con crédito.
+
+### T-20 · Textos y estilos de la revisión del Sprint 3
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-27 |
+| Tamaño       | S         |
+| Depende de   | T-18      |
+| Plan         | [`docs/plans/sprint-3.md`](docs/plans/sprint-3.md#ajustes-de-la-revisión-del-dev-2026-10-27) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como dev quiero los textos y anchos que marqué al revisar el sprint, de forma que Stock hable de
+pérdidas, el pedido se lea entero en Ventas/Pedidos y Estadísticas diga qué muestra cada grupo de cuadros.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · Stock dice "Registrar pérdida" en el botón naranja, en el diálogo y en el mensaje, y "pérdidas" en la descripción (cambio 2, R-2) · Estimación: 10 min · Completado: 2026-10-27 11:31
+
+- [x] **CA-2** · En Ventas/Pedidos las columnas cortas tienen ancho fijo y la columna Pedido usa el resto y muestra el pedido completo (cambio 4, R-4) · Estimación: 10 min · Completado: 2026-10-27 11:31
+
+- [x] **CA-3** · Estadísticas se titula "Resumen de la actividad" y tiene los subtítulos "Venta por categoría" y "Cantidad de ventas y sus ganancias" (cambios 8 y 9) · Estimación: 10 min · Completado: 2026-10-27 11:31
+
+**Notas**
+
+- Cambio 4: a 1440 px la tabla mide 1077 px y las 8 columnas tenían 135 px cada una. Las celdas de esta tabla bajan
+  el margen lateral a `px-3!`, y Pedido pasa de 87 px útiles a 185 px. Si el pedido no entra en una línea, sigue en
+  la siguiente, sin cortarse.
+- Nivel 1: lint, typecheck, `vitest related` (36 tests) y E2E de Estadísticas, Ventas/Pedidos y Stock (6 casos) en
+  verde.
+
+### US-25 · Proveedor sin teléfono ni correo obligatorios
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Pendiente |
+| Dueño        | Agente    |
+| Inicio       | —         |
+| Tamaño       | S         |
+| Depende de   | T-18      |
+| Plan         | [`docs/plans/sprint-3.md`](docs/plans/sprint-3.md#ajustes-de-la-revisión-del-dev-2026-10-27) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como administrador quiero anotar un proveedor sin su teléfono ni su correo, de forma que pueda cargarlo
+aunque todavía no tenga esos datos.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · El proveedor se guarda con teléfono y correo vacíos; un correo cargado sigue validándose (tests del schema y de contrato) · Estimación: 20 min · Completado: —
+
+- [ ] **CA-2** · El formulario dice "Teléfono" y "Correo electrónico"; E2E de Proveedores en verde · Estimación: 10 min · Completado: —
+
+### US-24 · Ventas: el pedido en un carrito desplegable
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Pendiente |
+| Dueño        | Agente    |
+| Inicio       | —         |
+| Tamaño       | M         |
+| Depende de   | T-18      |
+| Plan         | [`docs/plans/sprint-3.md`](docs/plans/sprint-3.md#ajustes-de-la-revisión-del-dev-2026-10-27) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como vendedor quiero el pedido actual en un panel que se abre desde la derecha, con un ticket que cuenta
+lo que agregué, de forma que los grupos de comida ocupen la pantalla y el pedido esté a un toque.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · Un botón con el ícono de ticket abre el panel desde la derecha con el pedido actual; se cierra con la X, con Escape o tocando afuera (cambio 7, R-5) · Estimación: 50 min · Completado: —
+
+- [ ] **CA-2** · El globito del botón cuenta los productos: una docena suma 1, una promo suma 1; con 0 no se muestra · Estimación: 15 min · Completado: —
+
+- [ ] **CA-3** · El botón Cobrar es verde, con contraste AA (cambio 6) · Estimación: 5 min · Completado: —
+
+- [ ] **CA-4** · Tests de componente y los 7 E2E de Ventas en verde, abriendo el carrito · Estimación: 20 min · Completado: —
+
+### US-23 · Precios de Empanadas y Ciabattas en Alta
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Pendiente |
+| Dueño        | Agente    |
+| Inicio       | —         |
+| Tamaño       | M         |
+| Depende de   | US-17     |
+| Plan         | [`docs/plans/sprint-3.md`](docs/plans/sprint-3.md#ajustes-de-la-revisión-del-dev-2026-10-27) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como administrador quiero cargar una sola vez, en Alta de productos, el precio único de las Empanadas
+(unidad, 3, 6 y 12) y de las Ciabattas (unidad), de forma que Stock sólo me pida el costo y la cantidad.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · Alta de productos tiene las tarjetas "Precios de Empanadas" y "Precios de Ciabattas", que sólo el admin guarda y que quedan auditadas (cambio 3) · Estimación: 40 min · Completado: —
+
+- [ ] **CA-2** · Ingresar stock de una empanada o una ciabatta no pide precio y el servidor rechaza un precio para esos grupos (R-3) · Estimación: 25 min · Completado: —
+
+- [ ] **CA-3** · La columna "Precio de venta" de Stock muestra los precios reales, también los del grupo (cambio 1, R-1) · Estimación: 10 min · Completado: —
+
+- [ ] **CA-4** · `npm run verify` y los E2E de Stock, cobro y tablero en verde · Estimación: 15 min · Completado: —

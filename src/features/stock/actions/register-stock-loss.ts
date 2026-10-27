@@ -15,7 +15,7 @@ export async function registerStockLossAction(input: StockLossInput): Promise<Ac
     if (!parsed.success) return fail('VALIDATION');
     const { item } = await stockService.registerLoss(caller, parsed.data);
     const stock = Number(item.stock);
-    return afterCatalogChange({ success: true, message: `Merma registrada: ${item.name} queda con ${stock.toLocaleString('es-AR')}`, data: { menuItemId: item.id, stock, version: item.version } });
+    return afterCatalogChange({ success: true, message: `Pérdida registrada: ${item.name} queda con ${stock.toLocaleString('es-AR')}`, data: { menuItemId: item.id, stock, version: item.version } });
   } catch (error) {
     return toActionFailure(error, 'el producto');
   }

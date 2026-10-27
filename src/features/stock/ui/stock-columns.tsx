@@ -25,7 +25,7 @@ export function StockButtons({ item, actions }: { item: MenuItemDef; actions: St
       <button onClick={() => actions.open({ kind: 'entry', item })} className={`${button} text-emerald-700 dark:text-emerald-400`} title='Ingresar stock'>
         <PackagePlus className='w-4 h-4' />
       </button>
-      <button onClick={() => actions.open({ kind: 'loss', item })} className={`${button} text-amber-700 dark:text-amber-400`} title='Registrar merma'>
+      <button onClick={() => actions.open({ kind: 'loss', item })} className={`${button} text-amber-700 dark:text-amber-400`} title='Registrar pérdida'>
         <PackageMinus className='w-4 h-4' />
       </button>
       <button onClick={() => actions.open({ kind: 'history', item })} className={`${button} text-brand-600 dark:text-brand-400`} title='Historial de ingresos'>

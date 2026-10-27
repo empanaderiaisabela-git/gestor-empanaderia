@@ -22,7 +22,7 @@ describe('merma e historial (US-4 CA-3 y CA-4)', () => {
     expect(screen.getByText('Stock actual: 2,5')).toBeDefined();
     fireEvent.change(screen.getByLabelText('Cantidad perdida'), { target: { value: '0,5' } });
     fireEvent.change(screen.getByLabelText('Motivo'), { target: { value: 'Se quemó' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Registrar merma' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Registrar pérdida' }));
     await waitFor(() => expect(submitLoss).toHaveBeenCalledWith({ menuItemId: PIZZA.id, quantity: 0.5, reason: 'Se quemó' }));
   });
 
@@ -30,7 +30,7 @@ describe('merma e historial (US-4 CA-3 y CA-4)', () => {
     render(<StockLossModal model={model({ dialog: { kind: 'loss', item: PIZZA }, submitLoss: async () => 'No hay stock suficiente de Muzza.' })} />);
     fireEvent.change(screen.getByLabelText('Cantidad perdida'), { target: { value: '3' } });
     fireEvent.change(screen.getByLabelText('Motivo'), { target: { value: 'x' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Registrar merma' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Registrar pérdida' }));
     expect(await screen.findByText('No hay stock suficiente de Muzza.')).toBeDefined();
   });
 
