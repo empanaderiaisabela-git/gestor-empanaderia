@@ -8,6 +8,13 @@ import { boardModelOf } from './use-order-board';
 const board = boardModelOf(ITEMS, GROUP_PRICES);
 const rowOf = (name: string): HTMLElement => screen.getByText(name).closest('li') ?? document.body;
 
+describe('el tablero ofrece sólo gustos con stock (US-19)', () => {
+  it('un gusto con stock 0, recién dado de alta o agotado, no aparece', () => {
+    const items = [...ITEMS, { ...ITEMS[0], id: 'nuevo', name: 'Sin ingresar', stock: 0 }];
+    expect(boardModelOf(items, GROUP_PRICES).itemsOf('empanadas').map((item) => item.name)).toEqual(['Carne', 'Pollo']);
+  });
+});
+
 describe('lista de gustos de una presentación (US-5 CA-2 a CA-4)', () => {
   beforeEach(() => useOrderStore.getState().clear());
 

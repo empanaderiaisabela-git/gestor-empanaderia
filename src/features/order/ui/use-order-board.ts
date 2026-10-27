@@ -17,7 +17,7 @@ export type OrderBoardModel = {
 };
 
 export function boardModelOf(items: MenuItemDef[], groupPrices: MenuGroupPriceDef[], loading = false): OrderBoardModel {
-  const active = items.filter((item) => item.isActive);
+  const active = items.filter((item) => item.isActive && item.stock > 0);
   const byId = new Map(active.map((item) => [item.id, item]));
   return {
     loading,

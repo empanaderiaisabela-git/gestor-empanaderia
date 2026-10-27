@@ -2444,7 +2444,7 @@ decisiones provisorias D-1 y D-2, el orden y la trazabilidad de cada línea de `
 | 4   | [US-16](#us-16--stock-sólo-para-el-administrador)                      | Stock sólo para el administrador                           | En revisión | T-17       | 45 min           |
 | 5   | [US-17](#us-17--alta-pide-grupo-y-nombre-costo-y-precio-en-ingresar-stock) | Alta pide grupo y nombre; costo y precio en Ingresar stock | En revisión | US-16      | 3 h              |
 | 6   | [US-18](#us-18--ingresar-stock-primero-la-categoría-después-el-gusto)  | Ingresar stock: primero la categoría, después el gusto     | En revisión | US-17      | 45 min           |
-| 7   | [US-19](#us-19--ventas-muestra-sólo-gustos-con-stock)                  | Ventas muestra sólo gustos con stock                       | Pendiente   | US-17      | 40 min           |
+| 7   | [US-19](#us-19--ventas-muestra-sólo-gustos-con-stock)                  | Ventas muestra sólo gustos con stock                       | En revisión | US-17      | 40 min           |
 | 8   | [US-22](#us-22--ventas-quitar-de-a-uno-en-el-pedido)                   | Ventas: quitar de a uno en el pedido                       | Pendiente   | T-17       | 40 min           |
 | 9   | [US-20](#us-20--íconos-de-lucide-por-grupo-en-ventas-y-estadísticas)   | Íconos de lucide por grupo en Ventas y Estadísticas        | Pendiente   | T-17       | 2 h              |
 | 10  | [US-21](#us-21--estadísticas-como-el-panel-de-referencia)              | Estadísticas como el panel de referencia                   | Pendiente   | US-20      | 2 h              |
@@ -2677,9 +2677,9 @@ recorrer los gustos de todas las categorías (`error-form-stock.png`).
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
-| Dueño        | —         |
-| Inicio       | —         |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-27 |
 | Tamaño       | S         |
 | Depende de   | US-17     |
 | Plan         | [`docs/plans/sprint-3.md`](docs/plans/sprint-3.md#7--us-19-ventas-sólo-con-stock-s-40-min) |
@@ -2691,9 +2691,16 @@ existe todavía.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · El tablero lista sólo gustos activos con stock mayor a 0; un gusto recién dado de alta o agotado no aparece · Estimación: 25 min · Completado: —
+- [x] **CA-1** · El tablero lista sólo gustos activos con stock mayor a 0; un gusto recién dado de alta o agotado no aparece · Estimación: 25 min · Completado: 2026-10-27 03:52
 
-- [ ] **CA-2** · Tests de componente y E2E del tablero en verde · Estimación: 15 min · Completado: —
+- [x] **CA-2** · Tests de componente y E2E del tablero en verde · Estimación: 15 min · Completado: 2026-10-27 03:52
+
+**Notas**
+
+- `boardModelOf` (`use-order-board.ts`) lista sólo gustos activos con stock mayor a 0, según el stock del
+  servidor. Un gusto recién dado de alta o agotado no aparece en el tablero ni para elegir en las promos. El cobro
+  ya rechazaba stock insuficiente.
+- Nivel 2: lint, typecheck, `test:coverage` (860 tests) y E2E de tablero, cobro y promo (7 casos) en verde.
 
 ### US-22 · Ventas: quitar de a uno en el pedido
 
