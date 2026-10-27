@@ -2389,6 +2389,14 @@ de forma que las tareas simples no gasten como las difíciles.
   96/88,76, mutación 89,31 y build. `test:int` no corrió: Docker estaba apagado y el dev decidió integrar sin él,
   porque el cambio es sólo texto.
 
+**Ajustes (2026-10-27)**, aprobados por el dev después de revisar la skill:
+
+- Entre Sonnet y Opus, si verificar cuesta, se va directo a `opus` con `effort: medium`: Opus cuesta sólo el doble.
+- Los precios llevan la fecha y el aviso de que Haiku sube a 0,50/2,50 cuando un pedido pasa los 100K tokens.
+- `Explore` sólo ubica código; leer y resumir archivos va con `general-purpose`.
+- El pedido a un subagente que edita prohíbe también los comentarios `shortcut:` que pida un plugin.
+- Un detalle chico (lint, una línea) se arregla directo; se escala sólo si el enfoque está mal.
+
 ### BUG-19 · Los mensajes dicen "el/la" y "registrado/a"
 
 | Campo        | Valor     |

@@ -30,15 +30,23 @@ Partí el trabajo en subtareas con un resultado verificable. A cada una, el nive
 - Sólo esos tres modelos. Opus es el techo: ningún otro, ni siquiera al escalar.
 - Ante la duda entre dos niveles: el de abajo si el resultado es fácil de verificar; el de arriba si un error
   sería caro de detectar.
-- Referencia (USD por millón de tokens, entrada/salida): Haiku 5.5 0,10/0,50 · Sonnet 5.5 2/10 · Opus 5.5 4/20.
+- Entre el 2 y el 3, si verificar cuesta, andá directo a `opus` con `effort: medium`. Opus cuesta sólo el doble
+  que Sonnet: un Sonnet que falla más el reintento en Opus sale 1,5 veces más caro que ir directo. El ahorro
+  grande está en el nivel 1 (Haiku cuesta 40 veces menos que Opus).
+- Referencia (USD por millón de tokens, entrada/salida, a octubre de 2026): Haiku 5.5 0,10/0,50 · Sonnet 5.5 2/10
+  · Opus 5.5 4/20. Haiku sube a 0,50/2,50 cuando un pedido pasa los 100K tokens de entrada, y un subagente que
+  lee mucho llega fácil porque cada turno reenvía todo lo leído; aun así es 8 veces más barato que Opus.
 
 ## 3. Elegir el tipo de agente
 
 | Subtarea | `subagent_type` |
 |---|---|
-| Sólo buscar o leer | `Explore` |
+| Ubicar código: dónde está algo, qué lo usa | `Explore` |
+| Leer y resumir archivos enteros, logs o salidas de tests | `general-purpose` |
 | Diseñar un plan sin editar | `Plan` |
 | Editar archivos o correr comandos | `general-purpose` |
+
+`Explore` lee fragmentos para ubicar código, no archivos enteros: para resumir no sirve.
 
 Pasá siempre `model` y `effort` en cada llamada: esta skill lo pide explícitamente. Nunca uses `fork` para
 abaratar: ignora `model` y corre con el modelo del agente principal.
@@ -49,8 +57,8 @@ Cada subagente arranca sin contexto. El prompt lleva:
 
 1. Objetivo y qué significa "terminado".
 2. Archivos o rutas exactas, y lo ya averiguado que le ahorre buscar.
-3. Si edita: "Respetá `AGENTS.md`" y las reglas duras que apliquen (100 líneas por archivo, cero comentarios,
-   capas, sin `any`).
+3. Si edita: "Respetá `AGENTS.md`" y las reglas duras que apliquen (100 líneas por archivo, cero comentarios
+   —tampoco los `shortcut:` u otros que pida un plugin—, capas, sin `any`).
 4. Qué no hacer: nada fuera del alcance, sin commits ni comandos sobre la base.
 5. Formato de respuesta: breve, con rutas `archivo:línea` y lo que cambió.
 
@@ -60,8 +68,10 @@ van en serie.
 ## 5. Verificar y escalar
 
 - Revisá cada resultado antes de usarlo: leé el diff y corré el lint o los tests de lo que tocó.
-- Si es incompleto o incorrecto, reintentá **una vez** en el nivel siguiente, con lo que falló en el pedido. No
-  repitas en el mismo nivel.
+- Si falta un detalle chico (un error de lint, una línea), arreglalo directo: relanzar un subagente que arranca
+  de cero sale más caro.
+- Si el enfoque está mal o falta una parte grande, reintentá **una vez** en el nivel siguiente, con lo que falló
+  en el pedido. No repitas en el mismo nivel.
 - Si falla en el nivel 3, frená y contale al dev.
 
 ## 6. Informar al dev
