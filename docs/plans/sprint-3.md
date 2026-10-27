@@ -53,6 +53,17 @@ cambio de base.
 - **Elegido**: la línea se quita del pedido, igual que con el tacho. Es lo que hace cualquier carrito.
 - **Si el dev responde otra cosa**: el "−" queda deshabilitado con una sola unidad. Cambia sólo la UI de US-22.
 
+### D-3 · El "padding doble" de las páginas (BUG-18)
+
+- **Pregunta**: además de la franja de arriba, ¿achico el margen interno de la tarjeta blanca de cada página?
+- **Situación**: en Estadísticas, a 1440 px, el contenido empezaba a 96 px del borde de arriba: 64 de la franja vacía
+  y 32 del margen del layout. Adentro, la tarjeta blanca tiene su propio margen de 24 px. Ese margen no es un padding
+  repetido: separa el contenido del borde de la tarjeta, como en la referencia.
+- **Elegido**: se quita sólo la franja. La tarjeta pasa a empezar a 34 px del borde, en todas las páginas, y su
+  margen interno queda igual.
+- **Si el dev responde otra cosa**: el margen interno se achica en las 12 páginas de `src/app/(main)/` (`p-6` a
+  `p-4`). Es un cambio de clases, de nivel 1.
+
 ## Orden de ejecución
 
 | # | Ítem | Depende de | Rama |

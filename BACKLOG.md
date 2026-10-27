@@ -2437,7 +2437,7 @@ decisiones provisorias D-1 y D-2, el orden y la trazabilidad de cada línea de `
 | --- | ---------------------------------------------------------------------- | ---------------------------------------------------------- | ----------- | ---------- | ---------------- |
 | 0   | [T-17](#t-17--backlog-del-sprint-3-desde-specsmd)                      | Backlog del Sprint 3 desde `specs.md`                      | En revisión | —          | 30 min           |
 | 1   | [T-19](#t-19--tests-por-nivel-según-el-tamaño-del-cambio)              | Tests por nivel según el tamaño del cambio                 | En revisión | T-17       | 30 min           |
-| 2   | [BUG-18](#bug-18--franja-vacía-arriba-de-cada-página)                  | Franja vacía arriba de cada página                         | Pendiente   | T-17       | 30 min           |
+| 2   | [BUG-18](#bug-18--franja-vacía-arriba-de-cada-página)                  | Franja vacía arriba de cada página                         | En revisión | T-17       | 30 min           |
 | 3   | [BUG-17](#bug-17--el-nombre-del-gusto-se-corta-en-alta-de-productos)   | El nombre del gusto se corta en Alta de productos          | Pendiente   | T-17       | 20 min           |
 | 4   | [US-16](#us-16--stock-sólo-para-el-administrador)                      | Stock sólo para el administrador                           | Pendiente   | T-17       | 45 min           |
 | 5   | [US-17](#us-17--alta-pide-grupo-y-nombre-costo-y-precio-en-ingresar-stock) | Alta pide grupo y nombre; costo y precio en Ingresar stock | Pendiente   | US-16      | 3 h              |
@@ -2504,9 +2504,9 @@ tiempo ni tokens como un cambio de base.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
-| Dueño        | —         |
-| Inicio       | —         |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-27 |
 | Tamaño       | S         |
 | Depende de   | T-17      |
 | Plan         | [`docs/plans/sprint-3.md`](docs/plans/sprint-3.md#2--bug-18-franja-vacía-arriba-s-30-min) |
@@ -2520,9 +2520,18 @@ padding doble. En Estadísticas obliga a scrollear para ver datos (`espacio-inec
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · Desde `xl`, el header no ocupa alto y el botón de tema queda arriba a la derecha; en móvil se ve como hoy · Estimación: 15 min · Completado: —
+- [x] **CA-1** · Desde `xl`, el header no ocupa alto y el botón de tema queda arriba a la derecha; en móvil se ve como hoy · Estimación: 15 min · Completado: 2026-10-27 03:19
 
-- [ ] **CA-2** · Ninguna página suma su propio padding al del layout; capturas de Estadísticas, Stock y Ventas sin la franja; E2E de navegación en verde · Estimación: 15 min · Completado: —
+- [x] **CA-2** · Ninguna página suma su propio padding al del layout; capturas de Estadísticas, Stock y Ventas sin la franja; E2E de navegación en verde · Estimación: 15 min · Completado: 2026-10-27 03:19
+
+**Notas**
+
+- Desde `xl`, el header sale del flujo (`xl:absolute`) y el botón de tema queda en el margen de arriba a la derecha,
+  sin pisar la tarjeta. Medido a 1440 px: la tarjeta de Estadísticas pasa de empezar a 96 px a empezar a 34 px. Por
+  debajo de `xl` sigue igual, porque ahí el header lleva el botón del menú.
+- Decisión provisoria D-3 (`docs/plans/sprint-3.md`): el margen interno de la tarjeta de cada página no se toca.
+- Nivel 1: tests relacionados (`main-layout.test.tsx`) en verde, lint y typecheck en el hook del commit, y
+  `navegacion.spec.ts` en verde (4 casos), después del arreglo de BUG-21.
 
 ### BUG-17 · El nombre del gusto se corta en Alta de productos
 
