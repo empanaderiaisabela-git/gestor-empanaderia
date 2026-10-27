@@ -18,6 +18,7 @@ describe('tablero de ventas (US-5 CA-1)', () => {
     render(<OrderBoard />);
     expect(await screen.findByRole('region', { name: 'Empanadas' })).toBeDefined();
     expect(['Pizzas', 'Sanguches', 'Ciabattas', 'Coca-Cola', 'Pepsi'].map((name) => screen.getByRole('region', { name }).getAttribute('aria-label'))).toHaveLength(5);
+    fireEvent.click(screen.getByRole('button', { name: 'Ver pedido' }));
     expect(screen.getByRole('region', { name: 'Pedido actual' })).toBeDefined();
   });
 
@@ -26,6 +27,7 @@ describe('tablero de ventas (US-5 CA-1)', () => {
     fireEvent.click(within(await screen.findByRole('region', { name: 'Empanadas' })).getByRole('button', { name: /1 docena/ }));
     fireEvent.click(within((await screen.findByText('Carne')).closest('li') ?? document.body).getByRole('button', { name: 'Completar' }));
     fireEvent.click(screen.getByRole('button', { name: 'Listo' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Ver pedido (1)' }));
     expect(within(screen.getByRole('region', { name: 'Pedido actual' })).getByText('Carne')).toBeDefined();
     expect(screen.getByText('12 en pedido')).toBeDefined();
   });

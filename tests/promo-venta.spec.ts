@@ -24,6 +24,7 @@ test.describe('vender una promo desde el tablero (US-9)', () => {
     await gustoEnPromo(page, 'Muzza y cebolla').getByRole('button', { name: 'Completar' }).click();
     await gustoEnPromo(page, 'Sprite 1,5 L').getByRole('button', { name: 'Agregar' }).click();
 
+    await page.getByRole('button', { name: /^Ver pedido/ }).click();
     const pedido = page.getByRole('region', { name: 'Pedido actual' });
     await expect(pedido.getByText(`Promo · ${nombre}`)).toBeVisible();
     await pedido.getByLabel('Comprador (opcional)').fill('Comprador promo');

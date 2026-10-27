@@ -298,7 +298,7 @@ Respuestas del dev a las preguntas:
 - **US-25 · Proveedor (cambio 10), nivel 2.** El schema acepta teléfono y correo vacíos, y un correo cargado se sigue
   validando. La base ya tiene `default('')`, así que no hay migración.
 - **US-24 · Carrito (cambios 6 y 7), nivel 2.** `order-drawer.tsx` tiene el botón con `Ticket` y el contador, y el
-  panel con `framer-motion`, que muestra `CurrentOrder` sin cambios. Cobrar en `bg-emerald-700`, que da 5,5:1 con texto
+  panel con transición de CSS, que muestra `CurrentOrder` sin cambios. Cobrar en `bg-emerald-700`, que da 5,5:1 con texto
   blanco. Los 7 E2E de Ventas abren el carrito.
 - **US-23 · Precios del grupo en Alta (cambios 1 y 3), nivel 3.** Vuelven la acción, el schema, el `save` del
   servicio y la tarjeta que sacó US-17 (`16b4cd2`), con textos mínimos. Stock deja de pedir y guardar el precio de

@@ -27,7 +27,8 @@ async function openCheckout(): Promise<void> {
     store().close();
   });
   render(<OrderBoard />);
-  fireEvent.click(await screen.findByRole('button', { name: 'Cobrar $15.500' }));
+  fireEvent.click(await screen.findByRole('button', { name: 'Ver pedido (2)' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Cobrar $15.500' }));
 }
 
 describe('cobrar desde el tablero (US-6 CA-1 y CA-5)', () => {

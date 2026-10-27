@@ -181,7 +181,10 @@ que sumar el total".
   con el precio (del grupo) o "desde $X".
   Avisa si el grupo no tiene gustos o si falta el precio del grupo, y deshabilita los botones.
 - `FlavorPicker` / `FlavorRow`: gustos con precio y stock disponible, y los botones según la presentación.
-- `CurrentOrder` / `OrderTable`: el pedido, con el total, Vaciar y Cobrar.
+- `OrderDrawer` (US-24): un botón flotante abajo a la derecha, con el ícono `Ticket` y un número que cuenta los
+  productos (una docena suma 1, una promo suma 1), abre desde la derecha el panel con `CurrentOrder`. Se cierra con
+  la X, con Escape o tocando afuera; Cobrar lo cierra y abre el cobro.
+- `CurrentOrder` / `OrderTable`: el pedido, con el total, Vaciar y Cobrar (verde, `emerald-700`).
 - `CheckoutModal` / `PaymentPicker` (`use-checkout.ts`): el cobro.
 
 Al tablero se entra con "Nuevo pedido", desde Ventas/Pedidos.

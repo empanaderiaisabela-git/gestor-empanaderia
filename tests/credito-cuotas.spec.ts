@@ -23,6 +23,7 @@ test.describe('cobrar con crédito en cuotas (US-11)', () => {
     await gusto(page, '7up 1,5 L').getByRole('button', { name: 'Agregar' }).click();
     await page.getByRole('button', { name: 'Listo' }).click();
 
+    await page.getByRole('button', { name: /^Ver pedido/ }).click();
     const pedido = page.getByRole('region', { name: 'Pedido actual' });
     await pedido.getByLabel('Comprador (opcional)').fill('Comprador crédito');
     await pedido.getByRole('button', { name: 'Cobrar $3.000' }).click();

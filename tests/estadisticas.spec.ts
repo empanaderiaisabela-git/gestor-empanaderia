@@ -10,6 +10,7 @@ test.describe('Estadísticas de la jornada (US-12)', () => {
     await grupo(page, 'Pepsi').getByRole('button', { name: /1 unidad/ }).click();
     await gusto(page, 'Pepsi 1,5 L').getByRole('button', { name: 'Agregar' }).click();
     await page.getByRole('button', { name: 'Listo' }).click();
+    await page.getByRole('button', { name: /^Ver pedido/ }).click();
     await page.getByRole('region', { name: 'Pedido actual' }).getByRole('button', { name: 'Cobrar $3.200' }).click();
     await page.getByRole('button', { name: 'Transferencia' }).click();
     await page.getByRole('button', { name: 'Efectivo' }).click();

@@ -2466,7 +2466,7 @@ son los ajustes que pidió el dev al revisar el sprint (2026-10-27), con sus dec
 | 13  | [BUG-20](#bug-20--el-recargo-de-cuotas-se-cuenta-como-plata-del-local)   | El recargo de cuotas se cuenta como plata del local        | En revisión | US-11      | 1 h 30 min       |
 | 14  | [T-20](#t-20--textos-y-estilos-de-la-revisión-del-sprint-3)              | Textos y estilos de la revisión del Sprint 3               | En revisión | T-18       | 30 min           |
 | 15  | [US-25](#us-25--proveedor-sin-teléfono-ni-correo-obligatorios)           | Proveedor sin teléfono ni correo obligatorios              | En revisión | T-18       | 30 min           |
-| 16  | [US-24](#us-24--ventas-el-pedido-en-un-carrito-desplegable)              | Ventas: el pedido en un carrito desplegable                | Pendiente   | T-18       | 1 h 30 min       |
+| 16  | [US-24](#us-24--ventas-el-pedido-en-un-carrito-desplegable)              | Ventas: el pedido en un carrito desplegable                | En revisión | T-18       | 1 h 30 min       |
 | 17  | [US-23](#us-23--precios-de-empanadas-y-ciabattas-en-alta)                | Precios de Empanadas y Ciabattas en Alta                   | Pendiente   | US-17      | 1 h 30 min       |
 |     |                                                                        | **Total del sprint**                                       |             |            | **18 h 25 min**  |
 
@@ -2981,9 +2981,9 @@ aunque todavía no tenga esos datos.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
+| Estado       | En revisión |
 | Dueño        | Agente    |
-| Inicio       | —         |
+| Inicio       | 2026-10-27 |
 | Tamaño       | M         |
 | Depende de   | T-18      |
 | Plan         | [`docs/plans/sprint-3.md`](docs/plans/sprint-3.md#ajustes-de-la-revisión-del-dev-2026-10-27) |
@@ -2995,13 +2995,24 @@ lo que agregué, de forma que los grupos de comida ocupen la pantalla y el pedid
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · Un botón con el ícono de ticket abre el panel desde la derecha con el pedido actual; se cierra con la X, con Escape o tocando afuera (cambio 7, R-5) · Estimación: 50 min · Completado: —
+- [x] **CA-1** · Un botón con el ícono de ticket abre el panel desde la derecha con el pedido actual; se cierra con la X, con Escape o tocando afuera (cambio 7, R-5) · Estimación: 50 min · Completado: 2026-10-27 11:49
 
-- [ ] **CA-2** · El globito del botón cuenta los productos: una docena suma 1, una promo suma 1; con 0 no se muestra · Estimación: 15 min · Completado: —
+- [x] **CA-2** · El globito del botón cuenta los productos: una docena suma 1, una promo suma 1; con 0 no se muestra · Estimación: 15 min · Completado: 2026-10-27 11:49
 
-- [ ] **CA-3** · El botón Cobrar es verde, con contraste AA (cambio 6) · Estimación: 5 min · Completado: —
+- [x] **CA-3** · El botón Cobrar es verde, con contraste AA (cambio 6) · Estimación: 5 min · Completado: 2026-10-27 11:49
 
-- [ ] **CA-4** · Tests de componente y los 7 E2E de Ventas en verde, abriendo el carrito · Estimación: 20 min · Completado: —
+- [x] **CA-4** · Tests de componente y los 7 E2E de Ventas en verde, abriendo el carrito · Estimación: 20 min · Completado: 2026-10-27 11:49
+
+**Notas**
+
+- `order-drawer.tsx`: el botón flotante con `Ticket` y el número, y el panel que entra desde la derecha. Va con
+  transición de CSS (`translate-x` y `visibility`) en lugar de `framer-motion`: el panel cerrado queda `inert` y
+  `aria-hidden`, así los tests y el lector de pantalla no lo ven. `CurrentOrder` no cambia.
+- Decisión provisoria R-5 (`docs/plans/sprint-3.md`): el botón flota abajo a la derecha y Cobrar cierra el carrito.
+- El tablero suma `pb-24` para que el botón no tape la última tarjeta.
+- Nivel 2: lint, typecheck, tests de componente del carrito, el tablero y el cobro (21), `test:coverage` en el hook
+  de pre-push y los 7 E2E de Ventas (11 casos) en verde, que ahora abren el carrito con "Ver pedido". En el
+  navegador: a 1440 px el panel mide 612 px; en el celular, todo el ancho y sin scroll horizontal.
 
 ### US-23 · Precios de Empanadas y Ciabattas en Alta
 

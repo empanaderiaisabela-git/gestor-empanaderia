@@ -34,7 +34,7 @@ export function CurrentOrder({ board, onCheckout }: CurrentOrderProps): JSX.Elem
         <button onClick={clear} className='inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-zinc-300 dark:border-zinc-700'>
           <Trash2 className='w-4 h-4' /> Vaciar
         </button>
-        <button onClick={onCheckout} disabled={!ready || !onCheckout} className='inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-brand-600 text-white font-semibold disabled:opacity-40 disabled:cursor-not-allowed'>
+        <button onClick={onCheckout} disabled={!ready || !onCheckout} className='inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white font-semibold disabled:opacity-40 disabled:cursor-not-allowed'>
           <Check className='w-4 h-4' /> Cobrar {formatMoney(total ?? 0)}
         </button>
       </div>

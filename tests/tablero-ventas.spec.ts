@@ -18,6 +18,7 @@ test.describe('tablero de ventas (US-5)', () => {
     await gusto(page, 'Napolitana').getByRole('button', { name: 'Agregar' }).click();
     await page.getByRole('button', { name: 'Listo' }).click();
 
+    await page.getByRole('button', { name: /^Ver pedido/ }).click();
     const pedido = page.getByRole('region', { name: 'Pedido actual' });
     await expect(pedido.getByText('2 Carne + 4 Pollo')).toBeVisible();
     await expect(pedido.getByText('Muzza / Napolitana')).toBeVisible();
@@ -29,6 +30,7 @@ test.describe('tablero de ventas (US-5)', () => {
     await grupo(page, 'Empanadas').getByRole('button', { name: /½ docena/ }).click();
     await gusto(page, 'Humita').getByRole('button', { name: 'Agregar uno' }).click();
     await page.getByRole('button', { name: 'Listo' }).click();
+    await page.getByRole('button', { name: /^Ver pedido/ }).click();
     const pedido = page.getByRole('region', { name: 'Pedido actual' });
     await expect(pedido.getByText('faltan 5')).toBeVisible();
     await expect(pedido.getByRole('button', { name: /Cobrar/ })).toBeDisabled();
