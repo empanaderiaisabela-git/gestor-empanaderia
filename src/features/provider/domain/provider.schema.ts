@@ -3,8 +3,13 @@ import { createSelectSchema } from 'drizzle-zod';
 import { providers } from '@/lib/db/schema';
 
 const name = z.string().trim().min(2, 'El nombre debe tener al menos 2 caracteres').max(100, 'Nombre demasiado largo');
-const phone = z.string().trim().min(1, 'El teléfono es obligatorio').max(30, 'Número de teléfono demasiado largo');
-const email = z.email('Formato de correo electrónico inválido').trim().min(1, 'El correo es obligatorio').max(100, 'El correo electrónico es demasiado largo');
+const phone = z.string().trim().max(30, 'Número de teléfono demasiado largo');
+const emailFormat = z.email();
+const email = z
+  .string()
+  .trim()
+  .max(100, 'El correo electrónico es demasiado largo')
+  .refine((value) => value === '' || emailFormat.safeParse(value).success, 'Formato de correo electrónico inválido');
 const version = z.number().int().min(1);
 
 export const providerCreateSchema = z.strictObject({ name, phone, email });

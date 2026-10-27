@@ -2465,7 +2465,7 @@ son los ajustes que pidió el dev al revisar el sprint (2026-10-27), con sus dec
 | 12  | [BUG-21](#bug-21--la-carga-inicial-de-datos-falla-si-quedaron-gastos)   | La carga inicial de datos falla si quedaron gastos         | En revisión | US-14      | 15 min           |
 | 13  | [BUG-20](#bug-20--el-recargo-de-cuotas-se-cuenta-como-plata-del-local)   | El recargo de cuotas se cuenta como plata del local        | En revisión | US-11      | 1 h 30 min       |
 | 14  | [T-20](#t-20--textos-y-estilos-de-la-revisión-del-sprint-3)              | Textos y estilos de la revisión del Sprint 3               | En revisión | T-18       | 30 min           |
-| 15  | [US-25](#us-25--proveedor-sin-teléfono-ni-correo-obligatorios)           | Proveedor sin teléfono ni correo obligatorios              | Pendiente   | T-18       | 30 min           |
+| 15  | [US-25](#us-25--proveedor-sin-teléfono-ni-correo-obligatorios)           | Proveedor sin teléfono ni correo obligatorios              | En revisión | T-18       | 30 min           |
 | 16  | [US-24](#us-24--ventas-el-pedido-en-un-carrito-desplegable)              | Ventas: el pedido en un carrito desplegable                | Pendiente   | T-18       | 1 h 30 min       |
 | 17  | [US-23](#us-23--precios-de-empanadas-y-ciabattas-en-alta)                | Precios de Empanadas y Ciabattas en Alta                   | Pendiente   | US-17      | 1 h 30 min       |
 |     |                                                                        | **Total del sprint**                                       |             |            | **18 h 25 min**  |
@@ -2951,9 +2951,9 @@ pérdidas, el pedido se lea entero en Ventas/Pedidos y Estadísticas diga qué m
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
+| Estado       | En revisión |
 | Dueño        | Agente    |
-| Inicio       | —         |
+| Inicio       | 2026-10-27 |
 | Tamaño       | S         |
 | Depende de   | T-18      |
 | Plan         | [`docs/plans/sprint-3.md`](docs/plans/sprint-3.md#ajustes-de-la-revisión-del-dev-2026-10-27) |
@@ -2965,9 +2965,17 @@ aunque todavía no tenga esos datos.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · El proveedor se guarda con teléfono y correo vacíos; un correo cargado sigue validándose (tests del schema y de contrato) · Estimación: 20 min · Completado: —
+- [x] **CA-1** · El proveedor se guarda con teléfono y correo vacíos; un correo cargado sigue validándose (tests del schema y de contrato) · Estimación: 20 min · Completado: 2026-10-27 11:41
 
-- [ ] **CA-2** · El formulario dice "Teléfono" y "Correo electrónico"; E2E de Proveedores en verde · Estimación: 10 min · Completado: —
+- [x] **CA-2** · El formulario dice "Teléfono" y "Correo electrónico"; E2E de Proveedores en verde · Estimación: 10 min · Completado: 2026-10-27 11:41
+
+**Notas**
+
+- `provider.schema.ts`: el teléfono deja de exigir `min(1)` y el correo acepta vacío o un correo válido (un `refine`
+  con `z.email()`, para conservar los mensajes de siempre). La base ya tenía `default('')`: no hay migración.
+- E2E: salen los casos que exigían teléfono o correo y entra "crear un proveedor sin teléfono ni correo".
+- Nivel 2: lint, typecheck, `test:coverage` (885 tests, cobertura 95,97/89,4) y E2E de Proveedores (15 casos) en
+  verde.
 
 ### US-24 · Ventas: el pedido en un carrito desplegable
 

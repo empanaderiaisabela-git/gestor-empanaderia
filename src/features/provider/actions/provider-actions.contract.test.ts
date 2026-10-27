@@ -32,6 +32,10 @@ describe('acciones de proveedores (camino feliz)', () => {
     expect(await deleteProviderAction({ id, version: 4 })).toEqual({ success: true, message: 'Se eliminó el proveedor' });
   });
 
+  it('crea un proveedor sin teléfono ni correo (US-25)', async () => {
+    expect(await createProviderAction({ name: 'Molino del Sur', phone: '', email: '' })).toMatchObject({ success: true, data: { phone: '', email: '' } });
+  });
+
   it('activar devuelve el mensaje de activación', async () => {
     const created = await createProviderAction(INPUT);
     const id = created.success ? created.data.id : '';

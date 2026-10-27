@@ -12,6 +12,7 @@ que se les compra mercadería.
 
 - El nombre es único **entre los activos**. Si se crea uno con el nombre de un proveedor **inactivo**, se lo reactiva
   con los datos nuevos ("Proveedor reactivado") en vez de crear otro.
+- El teléfono y el correo son opcionales (US-25). Si se carga un correo, tiene que tener formato válido.
 - No se puede borrar un proveedor que tiene productos: se lo desactiva.
 - Editar, activar o desactivar y borrar exigen la `version` que tiene la pantalla (concurrencia optimista).
 - Toda escritura deja un registro en la auditoría, en la misma transacción.
