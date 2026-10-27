@@ -245,6 +245,7 @@ El dev revisó el sprint antes de pasarlo a `main` y pidió 10 cambios breves, c
 | 8 | El título de Estadísticas pasa a "Resumen de la actividad" | T-20 |
 | 9 | Subtítulos "Venta por categoría" y "Cantidad de ventas y sus ganancias" | T-20 |
 | 10 | Proveedor sin teléfono ni correo obligatorios; etiquetas "Teléfono" y "Correo electrónico" | US-25 |
+| 11 | Los precios de la columna de Stock se cortan a mitad de renglón: uno arriba del otro | BUG-22 |
 
 Respuestas del dev a las preguntas:
 
@@ -258,8 +259,8 @@ Respuestas del dev a las preguntas:
 
 - **Pregunta**: ¿muestra sólo un precio o todos?
 - **Situación**: la docena de empanadas está a $32.000 y la unidad a $2.000.
-- **Elegido**: todos los precios del grupo, con el mismo formato que Sanguches: "1 unidad: $2.000 · … · 12 unidades:
-  $32.000".
+- **Elegido**: todos los precios del grupo, uno por renglón, igual que Sanguches: "1 unidad: $2.000", abajo
+  "3 unidades: …" (BUG-22).
 - **Si el dev responde otra cosa**: la columna muestra un solo precio. Es un cambio de nivel 1 en `stock-columns.tsx`.
 
 #### R-2 · Hasta dónde llega "pérdida"
@@ -303,6 +304,8 @@ Respuestas del dev a las preguntas:
 - **US-23 · Precios del grupo en Alta (cambios 1 y 3), nivel 3.** Vuelven la acción, el schema, el `save` del
   servicio y la tarjeta que sacó US-17 (`16b4cd2`), con textos mínimos. Stock deja de pedir y guardar el precio de
   esos grupos, y su columna muestra los precios reales.
+- **BUG-22 · Precios de Stock uno por renglón (cambio 11), nivel 1.** La columna "Precio de venta" pasa de un texto
+  unido con " · " a una lista con un precio por renglón.
 
 ## Trazabilidad: `specs.md` → ítems
 

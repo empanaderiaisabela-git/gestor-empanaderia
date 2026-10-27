@@ -2451,6 +2451,7 @@ de lucide; quitar de a uno en el pedido; y tests según el tamaño del cambio.
 **Plan del sprint**: [`docs/plans/sprint-3.md`](docs/plans/sprint-3.md). Tiene las decisiones del dev (2026-10-26), las
 decisiones provisorias D-1 y D-2, el orden y la trazabilidad de cada línea de `specs.md` a su ítem. Los ítems 14 a 17
 son los ajustes que pidió el dev al revisar el sprint (2026-10-27), con sus decisiones R-1 a R-5 en el mismo plan.
+El 18 es un arreglo rápido que pidió después.
 
 ### Resumen del Sprint 3
 
@@ -2474,7 +2475,8 @@ son los ajustes que pidió el dev al revisar el sprint (2026-10-27), con sus dec
 | 15  | [US-25](#us-25--proveedor-sin-teléfono-ni-correo-obligatorios)           | Proveedor sin teléfono ni correo obligatorios              | En revisión | T-18       | 30 min           |
 | 16  | [US-24](#us-24--ventas-el-pedido-en-un-carrito-desplegable)              | Ventas: el pedido en un carrito desplegable                | En revisión | T-18       | 1 h 30 min       |
 | 17  | [US-23](#us-23--precios-de-empanadas-y-ciabattas-en-alta)                | Precios de Empanadas y Ciabattas en Alta                   | En revisión | US-17      | 1 h 30 min       |
-|     |                                                                        | **Total del sprint**                                       |             |            | **18 h 25 min**  |
+| 18  | [BUG-22](#bug-22--los-precios-de-stock-se-leen-mal)                      | Los precios de Stock se leen mal                           | En revisión | US-23      | 15 min           |
+|     |                                                                        | **Total del sprint**                                       |             |            | **18 h 40 min**  |
 
 ### T-17 · Backlog del Sprint 3 desde `specs.md`
 
@@ -3061,3 +3063,31 @@ lo que agregué, de forma que los grupos de comida ocupen la pantalla y el pedid
   grupo (decisión provisoria R-1).
 - Nivel 3: `npm run verify` en verde (mutación 89,88 y build) y E2E de Stock, precios, cobro y tablero (10 casos),
   con uno nuevo: el precio de Ciabattas se guarda en Alta y Stock lo muestra sin pedirlo.
+
+### BUG-22 · Los precios de Stock se leen mal
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-27 |
+| Tamaño       | XS        |
+| Depende de   | US-23     |
+| Plan         | [`docs/plans/sprint-3.md`](docs/plans/sprint-3.md#ajustes-de-la-revisión-del-dev-2026-10-27) |
+| Merge        | —         |
+| Horas reales | 15 min    |
+
+**Historia**: Como administrador quiero ver en la columna "Precio de venta" de Stock un precio por renglón, de forma
+que se lea de un vistazo cuánto sale la unidad, 3, 6 y 12.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · Cada precio de la columna "Precio de venta" va en su propio renglón, sin cortarse ("1 unidad: $2.000", abajo "3 unidades: $8.000", etc.) · Estimación: 15 min · Completado: 2026-10-27 15:39
+
+**Notas**
+
+- Antes la columna unía los precios con " · " en un solo texto, y al no entrar en el ancho el corte caía en la mitad
+  de un precio. Ahora es una lista con un renglón por precio (`whitespace-nowrap`). Sale `priceSummary`, que ya no
+  usaba nadie.
+- Nivel 1: lint, typecheck, `vitest related` (40 tests) y E2E de Stock y precios (4 casos) en verde, y mirado en el
+  navegador a 1440 px.
