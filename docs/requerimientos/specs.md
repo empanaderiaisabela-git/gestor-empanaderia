@@ -188,3 +188,34 @@ fecha y numero unico, no es necesaria la foto, solo la fecha el monto, el numero
 
 ¿Se conservan las estadísticas de hoy que no nombró, como efectivo/transferencia o valor del stock?
 no es necesario. En cuanto a lo que se facturó dependiendo que medio de pago, necesito a los 4 disponibles por separado.
+
+
+---------------------------------------------------------------------------
+
+Aclaraciones para la sprint 3:
+
+-En alta de productos, quiero que la columna grupo y Gusto / bebida esten mas cerca, pues los nombres enseguida se cortan y no se llega a leer nada para un nombre medianamente largo (ver wirefrime en docs "error-visual-1")
+
+-En alta de productos, en el boton de nuevo gusto o bebida, cuando presiono la opcion pizza me deja un casillero para rellenar el precio de venta, pero cuando la agrego al stock me vuelve a pedir el precio de venta, no tiene ningún sentido. El precio se pone solo en el tab de stock.
+
+-En el wireframe error-form-stock se aprecia como el formulario dice "gusto o bebida" y combina todas las categorias que el local ofrece, lo cual es catastrofico pues si crece demasiado es super incomodo navegar entre todas los gustos de todas las categorías. Quiero que se separe en 2 forms donde el primero sea categoria, y el segundo sea gusto o bebida PERO DE LO SELECCIONADO EN CATEGORIA, es decir, que gusto o bebida solo muestre el gusto o la bebida disponible precargada en la categoria selecta, sin mezclar informacion.
+
+-En estadisticas: "La jornada del local va de 7:00 a 6:59 del día siguiente, en hora de Argentina." este mensaje está completamente de sobra.
+
+-En estadisticas, ver wireframe "espacio inecesario estadisticas", donde se ve como se deja un espacio arriba del todo innecesario que hace scrollear para ver informacion que ya podria aparecer si se usase bien ese espacio.
+
+- En estadisticas, quiero invertir los lugares de los KPI de ganancia en limpio-ventas registradas-total facturado con los KPI de las comidas, las comidas deben ir arriba y lo otro abajo.
+
+- En estadisticas, el KPI de ganancia en limpio tiene esto: "Lo facturado menos el costo para el local de lo vendido y las mermas." es completamente innecesario eso, quitarlo.
+
+- En estadisticas, hay un KPI que dice total facturado solo para el recargo de las cuotas, tampoco tiene sentido, se tiene que ir entero ese KPI.
+
+- En estadisticas, mira el wirefrime "referencia-de-otro-sistema", allí veras como pretendo que se vea el panel de estadísticas. Para introducir lo que estoy diciendo, esto es un gestor de stock que le hice a un cliente para manejar su ciber. Observa como luce. Como están acomodados los KPI. La idea es que las comidas queden arriba (como en el wirefrime de ejemplo lo están sus productos como servicio tecnico, tech, libreria...) y que ademas, dichas comidas tengan el borde de su KPI pintado, no el fondo completo, lo mismo aplica para las ventas procesadas y las ganancias. Además quiero deshacerme de los emojis unicode pues se ven muy feos. Prefiero mantener los de lucide-react, se ven mucho mas nativos. De lucid react quiero que tomes los iconos de pizza, sandwich, can-soda (para pepsi y cocacola), y para la empanada y la ciabatta, dejo en docs/wirerframes tambien dos imagenes que hice yo al estilo de lucide-react de ciabatta y empanada para que uses en su lugar, quitale el fondo y adaptalas al icono de su categoria. para el KPI de promos quiero el lucide-react de hand-coins.
+
+- En estadisticas, el KPI de GANANCIA EN LIMPIO solo se tiene que llamar GANANCIA. además este tiene que estar rodeado de un color verde con el icono lucide react del dinero.
+
+- En estadisticas, kpi ventas registradas debe estar rodeado de un azul de color en el marco, y con un icono que represente ventas, como un maletin, o un ticket. todo lucide react.
+
+- En estadisticas, se va la frase "Dinero generado por comida".
+
+- En ventas, el carrito que se va generando no me deja quitar de a un item, por ejemplo, si queria vender 3 pizzas y por accidente puse 4, tengo que eliminar las 4 de una y volver a poner 3 en vez de poner una sola, me gustaria poder quitar de a una.

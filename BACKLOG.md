@@ -10,6 +10,7 @@
 - [Sprint 0 · Base técnica](#sprint-0--base-técnica)
 - [Sprint 1 · Vender con el modelo de la empanadería](#sprint-1--vender-con-el-modelo-de-la-empanadería)
 - [Sprint 2 · Promociones, tarjetas, estadísticas y gastos](#sprint-2--promociones-tarjetas-estadísticas-y-gastos)
+- [Sprint 3 · Aclaraciones del dev](#sprint-3--aclaraciones-del-dev)
 
 ## Convenciones
 
@@ -2417,3 +2418,328 @@ tarjeta ya no existe.", "Se registró la tarjeta".
   `npm run db:migrate` (2026-10-26, con el OK del dev); este ítem arregla sólo el texto del mensaje.
 - `npm run verify` en verde: 871 tests, cobertura 96/88,76, 83 de integración, mutación 89,31 y build. Los 6 E2E que
   cambiaron, en verde (12 casos).
+
+
+## Sprint 3 · Aclaraciones del dev
+
+------------------------------------------------------------------------------------------------------------------------
+
+**Objetivo**: lo que el dev pidió al probar el Sprint 2. Alta de productos más simple, con el costo y el precio de venta
+en Stock; Stock por categoría y sólo para el administrador; Estadísticas con la forma del panel de referencia e íconos
+de lucide; quitar de a uno en el pedido; y tests según el tamaño del cambio.
+
+**Plan del sprint**: [`docs/plans/sprint-3.md`](docs/plans/sprint-3.md). Tiene las decisiones del dev (2026-10-26), las
+decisiones provisorias D-1 y D-2, el orden y la trazabilidad de cada línea de `specs.md` a su ítem.
+
+### Resumen del Sprint 3
+
+| #   | ID                                                                     | Título                                                     | Estado      | Depende de | Estimación       |
+| --- | ---------------------------------------------------------------------- | ---------------------------------------------------------- | ----------- | ---------- | ---------------- |
+| 0   | [T-17](#t-17--backlog-del-sprint-3-desde-specsmd)                      | Backlog del Sprint 3 desde `specs.md`                      | En revisión | —          | 30 min           |
+| 1   | [T-19](#t-19--tests-por-nivel-según-el-tamaño-del-cambio)              | Tests por nivel según el tamaño del cambio                 | Pendiente   | T-17       | 30 min           |
+| 2   | [BUG-18](#bug-18--franja-vacía-arriba-de-cada-página)                  | Franja vacía arriba de cada página                         | Pendiente   | T-17       | 30 min           |
+| 3   | [BUG-17](#bug-17--el-nombre-del-gusto-se-corta-en-alta-de-productos)   | El nombre del gusto se corta en Alta de productos          | Pendiente   | T-17       | 20 min           |
+| 4   | [US-16](#us-16--stock-sólo-para-el-administrador)                      | Stock sólo para el administrador                           | Pendiente   | T-17       | 45 min           |
+| 5   | [US-17](#us-17--alta-pide-grupo-y-nombre-costo-y-precio-en-ingresar-stock) | Alta pide grupo y nombre; costo y precio en Ingresar stock | Pendiente   | US-16      | 3 h              |
+| 6   | [US-18](#us-18--ingresar-stock-primero-la-categoría-después-el-gusto)  | Ingresar stock: primero la categoría, después el gusto     | Pendiente   | US-17      | 45 min           |
+| 7   | [US-19](#us-19--ventas-muestra-sólo-gustos-con-stock)                  | Ventas muestra sólo gustos con stock                       | Pendiente   | US-17      | 40 min           |
+| 8   | [US-22](#us-22--ventas-quitar-de-a-uno-en-el-pedido)                   | Ventas: quitar de a uno en el pedido                       | Pendiente   | T-17       | 40 min           |
+| 9   | [US-20](#us-20--íconos-de-lucide-por-grupo-en-ventas-y-estadísticas)   | Íconos de lucide por grupo en Ventas y Estadísticas        | Pendiente   | T-17       | 2 h              |
+| 10  | [US-21](#us-21--estadísticas-como-el-panel-de-referencia)              | Estadísticas como el panel de referencia                   | Pendiente   | US-20      | 2 h              |
+| 11  | [T-18](#t-18--cierre-del-sprint-3)                                     | Cierre del Sprint 3                                        | Pendiente   | todos      | 1 h              |
+|     |                                                                        | **Total del sprint**                                       |             |            | **12 h 40 min**  |
+
+### T-17 · Backlog del Sprint 3 desde `specs.md`
+
+| Campo        | Valor                                              |
+| ------------ | -------------------------------------------------- |
+| Estado       | En revisión                                        |
+| Dueño        | Agente                                             |
+| Inicio       | 2026-10-27                                         |
+| Tamaño       | S                                                  |
+| Depende de   | —                                                  |
+| Plan         | [`docs/plans/sprint-3.md`](docs/plans/sprint-3.md) |
+| Merge        | —                                                  |
+| Horas reales | —                                                  |
+
+**Historia**: Como dev quiero las aclaraciones del Sprint 3 cargadas como ítems, de forma que cada cambio tenga su
+criterio, su estimación y su rama.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · `BACKLOG.md` con el Sprint 3: cada ítem con historia (o actual/esperado), CA medibles con estimación y dependencias; `docs/plans/sprint-3.md` con las decisiones del dev, las provisorias, el orden y la trazabilidad de `specs.md` · Estimación: 25 min · Completado: 2026-10-27 02:52
+
+- [x] **CA-2** · `specs.md` y los 7 wireframes nuevos quedan commiteados tal como los dejó el dev · Estimación: 5 min · Completado: 2026-10-27 02:52
+
+### T-19 · Tests por nivel según el tamaño del cambio
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Pendiente |
+| Dueño        | —         |
+| Inicio       | —         |
+| Tamaño       | S         |
+| Depende de   | T-17      |
+| Plan         | [`docs/plans/sprint-3.md`](docs/plans/sprint-3.md#1--t-19-tests-por-nivel-según-el-tamaño-del-cambio-s-30-min) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como dev quiero que cada cambio se pruebe en proporción a su tamaño, de forma que un cartel no cueste
+tiempo ni tokens como un cambio de base.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · `AGENTS.md`, `docs/testing.md`, `docs/definition-of-done.md`, `start-task` y `finish-task` definen 3 niveles (texto o estilo: lint, typecheck, tests relacionados y E2E del texto; lógica acotada: + `test:coverage` y `test:int` si tocó un repositorio; profundo: `npm run verify`) y el plan de cada ítem declara el suyo · Estimación: 20 min · Completado: —
+
+- [ ] **CA-2** · `npm run verify` completo queda obligatorio en el cierre de cada sprint, y `AGENTS.md` pide el diff más chico que resuelva el problema; `skills:check` en verde · Estimación: 10 min · Completado: —
+
+**Notas**
+
+- Pedido del dev al cerrar BUG-19: cambiar un cartel tocó 80 archivos y corrió el `verify` completo.
+
+### BUG-18 · Franja vacía arriba de cada página
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Pendiente |
+| Dueño        | —         |
+| Inicio       | —         |
+| Tamaño       | S         |
+| Depende de   | T-17      |
+| Plan         | [`docs/plans/sprint-3.md`](docs/plans/sprint-3.md#2--bug-18-franja-vacía-arriba-s-30-min) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Actual**: arriba de cada página queda una franja vacía de 64 px (el header que sólo tiene el botón de tema) más un
+padding doble. En Estadísticas obliga a scrollear para ver datos (`espacio-inecesario-estadisticas.png`).
+
+**Esperado**: el contenido empieza arriba. El botón de tema sigue a mano y, en móvil, el botón del menú.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · Desde `xl`, el header no ocupa alto y el botón de tema queda arriba a la derecha; en móvil se ve como hoy · Estimación: 15 min · Completado: —
+
+- [ ] **CA-2** · Ninguna página suma su propio padding al del layout; capturas de Estadísticas, Stock y Ventas sin la franja; E2E de navegación en verde · Estimación: 15 min · Completado: —
+
+### BUG-17 · El nombre del gusto se corta en Alta de productos
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Pendiente |
+| Dueño        | —         |
+| Inicio       | —         |
+| Tamaño       | S         |
+| Depende de   | T-17      |
+| Plan         | [`docs/plans/sprint-3.md`](docs/plans/sprint-3.md#3--bug-17-nombre-cortado-en-alta-s-20-min) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Actual**: la columna GRUPO ocupa mucho y GUSTO / BEBIDA corta el nombre en ~220 px: "RUCULA Y JAMON CRUDO" se ve
+"RUCULA Y …" (`error-visual-1.png`).
+
+**Esperado**: GRUPO angosta, pegada a GUSTO / BEBIDA, y el nombre se lee entero.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · A 1280 px de ancho, "RUCULA Y JAMON CRUDO" con su etiqueta "En catálogo" se lee entero; GRUPO tiene ancho fijo angosto · Estimación: 20 min · Completado: —
+
+### US-16 · Stock sólo para el administrador
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Pendiente |
+| Dueño        | —         |
+| Inicio       | —         |
+| Tamaño       | S         |
+| Depende de   | T-17      |
+| Plan         | [`docs/plans/sprint-3.md`](docs/plans/sprint-3.md#4--us-16-stock-sólo-para-el-administrador-s-45-min) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como dueño quiero que sólo el administrador entre a Stock, de forma que el costo y el precio los cargue
+siempre quien los conoce.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · El menú del vendedor no muestra Stock y `/stock` lo redirige como cualquier página sin permiso (test de navegación y E2E) · Estimación: 15 min · Completado: —
+
+- [ ] **CA-2** · Ingresar stock, registrar merma y las lecturas de Stock devuelven `FORBIDDEN` al vendedor (tests de contrato) · Estimación: 20 min · Completado: —
+
+- [ ] **CA-3** · La UI de Stock ya no bifurca por rol y `docs/features/stock/README.md` lo dice · Estimación: 10 min · Completado: —
+
+### US-17 · Alta pide grupo y nombre; costo y precio en Ingresar stock
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Pendiente |
+| Dueño        | —         |
+| Inicio       | —         |
+| Tamaño       | L         |
+| Depende de   | US-16     |
+| Plan         | — (plan propio: `docs/plans/US-17-precios-en-stock.md`) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como administrador quiero dar de alta un gusto sólo con su grupo y su nombre, y cargar el costo y el
+precio de venta al ingresar stock, de forma que no cargue lo mismo dos veces.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · "Nuevo gusto o bebida" pide sólo grupo y nombre, y la edición sólo el nombre; salen de Alta las tarjetas de precios del grupo y las aclaraciones largas · Estimación: 30 min · Completado: —
+
+- [ ] **CA-2** · La base acepta un gusto sin costo ni precio (migración con los checks nuevos y test de integración); los datos actuales no cambian · Estimación: 40 min · Completado: —
+
+- [ ] **CA-3** · En el primer ingreso de un gusto, el costo y el precio de venta son obligatorios; después son opcionales y vacío deja el valor actual. En Empanadas y Ciabattas el precio es el del grupo (D-1). Stock, costo y precio se guardan juntos, con concurrencia optimista · Estimación: 1 h · Completado: —
+
+- [ ] **CA-4** · La grilla de Stock marca "Sin precio" o "Sin costo" y el catálogo público no muestra gustos sin precio · Estimación: 20 min · Completado: —
+
+- [ ] **CA-5** · E2E: alta de un gusto, primer ingreso con costo y precio, y venta · Estimación: 30 min · Completado: —
+
+**Notas**
+
+- Decisión provisoria D-1 (`docs/plans/sprint-3.md`): los precios de Empanadas y Ciabattas se cargan en Ingresar
+  stock y editan el precio del grupo.
+
+### US-18 · Ingresar stock: primero la categoría, después el gusto
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Pendiente |
+| Dueño        | —         |
+| Inicio       | —         |
+| Tamaño       | S         |
+| Depende de   | US-17     |
+| Plan         | [`docs/plans/sprint-3.md`](docs/plans/sprint-3.md#6--us-18-ingresar-stock-por-categoría-s-45-min) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como administrador quiero elegir primero la categoría y después el gusto, de forma que no tenga que
+recorrer los gustos de todas las categorías (`error-form-stock.png`).
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · "Ingresar stock" tiene un select "Categoría" y otro "Gusto o bebida" que muestra sólo los de esa categoría; sin categoría está deshabilitado y cambiarla limpia el gusto · Estimación: 30 min · Completado: —
+
+- [ ] **CA-2** · Tests de componente y E2E de Stock en verde con los dos selects · Estimación: 15 min · Completado: —
+
+### US-19 · Ventas muestra sólo gustos con stock
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Pendiente |
+| Dueño        | —         |
+| Inicio       | —         |
+| Tamaño       | S         |
+| Depende de   | US-17     |
+| Plan         | [`docs/plans/sprint-3.md`](docs/plans/sprint-3.md#7--us-19-ventas-sólo-con-stock-s-40-min) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como vendedor quiero ver en el tablero sólo los gustos que hay, de forma que no ofrezca algo que no
+existe todavía.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · El tablero lista sólo gustos activos con stock mayor a 0; un gusto recién dado de alta o agotado no aparece · Estimación: 25 min · Completado: —
+
+- [ ] **CA-2** · Tests de componente y E2E del tablero en verde · Estimación: 15 min · Completado: —
+
+### US-22 · Ventas: quitar de a uno en el pedido
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Pendiente |
+| Dueño        | —         |
+| Inicio       | —         |
+| Tamaño       | S         |
+| Depende de   | T-17      |
+| Plan         | [`docs/plans/sprint-3.md`](docs/plans/sprint-3.md#8--us-22-quitar-de-a-uno-en-el-pedido-s-40-min) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como vendedor quiero quitar de a una unidad en el pedido actual, de forma que si cargué 4 pizzas en vez
+de 3 no tenga que borrar todo y empezar de nuevo.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · Cada línea del pedido tiene un "−" que resta una unidad y recalcula el total; con una sola unidad, quita la línea (D-2) · Estimación: 30 min · Completado: —
+
+- [ ] **CA-2** · Tests del store y del componente del pedido en verde · Estimación: 10 min · Completado: —
+
+**Notas**
+
+- Decisión provisoria D-2 (`docs/plans/sprint-3.md`): con una sola unidad, el "−" quita la línea.
+
+### US-20 · Íconos de lucide por grupo en Ventas y Estadísticas
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Pendiente |
+| Dueño        | —         |
+| Inicio       | —         |
+| Tamaño       | M         |
+| Depende de   | T-17      |
+| Plan         | — (plan propio: `docs/plans/US-20-iconos-lucide.md`) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como dev quiero íconos de lucide en lugar de emojis en Ventas y Estadísticas, de forma que se vean
+nativos.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · `lucide-react` actualizado; Pizzas usa `Pizza`, Sanguches `Sandwich`, Coca-Cola y Pepsi `CanSoda` y Promos `HandCoins`, definidos en un solo lugar · Estimación: 40 min · Completado: —
+
+- [ ] **CA-2** · Empanadas y Ciabattas usan íconos propios al estilo lucide, redibujados de los PNG del dev, con el color de su grupo · Estimación: 50 min · Completado: —
+
+- [ ] **CA-3** · No queda ningún emoji de grupo en la app; tests de componente, de contraste y E2E del tablero en verde · Estimación: 30 min · Completado: —
+
+**Notas**
+
+- Revierte US-15 CA-2, que había pasado de lucide a emojis a pedido del dev.
+
+### US-21 · Estadísticas como el panel de referencia
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Pendiente |
+| Dueño        | —         |
+| Inicio       | —         |
+| Tamaño       | M         |
+| Depende de   | US-20     |
+| Plan         | — (plan propio: `docs/plans/US-21-estadisticas-referencia.md`) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como dueño quiero Estadísticas con la forma del panel de referencia, de forma que vea lo importante de
+un vistazo (`referencia-de-otro-sistema.png`).
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · Sin la descripción de la jornada ni "Dinero generado por comida"; comidas arriba en filas de 4, 3 y 2 (Empanadas, Pizzas, Sanguches, Ciabattas · Coca-Cola, Pepsi, Promos · Ventas registradas, Ganancia); debajo, los medios de pago · Estimación: 40 min · Completado: —
+
+- [ ] **CA-2** · Comidas, Promos, Ventas registradas y Ganancia llevan borde de color y fondo neutro; "Ganancia" sin aclaración, borde verde e ícono de dinero; "Ventas registradas" borde azul e ícono de maletín; "Total facturado" ya no está · Estimación: 50 min · Completado: —
+
+- [ ] **CA-3** · Medios de pago con fondo de color (Transferencia amarillo, Crédito naranja, Efectivo verde, Débito azul), con contraste AA en claro y oscuro (test); tests de componente y E2E de Estadísticas en verde · Estimación: 30 min · Completado: —
+
+### T-18 · Cierre del Sprint 3
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Pendiente |
+| Dueño        | —         |
+| Inicio       | —         |
+| Tamaño       | S         |
+| Depende de   | todos     |
+| Plan         | [`docs/plans/sprint-3.md`](docs/plans/sprint-3.md#11--t-18-cierre-del-sprint-3-s-1-h) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como dev quiero el Sprint 3 verificado completo y en `main`, de forma que la demo muestre lo que se
+probó.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · `npm run verify` completo y todos los E2E en verde sobre `develop` · Estimación: 30 min · Completado: —
+
+- [ ] **CA-2** · README, `docs/architecture.md` y `docs/initial_prompt.md` al día; merge local `develop → main` con el tag `sprint-3` · Estimación: 30 min · Completado: —
