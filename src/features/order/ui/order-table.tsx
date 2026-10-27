@@ -5,11 +5,11 @@ import { OrderLineRow } from './order-line-row';
 import { PromoLineRow, type PromoRowActions } from './promo-line-row';
 import type { OrderBoardModel } from './use-order-board';
 
-type OrderTableProps = { lines: OrderLine[]; promos?: PromoLine[]; board: OrderBoardModel; onRemove: (lineId: string) => void; promoActions?: PromoRowActions };
+type OrderTableProps = { lines: OrderLine[]; promos?: PromoLine[]; board: OrderBoardModel; onRemove: (lineId: string) => void; onRemoveOne: (lineId: string) => void; promoActions?: PromoRowActions };
 
 const NO_PROMO_ACTIONS: PromoRowActions = { onRemove: () => undefined, onReopen: () => undefined };
 
-export function OrderTable({ lines, promos = [], board, onRemove, promoActions = NO_PROMO_ACTIONS }: OrderTableProps): JSX.Element {
+export function OrderTable({ lines, promos = [], board, onRemove, onRemoveOne, promoActions = NO_PROMO_ACTIONS }: OrderTableProps): JSX.Element {
   if (lines.length === 0 && promos.length === 0) return <p className='py-6 text-center text-sm font-semibold uppercase text-zinc-400'>No hay productos en el pedido</p>;
   return (
     <table className='w-full text-left'>
@@ -24,7 +24,7 @@ export function OrderTable({ lines, promos = [], board, onRemove, promoActions =
       </thead>
       <tbody>
         {lines.map((line) => (
-          <OrderLineRow key={line.id} line={line} board={board} onRemove={onRemove} />
+          <OrderLineRow key={line.id} line={line} board={board} onRemove={onRemove} onRemoveOne={onRemoveOne} />
         ))}
         {promos.map((promo) => (
           <PromoLineRow key={promo.id} promo={promo} board={board} actions={promoActions} />

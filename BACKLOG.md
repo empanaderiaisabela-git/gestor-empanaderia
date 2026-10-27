@@ -2445,7 +2445,7 @@ decisiones provisorias D-1 y D-2, el orden y la trazabilidad de cada línea de `
 | 5   | [US-17](#us-17--alta-pide-grupo-y-nombre-costo-y-precio-en-ingresar-stock) | Alta pide grupo y nombre; costo y precio en Ingresar stock | En revisión | US-16      | 3 h              |
 | 6   | [US-18](#us-18--ingresar-stock-primero-la-categoría-después-el-gusto)  | Ingresar stock: primero la categoría, después el gusto     | En revisión | US-17      | 45 min           |
 | 7   | [US-19](#us-19--ventas-muestra-sólo-gustos-con-stock)                  | Ventas muestra sólo gustos con stock                       | En revisión | US-17      | 40 min           |
-| 8   | [US-22](#us-22--ventas-quitar-de-a-uno-en-el-pedido)                   | Ventas: quitar de a uno en el pedido                       | Pendiente   | T-17       | 40 min           |
+| 8   | [US-22](#us-22--ventas-quitar-de-a-uno-en-el-pedido)                   | Ventas: quitar de a uno en el pedido                       | En revisión | T-17       | 40 min           |
 | 9   | [US-20](#us-20--íconos-de-lucide-por-grupo-en-ventas-y-estadísticas)   | Íconos de lucide por grupo en Ventas y Estadísticas        | Pendiente   | T-17       | 2 h              |
 | 10  | [US-21](#us-21--estadísticas-como-el-panel-de-referencia)              | Estadísticas como el panel de referencia                   | Pendiente   | US-20      | 2 h              |
 | 11  | [T-18](#t-18--cierre-del-sprint-3)                                     | Cierre del Sprint 3                                        | Pendiente   | todos      | 1 h              |
@@ -2706,9 +2706,9 @@ existe todavía.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
-| Dueño        | —         |
-| Inicio       | —         |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-27 |
 | Tamaño       | S         |
 | Depende de   | T-17      |
 | Plan         | [`docs/plans/sprint-3.md`](docs/plans/sprint-3.md#8--us-22-quitar-de-a-uno-en-el-pedido-s-40-min) |
@@ -2720,13 +2720,17 @@ de 3 no tenga que borrar todo y empezar de nuevo.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · Cada línea del pedido tiene un "−" que resta una unidad y recalcula el total; con una sola unidad, quita la línea (D-2) · Estimación: 30 min · Completado: —
+- [x] **CA-1** · Cada línea del pedido tiene un "−" que resta una unidad y recalcula el total; con una sola unidad, quita la línea (D-2) · Estimación: 30 min · Completado: 2026-10-27 03:58
 
-- [ ] **CA-2** · Tests del store y del componente del pedido en verde · Estimación: 10 min · Completado: —
+- [x] **CA-2** · Tests del store y del componente del pedido en verde · Estimación: 10 min · Completado: 2026-10-27 03:58
 
 **Notas**
 
 - Decisión provisoria D-2 (`docs/plans/sprint-3.md`): con una sola unidad, el "−" quita la línea.
+- Cada línea del pedido tiene un botón "Quitar uno" (ícono −) junto al tacho. Resta una unidad y el importe se
+  recalcula; con una sola unidad quita la línea (D-2). Las líneas de promo siguen con su tacho, sin cambios.
+- Nivel 2: lint, typecheck, `test:coverage` (862 tests, con un test nuevo del store y uno de componente) y E2E de
+  tablero y cobro (6 casos) en verde.
 
 ### US-20 · Íconos de lucide por grupo en Ventas y Estadísticas
 
