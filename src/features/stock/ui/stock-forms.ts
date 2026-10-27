@@ -1,4 +1,4 @@
-import { PRICE_FIELDS } from '@/features/menu/domain/menu-groups';
+import { GROUP_PRICED, PRICE_FIELDS } from '@/features/menu/domain/menu-groups';
 import { type StockEntryInput, stockEntrySchema, type StockLossInput, stockLossSchema } from '@/features/stock/domain/stock.schema';
 
 export type EntryValues = { group: string; menuItemId: string; quantity: string; unitCost: string; providerId: string; price1: string; price3: string; price6: string; price12: string };
@@ -20,6 +20,7 @@ function errorsOf(issues: readonly Issue[]): FormErrors {
 }
 
 function pricesOf(values: EntryValues): Record<string, number> | undefined {
+  if (GROUP_PRICED.some((group) => group === values.group)) return undefined;
   const filled = PRICE_FIELDS.filter((field) => values[field].trim() !== '');
   return filled.length === 0 ? undefined : Object.fromEntries(filled.map((field) => [field, toNumber(values[field])]));
 }

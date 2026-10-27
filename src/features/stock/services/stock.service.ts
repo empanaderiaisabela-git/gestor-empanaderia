@@ -28,8 +28,7 @@ function saved(item: StockItem | null): StockItem {
 
 async function registerEntry(scope: StockScope, caller: Caller, input: StockEntryInput): Promise<EntryResult> {
   const current = await lockedItem(scope, input.menuItemId);
-  const { unitCost, itemPrices, groupChange } = await planEntry(scope, current, input);
-  if (groupChange && !(await scope.groupPrices.save(groupChange))) throw new AppError('STALE_VERSION');
+  const { unitCost, itemPrices } = planEntry(current, input);
   const stockBefore = Number(current.stock);
   const item = saved(await scope.stock.saveItem(current, { stock: stockBefore + input.quantity, unitCost, prices: itemPrices }));
   const entry = await scope.stock.insertEntry({ menuItemId: current.id, quantity: input.quantity, unitCost, providerId: input.providerId ?? null, userId: caller.id });

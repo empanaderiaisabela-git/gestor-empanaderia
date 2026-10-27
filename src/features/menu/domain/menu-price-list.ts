@@ -1,5 +1,5 @@
 import { formatMoney } from '@/lib/format-money';
-import { GROUPS, isPricedByGroup, type MenuGroup, type PriceField, priceFieldsOf, priceLabelOf } from './menu-groups';
+import { type MenuGroup, type PriceField, priceFieldsOf, priceLabelOf } from './menu-groups';
 
 export type PriceRow = { field: PriceField; label: string; value: number };
 export type PriceValues = Partial<Record<PriceField, number | null>>;
@@ -11,9 +11,8 @@ export function priceList(group: MenuGroup, prices: PriceValues): PriceRow[] {
   });
 }
 
-export function priceSummary(item: { group: MenuGroup } & PriceValues): string {
-  if (isPricedByGroup(item.group)) return `Igual para todas las ${GROUPS[item.group].label}`;
-  return priceList(item.group, item)
+export function priceSummary(group: MenuGroup, prices: PriceValues): string {
+  return priceList(group, prices)
     .map(({ label, value }) => `${label}: ${formatMoney(value)}`)
     .join(' · ');
 }

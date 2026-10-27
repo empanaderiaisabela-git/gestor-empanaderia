@@ -1,11 +1,9 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import type { StockUnitOfWork } from '@/features/stock/repository/stock-unit-of-work';
 import { createFakeStockUnitOfWork, type FakeStockUnitOfWork } from '../testing/fake-stock-unit-of-work';
-import { groupPriceRow, stockItem } from '../testing/stock-item';
+import { stockItem } from '../testing/stock-item';
 import { createStockService, type StockService } from './stock.service';
 
 const CALLER = { id: '00000000-0000-4000-8000-00000000000a' };
-const EMPANADA_PRICES = { price1: 1300, price3: 3600, price6: 7000, price12: 13000 };
 const bare = (overrides = {}) => stockItem({ id: crypto.randomUUID(), group: 'pizzas', name: 'Napolitana', unitCost: null, stock: '0.0', ...overrides });
 
 describe('stock.service: costo y precio al ingresar (US-17)', () => {
@@ -61,35 +59,16 @@ describe('stock.service: costo y precio al ingresar (US-17)', () => {
     await expect(service.registerEntry(CALLER, { menuItemId: sanguche.id, quantity: 1, prices: { price1: 1 } })).rejects.toMatchObject({ code: 'VALIDATION' });
   });
 
-  it('empanadas: el primer precio crea la fila del grupo y el siguiente la actualiza con su versión', async () => {
+  it('empanadas: el ingreso guarda costo y cantidad, sin pedir precio aunque el grupo no lo tenga (US-23, R-3)', async () => {
     const item = stockItem({ unitCost: '400.00' });
     fake.state.items.push(item);
-    await service.registerEntry(CALLER, { menuItemId: item.id, quantity: 1, prices: EMPANADA_PRICES });
-    expect(fake.state.groupPrices).toMatchObject([{ group: 'empanadas', price1: '1300.00', price12: '13000.00', version: 1 }]);
-    await service.registerEntry(CALLER, { menuItemId: item.id, quantity: 1, prices: { ...EMPANADA_PRICES, price1: 1400 } });
-    expect(fake.state.groupPrices).toMatchObject([{ price1: '1400.00', version: 2 }]);
-    expect(fake.state.items[0]).toMatchObject({ price1: null });
+    await expect(service.registerEntry(CALLER, { menuItemId: item.id, quantity: 1, unitCost: 450 })).resolves.toMatchObject({ item: { stock: '11.0', unitCost: '450.00', price1: null } });
   });
 
-  it('empanadas: MISSING_PRICE si el grupo no tiene precio y no se manda; con precio del grupo alcanza', async () => {
+  it('empanadas: VALIDATION si llega un precio, que se carga en Alta (US-23)', async () => {
     const item = stockItem({ unitCost: '400.00' });
     fake.state.items.push(item);
-    await expect(service.registerEntry(CALLER, { menuItemId: item.id, quantity: 1 })).rejects.toMatchObject({ code: 'MISSING_PRICE' });
-    fake.state.groupPrices.push(groupPriceRow());
-    await expect(service.registerEntry(CALLER, { menuItemId: item.id, quantity: 1 })).resolves.toMatchObject({ item: { stock: '11.0' } });
-  });
-
-  it('empanadas: VALIDATION si el precio no es de cuatro presentaciones', async () => {
-    const item = stockItem({ unitCost: '400.00' });
-    fake.state.items.push(item);
-    await expect(service.registerEntry(CALLER, { menuItemId: item.id, quantity: 1, prices: { price1: 1300 } })).rejects.toMatchObject({ code: 'VALIDATION' });
-  });
-
-  it('STALE_VERSION: alguien cambió el precio del grupo a la vez', async () => {
-    const item = stockItem({ unitCost: '400.00' });
-    fake.state.items.push(item);
-    fake.state.groupPrices.push(groupPriceRow({ version: 3 }));
-    const racing: StockUnitOfWork = { read: fake.read, run: (work) => fake.run((scope) => work({ ...scope, groupPrices: { ...scope.groupPrices, findAll: async () => [groupPriceRow({ version: 2 })] } })) };
-    await expect(createStockService({ unitOfWork: racing }).registerEntry(CALLER, { menuItemId: item.id, quantity: 1, prices: EMPANADA_PRICES })).rejects.toMatchObject({ code: 'STALE_VERSION' });
+    await expect(service.registerEntry(CALLER, { menuItemId: item.id, quantity: 1, prices: { price1: 1300, price3: 3600, price6: 7000, price12: 13000 } })).rejects.toMatchObject({ code: 'VALIDATION' });
+    expect(fake.state.entries).toEqual([]);
   });
 });

@@ -19,6 +19,11 @@ describe('formularios de Stock', () => {
     expect(parseEntry(values)).toEqual({ ok: true, input: { menuItemId: ITEM, quantity: 6, providerId: null, prices: { price1: 11000, price3: 30.5 } } });
   });
 
+  it('en Empanadas y Ciabattas no manda precios: se cargan en Alta (US-23)', () => {
+    const values = { menuItemId: ITEM, quantity: '6', unitCost: '', providerId: '', ...NO_PRICES, group: 'empanadas', price1: '11000' };
+    expect(parseEntry(values)).toEqual({ ok: true, input: { menuItemId: ITEM, quantity: 6, providerId: null } });
+  });
+
   it('marca el error en el campo del precio', () => {
     const values = { menuItemId: ITEM, quantity: '6', unitCost: '', providerId: '', ...NO_PRICES, price1: '-5' };
     expect(parseEntry(values)).toEqual({ ok: false, errors: { price1: 'El precio debe ser mayor a 0' } });

@@ -1,7 +1,6 @@
 import { db } from '@/lib/db';
 import { auditLogs } from '@/lib/db/schema';
 import { type DbTransaction, withTransaction } from '@/lib/db/transaction';
-import { drizzleMenuGroupPriceRepository, type MenuGroupPriceRepository } from '@/features/menu/repository/menu-group-price.repository';
 import { drizzleStockRepository, type StockRepository } from './stock.repository';
 
 export type StockAuditEntry = {
@@ -14,7 +13,6 @@ export type StockAuditEntry = {
 
 export type StockScope = {
   stock: StockRepository;
-  groupPrices: MenuGroupPriceRepository;
   audit: (entry: StockAuditEntry) => Promise<void>;
 };
 
@@ -31,5 +29,5 @@ function auditIn(tx: DbTransaction): StockScope['audit'] {
 
 export const drizzleStockUnitOfWork: StockUnitOfWork = {
   read: drizzleStockRepository(db),
-  run: (work) => withTransaction((tx) => work({ stock: drizzleStockRepository(tx), groupPrices: drizzleMenuGroupPriceRepository(tx), audit: auditIn(tx) })),
+  run: (work) => withTransaction((tx) => work({ stock: drizzleStockRepository(tx), audit: auditIn(tx) })),
 };

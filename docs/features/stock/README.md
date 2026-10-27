@@ -9,9 +9,9 @@
 Muestra el stock de cada gusto y bebida activos, agrupados por grupo, y permite:
 
 - **Ingresar stock**: suma unidades a un gusto y carga el costo para el local (por unidad; en la pizza, por pizza
-  entera), el precio de venta (US-17) y el proveedor. El costo actualiza el del gusto y alimenta la ganancia. Los
-  precios se editan según el grupo: en Empanadas y Ciabattas son los del grupo, en el resto los del gusto.
-- **Registrar una merma**: descuenta stock con un motivo y guarda el costo del momento.
+  entera), el precio de venta (US-17) y el proveedor. El costo actualiza el del gusto y alimenta la ganancia.
+  Empanadas y Ciabattas no piden precio: el precio único del grupo se carga en Alta de productos (US-23).
+- **Registrar una pérdida** (la merma): descuenta stock con un motivo y guarda el costo del momento.
 - **Ver el historial de ingresos** de cada gusto.
 
 ## Reglas de negocio
@@ -19,7 +19,8 @@ Muestra el stock de cada gusto y bebida activos, agrupados por grupo, y permite:
 - La cantidad que entra es un entero mayor a 0. Las mermas admiten media unidad sólo en Pizzas.
 - Una merma no puede superar el stock (`INSUFFICIENT_STOCK`).
 - **Primer ingreso de un gusto (US-17)**: costo y precio de venta son obligatorios (`MISSING_COST`,
-  `MISSING_PRICE`). En los ingresos siguientes son opcionales: vacío conserva el valor actual, que se muestra como
+  `MISSING_PRICE`). En Empanadas y Ciabattas sólo el costo: un precio para esos grupos se rechaza (`VALIDATION`) y
+  el ingreso no exige que el grupo ya tenga precio (US-23, decisión provisoria R-3). En los ingresos siguientes son opcionales: vacío conserva el valor actual, que se muestra como
   placeholder.
 - Sin costo nuevo, el ingreso conserva el costo actual del gusto y lo registra en el historial.
 - **Stock es sólo del administrador** (dev, 2026-10-26, US-16): el vendedor no ve la sección ni puede ingresar
@@ -74,9 +75,9 @@ La grilla lee los gustos con `fetchMenuItems` del feature `menu`.
 `src/app/(main)/stock/page.tsx` → `StockPanel`:
 
 - Barra con búsqueda, filtro por grupo y "Ingresar stock".
-- Grilla con grupo, gusto, stock ("Sin stock" en rojo), precio ("Sin precio") y costo ("Sin costo"). Las acciones de cada fila son ingresar,
-  merma e historial.
-- Modales: `StockEntryModal` (gusto agrupado por grupo, cantidad, costo, precios de venta del grupo y proveedor),
+- Grilla con grupo, gusto, stock ("Sin stock" en rojo), precio (los del gusto o los del grupo, o "Sin precio") y costo ("Sin costo"). Las acciones de cada fila son ingresar,
+  pérdida e historial.
+- Modales: `StockEntryModal` (categoría, gusto, cantidad, costo, precios de venta salvo en Empanadas y Ciabattas, y proveedor),
   `StockLossModal` y `StockHistoryModal` (cargando, vacío y lista).
 
 ## Tests

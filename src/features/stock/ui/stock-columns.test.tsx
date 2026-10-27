@@ -27,11 +27,11 @@ describe('grilla de Stock (US-4 CA-1)', () => {
     expect(screen.getByText('Sin costo')).toBeDefined();
   });
 
-  it('muestra el precio del grupo en Empanadas', () => {
+  it('muestra los precios reales del grupo en Empanadas (US-23)', () => {
     const empanada: MenuItemDef = { ...ITEM, group: 'empanadas', price1: null };
-    const grupo = [{ group: 'empanadas' as const, price1: 1500, price3: null, price6: null, price12: null, version: 1, updatedAt: '' }];
+    const grupo = [{ group: 'empanadas' as const, price1: 2000, price3: 5500, price6: 10000, price12: 32000, version: 1, updatedAt: '' }];
     render(<div>{getStockColumns({ open: vi.fn() }, grupo)[3].cell(empanada)}</div>);
-    expect(screen.getByText('Igual para todas las Empanadas')).toBeDefined();
+    expect(screen.getByText('1 unidad: $2.000 · 3 unidades: $5.500 · ½ docena: $10.000 · 1 docena: $32.000')).toBeDefined();
   });
 
   it('muestra el stock y avisa cuando no hay', () => {

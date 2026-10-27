@@ -2467,7 +2467,7 @@ son los ajustes que pidió el dev al revisar el sprint (2026-10-27), con sus dec
 | 14  | [T-20](#t-20--textos-y-estilos-de-la-revisión-del-sprint-3)              | Textos y estilos de la revisión del Sprint 3               | En revisión | T-18       | 30 min           |
 | 15  | [US-25](#us-25--proveedor-sin-teléfono-ni-correo-obligatorios)           | Proveedor sin teléfono ni correo obligatorios              | En revisión | T-18       | 30 min           |
 | 16  | [US-24](#us-24--ventas-el-pedido-en-un-carrito-desplegable)              | Ventas: el pedido en un carrito desplegable                | En revisión | T-18       | 1 h 30 min       |
-| 17  | [US-23](#us-23--precios-de-empanadas-y-ciabattas-en-alta)                | Precios de Empanadas y Ciabattas en Alta                   | Pendiente   | US-17      | 1 h 30 min       |
+| 17  | [US-23](#us-23--precios-de-empanadas-y-ciabattas-en-alta)                | Precios de Empanadas y Ciabattas en Alta                   | En revisión | US-17      | 1 h 30 min       |
 |     |                                                                        | **Total del sprint**                                       |             |            | **18 h 25 min**  |
 
 ### T-17 · Backlog del Sprint 3 desde `specs.md`
@@ -3018,9 +3018,9 @@ lo que agregué, de forma que los grupos de comida ocupen la pantalla y el pedid
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
+| Estado       | En revisión |
 | Dueño        | Agente    |
-| Inicio       | —         |
+| Inicio       | 2026-10-27 |
 | Tamaño       | M         |
 | Depende de   | US-17     |
 | Plan         | [`docs/plans/sprint-3.md`](docs/plans/sprint-3.md#ajustes-de-la-revisión-del-dev-2026-10-27) |
@@ -3032,10 +3032,23 @@ lo que agregué, de forma que los grupos de comida ocupen la pantalla y el pedid
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · Alta de productos tiene las tarjetas "Precios de Empanadas" y "Precios de Ciabattas", que sólo el admin guarda y que quedan auditadas (cambio 3) · Estimación: 40 min · Completado: —
+- [x] **CA-1** · Alta de productos tiene las tarjetas "Precios de Empanadas" y "Precios de Ciabattas", que sólo el admin guarda y que quedan auditadas (cambio 3) · Estimación: 40 min · Completado: 2026-10-27 12:09
 
-- [ ] **CA-2** · Ingresar stock de una empanada o una ciabatta no pide precio y el servidor rechaza un precio para esos grupos (R-3) · Estimación: 25 min · Completado: —
+- [x] **CA-2** · Ingresar stock de una empanada o una ciabatta no pide precio y el servidor rechaza un precio para esos grupos (R-3) · Estimación: 25 min · Completado: 2026-10-27 12:09
 
-- [ ] **CA-3** · La columna "Precio de venta" de Stock muestra los precios reales, también los del grupo (cambio 1, R-1) · Estimación: 10 min · Completado: —
+- [x] **CA-3** · La columna "Precio de venta" de Stock muestra los precios reales, también los del grupo (cambio 1, R-1) · Estimación: 10 min · Completado: 2026-10-27 12:09
 
-- [ ] **CA-4** · `npm run verify` y los E2E de Stock, cobro y tablero en verde · Estimación: 15 min · Completado: —
+- [x] **CA-4** · `npm run verify` y los E2E de Stock, cobro y tablero en verde · Estimación: 15 min · Completado: 2026-10-27 12:09
+
+**Notas**
+
+- Vuelven la acción `save-menu-group-prices.ts`, `menuGroupPricesSchema`, el `save` auditado del servicio, la tarjeta
+  `group-price-card.tsx` y sus tests, tal como estaban antes de US-17 (`16b4cd2`). La tarjeta queda con textos
+  mínimos: "Precios de Empanadas", "Sin precio" y "Guardar".
+- Stock deja de tocar el precio del grupo: `planEntry` es sincrónico, rechaza un precio para Empanadas o Ciabattas
+  (`VALIDATION`) y ya no exige que el grupo tenga precio (decisión provisoria R-3). Salen `groupPrices` del
+  `StockScope` y de su fake, y `groupPriceRow`. El formulario no muestra ni manda esos precios.
+- `priceSummary(group, prices)` deja de decir "Igual para todas las …": la columna de Stock muestra los precios del
+  grupo (decisión provisoria R-1).
+- Nivel 3: `npm run verify` en verde (mutación 89,88 y build) y E2E de Stock, precios, cobro y tablero (10 casos),
+  con uno nuevo: el precio de Ciabattas se guarda en Alta y Stock lo muestra sin pedirlo.

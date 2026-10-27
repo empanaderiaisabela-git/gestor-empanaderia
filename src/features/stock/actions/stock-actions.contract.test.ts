@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { MESSAGES } from '@/config/messages';
 import { asUser, TEST_USER_IDS } from '@/test/as-user';
 import { fakeStock } from '../testing/fake-stock-unit-of-work';
-import { groupPriceRow, stockItem } from '../testing/stock-item';
+import { stockItem } from '../testing/stock-item';
 import { fetchStockEntries } from './fetch-stock-entries';
 import { registerStockEntryAction } from './register-stock-entry';
 import { registerStockLossAction } from './register-stock-loss';
@@ -20,7 +20,6 @@ describe('acciones de Stock (US-4)', () => {
   beforeEach(() => {
     fakeStock.reset();
     fakeStock.state.items.push({ ...ITEM });
-    fakeStock.state.groupPrices.push(groupPriceRow());
     fakeStock.state.usernames.set(TEST_USER_IDS.admin, 'admin').set(TEST_USER_IDS.vendedor, 'vendedor');
     fakeStock.state.providerNames.set(PROVIDER, 'Molino del Sur');
   });

@@ -10,7 +10,9 @@
 
 El admin da de alta los gustos de cada comida y las bebidas de Coca-Cola y Pepsi con **sólo el grupo y el nombre**.
 El nombre es lo único que se edita después. El **costo para el local** y los **precios de venta** se cargan al
-ingresar stock (US-17): ver [stock](../stock/README.md).
+ingresar stock (US-17): ver [stock](../stock/README.md). La excepción es el **precio único** de Empanadas (1, 3, 6 y
+12 unidades) y Ciabattas (unidad), que el admin carga en las tarjetas "Precios de Empanadas" y "Precios de
+Ciabattas" de Alta (US-23).
 
 Un gusto nace sin stock, sin costo y sin precio. El stock entra por "Ingresar stock" (US-4).
 
@@ -44,6 +46,7 @@ varias presentaciones), sus fotos y si hay stock.
 | Ver la pantalla `/alta-de-productos` | Sí | No: `proxy.ts` lo lleva a `/ventas` | No |
 | Listar gustos, bebidas y precios del grupo | Sí | Sí (los necesita para vender), **sin el costo** (`unitCost: null`) por decisión del dev (2026-10-25) | No |
 | Crear, editar, activar, desactivar y borrar| Sí | No (`FORBIDDEN`) | No (`UNAUTHENTICATED`) |
+| Guardar los precios del grupo (`saveMenuGroupPricesAction`, US-23) | Sí | No (`FORBIDDEN`) | No (`UNAUTHENTICATED`) |
 | Mostrar u ocultar en el catálogo; subir y borrar fotos | Sí | No (`FORBIDDEN`) | No (`UNAUTHENTICATED`) |
 | Ver el catálogo (`fetchCatalog`, `fetchCatalogItem`) | Sí | Sí | **Sí: son las únicas lecturas públicas** |
 
@@ -102,6 +105,8 @@ T-11).
 | Foto para un gusto que ya no existe (no se llama a Cloudinary) | `NOT_FOUND` | El producto ya no existe. | `upload-menu-photo.contract.test.ts`, `services/menu-photo.service.test.ts` |
 | Borrar una foto que ya no está | `NOT_FOUND` | La foto ya no existe. | `menu-catalog.contract.test.ts` |
 | Visibilidad con una versión vieja | `STALE_VERSION` | Los datos en el servidor han cambiado. Por favor, sincroniza la lista e intenta nuevamente. | `menu-catalog.contract.test.ts` |
+| Precios del grupo con una presentación de más o de menos, o de un grupo sin precio único | `VALIDATION` | Los datos proporcionados no son válidos. | `menu-group-prices.contract.test.ts`, `domain/menu-group-price.schema.test.ts` |
+| Precios del grupo con una versión vieja | `STALE_VERSION` | Los datos en el servidor han cambiado. Por favor, sincroniza la lista e intenta nuevamente. | `menu-group-prices.contract.test.ts` |
 
 Si Cloudinary sube la foto pero falla el guardado en la base, la imagen se borra de Cloudinary (BUG-11). Los límites (JPG, PNG o WEBP de hasta 5 MB) son una decisión provisoria del agente (D-5 de [`sprint-2.md`](../../plans/sprint-2.md#d-5--formatos-y-tamaño-de-las-fotos-bug-11)).
 
@@ -111,6 +116,8 @@ Si Cloudinary sube la foto pero falla el guardado en la base, la imagen se borra
 
 - La barra con búsqueda, filtro por grupo y "Ver inactivos", y la grilla: tabla en escritorio y tarjetas en
   mobile.
+- Arriba, `GroupPriceCard` por cada grupo de precio único: sus precios, "Sin precio" si todavía no tiene y
+  "Guardar" (`save-menu-group-prices.ts`, sólo admin, auditado como `MENU_GROUP_PRICES`).
 - El formulario (`MenuItemFormModal`) pide sólo "Grupo" y "Nombre del gusto o bebida". El grupo no se cambia al editar.
 - La grilla muestra Grupo, Gusto / bebida, Stock y Acciones.
 - Cada fila tiene "Mostrar en el catálogo" / "Ocultar del catálogo" y "Fotos" (`MenuPhotosModal`, `use-menu-photos.ts`).

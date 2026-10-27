@@ -1,9 +1,8 @@
 import type { JSX } from 'react';
 import { FormField, inputClass } from '@/components/ui/form-field';
-import { GROUPS, MENU_GROUPS } from '@/features/menu/domain/menu-groups';
+import { GROUPS, isPricedByGroup, MENU_GROUPS } from '@/features/menu/domain/menu-groups';
 import type { MenuItemDef } from '@/features/menu/domain/menu-item.schema';
 import { costLabelOf } from '@/features/menu/domain/menu-terms';
-import type { MenuGroupPriceDef } from '@/features/menu/domain/menu-group-price.schema';
 import { formatMoney } from '@/lib/format-money';
 import type { ProviderDef } from '@/features/provider/domain/provider.schema';
 import type { EntryValues, FormErrors } from './stock-forms';
@@ -14,7 +13,6 @@ type StockEntryFieldsProps = {
   errors: FormErrors;
   items: MenuItemDef[];
   providers: ProviderDef[];
-  groupPrices: MenuGroupPriceDef[];
   onChange: (values: EntryValues) => void;
 };
 
@@ -41,14 +39,14 @@ function ItemSelects({ values, errors, items, onChange }: Pick<StockEntryFieldsP
   );
 }
 
-function CostFields({ values, errors, items, providers, groupPrices, onChange }: StockEntryFieldsProps): JSX.Element {
+function CostFields({ values, errors, items, providers, onChange }: StockEntryFieldsProps): JSX.Element {
   const item = items.find((candidate) => candidate.id === values.menuItemId) ?? null;
   return (
     <>
       <FormField label={costLabelOf(item?.group ?? null)} error={errors.unitCost}>
         <input inputMode='decimal' value={values.unitCost} onChange={(event) => onChange({ ...values, unitCost: event.target.value })} placeholder={item?.unitCost == null ? '' : formatMoney(item.unitCost)} className={inputClass(Boolean(errors.unitCost))} />
       </FormField>
-      {item && <StockPriceFields item={item} groupPrices={groupPrices} values={values} errors={errors} onChange={onChange} />}
+      {item && !isPricedByGroup(item.group) && <StockPriceFields item={item} values={values} errors={errors} onChange={onChange} />}
       <FormField label='Proveedor (opcional)' error={errors.providerId}>
         <select value={values.providerId} onChange={(event) => onChange({ ...values, providerId: event.target.value })} className={inputClass(Boolean(errors.providerId))}>
           <option value=''>Sin proveedor</option>

@@ -46,11 +46,12 @@ describe('ingresos y mermas simultáneos sobre el mismo gusto (US-4 CA-2)', () =
     expect(row).toMatchObject({ stock: '6.0', unitCost: '3000.00', price1: '11000.00', version: 2 });
   });
 
-  it('el precio de las empanadas se guarda en el grupo con su versión (US-17)', async () => {
+  it('Stock no toca el precio del grupo de las empanadas: se carga en Alta (US-23)', async () => {
     const prices = { price1: 1300, price3: 3600, price6: 7000, price12: 13000 };
-    await stockService.registerEntry(CALLER, { menuItemId: itemId, quantity: 1, prices });
+    await expect(stockService.registerEntry(CALLER, { menuItemId: itemId, quantity: 1, prices })).rejects.toMatchObject({ code: 'VALIDATION' });
     const [row] = await db.select().from(menuGroupPrices).where(eq(menuGroupPrices.group, 'empanadas'));
-    expect(row).toMatchObject({ price1: '1300.00', version: 2 });
+    expect(row).toMatchObject({ price1: '1200.00', version: 1 });
+    expect(await stockOf(itemId)).toBe(10);
   });
 
   it('si la merma no alcanza, no se registra nada', async () => {

@@ -1,9 +1,8 @@
-import { fakeMenuGroupPriceRepository, type FakeGroupPriceState } from '@/features/menu/testing/fake-menu-group-prices';
 import { priceColumns } from '@/features/menu/repository/menu-item.repository';
 import type { EntryView, StockEntry, StockItem, StockLoss, StockRepository } from '@/features/stock/repository/stock.repository';
 import type { StockAuditEntry, StockUnitOfWork } from '@/features/stock/repository/stock-unit-of-work';
 
-type FakeState = FakeGroupPriceState & { items: StockItem[]; entries: StockEntry[]; losses: StockLoss[]; audits: StockAuditEntry[]; providerNames: Map<string, string>; usernames: Map<string, string>; clock: number };
+type FakeState = { items: StockItem[]; entries: StockEntry[]; losses: StockLoss[]; audits: StockAuditEntry[]; providerNames: Map<string, string>; usernames: Map<string, string>; clock: number };
 
 const tick = (state: FakeState): Date => {
   state.clock += 1;
@@ -45,14 +44,13 @@ export function fakeStockRepository(state: FakeState): StockRepository {
 export type FakeStockUnitOfWork = StockUnitOfWork & { state: FakeState; reset(): void };
 
 export function createFakeStockUnitOfWork(): FakeStockUnitOfWork {
-  const empty = (): FakeState => ({ items: [], groupPrices: [], entries: [], losses: [], audits: [], providerNames: new Map(), usernames: new Map(), clock: 0 });
+  const empty = (): FakeState => ({ items: [], entries: [], losses: [], audits: [], providerNames: new Map(), usernames: new Map(), clock: 0 });
   const state = empty();
   const repository = fakeStockRepository(state);
-  const groupPrices = fakeMenuGroupPriceRepository(state);
   return {
     state,
     read: repository,
-    run: (work) => work({ stock: repository, groupPrices, audit: async (entry) => void state.audits.push(entry) }),
+    run: (work) => work({ stock: repository, audit: async (entry) => void state.audits.push(entry) }),
     reset: () => Object.assign(state, empty()),
   };
 }

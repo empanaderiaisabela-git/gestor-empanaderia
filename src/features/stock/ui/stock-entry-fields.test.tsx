@@ -9,7 +9,7 @@ const ITEMS = [item('a', 'pizzas', 'Muzza'), item('b', 'pizzas', 'Napolitana'), 
 const BLANK: EntryValues = { group: '', menuItemId: '', quantity: '', unitCost: '', providerId: '', price1: '', price3: '', price6: '', price12: '' };
 
 function renderFields(values: EntryValues, onChange = vi.fn()): typeof onChange {
-  render(<StockEntryFields values={values} errors={{}} items={ITEMS} providers={[]} groupPrices={[]} onChange={onChange} />);
+  render(<StockEntryFields values={values} errors={{}} items={ITEMS} providers={[]} onChange={onChange} />);
   return onChange;
 }
 

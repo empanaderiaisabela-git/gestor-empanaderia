@@ -1,4 +1,3 @@
-import type { MenuGroupPrice } from '@/features/menu/repository/menu-group-price.repository';
 import type { StockItem } from '@/features/stock/repository/stock.repository';
 
 export function stockItem(overrides: Partial<StockItem> = {}): StockItem {
@@ -19,8 +18,4 @@ export function stockItem(overrides: Partial<StockItem> = {}): StockItem {
     updatedAt: new Date(0),
     ...overrides,
   };
-}
-
-export function groupPriceRow(overrides: Partial<MenuGroupPrice> = {}): MenuGroupPrice {
-  return { group: 'empanadas', price1: '1200.00', price3: '3400.00', price6: '6500.00', price12: '12000.00', version: 1, updatedAt: new Date(0), ...overrides };
 }

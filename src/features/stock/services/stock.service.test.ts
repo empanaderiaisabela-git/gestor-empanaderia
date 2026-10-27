@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import type { StockUnitOfWork } from '@/features/stock/repository/stock-unit-of-work';
 import { createFakeStockUnitOfWork, type FakeStockUnitOfWork } from '../testing/fake-stock-unit-of-work';
-import { groupPriceRow, stockItem } from '../testing/stock-item';
+import { stockItem } from '../testing/stock-item';
 import { createStockService, type StockService } from './stock.service';
 
 const CALLER = { id: '00000000-0000-4000-8000-00000000000a' };
@@ -16,7 +16,6 @@ describe('stock.service (US-4)', () => {
   beforeEach(() => {
     fake = createFakeStockUnitOfWork();
     fake.state.items.push({ ...empanada }, { ...pizza });
-    fake.state.groupPrices.push(groupPriceRow());
     fake.state.usernames.set(CALLER.id, 'admin');
     fake.state.providerNames.set(PROVIDER, 'Molino del Sur');
     service = createStockService({ unitOfWork: fake });

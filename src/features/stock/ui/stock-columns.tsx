@@ -36,7 +36,8 @@ export function StockButtons({ item, actions }: { item: MenuItemDef; actions: St
 }
 
 function priceCell(item: MenuItemDef, groupPrices: MenuGroupPriceDef[]): string {
-  return currentPricesOf(item, groupPrices).price1 == null ? 'Sin precio' : priceSummary(item);
+  const prices = currentPricesOf(item, groupPrices);
+  return prices.price1 == null ? 'Sin precio' : priceSummary(item.group, prices);
 }
 
 export function getStockColumns(actions: StockRowActions, groupPrices: MenuGroupPriceDef[]): ColumnDef<MenuItemDef>[] {
