@@ -11,7 +11,7 @@ const GROUP_ORDER = ['empanadas', 'pizzas', 'sanguches', 'ciabattas', 'coca_cola
 function newRow(state: FakeState, { group, name, unitCost, prices }: MenuItemData): MenuItem {
   state.clock += 1;
   const at = new Date(state.clock * 1000);
-  const base = { id: crypto.randomUUID(), group, name, unitCost: unitCost.toFixed(2), stock: '0.0', isActive: true, isVisible: false, version: 1 };
+  const base = { id: crypto.randomUUID(), group, name, unitCost: unitCost === undefined ? null : unitCost.toFixed(2), stock: '0.0', isActive: true, isVisible: false, version: 1 };
   return { ...base, ...priceColumns(prices), createdAt: at, updatedAt: at };
 }
 

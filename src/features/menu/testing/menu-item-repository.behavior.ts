@@ -40,6 +40,10 @@ export function describeMenuItemRepository(label: string, setup: () => Promise<M
       expect(await harness.repository.insert(PIZZA)).toMatchObject({ price1: '11000.00', price3: null, price6: null, price12: null });
     });
 
+    it('inserta un gusto sin costo ni precios (US-17): quedan nulos', async () => {
+      expect(await harness.repository.insert({ group: 'sanguches', name: 'Sin datos' })).toMatchObject({ unitCost: null, price1: null, price3: null, price6: null, price12: null });
+    });
+
     it('busca por nombre dentro del grupo, sin distinguir mayúsculas y con % y _ como texto', async () => {
       await harness.repository.insert({ ...PIZZA, name: 'Fuga_100%' });
       expect(await harness.repository.findByName('pizzas', 'fuga_100%')).toMatchObject({ name: 'Fuga_100%' });

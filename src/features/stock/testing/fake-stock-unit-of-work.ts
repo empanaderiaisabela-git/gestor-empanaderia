@@ -1,7 +1,9 @@
+import { fakeMenuGroupPriceRepository, type FakeGroupPriceState } from '@/features/menu/testing/fake-menu-group-prices';
+import { priceColumns } from '@/features/menu/repository/menu-item.repository';
 import type { EntryView, StockEntry, StockItem, StockLoss, StockRepository } from '@/features/stock/repository/stock.repository';
 import type { StockAuditEntry, StockUnitOfWork } from '@/features/stock/repository/stock-unit-of-work';
 
-type FakeState = { items: StockItem[]; entries: StockEntry[]; losses: StockLoss[]; audits: StockAuditEntry[]; providerNames: Map<string, string>; usernames: Map<string, string>; clock: number };
+type FakeState = FakeGroupPriceState & { items: StockItem[]; entries: StockEntry[]; losses: StockLoss[]; audits: StockAuditEntry[]; providerNames: Map<string, string>; usernames: Map<string, string>; clock: number };
 
 const tick = (state: FakeState): Date => {
   state.clock += 1;
@@ -16,10 +18,10 @@ function viewOf(state: FakeState, entry: StockEntry): EntryView {
 export function fakeStockRepository(state: FakeState): StockRepository {
   return {
     lockItem: async (id) => state.items.find((item) => item.id === id) ?? null,
-    saveItem: async ({ id, version }, { stock, unitCost }) => {
+    saveItem: async ({ id, version }, { stock, unitCost, prices }) => {
       const item = state.items.find((row) => row.id === id && row.version === version);
       if (!item) return null;
-      Object.assign(item, { stock: stock.toFixed(1), version: version + 1 }, unitCost === undefined ? {} : { unitCost: unitCost.toFixed(2) });
+      Object.assign(item, { stock: stock.toFixed(1), version: version + 1 }, unitCost === undefined ? {} : { unitCost: unitCost.toFixed(2) }, prices ? priceColumns(prices) : {});
       return { ...item };
     },
     insertEntry: async ({ unitCost, ...entry }) => {
@@ -43,13 +45,14 @@ export function fakeStockRepository(state: FakeState): StockRepository {
 export type FakeStockUnitOfWork = StockUnitOfWork & { state: FakeState; reset(): void };
 
 export function createFakeStockUnitOfWork(): FakeStockUnitOfWork {
-  const empty = (): FakeState => ({ items: [], entries: [], losses: [], audits: [], providerNames: new Map(), usernames: new Map(), clock: 0 });
+  const empty = (): FakeState => ({ items: [], groupPrices: [], entries: [], losses: [], audits: [], providerNames: new Map(), usernames: new Map(), clock: 0 });
   const state = empty();
   const repository = fakeStockRepository(state);
+  const groupPrices = fakeMenuGroupPriceRepository(state);
   return {
     state,
     read: repository,
-    run: (work) => work({ stock: repository, audit: async (entry) => void state.audits.push(entry) }),
+    run: (work) => work({ stock: repository, groupPrices, audit: async (entry) => void state.audits.push(entry) }),
     reset: () => Object.assign(state, empty()),
   };
 }

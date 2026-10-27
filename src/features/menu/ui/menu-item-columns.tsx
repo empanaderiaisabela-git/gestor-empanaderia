@@ -3,9 +3,6 @@ import type { JSX } from 'react';
 import type { ColumnDef } from '@/components/ui/virtualized-data-table';
 import { GROUPS } from '@/features/menu/domain/menu-groups';
 import type { MenuItemDef } from '@/features/menu/domain/menu-item.schema';
-import { priceSummary } from '@/features/menu/domain/menu-price-list';
-import { COST_TERM, SALE_PRICE_TERM } from '@/features/menu/domain/menu-terms';
-import { formatMoney } from '@/lib/format-money';
 
 export type MenuItemRowActions = {
   onEdit: (item: MenuItemDef) => void;
@@ -52,9 +49,7 @@ export function MenuItemRowButtons({ item, actions }: { item: MenuItemDef; actio
 export function getMenuItemColumns(actions: MenuItemRowActions): ColumnDef<MenuItemDef>[] {
   return [
     { header: 'Grupo', headerClassName: 'w-32', cellClassName: 'text-zinc-500', cell: (item) => GROUPS[item.group].label },
-    { header: 'Gusto / bebida', headerClassName: 'w-[36%]', cell: (item) => <NameCell item={item} /> },
-    { header: COST_TERM, cellClassName: 'text-zinc-500', cell: (item) => (item.unitCost === null ? '—' : formatMoney(item.unitCost)) },
-    { header: SALE_PRICE_TERM, cellClassName: 'text-zinc-600 dark:text-zinc-300 text-sm', cell: (item) => priceSummary(item) },
+    { header: 'Gusto / bebida', cell: (item) => <NameCell item={item} /> },
     { header: 'Stock', cellClassName: 'text-zinc-500', cell: (item) => item.stock.toLocaleString('es-AR') },
     { header: 'Acciones', headerClassName: 'w-44 text-right', cellClassName: 'flex gap-1 justify-end', cell: (item) => <MenuItemRowButtons item={item} actions={actions} /> },
   ];

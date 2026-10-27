@@ -7,6 +7,7 @@ import { StockPanel } from './stock-panel';
 const actions = vi.hoisted(() => ({ fetchItems: vi.fn(), entry: vi.fn() }));
 
 vi.mock('@/features/menu/actions/fetch-menu-items', () => ({ fetchMenuItems: actions.fetchItems }));
+vi.mock('@/features/menu/actions/fetch-menu-group-prices', () => ({ fetchMenuGroupPrices: vi.fn(async () => []) }));
 vi.mock('@/features/provider/actions/fetch-providers', () => ({ fetchProviders: vi.fn(async () => []) }));
 vi.mock('@/features/stock/actions/register-stock-entry', () => ({ registerStockEntryAction: actions.entry }));
 vi.mock('@/features/stock/actions/register-stock-loss', () => ({ registerStockLossAction: vi.fn() }));
@@ -27,7 +28,7 @@ describe('pantalla de Stock (US-4)', () => {
     fireEvent.click(await screen.findByRole('button', { name: 'Ingresar stock' }));
     fireEvent.change(screen.getByLabelText('Gusto o bebida'), { target: { value: ITEM.id } });
     fireEvent.change(screen.getByLabelText('Cantidad que entra'), { target: { value: '12' } });
-    fireEvent.change(screen.getByLabelText('Costo para el local, por unidad (vacío = se mantiene el actual)'), { target: { value: '460' } });
+    fireEvent.change(screen.getByLabelText('Costo para el local, por unidad'), { target: { value: '460' } });
     fireEvent.change(screen.getByLabelText('Proveedor (opcional)'), { target: { value: '' } });
     fireEvent.click(screen.getByRole('button', { name: 'Ingresar' }));
     await waitFor(() => expect(actions.entry).toHaveBeenCalledWith({ menuItemId: ITEM.id, quantity: 12, unitCost: 460, providerId: null }), { timeout: 5000 });
@@ -39,7 +40,22 @@ describe('pantalla de Stock (US-4)', () => {
     render(<StockPanel />);
     fireEvent.click(await screen.findByRole('button', { name: 'Ingresar stock' }));
     fireEvent.change(screen.getByLabelText('Gusto o bebida'), { target: { value: PIZZA.id } });
-    expect(screen.getByLabelText('Costo para el local, por pizza entera (vacío = se mantiene el actual)')).toBeDefined();
+    expect(screen.getByLabelText('Costo para el local, por pizza entera')).toBeDefined();
+    expect(screen.getByPlaceholderText('$11.000')).toBeDefined();
+  });
+
+  it('el admin carga el precio de venta y el servidor puede rechazar el ingreso', async () => {
+    useMenuStore.setState({ items: [PIZZA] });
+    actions.fetchItems.mockResolvedValue([PIZZA]);
+    actions.entry.mockResolvedValue({ success: false, error: 'Falta el costo para el local.' });
+    render(<StockPanel />);
+    fireEvent.click(await screen.findByRole('button', { name: 'Ingresar stock' }));
+    fireEvent.change(screen.getByLabelText('Gusto o bebida'), { target: { value: PIZZA.id } });
+    fireEvent.change(screen.getByLabelText('Cantidad que entra'), { target: { value: '5' } });
+    fireEvent.change(screen.getByLabelText('Precio de venta, pizza entera'), { target: { value: '12000' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Ingresar' }));
+    await waitFor(() => expect(actions.entry).toHaveBeenCalledWith({ menuItemId: PIZZA.id, quantity: 5, providerId: null, prices: { price1: 12000 } }));
+    expect(await screen.findByText('Falta el costo para el local.')).toBeDefined();
   });
 
   it('filtra por grupo y por nombre sin romper la pantalla', async () => {

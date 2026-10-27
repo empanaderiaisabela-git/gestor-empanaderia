@@ -11,6 +11,12 @@ describe('ingresar stock (US-4 CA-2)', () => {
     expect(stockEntrySchema.parse({ menuItemId: ITEM, quantity: 6, unitCost: 450.5, providerId: null })).toMatchObject({ unitCost: 450.5, providerId: null });
   });
 
+  it('acepta los precios de venta (US-17) y rechaza uno en 0', () => {
+    expect(stockEntrySchema.parse({ menuItemId: ITEM, quantity: 6, prices: { price1: 11000 } })).toMatchObject({ prices: { price1: 11000 } });
+    expect(first(stockEntrySchema.safeParse({ menuItemId: ITEM, quantity: 6, prices: { price1: 0 } }))).toBe('El precio debe ser mayor a 0');
+    expect(stockEntrySchema.safeParse({ menuItemId: ITEM, quantity: 6, prices: { price1: 1, price2: 2 } }).success).toBe(false);
+  });
+
   it.each([
     { caso: 'cantidad 0', input: { menuItemId: ITEM, quantity: 0 }, message: 'La cantidad debe ser mayor a 0' },
     { caso: 'cantidad con decimales', input: { menuItemId: ITEM, quantity: 1.5 }, message: 'La cantidad tiene que ser un número entero' },

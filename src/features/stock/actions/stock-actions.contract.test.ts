@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { MESSAGES } from '@/config/messages';
 import { asUser, TEST_USER_IDS } from '@/test/as-user';
 import { fakeStock } from '../testing/fake-stock-unit-of-work';
-import { stockItem } from '../testing/stock-item';
+import { groupPriceRow, stockItem } from '../testing/stock-item';
 import { fetchStockEntries } from './fetch-stock-entries';
 import { registerStockEntryAction } from './register-stock-entry';
 import { registerStockLossAction } from './register-stock-loss';
@@ -20,6 +20,7 @@ describe('acciones de Stock (US-4)', () => {
   beforeEach(() => {
     fakeStock.reset();
     fakeStock.state.items.push({ ...ITEM });
+    fakeStock.state.groupPrices.push(groupPriceRow());
     fakeStock.state.usernames.set(TEST_USER_IDS.admin, 'admin').set(TEST_USER_IDS.vendedor, 'vendedor');
     fakeStock.state.providerNames.set(PROVIDER, 'Molino del Sur');
   });
@@ -28,6 +29,15 @@ describe('acciones de Stock (US-4)', () => {
     await asUser({ role: 'admin' });
     expect(await registerStockEntryAction({ menuItemId: ITEM.id, quantity: 12, unitCost: 450, providerId: PROVIDER })).toEqual({ success: true, message: 'Stock ingresado: Carne suave queda con 22', data: { menuItemId: ITEM.id, stock: 22, version: 2 } });
     expect(await fetchStockEntries(ITEM.id)).toMatchObject([{ quantity: 12, unitCost: 450, providerName: 'Molino del Sur', username: 'admin' }]);
+  });
+
+  it('MISSING_COST y MISSING_PRICE: un gusto nuevo sin costo ni precio no admite ingresos', async () => {
+    await asUser({ role: 'admin' });
+    const bare = stockItem({ id: '55555555-5555-4555-8555-555555555555', group: 'pizzas', name: 'Napolitana', unitCost: null, stock: '0.0' });
+    fakeStock.state.items.push(bare);
+    expect(await registerStockEntryAction({ menuItemId: bare.id, quantity: 6 })).toEqual({ success: false, code: 'MISSING_COST', error: 'Falta el costo para el local.' });
+    expect(await registerStockEntryAction({ menuItemId: bare.id, quantity: 6, unitCost: 3000 })).toEqual({ success: false, code: 'MISSING_PRICE', error: 'Falta el precio de venta.' });
+    expect(await registerStockEntryAction({ menuItemId: bare.id, quantity: 6, unitCost: 3000, prices: { price1: 11000 } })).toMatchObject({ success: true, data: { stock: 6, version: 2 } });
   });
 
   it('FORBIDDEN: el vendedor no entra a Stock: no ingresa, no lee el historial ni registra mermas (US-16)', async () => {

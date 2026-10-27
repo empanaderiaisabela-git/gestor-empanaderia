@@ -16,6 +16,8 @@ describe('catálogo de errores (T-4 CA-1)', () => {
     { code: 'HAS_RELATIONS', message: DATABASE.FOREIGN_KEY_VIOLATION },
     { code: 'RELATION_NOT_FOUND', message: DATABASE.RELATION_NOT_FOUND },
     { code: 'STALE_VERSION', message: DATABASE.CONCURRENCY },
+    { code: 'MISSING_COST', message: 'Falta el costo para el local.' },
+    { code: 'MISSING_PRICE', message: 'Falta el precio de venta.' },
     { code: 'UNEXPECTED', message: DATABASE.GENERIC('el proveedor') },
   ] as const)('$code usa el mismo texto que ve hoy el usuario', ({ code, message }) => {
     expect(errorMessage(code, 'el proveedor')).toBe(message);

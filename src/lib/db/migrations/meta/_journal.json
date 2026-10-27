@@ -120,6 +120,13 @@
       "when": 1792992061622,
       "tag": "0016_expenses",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1793073450983,
+      "tag": "0017_precios-en-stock",
+      "breakpoints": true
     }
   ]
 }

@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { isValidDecimal } from '@/lib/utils';
-import { isPricedByGroup, type MenuGroup, PRICE_FIELDS, type PriceField, priceFieldsOf, priceLabelOf } from './menu-groups';
+import { type MenuGroup, PRICE_FIELDS, type PriceField, priceFieldsOf, priceLabelOf } from './menu-groups';
 
 const MAX_MONEY = 9_999_999.99;
 
@@ -34,10 +34,4 @@ export function priceIssues(group: MenuGroup, prices: MenuPrices): PriceIssue[] 
     if (!required.includes(field) && present) return [{ field, message: 'Este grupo no se vende en esa presentación' }];
     return [];
   });
-}
-
-export function itemPriceIssues(group: MenuGroup, prices: MenuPrices | undefined): PriceIssue[] {
-  if (isPricedByGroup(group)) return prices === undefined ? [] : [{ field: 'price1', message: 'Este grupo usa el mismo precio para todos los gustos' }];
-  if (prices === undefined) return [{ field: 'price1', message: 'Falta el precio del gusto' }];
-  return priceIssues(group, prices);
 }

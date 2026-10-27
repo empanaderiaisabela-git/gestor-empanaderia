@@ -7,16 +7,31 @@ const ITEM: MenuItemDef = { id: 'a', group: 'sanguches', name: 'Primavera', unit
 
 describe('grilla de Stock (US-4 CA-1)', () => {
   it('muestra el costo para el local (US-16)', () => {
-    expect(getStockColumns({ open: vi.fn() }).map((column) => column.header)).toEqual(['Grupo', 'Gusto / bebida', 'Stock', 'Precio de venta', 'Costo para el local', 'Acciones']);
+    expect(getStockColumns({ open: vi.fn() }, []).map((column) => column.header)).toEqual(['Grupo', 'Gusto / bebida', 'Stock', 'Precio de venta', 'Costo para el local', 'Acciones']);
   });
 
   it('cada celda muestra grupo, gusto, stock, precio y costo', () => {
-    const columns = getStockColumns({ open: vi.fn() });
+    const columns = getStockColumns({ open: vi.fn() }, []);
     render(<div>{columns.slice(0, 5).map((column, index) => <span key={index}>{column.cell(ITEM)}</span>)}</div>);
     ['Sanguches', 'Primavera', '24', '$650'].forEach((text) => expect(screen.getByText(text)).toBeDefined());
     expect(screen.getByText(/1 unidad: \$1\.600/)).toBeDefined();
     render(<div>{columns[5].cell(ITEM)}</div>);
     expect(screen.getAllByTitle('Ingresar stock')).toHaveLength(1);
+  });
+
+  it('avisa cuando falta el precio o el costo', () => {
+    const sin: MenuItemDef = { ...ITEM, unitCost: null, price1: null, price3: null, price6: null, price12: null };
+    const columns = getStockColumns({ open: vi.fn() }, []);
+    render(<div>{columns.slice(3, 5).map((column, index) => <span key={index}>{column.cell(sin)}</span>)}</div>);
+    expect(screen.getByText('Sin precio')).toBeDefined();
+    expect(screen.getByText('Sin costo')).toBeDefined();
+  });
+
+  it('muestra el precio del grupo en Empanadas', () => {
+    const empanada: MenuItemDef = { ...ITEM, group: 'empanadas', price1: null };
+    const grupo = [{ group: 'empanadas' as const, price1: 1500, price3: null, price6: null, price12: null, version: 1, updatedAt: '' }];
+    render(<div>{getStockColumns({ open: vi.fn() }, grupo)[3].cell(empanada)}</div>);
+    expect(screen.getByText('Igual para todas las Empanadas')).toBeDefined();
   });
 
   it('muestra el stock y avisa cuando no hay', () => {

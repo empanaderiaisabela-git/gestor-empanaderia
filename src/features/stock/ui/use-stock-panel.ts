@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
+import { fetchMenuGroupPrices } from '@/features/menu/actions/fetch-menu-group-prices';
 import { fetchMenuItems } from '@/features/menu/actions/fetch-menu-items';
 import type { MenuGroup } from '@/features/menu/domain/menu-groups';
+import type { MenuGroupPriceDef } from '@/features/menu/domain/menu-group-price.schema';
 import type { MenuItemDef } from '@/features/menu/domain/menu-item.schema';
 import { useMenuStore } from '@/features/menu/store/menu.store';
 import { fetchProviders } from '@/features/provider/actions/fetch-providers';
@@ -18,6 +20,7 @@ export type StockPanelModel = {
   items: MenuItemDef[];
   activeItems: MenuItemDef[];
   providers: ProviderDef[];
+  groupPrices: MenuGroupPriceDef[];
   search: string;
   setSearch: (value: string) => void;
   groupFilter: MenuGroup | 'todos';
@@ -30,22 +33,28 @@ export type StockPanelModel = {
 };
 
 function useStockData(): { loading: boolean; providers: ProviderDef[]; reload: () => Promise<void> } {
-  const { isLoaded, setItems } = useMenuStore();
+  const { isLoaded, setItems, setGroupPrices } = useMenuStore();
   const [loading, setLoading] = useState(!isLoaded);
   const [providers, setProviders] = useState<ProviderDef[]>([]);
-  const reload = async (): Promise<void> => setItems(await fetchMenuItems());
+  const reload = async (): Promise<void> => {
+    const [prices, rows] = await Promise.all([fetchMenuGroupPrices(), fetchMenuItems()]);
+    setGroupPrices(prices);
+    setItems(rows);
+  };
   useEffect(() => {
     fetchProviders().then(setProviders);
     if (isLoaded) return setLoading(false);
+    fetchMenuGroupPrices().then(setGroupPrices);
     fetchMenuItems()
       .then(setItems)
       .finally(() => setLoading(false));
-  }, [isLoaded, setItems]);
+  }, [isLoaded, setItems, setGroupPrices]);
   return { loading, providers, reload };
 }
 
 export function useStockPanel(): StockPanelModel {
   const allItems = useMenuStore((state) => state.items);
+  const groupPrices = useMenuStore((state) => state.groupPrices);
   const { loading, providers, reload } = useStockData();
   const [search, setSearch] = useState('');
   const [groupFilter, setGroupFilter] = useState<MenuGroup | 'todos'>('todos');
@@ -66,5 +75,5 @@ export function useStockPanel(): StockPanelModel {
   };
   const submitEntry = (input: StockEntryInput): Promise<string | null> => submit(registerStockEntryAction(input));
   const submitLoss = (input: StockLossInput): Promise<string | null> => submit(registerStockLossAction(input));
-  return { loading, items, activeItems, providers, search, setSearch, groupFilter, setGroupFilter, dialog, setDialog, message, submitEntry, submitLoss };
+  return { loading, items, activeItems, providers, groupPrices, search, setSearch, groupFilter, setGroupFilter, dialog, setDialog, message, submitEntry, submitLoss };
 }

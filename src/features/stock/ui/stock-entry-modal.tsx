@@ -8,7 +8,7 @@ import { StockEntryFields } from './stock-entry-fields';
 import { type EntryValues, type FormErrors, parseEntry } from './stock-forms';
 import type { StockPanelModel } from './use-stock-panel';
 
-const blank = (menuItemId: string): EntryValues => ({ menuItemId, quantity: '', unitCost: '', providerId: '' });
+const blank = (menuItemId: string): EntryValues => ({ menuItemId, quantity: '', unitCost: '', providerId: '', price1: '', price3: '', price6: '', price12: '' });
 
 export function StockEntryModal({ model }: { model: StockPanelModel }): JSX.Element {
   const isOpen = model.dialog?.kind === 'entry';
@@ -38,7 +38,7 @@ export function StockEntryModal({ model }: { model: StockPanelModel }): JSX.Elem
   return (
     <ResponsiveModal isOpen={isOpen} onClose={() => model.setDialog(null)} title='Ingresar stock' icon={<PackagePlus className='w-5 h-5 text-brand-500' />} width='md' onSubmit={submit} submitLabel='Ingresar' isPending={pending}>
       <ErrorAlert error={serverError} />
-      <StockEntryFields values={values} errors={errors} items={model.activeItems} providers={model.providers} onChange={setValues} />
+      <StockEntryFields values={values} errors={errors} items={model.activeItems} providers={model.providers} groupPrices={model.groupPrices} onChange={setValues} />
     </ResponsiveModal>
   );
 }

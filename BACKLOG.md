@@ -2442,7 +2442,7 @@ decisiones provisorias D-1 y D-2, el orden y la trazabilidad de cada línea de `
 | 2   | [BUG-18](#bug-18--franja-vacía-arriba-de-cada-página)                  | Franja vacía arriba de cada página                         | En revisión | T-17       | 30 min           |
 | 3   | [BUG-17](#bug-17--el-nombre-del-gusto-se-corta-en-alta-de-productos)   | El nombre del gusto se corta en Alta de productos          | En revisión | T-17       | 20 min           |
 | 4   | [US-16](#us-16--stock-sólo-para-el-administrador)                      | Stock sólo para el administrador                           | En revisión | T-17       | 45 min           |
-| 5   | [US-17](#us-17--alta-pide-grupo-y-nombre-costo-y-precio-en-ingresar-stock) | Alta pide grupo y nombre; costo y precio en Ingresar stock | Pendiente   | US-16      | 3 h              |
+| 5   | [US-17](#us-17--alta-pide-grupo-y-nombre-costo-y-precio-en-ingresar-stock) | Alta pide grupo y nombre; costo y precio en Ingresar stock | En revisión | US-16      | 3 h              |
 | 6   | [US-18](#us-18--ingresar-stock-primero-la-categoría-después-el-gusto)  | Ingresar stock: primero la categoría, después el gusto     | Pendiente   | US-17      | 45 min           |
 | 7   | [US-19](#us-19--ventas-muestra-sólo-gustos-con-stock)                  | Ventas muestra sólo gustos con stock                       | Pendiente   | US-17      | 40 min           |
 | 8   | [US-22](#us-22--ventas-quitar-de-a-uno-en-el-pedido)                   | Ventas: quitar de a uno en el pedido                       | Pendiente   | T-17       | 40 min           |
@@ -2605,9 +2605,9 @@ siempre quien los conoce.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
-| Dueño        | —         |
-| Inicio       | —         |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-27 |
 | Tamaño       | L         |
 | Depende de   | US-16     |
 | Plan         | — (plan propio: `docs/plans/US-17-precios-en-stock.md`) |
@@ -2619,20 +2619,29 @@ precio de venta al ingresar stock, de forma que no cargue lo mismo dos veces.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · "Nuevo gusto o bebida" pide sólo grupo y nombre, y la edición sólo el nombre; salen de Alta las tarjetas de precios del grupo y las aclaraciones largas · Estimación: 30 min · Completado: —
+- [x] **CA-1** · "Nuevo gusto o bebida" pide sólo grupo y nombre, y la edición sólo el nombre; salen de Alta las tarjetas de precios del grupo y las aclaraciones largas · Estimación: 30 min · Completado: 2026-10-27 01:21
 
-- [ ] **CA-2** · La base acepta un gusto sin costo ni precio (migración con los checks nuevos y test de integración); los datos actuales no cambian · Estimación: 40 min · Completado: —
+- [x] **CA-2** · La base acepta un gusto sin costo ni precio (migración con los checks nuevos y test de integración); los datos actuales no cambian · Estimación: 40 min · Completado: 2026-10-27 01:21
 
-- [ ] **CA-3** · En el primer ingreso de un gusto, el costo y el precio de venta son obligatorios; después son opcionales y vacío deja el valor actual. En Empanadas y Ciabattas el precio es el del grupo (D-1). Stock, costo y precio se guardan juntos, con concurrencia optimista · Estimación: 1 h · Completado: —
+- [x] **CA-3** · En el primer ingreso de un gusto, el costo y el precio de venta son obligatorios; después son opcionales y vacío deja el valor actual. En Empanadas y Ciabattas el precio es el del grupo (D-1). Stock, costo y precio se guardan juntos, con concurrencia optimista · Estimación: 1 h · Completado: 2026-10-27 01:21
 
-- [ ] **CA-4** · La grilla de Stock marca "Sin precio" o "Sin costo" y el catálogo público no muestra gustos sin precio · Estimación: 20 min · Completado: —
+- [x] **CA-4** · La grilla de Stock marca "Sin precio" o "Sin costo" y el catálogo público no muestra gustos sin precio · Estimación: 20 min · Completado: 2026-10-27 01:21
 
-- [ ] **CA-5** · E2E: alta de un gusto, primer ingreso con costo y precio, y venta · Estimación: 30 min · Completado: —
+- [x] **CA-5** · E2E: alta de un gusto, primer ingreso con costo y precio, y venta · Estimación: 30 min · Completado: 2026-10-27 01:21
 
 **Notas**
 
 - Decisión provisoria D-1 (`docs/plans/sprint-3.md`): los precios de Empanadas y Ciabattas se cargan en Ingresar
   stock y editan el precio del grupo.
+- Hecho con tres subagentes Sonnet (servidor; UI de Alta; UI de Stock) y revisado. Migración
+  `0017_precios-en-stock` (costo nulo y precios nulos permitidos); `stock-entry-plan.ts` decide costo y precio del
+  ingreso (`MISSING_COST`, `MISSING_PRICE`, precio del grupo para Empanadas y Ciabattas, D-1). Las tarjetas de
+  precio del grupo y su acción de guardar salieron de Alta; la grilla de Alta muestra grupo, gusto, stock y
+  acciones (D-4). El catálogo público sólo muestra gustos con precio.
+- Nivel 3: `npm run verify` en verde (856 tests, 96 de integración, mutación 89,51 y build) y todos los E2E en
+  verde: 72 en la corrida completa más `stock-precios.spec.ts` (alta → primer ingreso con costo y precio → precio en
+  la grilla), que se corrigió dos veces (selector de "Grupo" y la grilla virtual de Alta).
+- `npm run db:migrate` corrido en la base de desarrollo (autorizado por el dev).
 
 ### US-18 · Ingresar stock: primero la categoría, después el gusto
 

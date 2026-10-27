@@ -7,12 +7,10 @@ import { useMenuPanel } from './use-menu-panel';
 const actions = vi.hoisted(() => ({ fetch: vi.fn(), toggle: vi.fn(), remove: vi.fn() }));
 
 vi.mock('@/features/menu/actions/fetch-menu-items', () => ({ fetchMenuItems: actions.fetch }));
-vi.mock('@/features/menu/actions/fetch-menu-group-prices', () => ({ fetchMenuGroupPrices: vi.fn(async () => []) }));
 vi.mock('@/features/menu/actions/toggle-menu-item-active', () => ({ toggleMenuItemActiveAction: actions.toggle }));
 vi.mock('@/features/menu/actions/delete-menu-item', () => ({ deleteMenuItemAction: actions.remove }));
 vi.mock('@/features/menu/actions/create-menu-item', () => ({ createMenuItemAction: vi.fn() }));
 vi.mock('@/features/menu/actions/update-menu-item', () => ({ updateMenuItemAction: vi.fn() }));
-vi.mock('@/features/menu/actions/save-menu-group-prices', () => ({ saveMenuGroupPricesAction: vi.fn() }));
 
 const item = (overrides: Partial<MenuItemDef>): MenuItemDef => ({ id: 'a', group: 'empanadas', name: 'Carne', unitCost: 1, stock: 0, price1: null, price3: null, price6: null, price12: null, isActive: true, isVisible: false, version: 4, createdAt: '', updatedAt: '', ...overrides });
 const ITEMS = [item({}), item({ id: 'b', group: 'pizzas', name: 'Muzza', price1: 10 }), item({ id: 'c', name: 'Humita', isActive: false })];

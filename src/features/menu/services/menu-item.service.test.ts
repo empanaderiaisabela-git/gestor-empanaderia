@@ -4,9 +4,9 @@ import { createFakeMenuUnitOfWork, type FakeMenuUnitOfWork } from '../testing/fa
 import { createMenuItemService, type MenuItemService } from './menu-item.service';
 
 const CALLER = { id: '00000000-0000-4000-8000-00000000000a' };
-const EMPANADA: MenuItemInput = { group: 'empanadas', name: 'Carne suave', unitCost: 400 };
-const PIZZA: MenuItemInput = { group: 'pizzas', name: 'Muzza', unitCost: 3000, prices: { price1: 11000 } };
-const EDIT = { name: 'Muzza', unitCost: 3100, prices: { price1: 11500 }, version: 1 };
+const EMPANADA: MenuItemInput = { group: 'empanadas', name: 'Carne suave' };
+const PIZZA: MenuItemInput = { group: 'pizzas', name: 'Muzza' };
+const EDIT = { name: 'Muzza', version: 1 };
 
 describe('menu-item.service (US-3)', () => {
   let fake: FakeMenuUnitOfWork;
@@ -19,7 +19,7 @@ describe('menu-item.service (US-3)', () => {
 
   it('crea un gusto sin stock y audita CREAR', async () => {
     const item = await service.create(CALLER, EMPANADA);
-    expect(item).toMatchObject({ name: 'Carne suave', stock: '0.0', price1: null });
+    expect(item).toMatchObject({ name: 'Carne suave', stock: '0.0', unitCost: null, price1: null, price3: null, price6: null, price12: null });
     expect(fake.state.audits).toEqual([{ userId: CALLER.id, action: 'CREAR', entity: 'MENU_ITEM', entityId: item.id, detail: expect.objectContaining({ group: 'empanadas', note: 'Nuevo producto' }) }]);
   });
 
@@ -34,17 +34,15 @@ describe('menu-item.service (US-3)', () => {
     await expect(service.create(CALLER, { ...EMPANADA, name: 'Muzza' })).resolves.toMatchObject({ group: 'empanadas' });
   });
 
-  it('edita nombre, costo y precios con la versión, y audita ACTUALIZAR', async () => {
+  it('edita sólo el nombre con la versión y audita ACTUALIZAR', async () => {
     const item = await service.create(CALLER, PIZZA);
-    expect(await service.update(CALLER, item.id, { ...EDIT, name: 'Muzza especial' })).toMatchObject({ name: 'Muzza especial', unitCost: '3100.00', price1: '11500.00', version: 2 });
+    expect(await service.update(CALLER, item.id, { ...EDIT, name: 'Muzza especial' })).toMatchObject({ name: 'Muzza especial', unitCost: null, price1: null, version: 2 });
     expect(fake.state.audits.at(-1)).toMatchObject({ action: 'ACTUALIZAR', detail: { name: 'Muzza especial' } });
   });
 
-  it('VALIDATION: al editar, los precios tienen que corresponder al grupo del gusto', async () => {
-    const empanada = await service.create(CALLER, EMPANADA);
-    const pizza = await service.create(CALLER, PIZZA);
-    await expect(service.update(CALLER, empanada.id, { ...EDIT, name: 'Carne suave' })).rejects.toMatchObject({ code: 'VALIDATION' });
-    await expect(service.update(CALLER, pizza.id, { name: 'Muzza', unitCost: 1, version: 1 })).rejects.toMatchObject({ code: 'VALIDATION' });
+  it('al editar el nombre conserva el costo y el precio cargados con el stock', async () => {
+    const item = await fake.read.items.insert({ ...PIZZA, unitCost: 3000, prices: { price1: 11000 } });
+    expect(await service.update(CALLER, item.id, { ...EDIT, name: 'Muzza especial' })).toMatchObject({ unitCost: '3000.00', price1: '11000.00' });
   });
 
   it('DUPLICATE: no deja renombrar con el nombre de otro gusto del grupo', async () => {

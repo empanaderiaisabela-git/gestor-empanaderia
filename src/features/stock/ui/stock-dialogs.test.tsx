@@ -12,7 +12,7 @@ const PIZZA: MenuItemDef = { id: '11111111-1111-4111-8111-111111111111', group: 
 
 function model(overrides: Partial<StockPanelModel>): StockPanelModel {
   const noop = vi.fn(async () => null);
-  return { loading: false, items: [], activeItems: [], providers: [], search: '', setSearch: vi.fn(), groupFilter: 'todos', setGroupFilter: vi.fn(), dialog: null, setDialog: vi.fn(), message: null, submitEntry: noop, submitLoss: noop, ...overrides };
+  return { loading: false, items: [], activeItems: [], providers: [], groupPrices: [], search: '', setSearch: vi.fn(), groupFilter: 'todos', setGroupFilter: vi.fn(), dialog: null, setDialog: vi.fn(), message: null, submitEntry: noop, submitLoss: noop, ...overrides };
 }
 
 describe('merma e historial (US-4 CA-3 y CA-4)', () => {

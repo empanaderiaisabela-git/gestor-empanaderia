@@ -1,20 +1,13 @@
 import { z } from 'zod';
 import { MENU_GROUPS } from './menu-groups';
-import { itemPriceIssues, menuPricesSchema, unitCostSchema } from './menu-prices';
 
 const name = z.string('El nombre es obligatorio').trim().min(1, 'El nombre es obligatorio').max(60, 'El nombre no puede superar los 60 caracteres');
 const version = z.number().int().min(1);
 
-export const menuItemCreateSchema = z
-  .strictObject({ group: z.enum(MENU_GROUPS, 'Elegí un grupo válido'), name, unitCost: unitCostSchema, prices: menuPricesSchema.optional() })
-  .superRefine((input, ctx) => {
-    for (const issue of itemPriceIssues(input.group, input.prices)) {
-      ctx.addIssue({ code: 'custom', path: ['prices', issue.field], message: issue.message });
-    }
-  });
+export const menuItemCreateSchema = z.strictObject({ group: z.enum(MENU_GROUPS, 'Elegí un grupo válido'), name });
 export type MenuItemInput = z.infer<typeof menuItemCreateSchema>;
 
-export const menuItemUpdateSchema = z.strictObject({ name, unitCost: unitCostSchema, prices: menuPricesSchema.optional(), version });
+export const menuItemUpdateSchema = z.strictObject({ name, version });
 export type MenuItemUpdateInput = z.infer<typeof menuItemUpdateSchema>;
 
 export const menuItemToggleSchema = z.strictObject({ id: z.uuid(), isActive: z.boolean(), version });

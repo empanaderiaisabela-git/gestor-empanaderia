@@ -21,6 +21,12 @@ export function describeStockRepository(label: string, setup: () => Promise<Stoc
       expect(await harness.repository.saveItem({ id: harness.itemId, version: 1 }, { stock: 1 })).toBeNull();
     });
 
+    it('guarda también los precios del gusto, y sin precios nuevos los conserva (US-17)', async () => {
+      const { repository, itemId } = harness;
+      expect(await repository.saveItem({ id: itemId, version: 1 }, { stock: 3, prices: { price1: 12000 } })).toMatchObject({ price1: '12000.00', price3: null, version: 2 });
+      expect(await repository.saveItem({ id: itemId, version: 2 }, { stock: 4 })).toMatchObject({ price1: '12000.00', version: 3 });
+    });
+
     it('sin costo nuevo, conserva el costo', async () => {
       const before = await harness.repository.lockItem(harness.itemId);
       expect(await harness.repository.saveItem({ id: harness.itemId, version: 1 }, { stock: 3 })).toMatchObject({ unitCost: before?.unitCost });

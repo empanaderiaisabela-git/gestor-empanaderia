@@ -24,16 +24,16 @@ describe('resumen de precios de la grilla', () => {
 });
 
 describe('fila de la grilla y tarjeta mobile (US-3 CA-5)', () => {
-  it('muestra grupo, gusto, costo, precio y stock, y marca los inactivos', () => {
+  it('muestra grupo, gusto y stock, y marca los inactivos', () => {
     const columns = getMenuItemColumns(rowActions());
-    render(<div>{columns.slice(0, 5).map((column, index) => <span key={index}>{column.cell({ ...BASE, isActive: false })}</span>)}</div>);
-    expect(columns.map((column) => column.header)).toEqual(['Grupo', 'Gusto / bebida', 'Costo para el local', 'Precio de venta', 'Stock', 'Acciones']);
-    ['Empanadas', 'Carne', 'Inactivo', '$400', 'Igual para todas las Empanadas', '24'].forEach((text) => expect(screen.getByText(text)).toBeDefined());
+    render(<div>{columns.slice(0, 3).map((column, index) => <span key={index}>{column.cell({ ...BASE, isActive: false })}</span>)}</div>);
+    expect(columns.map((column) => column.header)).toEqual(['Grupo', 'Gusto / bebida', 'Stock', 'Acciones']);
+    ['Empanadas', 'Carne', 'Inactivo', '24'].forEach((text) => expect(screen.getByText(text)).toBeDefined());
   });
 
   it('los botones de la fila editan, desactivan y borran', () => {
     const actions = rowActions();
-    render(<div>{getMenuItemColumns(actions)[5].cell(BASE)}</div>);
+    render(<div>{getMenuItemColumns(actions)[3].cell(BASE)}</div>);
     fireEvent.click(screen.getByTitle('Editar'));
     fireEvent.click(screen.getByTitle('Desactivar'));
     fireEvent.click(screen.getByTitle('Eliminar'));
@@ -42,12 +42,11 @@ describe('fila de la grilla y tarjeta mobile (US-3 CA-5)', () => {
     expect(actions.onDelete).toHaveBeenCalledWith('x');
   });
 
-  it('la tarjeta mobile muestra el grupo, el resumen y las mismas acciones', () => {
+  it('la tarjeta mobile muestra el grupo, el stock y las mismas acciones', () => {
     const actions = rowActions();
     render(renderMenuItemCard(actions)({ ...BASE, group: 'pizzas', name: 'Muzza', price1: 11000, isActive: false }));
     expect(screen.getByText('Pizzas')).toBeDefined();
-    expect(screen.getByText('pizza entera: $11.000')).toBeDefined();
-    ['Precio de venta', 'Costo para el local', '$400 · Stock 24'].forEach((text) => expect(screen.getByText(text)).toBeDefined());
+    expect(screen.getByText('Stock 24')).toBeDefined();
     fireEvent.click(screen.getByRole('button', { name: 'Acciones' }));
     fireEvent.click(screen.getByText('Activar'));
     expect(actions.onToggleActive).toHaveBeenCalled();
@@ -55,7 +54,7 @@ describe('fila de la grilla y tarjeta mobile (US-3 CA-5)', () => {
 
   it('mostrar u ocultar en el catálogo y abrir las fotos (T-12)', () => {
     const actions = rowActions();
-    const { unmount } = render(<div>{getMenuItemColumns(actions)[5].cell(BASE)}</div>);
+    const { unmount } = render(<div>{getMenuItemColumns(actions)[3].cell(BASE)}</div>);
     fireEvent.click(screen.getByTitle('Mostrar en el catálogo'));
     fireEvent.click(screen.getByTitle('Fotos'));
     expect(actions.onToggleVisible).toHaveBeenCalledWith(BASE);

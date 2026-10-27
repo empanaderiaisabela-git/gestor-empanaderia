@@ -5,7 +5,7 @@ import { type FormEvent, type JSX, useEffect, useState } from 'react';
 import { ErrorAlert } from '@/components/ui/alert';
 import { FormField, inputClass } from '@/components/ui/form-field';
 import { ResponsiveModal } from '@/components/ui/responsive-modal';
-import { SALE_PRICE_HINT, SALE_PRICE_TERM } from '@/features/menu/domain/menu-terms';
+import { SALE_PRICE_TERM } from '@/features/menu/domain/menu-terms';
 import { PromotionComponentFields } from './promotion-component-fields';
 import { initialValues, parseCreate, parseUpdate, type PromotionFormErrors, type PromotionFormValues } from './promotion-form';
 import type { PromotionsPanelModel } from './use-promotions-panel';
@@ -22,7 +22,6 @@ function PromotionFields({ values, errors, onChange }: FieldsProps): JSX.Element
       <FormField label={`${SALE_PRICE_TERM} de la promo`} error={errors.price}>
         <input inputMode='decimal' value={values.price} onChange={(event) => onChange({ ...values, price: event.target.value })} placeholder='Ej: 15000' className={inputClass(Boolean(errors.price))} />
       </FormField>
-      <p className='text-xs text-zinc-500 -mt-2'>{SALE_PRICE_HINT} Se escribe a mano.</p>
     </div>
   );
 }
