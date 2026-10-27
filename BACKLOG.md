@@ -2447,7 +2447,8 @@ decisiones provisorias D-1 y D-2, el orden y la trazabilidad de cada línea de `
 | 9   | [US-20](#us-20--íconos-de-lucide-por-grupo-en-ventas-y-estadísticas)   | Íconos de lucide por grupo en Ventas y Estadísticas        | Pendiente   | T-17       | 2 h              |
 | 10  | [US-21](#us-21--estadísticas-como-el-panel-de-referencia)              | Estadísticas como el panel de referencia                   | Pendiente   | US-20      | 2 h              |
 | 11  | [T-18](#t-18--cierre-del-sprint-3)                                     | Cierre del Sprint 3                                        | Pendiente   | todos      | 1 h              |
-|     |                                                                        | **Total del sprint**                                       |             |            | **12 h 40 min**  |
+| 12  | [BUG-21](#bug-21--la-carga-inicial-de-datos-falla-si-quedaron-gastos)   | La carga inicial de datos falla si quedaron gastos         | En revisión | US-14      | 15 min           |
+|     |                                                                        | **Total del sprint**                                       |             |            | **12 h 55 min**  |
 
 ### T-17 · Backlog del Sprint 3 desde `specs.md`
 
@@ -2745,3 +2746,32 @@ probó.
 - [ ] **CA-1** · `npm run verify` completo y todos los E2E en verde sobre `develop` · Estimación: 30 min · Completado: —
 
 - [ ] **CA-2** · README, `docs/architecture.md` y `docs/initial_prompt.md` al día; merge local `develop → main` con el tag `sprint-3` · Estimación: 30 min · Completado: —
+
+### BUG-21 · La carga inicial de datos falla si quedaron gastos
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-27 |
+| Tamaño       | S         |
+| Depende de   | US-14     |
+| Plan         | —         |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Actual**: `npm run db:seed` borra los usuarios sin borrar antes los gastos, que los referencian. Si una corrida de E2E
+(por ejemplo `gastos.spec.ts`) dejó gastos en `db-test`, la siguiente no arranca: "update or delete on table users
+violates foreign key constraint expenses_user_id_users_id_fk".
+
+**Esperado**: la carga inicial borra los gastos antes que los usuarios y los E2E corren una vez tras otra.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · `setup-initial-data.ts` borra `expenses` antes que `users`; `gastos.spec.ts` y después `navegacion.spec.ts` corren en verde dos veces seguidas · Estimación: 15 min · Completado: 2026-10-27 03:22
+
+**Notas**
+
+- Apareció al verificar BUG-18. En el CI no se ve porque cada corrida arranca con la base vacía.
+- Nivel 2 (script de datos): la prueba es el E2E repetido. Primera corrida: 6 casos en verde; segunda, con los gastos
+  de la primera ya en la base: 4 casos en verde.

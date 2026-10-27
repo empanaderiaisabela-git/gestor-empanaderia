@@ -69,6 +69,7 @@ cambio de base.
 | 9 | US-20 Íconos de lucide por grupo en Ventas y Estadísticas | T-17 | `feat/us-20-iconos-lucide` |
 | 10 | US-21 Estadísticas como el panel de referencia | US-20 | `feat/us-21-estadisticas-referencia` |
 | 11 | T-18 Cierre del Sprint 3 | todos | `docs/t-18-cierre-sprint-3` |
+| 12 | BUG-21 La carga inicial de datos falla si quedaron gastos (apareció en BUG-18) | US-14 | `fix/bug-21-seed-con-gastos` |
 
 T-19 va primero porque define cuánto se prueba cada ítem que sigue. BUG-17, BUG-18, US-22 y US-20 no dependen de los
 demás: se pueden adelantar si un ítem queda bloqueado.
