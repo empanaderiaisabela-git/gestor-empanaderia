@@ -2438,7 +2438,7 @@ decisiones provisorias D-1 y D-2, el orden y la trazabilidad de cada línea de `
 | 0   | [T-17](#t-17--backlog-del-sprint-3-desde-specsmd)                      | Backlog del Sprint 3 desde `specs.md`                      | En revisión | —          | 30 min           |
 | 1   | [T-19](#t-19--tests-por-nivel-según-el-tamaño-del-cambio)              | Tests por nivel según el tamaño del cambio                 | En revisión | T-17       | 30 min           |
 | 2   | [BUG-18](#bug-18--franja-vacía-arriba-de-cada-página)                  | Franja vacía arriba de cada página                         | En revisión | T-17       | 30 min           |
-| 3   | [BUG-17](#bug-17--el-nombre-del-gusto-se-corta-en-alta-de-productos)   | El nombre del gusto se corta en Alta de productos          | Pendiente   | T-17       | 20 min           |
+| 3   | [BUG-17](#bug-17--el-nombre-del-gusto-se-corta-en-alta-de-productos)   | El nombre del gusto se corta en Alta de productos          | En revisión | T-17       | 20 min           |
 | 4   | [US-16](#us-16--stock-sólo-para-el-administrador)                      | Stock sólo para el administrador                           | Pendiente   | T-17       | 45 min           |
 | 5   | [US-17](#us-17--alta-pide-grupo-y-nombre-costo-y-precio-en-ingresar-stock) | Alta pide grupo y nombre; costo y precio en Ingresar stock | Pendiente   | US-16      | 3 h              |
 | 6   | [US-18](#us-18--ingresar-stock-primero-la-categoría-después-el-gusto)  | Ingresar stock: primero la categoría, después el gusto     | Pendiente   | US-17      | 45 min           |
@@ -2537,9 +2537,9 @@ padding doble. En Estadísticas obliga a scrollear para ver datos (`espacio-inec
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
-| Dueño        | —         |
-| Inicio       | —         |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-27 |
 | Tamaño       | S         |
 | Depende de   | T-17      |
 | Plan         | [`docs/plans/sprint-3.md`](docs/plans/sprint-3.md#3--bug-17-nombre-cortado-en-alta-s-20-min) |
@@ -2553,7 +2553,16 @@ padding doble. En Estadísticas obliga a scrollear para ver datos (`espacio-inec
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · A 1280 px de ancho, "RUCULA Y JAMON CRUDO" con su etiqueta "En catálogo" se lee entero; GRUPO tiene ancho fijo angosto · Estimación: 20 min · Completado: —
+- [x] **CA-1** · A 1280 px de ancho, "RUCULA Y JAMON CRUDO" con su etiqueta "En catálogo" se lee entero; GRUPO tiene ancho fijo angosto · Estimación: 20 min · Completado: 2026-10-27 00:30
+
+**Notas**
+
+- GRUPO pasa a ancho fijo angosto (`w-32`), GUSTO / BEBIDA al 36 % y ACCIONES a `w-44`, para que sus 5 botones
+  entren. El nombre ya no se corta en una línea: se parte en dos (`line-clamp-2`) y el nombre completo sigue en el
+  `title`.
+- Medido a 1280 px con la base de desarrollo: "RUCULA Y JAMON CRUDO" con "En catálogo" entra entero en dos líneas.
+  Costo, precio y stock quedan más angostos; US-17 los saca de esta grilla (decisión provisoria D-4).
+- Nivel 1: tests relacionados (2 archivos, 12 tests) en verde, y lint y typecheck en el hook del commit.
 
 ### US-16 · Stock sólo para el administrador
 
