@@ -13,6 +13,7 @@ test.describe('Precios en Stock (US-17)', () => {
 
     await page.goto('/stock');
     await page.getByRole('button').filter({ hasText: 'Ingresar stock' }).click();
+    await page.getByLabel('Categoría').selectOption({ label: 'Pizzas' });
     await page.getByLabel('Gusto o bebida').selectOption({ label: `${gusto} (stock 0)` });
     await page.getByLabel('Cantidad que entra').fill('5');
     await page.getByLabel(/Costo para el local/).fill('3000');

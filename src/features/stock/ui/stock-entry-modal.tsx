@@ -8,22 +8,23 @@ import { StockEntryFields } from './stock-entry-fields';
 import { type EntryValues, type FormErrors, parseEntry } from './stock-forms';
 import type { StockPanelModel } from './use-stock-panel';
 
-const blank = (menuItemId: string): EntryValues => ({ menuItemId, quantity: '', unitCost: '', providerId: '', price1: '', price3: '', price6: '', price12: '' });
+const blank = (group: string, menuItemId: string): EntryValues => ({ group, menuItemId, quantity: '', unitCost: '', providerId: '', price1: '', price3: '', price6: '', price12: '' });
 
 export function StockEntryModal({ model }: { model: StockPanelModel }): JSX.Element {
   const isOpen = model.dialog?.kind === 'entry';
   const preselected = model.dialog?.item?.id ?? '';
-  const [values, setValues] = useState<EntryValues>(blank(''));
+  const preselectedGroup = model.dialog?.item?.group ?? '';
+  const [values, setValues] = useState<EntryValues>(blank('', ''));
   const [errors, setErrors] = useState<FormErrors>({});
   const [serverError, setServerError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 
   useEffect(() => {
     if (!isOpen) return;
-    setValues(blank(preselected));
+    setValues(blank(preselectedGroup, preselected));
     setErrors({});
     setServerError(null);
-  }, [isOpen, preselected]);
+  }, [isOpen, preselected, preselectedGroup]);
 
   const submit = async (event: FormEvent): Promise<void> => {
     event.preventDefault();

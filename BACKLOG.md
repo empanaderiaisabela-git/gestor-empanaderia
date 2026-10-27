@@ -2443,7 +2443,7 @@ decisiones provisorias D-1 y D-2, el orden y la trazabilidad de cada línea de `
 | 3   | [BUG-17](#bug-17--el-nombre-del-gusto-se-corta-en-alta-de-productos)   | El nombre del gusto se corta en Alta de productos          | En revisión | T-17       | 20 min           |
 | 4   | [US-16](#us-16--stock-sólo-para-el-administrador)                      | Stock sólo para el administrador                           | En revisión | T-17       | 45 min           |
 | 5   | [US-17](#us-17--alta-pide-grupo-y-nombre-costo-y-precio-en-ingresar-stock) | Alta pide grupo y nombre; costo y precio en Ingresar stock | En revisión | US-16      | 3 h              |
-| 6   | [US-18](#us-18--ingresar-stock-primero-la-categoría-después-el-gusto)  | Ingresar stock: primero la categoría, después el gusto     | Pendiente   | US-17      | 45 min           |
+| 6   | [US-18](#us-18--ingresar-stock-primero-la-categoría-después-el-gusto)  | Ingresar stock: primero la categoría, después el gusto     | En revisión | US-17      | 45 min           |
 | 7   | [US-19](#us-19--ventas-muestra-sólo-gustos-con-stock)                  | Ventas muestra sólo gustos con stock                       | Pendiente   | US-17      | 40 min           |
 | 8   | [US-22](#us-22--ventas-quitar-de-a-uno-en-el-pedido)                   | Ventas: quitar de a uno en el pedido                       | Pendiente   | T-17       | 40 min           |
 | 9   | [US-20](#us-20--íconos-de-lucide-por-grupo-en-ventas-y-estadísticas)   | Íconos de lucide por grupo en Ventas y Estadísticas        | Pendiente   | T-17       | 2 h              |
@@ -2647,9 +2647,9 @@ precio de venta al ingresar stock, de forma que no cargue lo mismo dos veces.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
-| Dueño        | —         |
-| Inicio       | —         |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-27 |
 | Tamaño       | S         |
 | Depende de   | US-17     |
 | Plan         | [`docs/plans/sprint-3.md`](docs/plans/sprint-3.md#6--us-18-ingresar-stock-por-categoría-s-45-min) |
@@ -2661,9 +2661,17 @@ recorrer los gustos de todas las categorías (`error-form-stock.png`).
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · "Ingresar stock" tiene un select "Categoría" y otro "Gusto o bebida" que muestra sólo los de esa categoría; sin categoría está deshabilitado y cambiarla limpia el gusto · Estimación: 30 min · Completado: —
+- [x] **CA-1** · "Ingresar stock" tiene un select "Categoría" y otro "Gusto o bebida" que muestra sólo los de esa categoría; sin categoría está deshabilitado y cambiarla limpia el gusto · Estimación: 30 min · Completado: 2026-10-27 03:46
 
-- [ ] **CA-2** · Tests de componente y E2E de Stock en verde con los dos selects · Estimación: 15 min · Completado: —
+- [x] **CA-2** · Tests de componente y E2E de Stock en verde con los dos selects · Estimación: 15 min · Completado: 2026-10-27 03:46
+
+**Notas**
+
+- "Ingresar stock" tiene dos selects: "Categoría" y "Gusto o bebida", que lista sólo los de esa categoría y está
+  deshabilitado sin categoría; cambiar de categoría limpia el gusto. Al abrirlo desde una fila, viene con la
+  categoría y el gusto de esa fila. La categoría vive sólo en el formulario: la acción sigue recibiendo el gusto.
+- Nivel 1: lint, typecheck, tests relacionados (4 archivos, 18 tests, con `stock-entry-fields.test.tsx` nuevo) y E2E
+  de Stock (`stock.spec.ts` y `stock-precios.spec.ts`, 5 casos) en verde. Verificado también en la app.
 
 ### US-19 · Ventas muestra sólo gustos con stock
 

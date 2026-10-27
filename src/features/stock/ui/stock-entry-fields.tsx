@@ -18,19 +18,25 @@ type StockEntryFieldsProps = {
   onChange: (values: EntryValues) => void;
 };
 
-function ItemOptions({ items }: { items: MenuItemDef[] }): JSX.Element {
+function ItemSelects({ values, errors, items, onChange }: Pick<StockEntryFieldsProps, 'values' | 'errors' | 'items' | 'onChange'>): JSX.Element {
   return (
     <>
-      <option value=''>Elegí un gusto o bebida</option>
-      {MENU_GROUPS.map((group) => (
-        <optgroup key={group} label={GROUPS[group].label}>
-          {items.filter((item) => item.group === group).map((item) => (
+      <FormField label='Categoría'>
+        <select value={values.group} onChange={(event) => onChange({ ...values, group: event.target.value, menuItemId: '' })} className={inputClass(false)}>
+          <option value=''>Elegí una categoría</option>
+          {MENU_GROUPS.map((group) => <option key={group} value={group}>{GROUPS[group].label}</option>)}
+        </select>
+      </FormField>
+      <FormField label='Gusto o bebida' error={errors.menuItemId}>
+        <select value={values.menuItemId} disabled={values.group === ''} onChange={(event) => onChange({ ...values, menuItemId: event.target.value })} className={inputClass(Boolean(errors.menuItemId))}>
+          <option value=''>Elegí un gusto o bebida</option>
+          {items.filter((item) => item.group === values.group).map((item) => (
             <option key={item.id} value={item.id}>
               {item.name} (stock {item.stock.toLocaleString('es-AR')})
             </option>
           ))}
-        </optgroup>
-      ))}
+        </select>
+      </FormField>
     </>
   );
 }
@@ -61,11 +67,7 @@ export function StockEntryFields(props: StockEntryFieldsProps): JSX.Element {
   const { values, errors, items, onChange } = props;
   return (
     <div className='space-y-4'>
-      <FormField label='Gusto o bebida' error={errors.menuItemId}>
-        <select value={values.menuItemId} onChange={(event) => onChange({ ...values, menuItemId: event.target.value })} className={inputClass(Boolean(errors.menuItemId))}>
-          <ItemOptions items={items} />
-        </select>
-      </FormField>
+      <ItemSelects values={values} errors={errors} items={items} onChange={onChange} />
       <FormField label='Cantidad que entra' error={errors.quantity}>
         <input inputMode='numeric' value={values.quantity} onChange={(event) => onChange({ ...values, quantity: event.target.value })} placeholder='Ej: 24' className={inputClass(Boolean(errors.quantity))} />
       </FormField>

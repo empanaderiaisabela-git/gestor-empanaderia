@@ -3,7 +3,7 @@ import { parseEntry, parseLoss } from './stock-forms';
 
 const ITEM = '11111111-1111-4111-8111-111111111111';
 const PROVIDER = '22222222-2222-4222-8222-222222222222';
-const NO_PRICES = { price1: '', price3: '', price6: '', price12: '' };
+const NO_PRICES = { group: '', price1: '', price3: '', price6: '', price12: '' };
 
 describe('formularios de Stock', () => {
   it('el admin manda cantidad, costo y proveedor', () => {

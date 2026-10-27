@@ -1,7 +1,7 @@
 import { PRICE_FIELDS } from '@/features/menu/domain/menu-groups';
 import { type StockEntryInput, stockEntrySchema, type StockLossInput, stockLossSchema } from '@/features/stock/domain/stock.schema';
 
-export type EntryValues = { menuItemId: string; quantity: string; unitCost: string; providerId: string; price1: string; price3: string; price6: string; price12: string };
+export type EntryValues = { group: string; menuItemId: string; quantity: string; unitCost: string; providerId: string; price1: string; price3: string; price6: string; price12: string };
 export type LossValues = { quantity: string; reason: string };
 export type FormErrors = Partial<Record<string, string>>;
 export type Parsed<T> = { ok: true; input: T } | { ok: false; errors: FormErrors };

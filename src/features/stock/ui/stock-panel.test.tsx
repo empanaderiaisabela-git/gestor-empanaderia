@@ -26,6 +26,7 @@ describe('pantalla de Stock (US-4)', () => {
   it('el admin carga cantidad, costo y proveedor', async () => {
     render(<StockPanel />);
     fireEvent.click(await screen.findByRole('button', { name: 'Ingresar stock' }));
+    fireEvent.change(screen.getByLabelText('Categoría'), { target: { value: ITEM.group } });
     fireEvent.change(screen.getByLabelText('Gusto o bebida'), { target: { value: ITEM.id } });
     fireEvent.change(screen.getByLabelText('Cantidad que entra'), { target: { value: '12' } });
     fireEvent.change(screen.getByLabelText('Costo para el local, por unidad'), { target: { value: '460' } });
@@ -39,6 +40,7 @@ describe('pantalla de Stock (US-4)', () => {
     actions.fetchItems.mockResolvedValue([ITEM, PIZZA]);
     render(<StockPanel />);
     fireEvent.click(await screen.findByRole('button', { name: 'Ingresar stock' }));
+    fireEvent.change(screen.getByLabelText('Categoría'), { target: { value: PIZZA.group } });
     fireEvent.change(screen.getByLabelText('Gusto o bebida'), { target: { value: PIZZA.id } });
     expect(screen.getByLabelText('Costo para el local, por pizza entera')).toBeDefined();
     expect(screen.getByPlaceholderText('$11.000')).toBeDefined();
@@ -50,6 +52,7 @@ describe('pantalla de Stock (US-4)', () => {
     actions.entry.mockResolvedValue({ success: false, error: 'Falta el costo para el local.' });
     render(<StockPanel />);
     fireEvent.click(await screen.findByRole('button', { name: 'Ingresar stock' }));
+    fireEvent.change(screen.getByLabelText('Categoría'), { target: { value: PIZZA.group } });
     fireEvent.change(screen.getByLabelText('Gusto o bebida'), { target: { value: PIZZA.id } });
     fireEvent.change(screen.getByLabelText('Cantidad que entra'), { target: { value: '5' } });
     fireEvent.change(screen.getByLabelText('Precio de venta, pizza entera'), { target: { value: '12000' } });
