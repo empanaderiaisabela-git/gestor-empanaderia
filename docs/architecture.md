@@ -64,7 +64,7 @@ flowchart LR
 | Capa | Tecnología |
 |---|---|
 | Framework | Next.js 16 (App Router, Turbopack), React 19, TypeScript `strict` |
-| UI | Tailwind CSS v4, lucide-react, framer-motion, next-themes, react-virtuoso (tablas largas) |
+| UI | Tailwind CSS v4, lucide-react (íconos por grupo; los de Empanada y Ciabatta son propios, en `src/components/icons/`), framer-motion, next-themes, react-virtuoso (tablas largas) |
 | Estado en el cliente | Zustand, un store por feature |
 | Formularios y validación | React Hook Form + Zod 4; `drizzle-zod` deriva los schemas de las tablas |
 | Datos | PostgreSQL 15 + Drizzle ORM (`node-postgres`), migraciones con `drizzle-kit` |
@@ -128,7 +128,7 @@ Con el tope de 100 líneas, cuando un archivo crece se parte por operación (`cr
 
 | Ruta | Contenido |
 |---|---|
-| `src/proxy.ts` | Next 16 renombró `middleware.ts` a `proxy.ts`. Corre en cada request: valida la cookie `session`, redirige a `/home` si no hay sesión y aplica RBAC por ruta con **la misma lista que el menú** (`src/config/navigation.ts`, US-2): el `vendedor` sólo entra a Ventas/Pedidos, Stock y Clientes, y si pide otra sección va a `/ventas`. Con sesión, `/login` lleva al inicio de cada rol (admin: Estadísticas; vendedor: Ventas/Pedidos). Las rutas públicas están en `PUBLIC_PATHS`. |
+| `src/proxy.ts` | Next 16 renombró `middleware.ts` a `proxy.ts`. Corre en cada request: valida la cookie `session`, redirige a `/home` si no hay sesión y aplica RBAC por ruta con **la misma lista que el menú** (`src/config/navigation.ts`, US-2): el `vendedor` sólo entra a Ventas/Pedidos y Clientes, y si pide otra sección va a `/ventas`. Con sesión, `/login` lleva al inicio de cada rol (admin: Estadísticas; vendedor: Ventas/Pedidos). Las rutas públicas están en `PUBLIC_PATHS`. |
 | `src/features/<f>/actions/` | Server Actions. Única puerta del cliente al servidor: sesión y rol, validación Zod, service y `ActionResult`. |
 | `src/features/<f>/services/` | Reglas de negocio y orquestación. Abren la transacción y la pasan a los repositorios. Existe en `provider` (T-5, el molde), `menu`, `stock`, `order`, `promotion`, `card` y `expense`, con unidad de trabajo: el service nunca ve `tx`. `stats` lee la jornada en una sola transacción de sólo lectura y calcula con funciones puras. En `customer`, `user` y `audit` la lógica sigue repartida entre actions y repositorios, y se migra copiando `provider`. |
 | `src/features/<f>/repository/` | Acceso a datos con Drizzle. Reciben `tx` opcional para participar de una transacción y traducen "0 filas afectadas" a error de concurrencia. |
@@ -227,7 +227,7 @@ que se pagina y busca en el servidor con `unaccent`.
 
 ### Catálogo público
 
-`/home` y `/product/[id]` son Server Components: leen sin sesión los gustos y bebidas activos con `is_visible = true`
+`/home` y `/product/[id]` son Server Components: leen sin sesión los gustos y bebidas activos con `is_visible = true` y con precio
 (`fetchCatalog` y `fetchCatalogItem` del feature `menu`, las únicas lecturas públicas; T-12). No hay
 carrito ni pedidos online: el cliente consulta por WhatsApp o Instagram.
 
@@ -276,7 +276,7 @@ Casos especiales:
 |---|---|
 | Autenticación | Usuario y contraseña (`bcrypt`). Token JWT HS256 de 24 h en la cookie `session` (`httpOnly`, `secure`, `sameSite=lax`). |
 | Fuerza bruta | 5 intentos fallidos por usuario ⇒ bloqueo de 15 minutos. El contador vive en la memoria del proceso: se pierde al reiniciar y no se comparte entre instancias. |
-| Roles | `admin` (todo) y `vendedor` (Ventas/Pedidos, Stock y Clientes). Se aplican dos veces: por ruta en `proxy.ts` y por operación en cada Server Action. |
+| Roles | `admin` (todo) y `vendedor` (Ventas/Pedidos y Clientes; Stock es sólo admin, también en sus actions). Se aplican dos veces: por ruta en `proxy.ts` y por operación en cada Server Action. |
 | Sesiones viejas | `verifyAuthOrAdmin` vuelve a leer al usuario: si lo desactivaron, la sesión deja de servir aunque el JWT siga vigente. |
 | Entrada | Toda action valida con Zod antes de tocar datos. Objetivo: `z.strictObject`, que rechaza campos de más. |
 | Salida | Las lecturas se parsean con `*RowSchema`. `password_hash` nunca sale del servidor. |
@@ -290,11 +290,11 @@ Casos especiales:
 | `users` | Personal con rol `admin` o `vendedor` | Sí | Lógica (`is_active`) |
 | `providers` | Proveedores | Sí | Lógica; física si no tiene ingresos de stock |
 | `customers` | Clientes; DNI único, comparado sin puntos ni guiones | Sí | Lógica |
-| `sales`, `sale_payments` | Venta: vendedor, comprador opcional, descuentos y total; pagos en `efectivo`, `transferencia`, `debito` o `credito` (hasta 2 por venta). El crédito guarda tarjeta, cuotas, % y monto del recargo (US-11), y el total de la venta incluye el recargo (D-3 de `sprint-2.md`) | No | Anulación (borrado y reposición de stock) |
+| `sales`, `sale_payments` | Venta: vendedor, comprador opcional, descuentos y total; pagos en `efectivo`, `transferencia`, `debito` o `credito` (hasta 2 por venta). El crédito guarda tarjeta, cuotas, % y monto del recargo (US-11), y el recargo es de la tarjeta, no del local (BUG-20): el total de la venta y los pagos quedan al precio original y el recargo sólo se guarda como dato | No | Anulación (borrado y reposición de stock) |
 | `sale_lines`, `sale_line_items` (`order-schema.ts`) | Cada línea del pedido con lo cobrado, su orden y la descripción de sus gustos; lo que consumió de cada gusto con el costo congelado (US-6). Una línea de promo lleva `promotion_id` en vez de grupo y presentación (US-9) | No | En cascada con la venta |
 | `audit_logs` | Bitácora de operaciones | No | — |
-| `menu_items` (`src/lib/db/menu-schema.ts`) | Gustos y bebidas (US-3): grupo, nombre, costo, stock con medias para pizzas, precios por gusto según el grupo y visibilidad en el catálogo ([ADR 0005](adr/0005-grupos-fijos-y-precio-del-grupo-o-por-gusto.md)) | Sí | Lógica; física si no tiene movimientos |
-| `menu_group_prices` | Precio único por presentación de Empanadas y Ciabattas | Sí | — |
+| `menu_items` (`src/lib/db/menu-schema.ts`) | Gustos y bebidas (US-3): grupo, nombre, costo y precios (se cargan en el primer ingreso de stock: `MISSING_COST` y `MISSING_PRICE`, US-17), stock con medias para pizzas, precios por gusto según el grupo y visibilidad en el catálogo ([ADR 0005](adr/0005-grupos-fijos-y-precio-del-grupo-o-por-gusto.md)) | Sí | Lógica; física si no tiene movimientos |
+| `menu_group_prices` | Precio único por presentación de Empanadas y Ciabattas; se fija desde Ingresar stock (US-17, migración 0017) | Sí | — |
 | `menu_item_images` | Fotos de cada gusto en Cloudinary (T-12) | No | Física; en cascada con el gusto |
 | `stock_entries` (`src/lib/db/stock-schema.ts`) | Ingresos de stock (US-4): gusto, cantidad entera, costo unitario, proveedor opcional y usuario | No | — |
 | `stock_losses` | Mermas: cantidad (media pizza incluida), costo unitario del momento, motivo y usuario | No | — |
@@ -345,7 +345,7 @@ uso sin conexión), se decide con un ADR que evalúe primero una PWA y después 
 El código heredado **no se copia como ejemplo**. Cada brecha se corrige cuando un ítem del backlog toca ese
 código, o con un ítem propio. Nunca "de paso" dentro de otra tarea.
 
-El inventario exacto de archivos que violan las reglas duras es `eslint-legacy.json` (143 al activarlas en T-3, 88 al cerrar el Sprint 1 y 86 al cerrar el Sprint 2).
+El inventario exacto de archivos que violan las reglas duras es `eslint-legacy.json` (143 al activarlas en T-3, 88 al cerrar el Sprint 1 y 86 al cerrar los Sprints 2 y 3).
 Cuando un ítem corrige uno, lo saca de la lista, y la lista nunca crece (ADR 0003).
 
 | Brecha | Dónde | Regla de `AGENTS.md` |

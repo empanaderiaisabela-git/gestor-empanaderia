@@ -244,3 +244,117 @@ demás: se pueden adelantar si un ítem queda bloqueado.
 | 219 | Se va "Dinero generado por comida" | US-21 |
 | 221 | Quitar de a uno en el pedido de Ventas | US-22 |
 | — (pedido en el chat) | Tests según el tamaño del cambio | T-19 |
+
+## Resumen del Sprint 3 (para el dev)
+
+<details>
+<summary>Qué se hizo, en lenguaje simple</summary>
+
+El dev dejó el sprint corriendo de noche (2026-10-26 a 2026-10-27) y autorizó commitear, integrar a `develop` y
+hacer push de cada ítem sin esperar su OK, con estas listas simples para revisar a la mañana. Todo está en
+`develop`; **no** se pasó nada a `main` ni se puso la etiqueta `sprint-3`: eso espera el OK del dev.
+
+| Ítem | Commit | Qué cambió |
+|---|---|---|
+| T-17 | `3c3cd07` | El Sprint 3 cargado en el backlog, con este plan |
+| T-19 | `f41a5fe` | Las pruebas se corren según el tamaño de cada cambio |
+| BUG-21 | `df85b45` | La carga de datos de prueba no se traba con gastos viejos (apareció de noche) |
+| BUG-18 | `f5f090e` | Sin la franja vacía de arriba |
+| BUG-17 | `e3388d8` | El nombre del gusto se lee entero en Alta |
+| BUG-20 | `c893d6d` | El recargo de las cuotas es de la tarjeta, no del local |
+| US-16 | `6c1cac2` | Stock es sólo del administrador |
+| US-17 | `16b4cd2` | Alta pide grupo y nombre; costo y precio en Ingresar stock |
+| US-18 | `d137966` | Ingresar stock: primero la categoría, después el gusto |
+| US-19 | `d186df7` | Ventas muestra sólo gustos con stock |
+| US-22 | `ad3c3e2` | "Quitar uno" en el pedido |
+| US-20 | `a7ee8c5` | Íconos de lucide (y la empanada y la ciabatta propias) |
+| US-21 | `e1225e6` | Estadísticas como el panel de referencia |
+
+#### T-17 · 3c3cd07
+- Tus pedidos del Sprint 3 quedaron guardados tal cual (texto e imágenes) y pasaron a la lista de tareas.
+
+#### T-19 · f41a5fe
+- Las pruebas automáticas se corren según el tamaño del cambio; al cerrar el sprint se corre todo.
+
+#### BUG-21 · df85b45
+- Las pruebas automáticas de pantallas ya no se traban si una corrida anterior dejó gastos cargados.
+- Es un arreglo del script que prepara la base de pruebas; la app no cambia.
+
+#### BUG-18 · f5f090e
+- Desaparece la franja vacía de arriba de cada página: en compu, el contenido sube unos 60 px y se ve más sin
+  scrollear.
+- El botón de modo claro/oscuro queda chiquito en la esquina de arriba a la derecha.
+- En celular y tablet se ve igual que antes (ahí está el botón del menú).
+
+#### BUG-17 · e3388d8
+- En Alta de productos, la columna "Grupo" es angosta y la del gusto más ancha: los nombres largos como "RUCULA Y
+  JAMON CRUDO" se leen enteros (si no entran en una línea, pasan a dos).
+
+#### BUG-20 · c893d6d
+- El recargo de las cuotas ya no se cuenta como plata del local: una venta de $10.000 con $6.000 en Visa a 3 cuotas
+  queda en $10.000, no en $10.600. El recargo lo cobra la tarjeta.
+- Al cobrar se confirma el precio original; el comprobante y el historial muestran el pago con Visa por $6.000.
+- Estadísticas (facturado, ganancia, crédito y comidas) ya no suman el recargo.
+- Quedan anotadas tu respuesta a D-3 y la aprobación de las demás decisiones del Sprint 2.
+
+#### US-16 · 6c1cac2
+- Stock queda sólo para el administrador: el vendedor ya no ve "Stock" en el menú y, si intenta entrar, la app lo
+  manda a Ventas/Pedidos.
+- El vendedor tampoco puede ingresar stock ni ver el historial (antes podía ingresar cantidades).
+- Para el administrador, Stock muestra siempre todo: costo, proveedor, mermas e historial.
+
+#### US-17 · 16b4cd2
+- Alta de productos ahora pide sólo el grupo y el nombre del gusto o bebida; para editar, sólo el nombre.
+- El costo para el local y el precio de venta se cargan al ingresar stock. La primera vez son obligatorios; después,
+  si se dejan vacíos, quedan los de antes (el valor actual aparece de guía en el campo).
+- Las empanadas y ciabattas tienen un precio por grupo: se carga al ingresar stock de cualquiera de sus gustos, y
+  ya no hay tarjetas de precios en Alta.
+- La grilla de Alta ya no muestra costo ni precio (se ven en Stock). En Stock, un gusto nuevo dice "Sin precio" y
+  "Sin costo" hasta su primer ingreso.
+- El catálogo público no muestra gustos sin precio. La base de desarrollo ya está actualizada.
+
+#### US-18 · d137966
+- Al ingresar stock se elige primero la categoría (Empanadas, Pizzas…) y después el gusto, que muestra sólo los de
+  esa categoría. Ya no hay que recorrer una lista con todo mezclado.
+
+#### US-19 · d186df7
+- En Ventas sólo aparecen los gustos que tienen stock. Un gusto recién dado de alta (sin ingreso todavía) o uno que
+  se agotó no se muestra, ni en el tablero ni al armar promos.
+
+#### US-22 · ad3c3e2
+- En el pedido de Ventas, cada línea tiene un botón "−" (Quitar uno): si cargaste 4 pizzas en vez de 3, tocás "−"
+  una vez y quedan 3. Con una sola unidad, el "−" la saca del pedido.
+
+#### US-20 · a7ee8c5
+- Chau emojis: cada grupo tiene un ícono de dibujo lineal (lucide) en Ventas y en Estadísticas: pizza, sándwich y
+  lata (Coca-Cola y Pepsi); las Promos, una mano con monedas.
+- Empanadas y Ciabattas usan íconos propios hechos a partir de tus dibujos: la empanada con su repulgue y la
+  ciabatta alargada con los cortes del pan.
+
+#### US-21 · e1225e6
+- Estadísticas quedó como el panel de referencia: arriba las comidas (Empanadas, Pizzas, Sanguches, Ciabattas; luego
+  Coca-Cola, Pepsi y Promos), después Ventas registradas y Ganancia, y abajo los medios de pago.
+- Las comidas, Promos, Ventas y Ganancia tienen el borde pintado (no el fondo). Ganancia, borde verde con ícono de
+  billete; Ventas registradas, borde azul con un maletín. Los medios de pago tienen fondo de color.
+- Se fueron la frase de la jornada (7:00 a 6:59), "Dinero generado por comida", "Total facturado" y la aclaración
+  de la ganancia.
+
+### Decisiones provisorias del agente (resumen)
+
+| D | Decisión | Si el dev responde otra cosa |
+|---|---|---|
+| D-1 | Los precios de Empanadas y Ciabattas se cargan en Ingresar stock y cambian el precio del grupo | Las tarjetas de precio quedan fijas arriba de Stock (sólo UI) |
+| D-2 | Con una sola unidad, "Quitar uno" saca la línea | El "−" se deshabilita con una unidad |
+| D-3 | El margen interno de la tarjeta de cada página no se tocó (sólo la franja) | Se achica `p-6` a `p-4` en las páginas |
+| D-4 | La grilla de Alta no muestra costo ni precio (se ven en Stock) | Se vuelven a agregar las dos columnas |
+| D-5 | El cobro y el comprobante no muestran el recargo de la tarjeta | Se muestra como dato, sin sumarlo |
+
+### Para la mañana
+
+- Revisar y, si está todo bien, pasar `develop` a `main` con la etiqueta `sprint-3` (T-18 CA-2).
+- Sigue sin commitear el cambio de la skill `delegate-task` (espera tu OK aparte) y quedó sin versionar
+  `.claude/launch.json` (configuración local para levantar la app en el panel de previsualización).
+- La tarea programada "Retomar trabajo del Gestor empanadería" quedó desactivada; se puede borrar.
+- Entre la 01:25 y las 03:42 el trabajo se pausó por el límite de uso de 5 horas y siguió solo.
+
+</details>

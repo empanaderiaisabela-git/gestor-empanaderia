@@ -2411,11 +2411,11 @@ tarjeta ya no existe.", "Se registró la tarjeta".
 
 **Criterios de aceptación**
 
-- [x] **CA-1** · Las plantillas de `src/config/messages.ts` no llevan "el/la" ni "/a": los avisos de éxito usan un verbo ("Se registró…", "Se actualizó…", "Se eliminó…", "Se activó…", "Se desactivó…", "Se reactivó…") y los errores reciben la entidad con su artículo (test de cada plantilla con una entidad femenina y una masculina) · Estimación: 20 min · Completado: 2026-10-27 02:47
+- [x] **CA-1** · Las plantillas de `src/config/messages.ts` no llevan "el/la" ni "/a": los avisos de éxito usan un verbo ("Se registró…", "Se actualizó…", "Se eliminó…", "Se activó…", "Se desactivó…", "Se reactivó…") y los errores reciben la entidad con su artículo (test de cada plantilla con una entidad femenina y una masculina) · Estimación: 20 min · Completado: 2026-10-26 23:47
 
-- [x] **CA-2** · Todas las acciones y servicios pasan la entidad con su artículo y en minúscula ('la venta', 'el producto'…); las entidades del log de auditoría ('SALE', 'MENU_ITEM'…) no cambian · Estimación: 15 min · Completado: 2026-10-27 02:47
+- [x] **CA-2** · Todas las acciones y servicios pasan la entidad con su artículo y en minúscula ('la venta', 'el producto'…); las entidades del log de auditoría ('SALE', 'MENU_ITEM'…) no cambian · Estimación: 15 min · Completado: 2026-10-26 23:47
 
-- [x] **CA-3** · Los tests unitarios, de contrato, de componente y E2E y las tablas de errores de `docs/features/` esperan los textos nuevos; `npm run verify` en verde · Estimación: 20 min · Completado: 2026-10-27 02:47
+- [x] **CA-3** · Los tests unitarios, de contrato, de componente y E2E y las tablas de errores de `docs/features/` esperan los textos nuevos; `npm run verify` en verde · Estimación: 20 min · Completado: 2026-10-26 23:47
 
 **Notas**
 
@@ -2452,7 +2452,7 @@ decisiones provisorias D-1 y D-2, el orden y la trazabilidad de cada línea de `
 | 8   | [US-22](#us-22--ventas-quitar-de-a-uno-en-el-pedido)                   | Ventas: quitar de a uno en el pedido                       | En revisión | T-17       | 40 min           |
 | 9   | [US-20](#us-20--íconos-de-lucide-por-grupo-en-ventas-y-estadísticas)   | Íconos de lucide por grupo en Ventas y Estadísticas        | En revisión | T-17       | 2 h              |
 | 10  | [US-21](#us-21--estadísticas-como-el-panel-de-referencia)              | Estadísticas como el panel de referencia                   | En revisión | US-20      | 2 h              |
-| 11  | [T-18](#t-18--cierre-del-sprint-3)                                     | Cierre del Sprint 3                                        | Pendiente   | todos      | 1 h              |
+| 11  | [T-18](#t-18--cierre-del-sprint-3)                                     | Cierre del Sprint 3                                        | En progreso | todos      | 1 h              |
 | 12  | [BUG-21](#bug-21--la-carga-inicial-de-datos-falla-si-quedaron-gastos)   | La carga inicial de datos falla si quedaron gastos         | En revisión | US-14      | 15 min           |
 | 13  | [BUG-20](#bug-20--el-recargo-de-cuotas-se-cuenta-como-plata-del-local)   | El recargo de cuotas se cuenta como plata del local        | En revisión | US-11      | 1 h 30 min       |
 |     |                                                                        | **Total del sprint**                                       |             |            | **14 h 25 min**  |
@@ -2475,9 +2475,9 @@ criterio, su estimación y su rama.
 
 **Criterios de aceptación**
 
-- [x] **CA-1** · `BACKLOG.md` con el Sprint 3: cada ítem con historia (o actual/esperado), CA medibles con estimación y dependencias; `docs/plans/sprint-3.md` con las decisiones del dev, las provisorias, el orden y la trazabilidad de `specs.md` · Estimación: 25 min · Completado: 2026-10-27 02:52
+- [x] **CA-1** · `BACKLOG.md` con el Sprint 3: cada ítem con historia (o actual/esperado), CA medibles con estimación y dependencias; `docs/plans/sprint-3.md` con las decisiones del dev, las provisorias, el orden y la trazabilidad de `specs.md` · Estimación: 25 min · Completado: 2026-10-26 23:52
 
-- [x] **CA-2** · `specs.md` y los 7 wireframes nuevos quedan commiteados tal como los dejó el dev · Estimación: 5 min · Completado: 2026-10-27 02:52
+- [x] **CA-2** · `specs.md` y los 7 wireframes nuevos quedan commiteados tal como los dejó el dev · Estimación: 5 min · Completado: 2026-10-26 23:52
 
 ### T-19 · Tests por nivel según el tamaño del cambio
 
@@ -2485,7 +2485,7 @@ criterio, su estimación y su rama.
 | ------------ | --------- |
 | Estado       | En revisión |
 | Dueño        | Agente    |
-| Inicio       | 2026-10-27 |
+| Inicio       | 2026-10-26 |
 | Tamaño       | S         |
 | Depende de   | T-17      |
 | Plan         | [`docs/plans/sprint-3.md`](docs/plans/sprint-3.md#1--t-19-tests-por-nivel-según-el-tamaño-del-cambio-s-30-min) |
@@ -2497,9 +2497,9 @@ tiempo ni tokens como un cambio de base.
 
 **Criterios de aceptación**
 
-- [x] **CA-1** · `AGENTS.md`, `docs/testing.md`, `docs/definition-of-done.md`, `start-task` y `finish-task` definen 3 niveles (texto o estilo: lint, typecheck, tests relacionados y E2E del texto; lógica acotada: + `test:coverage` y `test:int` si tocó un repositorio; profundo: `npm run verify`) y el plan de cada ítem declara el suyo · Estimación: 20 min · Completado: 2026-10-27 03:02
+- [x] **CA-1** · `AGENTS.md`, `docs/testing.md`, `docs/definition-of-done.md`, `start-task` y `finish-task` definen 3 niveles (texto o estilo: lint, typecheck, tests relacionados y E2E del texto; lógica acotada: + `test:coverage` y `test:int` si tocó un repositorio; profundo: `npm run verify`) y el plan de cada ítem declara el suyo · Estimación: 20 min · Completado: 2026-10-27 00:02
 
-- [x] **CA-2** · `npm run verify` completo queda obligatorio en el cierre de cada sprint, y `AGENTS.md` pide el diff más chico que resuelva el problema; `skills:check` en verde · Estimación: 10 min · Completado: 2026-10-27 03:02
+- [x] **CA-2** · `npm run verify` completo queda obligatorio en el cierre de cada sprint, y `AGENTS.md` pide el diff más chico que resuelva el problema; `skills:check` en verde · Estimación: 10 min · Completado: 2026-10-27 00:02
 
 **Notas**
 
@@ -2527,9 +2527,9 @@ padding doble. En Estadísticas obliga a scrollear para ver datos (`espacio-inec
 
 **Criterios de aceptación**
 
-- [x] **CA-1** · Desde `xl`, el header no ocupa alto y el botón de tema queda arriba a la derecha; en móvil se ve como hoy · Estimación: 15 min · Completado: 2026-10-27 03:19
+- [x] **CA-1** · Desde `xl`, el header no ocupa alto y el botón de tema queda arriba a la derecha; en móvil se ve como hoy · Estimación: 15 min · Completado: 2026-10-27 00:19
 
-- [x] **CA-2** · Ninguna página suma su propio padding al del layout; capturas de Estadísticas, Stock y Ventas sin la franja; E2E de navegación en verde · Estimación: 15 min · Completado: 2026-10-27 03:19
+- [x] **CA-2** · Ninguna página suma su propio padding al del layout; capturas de Estadísticas, Stock y Ventas sin la franja; E2E de navegación en verde · Estimación: 15 min · Completado: 2026-10-27 00:19
 
 **Notas**
 
@@ -2809,9 +2809,9 @@ un vistazo (`referencia-de-otro-sistema.png`).
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
-| Dueño        | —         |
-| Inicio       | —         |
+| Estado       | En progreso |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-27 |
 | Tamaño       | S         |
 | Depende de   | todos     |
 | Plan         | [`docs/plans/sprint-3.md`](docs/plans/sprint-3.md#11--t-18-cierre-del-sprint-3-s-1-h) |
@@ -2823,9 +2823,19 @@ probó.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · `npm run verify` completo y todos los E2E en verde sobre `develop` · Estimación: 30 min · Completado: —
+- [x] **CA-1** · `npm run verify` completo y todos los E2E en verde sobre `develop` · Estimación: 30 min · Completado: 2026-10-27 04:29
 
 - [ ] **CA-2** · README, `docs/architecture.md` y `docs/initial_prompt.md` al día; merge local `develop → main` con el tag `sprint-3` · Estimación: 30 min · Completado: —
+
+**Notas**
+
+- CA-1: `npm run verify` en verde sobre la rama de T-18 (884 tests, cobertura 95,97/89,38, 96 de integración,
+  mutación 89,51 y build) y todos los E2E en verde: 72 en la corrida completa y `concurrencia.spec.ts`, que fallaba
+  porque seguía eligiendo el gusto sin la categoría (US-18) y se corrigió acá.
+- CA-2: README, `docs/architecture.md` y `docs/initial_prompt.md` al día (lo hizo un subagente Sonnet y se
+  revisó). Falta el merge local `develop → main` con el tag `sprint-3`, que el dev pidió dejar para su OK.
+- Se corrigieron las horas de cierre de BUG-19, T-17, T-19, BUG-18 y BUG-21: se habían cargado en UTC.
+- El resumen del sprint, en lenguaje simple, está al final de `docs/plans/sprint-3.md`.
 
 ### BUG-21 · La carga inicial de datos falla si quedaron gastos
 
@@ -2848,7 +2858,7 @@ violates foreign key constraint expenses_user_id_users_id_fk".
 
 **Criterios de aceptación**
 
-- [x] **CA-1** · `setup-initial-data.ts` borra `expenses` antes que `users`; `gastos.spec.ts` y después `navegacion.spec.ts` corren en verde dos veces seguidas · Estimación: 15 min · Completado: 2026-10-27 03:22
+- [x] **CA-1** · `setup-initial-data.ts` borra `expenses` antes que `users`; `gastos.spec.ts` y después `navegacion.spec.ts` corren en verde dos veces seguidas · Estimación: 15 min · Completado: 2026-10-27 00:22
 
 **Notas**
 
