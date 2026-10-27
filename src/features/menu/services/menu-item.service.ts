@@ -33,7 +33,7 @@ async function createItem({ items, audit }: MenuScope, caller: Caller, input: Me
 
 async function updateItem({ items, audit }: MenuScope, caller: Caller, { id, input }: { id: string; input: MenuItemUpdateInput }): Promise<MenuItem> {
   const current = await items.findById(id);
-  if (!current) throw new AppError('NOT_FOUND', { entity: 'producto' });
+  if (!current) throw new AppError('NOT_FOUND', { entity: 'el producto' });
   if (itemPriceIssues(current.group, input.prices).length > 0) throw new AppError('VALIDATION');
   const sameName = await items.findByName(current.group, input.name);
   if (sameName && sameName.id !== id) throw new AppError('DUPLICATE');

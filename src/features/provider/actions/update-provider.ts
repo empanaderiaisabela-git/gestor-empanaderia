@@ -15,8 +15,8 @@ export async function updateProviderAction(id: string, input: ProviderUpdateInpu
     const parsed = providerUpdateSchema.safeParse(input);
     if (!parsedId.success || !parsed.success) return fail('VALIDATION');
     const provider = await providerService.update(caller, parsedId.data, parsed.data);
-    return { success: true, message: MESSAGES.SUCCESS.UPDATED('Proveedor'), data: providerRowSchema.parse(provider) };
+    return { success: true, message: MESSAGES.SUCCESS.UPDATED('el proveedor'), data: providerRowSchema.parse(provider) };
   } catch (error) {
-    return toActionFailure(error, 'Proveedor');
+    return toActionFailure(error, 'el proveedor');
   }
 }

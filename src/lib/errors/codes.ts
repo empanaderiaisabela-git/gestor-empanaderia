@@ -1,7 +1,7 @@
 import { MESSAGES } from '@/config/messages';
 
 const { VALIDATION, DATABASE } = MESSAGES.ERROR;
-const DEFAULT_ENTITY = 'registro';
+const DEFAULT_ENTITY = 'el registro';
 
 const CATALOG = {
   VALIDATION: () => VALIDATION.INVALID_DATA,

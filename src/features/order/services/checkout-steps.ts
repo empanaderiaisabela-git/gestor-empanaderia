@@ -18,7 +18,7 @@ const pricesOf = (row: PriceColumns): Prices => ({ price1: amount(row.price1), p
 
 export function itemOf(items: LockedItems, id: string): StockItem {
   const item = items.get(id);
-  if (!item) throw new AppError('NOT_FOUND', { entity: 'producto' });
+  if (!item) throw new AppError('NOT_FOUND', { entity: 'el producto' });
   return item;
 }
 
@@ -26,7 +26,7 @@ export async function lockFlavors(scope: CheckoutScope, lines: OrderLine[]): Pro
   const items: LockedItems = new Map();
   for (const id of [...orderUsage(lines).keys()].sort()) {
     const item = await scope.stock.lockItem(id);
-    if (!item) throw new AppError('NOT_FOUND', { entity: 'producto' });
+    if (!item) throw new AppError('NOT_FOUND', { entity: 'el producto' });
     items.set(id, item);
   }
   return items;

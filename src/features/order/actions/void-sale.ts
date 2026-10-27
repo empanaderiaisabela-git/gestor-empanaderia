@@ -15,6 +15,6 @@ export async function voidSaleAction(input: VoidSaleInput): Promise<ActionResult
     await saleHistoryService.voidSale(caller, parsed.data.saleId);
     return afterCatalogChange({ success: true, message: 'Venta anulada y stock repuesto.' });
   } catch (error) {
-    return toActionFailure(error, 'venta');
+    return toActionFailure(error, 'la venta');
   }
 }

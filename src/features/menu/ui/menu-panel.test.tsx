@@ -25,7 +25,7 @@ describe('pantalla de Alta de productos (US-3 CA-5 y CA-7)', () => {
     useMenuStore.setState({ items: [], groupPrices: [], isLoaded: false });
     actions.fetchMenuItems.mockResolvedValue([]);
     actions.fetchMenuGroupPrices.mockResolvedValue([CIABATTAS]);
-    actions.createMenuItemAction.mockResolvedValue({ success: true, message: 'Producto registrado/a exitosamente' });
+    actions.createMenuItemAction.mockResolvedValue({ success: true, message: 'Se registró el producto' });
     actions.saveMenuGroupPricesAction.mockResolvedValue({ success: true, message: 'Precios del grupo guardados exitosamente' });
   });
 

@@ -13,8 +13,8 @@ export async function deleteExpenseAction(input: ExpenseDeleteInput): Promise<Ac
     const parsed = expenseDeleteSchema.safeParse(input);
     if (!parsed.success) return fail('VALIDATION');
     await expenseService.remove(caller, parsed.data);
-    return { success: true, message: MESSAGES.SUCCESS.DELETED('Gasto') };
+    return { success: true, message: MESSAGES.SUCCESS.DELETED('el gasto') };
   } catch (error) {
-    return toActionFailure(error, 'Gasto');
+    return toActionFailure(error, 'el gasto');
   }
 }

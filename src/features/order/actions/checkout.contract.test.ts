@@ -38,7 +38,7 @@ describe('acción de cobro (US-6)', () => {
 
   it.each([
     { caso: 'VALIDATION: línea incompleta', input: checkoutOf([{ ...halfDozen, flavors: [{ menuItemId: CARNE.id, units: 5 }] }], { payments: [{ type: 'efectivo', amount: 8000 }] }), code: 'VALIDATION', error: MESSAGES.ERROR.VALIDATION.INVALID_DATA },
-    { caso: 'NOT_FOUND: gusto borrado', input: checkoutOf([{ ...cokes(1), flavors: [{ menuItemId: '10000000-0000-4000-8000-0000000000ff', units: 1 }] }], { payments: [{ type: 'efectivo', amount: 2500 }] }), code: 'NOT_FOUND', error: 'El/la producto seleccionado ya no existe.' },
+    { caso: 'NOT_FOUND: gusto borrado', input: checkoutOf([{ ...cokes(1), flavors: [{ menuItemId: '10000000-0000-4000-8000-0000000000ff', units: 1 }] }], { payments: [{ type: 'efectivo', amount: 2500 }] }), code: 'NOT_FOUND', error: 'El producto ya no existe.' },
     { caso: 'INSUFFICIENT_STOCK: no alcanza', input: checkoutOf([cokes(6)], { payments: [{ type: 'transferencia', amount: 15000 }] }), code: 'INSUFFICIENT_STOCK', error: 'No hay stock suficiente de Coca 500.' },
   ])('$caso', async ({ input, code, error }) => {
     await asUser({ role: 'vendedor' });
@@ -50,7 +50,7 @@ describe('acción de cobro (US-6)', () => {
     const { id } = await fakeCheckout.promotions.read.insert(MEDIA_Y_COCA);
     const pay = [{ type: 'efectivo' as const, amount: 9000 }];
     expect(await checkoutAction(checkoutOf([], { promos: [promoOf(id)], payments: pay }))).toMatchObject({ success: true, message: 'Venta registrada por $9.000' });
-    expect(await checkoutAction(checkoutOf([], { promos: [promoOf(crypto.randomUUID())], payments: pay }))).toEqual({ success: false, code: 'NOT_FOUND', error: 'El/la promoción seleccionado ya no existe.' });
+    expect(await checkoutAction(checkoutOf([], { promos: [promoOf(crypto.randomUUID())], payments: pay }))).toEqual({ success: false, code: 'NOT_FOUND', error: 'La promoción ya no existe.' });
   });
 
   it('fuzz: ninguna entrada hace lanzar ni devuelve un error fuera del catálogo', async () => {

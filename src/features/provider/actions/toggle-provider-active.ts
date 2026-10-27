@@ -13,9 +13,9 @@ export async function toggleProviderActiveAction(input: ProviderToggleInput): Pr
     const parsed = providerToggleSchema.safeParse(input);
     if (!parsed.success) return fail('VALIDATION');
     await providerService.setActive(caller, parsed.data);
-    const message = parsed.data.isActive ? MESSAGES.SUCCESS.ACTIVATED('Proveedor') : MESSAGES.SUCCESS.DEACTIVATED('Proveedor');
+    const message = parsed.data.isActive ? MESSAGES.SUCCESS.ACTIVATED('el proveedor') : MESSAGES.SUCCESS.DEACTIVATED('el proveedor');
     return { success: true, message };
   } catch (error) {
-    return toActionFailure(error, 'Proveedor');
+    return toActionFailure(error, 'el proveedor');
   }
 }

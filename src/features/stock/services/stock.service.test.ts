@@ -59,7 +59,7 @@ describe('stock.service (US-4)', () => {
 
   it('NOT_FOUND: el gusto ya no existe', async () => {
     const ghost = '44444444-4444-4444-8444-444444444444';
-    await expect(service.registerEntry(CALLER, { menuItemId: ghost, quantity: 1 })).rejects.toMatchObject({ code: 'NOT_FOUND', message: 'El/la producto seleccionado ya no existe.' });
+    await expect(service.registerEntry(CALLER, { menuItemId: ghost, quantity: 1 })).rejects.toMatchObject({ code: 'NOT_FOUND', message: 'El producto ya no existe.' });
     await expect(service.registerLoss(CALLER, { menuItemId: ghost, quantity: 1, reason: 'x' })).rejects.toMatchObject({ code: 'NOT_FOUND' });
   });
 

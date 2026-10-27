@@ -44,7 +44,7 @@ describe('historial y anulación (US-7)', () => {
   it('una venta no se anula dos veces: la segunda da NOT_FOUND y no repone de nuevo', async () => {
     const { saleId } = await checkout.checkout(CALLER, checkoutOf([cokes(1)], { payments: cash(2500) }));
     await history.voidSale(ADMIN, saleId);
-    await expect(history.voidSale(ADMIN, saleId)).rejects.toMatchObject({ code: 'NOT_FOUND', message: 'El/la venta seleccionado ya no existe.' });
+    await expect(history.voidSale(ADMIN, saleId)).rejects.toMatchObject({ code: 'NOT_FOUND', message: 'La venta ya no existe.' });
     expect(stockOf(fake, COCA.id)).toBe('5.0');
   });
 
@@ -54,7 +54,7 @@ describe('historial y anulación (US-7)', () => {
     fake.stock.read = { ...repository, saveItem: async () => null };
     await expect(history.voidSale(ADMIN, saleId)).rejects.toMatchObject({ code: 'STALE_VERSION' });
     fake.stock.read = { ...repository, lockItem: async () => null };
-    await expect(history.voidSale(ADMIN, saleId)).rejects.toMatchObject({ code: 'NOT_FOUND', message: 'El/la producto seleccionado ya no existe.' });
+    await expect(history.voidSale(ADMIN, saleId)).rejects.toMatchObject({ code: 'NOT_FOUND', message: 'El producto ya no existe.' });
     fake.stock.read = repository;
   });
 });

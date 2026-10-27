@@ -63,8 +63,8 @@ describe('pantalla de Estadísticas (US-12 CA-1 a CA-5)', () => {
   });
 
   it('si el servidor falla, muestra el motivo', async () => {
-    action.fetch.mockResolvedValue({ success: false, code: 'UNEXPECTED', error: 'Ocurrió un error inesperado al procesar el/la panel de estadísticas.' });
+    action.fetch.mockResolvedValue({ success: false, code: 'UNEXPECTED', error: 'Ocurrió un error inesperado al procesar el panel de estadísticas.' });
     render(<StatsPanel />);
-    expect(await screen.findByText('Ocurrió un error inesperado al procesar el/la panel de estadísticas.')).toBeDefined();
+    expect(await screen.findByText('Ocurrió un error inesperado al procesar el panel de estadísticas.')).toBeDefined();
   });
 });

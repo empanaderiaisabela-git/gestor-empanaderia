@@ -104,13 +104,13 @@ T-11).
 | Nombre vacío o de más de 60, costo o precio inválido, precios que no corresponden al grupo | `VALIDATION` | Los datos proporcionados no son válidos. | `menu-errors.contract.test.ts`, `domain/*.schema.test.ts` |
 | Nombre repetido en el grupo | `DUPLICATE` | Ya existe un registro con esos datos (DNI, nombre o código duplicado). | `menu-errors.contract.test.ts` |
 | Editar, activar o borrar con una versión vieja; precios del grupo cambiados por otra persona | `STALE_VERSION` | Los datos en el servidor han cambiado. Por favor, sincroniza la lista e intenta nuevamente. | `menu-errors.contract.test.ts`, `menu-group-prices.contract.test.ts` |
-| Editar un producto que ya no existe | `NOT_FOUND` | El/la producto seleccionado ya no existe. | `menu-errors.contract.test.ts` |
+| Editar un producto que ya no existe | `NOT_FOUND` | El producto ya no existe. | `menu-errors.contract.test.ts` |
 | Borrar un producto con movimientos | `HAS_RELATIONS` | No se puede completar la operación porque existen registros relacionados. | `menu-errors.contract.test.ts` |
 | Un vendedor muestra u oculta un gusto o maneja fotos | `FORBIDDEN` | Solo los administradores pueden realizar esta acción | `menu-catalog.contract.test.ts` |
 | Foto que no es JPG, PNG o WEBP, o una URL (no se llama a Cloudinary) | `VALIDATION` | La imagen tiene que ser JPG, PNG o WEBP | `upload-menu-photo.contract.test.ts`, `menu-catalog.contract.test.ts`, `domain/catalog.test.ts` |
 | Foto de más de 5 MB (no se llama a Cloudinary) | `VALIDATION` | La imagen no puede superar los 5 MB | `upload-menu-photo.contract.test.ts`, `domain/catalog.test.ts` |
-| Foto para un gusto que ya no existe (no se llama a Cloudinary) | `NOT_FOUND` | El/la producto seleccionado ya no existe. | `upload-menu-photo.contract.test.ts`, `services/menu-photo.service.test.ts` |
-| Borrar una foto que ya no está | `NOT_FOUND` | El/la foto seleccionado ya no existe. | `menu-catalog.contract.test.ts` |
+| Foto para un gusto que ya no existe (no se llama a Cloudinary) | `NOT_FOUND` | El producto ya no existe. | `upload-menu-photo.contract.test.ts`, `services/menu-photo.service.test.ts` |
+| Borrar una foto que ya no está | `NOT_FOUND` | La foto ya no existe. | `menu-catalog.contract.test.ts` |
 | Visibilidad con una versión vieja | `STALE_VERSION` | Los datos en el servidor han cambiado. Por favor, sincroniza la lista e intenta nuevamente. | `menu-catalog.contract.test.ts` |
 
 Si Cloudinary sube la foto pero falla el guardado en la base, la imagen se borra de Cloudinary (BUG-11). Los límites (JPG, PNG o WEBP de hasta 5 MB) son una decisión provisoria del agente (D-5 de [`sprint-2.md`](../../plans/sprint-2.md#d-5--formatos-y-tamaño-de-las-fotos-bug-11)).

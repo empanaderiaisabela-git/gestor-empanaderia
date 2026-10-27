@@ -45,7 +45,7 @@ describe('fetchWorkdayStats (US-12 y regresión BUG-12)', () => {
     await asUser({ role: 'admin' });
     snapshot.mockRejectedValue(new Error('se cayó la base'));
     vi.spyOn(console, 'error').mockImplementation(() => undefined);
-    expect(await fetchWorkdayStats('2026-10-25')).toEqual({ success: false, code: 'UNEXPECTED', error: 'Ocurrió un error inesperado al procesar el/la panel de estadísticas.' });
+    expect(await fetchWorkdayStats('2026-10-25')).toEqual({ success: false, code: 'UNEXPECTED', error: 'Ocurrió un error inesperado al procesar el panel de estadísticas.' });
   });
 
   it('fuzz: ninguna entrada hace lanzar ni devuelve un error fuera del catálogo', async () => {

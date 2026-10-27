@@ -62,7 +62,7 @@ describe('acciones de Stock (US-4)', () => {
 
   it('NOT_FOUND: el gusto ya no existe (CA-5)', async () => {
     await asUser({ role: 'admin' });
-    expect(await registerStockEntryAction({ menuItemId: '44444444-4444-4444-8444-444444444444', quantity: 1 })).toEqual({ success: false, code: 'NOT_FOUND', error: 'El/la producto seleccionado ya no existe.' });
+    expect(await registerStockEntryAction({ menuItemId: '44444444-4444-4444-8444-444444444444', quantity: 1 })).toEqual({ success: false, code: 'NOT_FOUND', error: 'El producto ya no existe.' });
   });
 
   it('INSUFFICIENT_STOCK: la merma supera el stock (CA-5)', async () => {

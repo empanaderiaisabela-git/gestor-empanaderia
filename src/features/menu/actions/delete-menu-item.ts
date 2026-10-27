@@ -14,8 +14,8 @@ export async function deleteMenuItemAction(input: MenuItemDeleteInput): Promise<
     const parsed = menuItemDeleteSchema.safeParse(input);
     if (!parsed.success) return fail('VALIDATION');
     await menuItemService.remove(caller, parsed.data);
-    return afterCatalogChange({ success: true, message: MESSAGES.SUCCESS.DELETED('Producto') });
+    return afterCatalogChange({ success: true, message: MESSAGES.SUCCESS.DELETED('el producto') });
   } catch (error) {
-    return toActionFailure(error, 'producto');
+    return toActionFailure(error, 'el producto');
   }
 }

@@ -17,7 +17,7 @@ test.describe('Gastos (US-14)', () => {
     await page.getByLabel('Monto').fill('18500');
     await page.getByLabel('Fecha de la factura').fill('2026-10-24');
     await page.getByRole('button', { name: 'Anotar gasto' }).click();
-    await expect(page.getByText('Gasto registrado/a exitosamente')).toBeVisible();
+    await expect(page.getByText('Se registró el gasto')).toBeVisible();
 
     await page.getByPlaceholder('Buscar por número de factura o título...').filter({ visible: true }).fill(numero);
     const fila = page.getByRole('row', { name: new RegExp(numero) });

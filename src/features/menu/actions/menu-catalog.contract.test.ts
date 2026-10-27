@@ -57,7 +57,7 @@ describe('fotos, visibilidad y catálogo público (T-12)', () => {
 
   it.each([
     { caso: 'VALIDATION: tipo no permitido', run: () => uploadMenuPhotoAction({ menuItemId: itemId, image: 'data:image/gif;base64,R0lGOD==' }), expected: { success: false, code: 'VALIDATION', error: 'La imagen tiene que ser JPG, PNG o WEBP' } },
-    { caso: 'NOT_FOUND: borrar una foto inexistente', run: () => deleteMenuPhotoAction({ publicId: 'menu/x/9' }), expected: { success: false, code: 'NOT_FOUND', error: 'El/la foto seleccionado ya no existe.' } },
+    { caso: 'NOT_FOUND: borrar una foto inexistente', run: () => deleteMenuPhotoAction({ publicId: 'menu/x/9' }), expected: { success: false, code: 'NOT_FOUND', error: 'La foto ya no existe.' } },
     { caso: 'STALE_VERSION: visibilidad con versión vieja', run: () => toggleMenuItemVisibilityAction({ id: itemId, isVisible: true, version: 7 }), expected: { success: false, code: 'STALE_VERSION' } },
   ])('$caso', async ({ run, expected }) => {
     expect(await run()).toMatchObject(expected);

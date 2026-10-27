@@ -18,7 +18,7 @@ function soldTotals(items: SoldItem[]): [string, number][] {
 async function restock({ stock }: SaleHistoryScope, sold: [string, number][]): Promise<void> {
   for (const [id, units] of sold) {
     const item = await stock.lockItem(id);
-    if (!item) throw new AppError('NOT_FOUND', { entity: 'producto' });
+    if (!item) throw new AppError('NOT_FOUND', { entity: 'el producto' });
     const saved = await stock.saveItem(item, { stock: Number(item.stock) + units });
     if (!saved) throw new AppError('STALE_VERSION');
   }
@@ -26,7 +26,7 @@ async function restock({ stock }: SaleHistoryScope, sold: [string, number][]): P
 
 async function voidSale(scope: SaleHistoryScope, caller: Caller, saleId: string): Promise<SaleView> {
   const sale = await scope.history.lockSale(saleId);
-  if (!sale) throw new AppError('NOT_FOUND', { entity: 'venta' });
+  if (!sale) throw new AppError('NOT_FOUND', { entity: 'la venta' });
   await restock(scope, soldTotals(await scope.history.soldItems(saleId)));
   await scope.history.deleteSale(saleId);
   const payments = sale.payments.map(({ type, amount }) => ({ type, amount: Number(amount) }));

@@ -15,8 +15,8 @@ export async function updateExpenseAction(id: string, input: ExpenseUpdateInput)
     const parsed = expenseUpdateSchema.safeParse(input);
     if (!parsedId.success || !parsed.success) return fail('VALIDATION');
     const expense = await expenseService.update(caller, parsedId.data, parsed.data);
-    return { success: true, message: MESSAGES.SUCCESS.UPDATED('Gasto'), data: expenseRowSchema.parse(expense) };
+    return { success: true, message: MESSAGES.SUCCESS.UPDATED('el gasto'), data: expenseRowSchema.parse(expense) };
   } catch (error) {
-    return toActionFailure(error, 'Gasto');
+    return toActionFailure(error, 'el gasto');
   }
 }

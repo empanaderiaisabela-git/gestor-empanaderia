@@ -13,9 +13,9 @@ export async function togglePromotionActiveAction(input: PromotionToggleInput): 
     const parsed = promotionToggleSchema.safeParse(input);
     if (!parsed.success) return fail('VALIDATION');
     await promotionService.setActive(caller, parsed.data);
-    const message = parsed.data.isActive ? MESSAGES.SUCCESS.ACTIVATED('Promoción') : MESSAGES.SUCCESS.DEACTIVATED('Promoción');
+    const message = parsed.data.isActive ? MESSAGES.SUCCESS.ACTIVATED('la promoción') : MESSAGES.SUCCESS.DEACTIVATED('la promoción');
     return { success: true, message };
   } catch (error) {
-    return toActionFailure(error, 'Promoción');
+    return toActionFailure(error, 'la promoción');
   }
 }

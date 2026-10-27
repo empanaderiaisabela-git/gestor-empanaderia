@@ -39,9 +39,9 @@ describe('cobrar con crédito en cuotas (US-11 CA-1 y CA-2)', () => {
   });
 
   it.each([
-    { caso: 'tarjeta desactivada', setup: async (id: string) => void (await fake.cards.read.update({ id, version: 1 }, { isActive: false })), installments: 3, message: 'El/la tarjeta seleccionado ya no existe.' },
-    { caso: 'tarjeta inexistente', setup: async () => undefined, installments: 3, message: 'El/la tarjeta seleccionado ya no existe.', ghost: true },
-    { caso: 'cuotas que la tarjeta no tiene', setup: async () => undefined, installments: 12, message: 'El/la plan de cuotas seleccionado ya no existe.' },
+    { caso: 'tarjeta desactivada', setup: async (id: string) => void (await fake.cards.read.update({ id, version: 1 }, { isActive: false })), installments: 3, message: 'La tarjeta ya no existe.' },
+    { caso: 'tarjeta inexistente', setup: async () => undefined, installments: 3, message: 'La tarjeta ya no existe.', ghost: true },
+    { caso: 'cuotas que la tarjeta no tiene', setup: async () => undefined, installments: 12, message: 'El plan de cuotas ya no existe.' },
   ])('NOT_FOUND: $caso, sin registrar la venta ni tocar el stock (CA-3)', async ({ setup, installments, message, ghost }) => {
     const cardId = await visa();
     await setup(cardId);

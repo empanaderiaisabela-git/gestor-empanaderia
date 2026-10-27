@@ -72,7 +72,7 @@ test.describe.parallel('Pruebas de Concurrencia', () => {
 
     // Usuario 2 elimina el proveedor
     await proveedoresPage2.eliminarProveedor(proveedor);
-    await expect(page2.getByText('Proveedor eliminado/a exitosamente')).toBeVisible();
+    await expect(page2.getByText('Se eliminó el proveedor')).toBeVisible();
 
     // Usuario 1 confirma el ingreso
     await page1.getByRole('button', { name: 'Ingresar', exact: true }).click();

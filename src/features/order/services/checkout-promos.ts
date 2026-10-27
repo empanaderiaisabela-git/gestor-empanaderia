@@ -21,7 +21,7 @@ export async function resolvePromos(scope: CheckoutScope, promos: readonly Check
   const resolved: ResolvedPromo[] = [];
   for (const [index, promo] of promos.entries()) {
     const promotion = await scope.promotions.findById(promo.promotionId);
-    if (!promotion?.isActive) throw new AppError('NOT_FOUND', { entity: 'promoción' });
+    if (!promotion?.isActive) throw new AppError('NOT_FOUND', { entity: 'la promoción' });
     if (!matchesPromotion(promo.parts, promotion)) throw new AppError('VALIDATION');
     const parts = promo.parts.map((part, position) => ({ ...part, id: `promo-${index}-${position}`, quantity: promo.quantity }));
     resolved.push({ promotion, quantity: promo.quantity, parts });

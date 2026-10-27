@@ -8,9 +8,9 @@ type RequestedPayment = CheckoutData['payments'][number];
 
 async function creditPayment(scope: CheckoutScope, { type, amount, cardId, installments }: RequestedPayment): Promise<NewPayment> {
   const card = cardId === undefined ? null : await scope.cards.findById(cardId);
-  if (!card?.isActive) throw new AppError('NOT_FOUND', { entity: 'tarjeta' });
+  if (!card?.isActive) throw new AppError('NOT_FOUND', { entity: 'la tarjeta' });
   const plan = card.plans.find((candidate) => candidate.installments === installments);
-  if (!plan) throw new AppError('NOT_FOUND', { entity: 'plan de cuotas' });
+  if (!plan) throw new AppError('NOT_FOUND', { entity: 'el plan de cuotas' });
   const surchargePct = Number(plan.surchargePct);
   return { type, amount, cardId: card.id, installments: plan.installments, surchargePct, surchargeAmount: round2((amount * surchargePct) / 100) };
 }

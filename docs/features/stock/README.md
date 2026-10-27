@@ -60,7 +60,7 @@ La grilla lee los gustos con `fetchMenuItems` del feature `menu`.
 | Sin sesión | `UNAUTHENTICATED` | No autorizado (Token faltante) | `actions/stock-actions.contract.test.ts` |
 | El vendedor carga costo o proveedor, o registra una merma | `FORBIDDEN` | Solo los administradores pueden realizar esta acción | `stock-actions.contract.test.ts` |
 | Cantidad ≤ 0 o con decimales; media unidad fuera de Pizzas; motivo vacío | `VALIDATION` | Los datos proporcionados no son válidos. | `stock-actions.contract.test.ts`, `services/stock.service.test.ts` |
-| El gusto ya no existe | `NOT_FOUND` | El/la producto seleccionado ya no existe. | `stock-actions.contract.test.ts` |
+| El gusto ya no existe | `NOT_FOUND` | El producto ya no existe. | `stock-actions.contract.test.ts` |
 | La merma supera el stock | `INSUFFICIENT_STOCK` | No hay stock suficiente de <gusto>. | `stock-actions.contract.test.ts`, `stock.service.int.test.ts` |
 | El gusto cambió entre la lectura y la escritura | `STALE_VERSION` | Los datos en el servidor han cambiado… | `stock.service.test.ts` |
 

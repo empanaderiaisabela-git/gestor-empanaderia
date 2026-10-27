@@ -16,7 +16,7 @@ test.describe('Tarjetas (US-10)', () => {
     await page.getByRole('button', { name: /Agregar plan/ }).click();
     await page.getByLabel('Recargo % del plan 2').fill('15');
     await page.getByRole('button', { name: 'Crear tarjeta' }).click();
-    await expect(page.getByText('Tarjeta registrado/a exitosamente')).toBeVisible();
+    await expect(page.getByText('Se registró la tarjeta')).toBeVisible();
 
     await page.getByPlaceholder('Buscar tarjeta por nombre...').filter({ visible: true }).fill(nombre);
     await expect(page.getByRole('row', { name: new RegExp(nombre) }).getByText('1 cuota sin recargo · 3 cuotas +15 %')).toBeVisible();

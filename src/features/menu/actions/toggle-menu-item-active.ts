@@ -14,9 +14,9 @@ export async function toggleMenuItemActiveAction(input: MenuItemToggleInput): Pr
     const parsed = menuItemToggleSchema.safeParse(input);
     if (!parsed.success) return fail('VALIDATION');
     await menuItemService.setActive(caller, parsed.data);
-    const message = parsed.data.isActive ? MESSAGES.SUCCESS.ACTIVATED('Producto') : MESSAGES.SUCCESS.DEACTIVATED('Producto');
+    const message = parsed.data.isActive ? MESSAGES.SUCCESS.ACTIVATED('el producto') : MESSAGES.SUCCESS.DEACTIVATED('el producto');
     return afterCatalogChange({ success: true, message });
   } catch (error) {
-    return toActionFailure(error, 'producto');
+    return toActionFailure(error, 'el producto');
   }
 }

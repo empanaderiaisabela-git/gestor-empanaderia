@@ -15,6 +15,6 @@ export async function toggleMenuItemVisibilityAction(input: MenuItemVisibilityIn
     const item = await menuItemService.setVisible(caller, parsed.data);
     return afterCatalogChange({ success: true, message: item.isVisible ? `${item.name} se muestra en el catálogo` : `${item.name} ya no se muestra en el catálogo` });
   } catch (error) {
-    return toActionFailure(error, 'producto');
+    return toActionFailure(error, 'el producto');
   }
 }

@@ -22,13 +22,13 @@ describe('acciones de Promociones (camino feliz)', () => {
 
   it('crea, edita, desactiva, reactiva y borra con sus mensajes (CA-1 a CA-3)', async () => {
     const created = await createPromotionAction(PROMO_INPUT);
-    expect(created).toMatchObject({ success: true, message: 'Promoción registrado/a exitosamente', data: { name: PROMO_INPUT.name, price: 15000, isActive: true, version: 1 } });
+    expect(created).toMatchObject({ success: true, message: 'Se registró la promoción', data: { name: PROMO_INPUT.name, price: 15000, isActive: true, version: 1 } });
     const id = created.success ? created.data.id : '';
 
-    expect(await updatePromotionAction(id, { ...PROMO_INPUT, price: 14000, version: 1 })).toMatchObject({ success: true, message: 'Promoción actualizado/a exitosamente', data: { price: 14000, version: 2 } });
-    expect(await togglePromotionActiveAction({ id, isActive: false, version: 2 })).toEqual({ success: true, message: 'Promoción desactivado/a exitosamente' });
-    expect(await togglePromotionActiveAction({ id, isActive: true, version: 3 })).toEqual({ success: true, message: 'Promoción activado/a exitosamente' });
-    expect(await deletePromotionAction({ id, version: 4 })).toEqual({ success: true, message: 'Promoción eliminado/a exitosamente' });
+    expect(await updatePromotionAction(id, { ...PROMO_INPUT, price: 14000, version: 1 })).toMatchObject({ success: true, message: 'Se actualizó la promoción', data: { price: 14000, version: 2 } });
+    expect(await togglePromotionActiveAction({ id, isActive: false, version: 2 })).toEqual({ success: true, message: 'Se desactivó la promoción' });
+    expect(await togglePromotionActiveAction({ id, isActive: true, version: 3 })).toEqual({ success: true, message: 'Se activó la promoción' });
+    expect(await deletePromotionAction({ id, version: 4 })).toEqual({ success: true, message: 'Se eliminó la promoción' });
   });
 
   it('el vendedor también puede listarlas (las usa al vender), con sus componentes', async () => {

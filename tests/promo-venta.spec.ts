@@ -11,7 +11,7 @@ async function crearPromo(page: Page, nombre: string): Promise<void> {
   await page.getByLabel('Grupo del producto 2').selectOption({ label: 'Coca-Cola' });
   await page.getByLabel('Precio de venta de la promo').fill('9000');
   await page.getByRole('button', { name: 'Crear promoción' }).click();
-  await expect(page.getByText('Promoción registrado/a exitosamente')).toBeVisible();
+  await expect(page.getByText('Se registró la promoción')).toBeVisible();
 }
 
 test.describe('vender una promo desde el tablero (US-9)', () => {

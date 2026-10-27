@@ -142,16 +142,16 @@ borre.
 | Sin sesión | `UNAUTHENTICATED` | No autorizado (Token faltante) | `checkout.contract.test.ts` |
 | Entrada mal formada o con precios, costos o total | `VALIDATION` | Los datos proporcionados no son válidos. | `checkout.contract.test.ts` |
 | Línea incompleta, gusto de otro grupo o dado de baja, grupo sin precio, descuento mayor al total o pagos que no suman | `VALIDATION` | idem | `checkout-errors.test.ts` |
-| Un gusto que ya no existe | `NOT_FOUND` | El/la producto seleccionado ya no existe. | `checkout-errors.test.ts` |
+| Un gusto que ya no existe | `NOT_FOUND` | El producto ya no existe. | `checkout-errors.test.ts` |
 | Un gusto no alcanza | `INSUFFICIENT_STOCK` | No hay stock suficiente de {gusto}. | `checkout-errors.test.ts` y `checkout.service.int.test.ts` |
 | Crédito sin tarjeta o sin cuotas, o tarjeta en otro medio (US-11) | `VALIDATION` | Los datos proporcionados no son válidos. | `checkout.schema.test.ts` |
-| Tarjeta inexistente o desactivada (US-11) | `NOT_FOUND` | El/la tarjeta seleccionado ya no existe. | `checkout-payments.test.ts` |
-| Plan de cuotas que la tarjeta no tiene (US-11) | `NOT_FOUND` | El/la plan de cuotas seleccionado ya no existe. | `checkout-payments.test.ts` |
-| Promo inexistente o desactivada (US-9) | `NOT_FOUND` | El/la promoción seleccionado ya no existe. | `checkout-promos.test.ts`, `checkout.contract.test.ts` |
+| Tarjeta inexistente o desactivada (US-11) | `NOT_FOUND` | La tarjeta ya no existe. | `checkout-payments.test.ts` |
+| Plan de cuotas que la tarjeta no tiene (US-11) | `NOT_FOUND` | El plan de cuotas ya no existe. | `checkout-payments.test.ts` |
+| Promo inexistente o desactivada (US-9) | `NOT_FOUND` | La promoción ya no existe. | `checkout-promos.test.ts`, `checkout.contract.test.ts` |
 | Partes de la promo que no coinciden con sus productos, gustos incompletos o de otro grupo (US-9) | `VALIDATION` | Los datos proporcionados no son válidos. | `checkout-promos.test.ts` |
 | Otro movimiento cambió el gusto entre el bloqueo y el guardado | `STALE_VERSION` | mensaje de concurrencia | `checkout-errors.test.ts` |
 | Anular: el vendedor lo intenta | `FORBIDDEN` | Solo los administradores pueden realizar esta acción | `sale-history.contract.test.ts` |
-| Anular: la venta no existe o ya se anuló | `NOT_FOUND` | El/la venta seleccionado ya no existe. | `sale-history.contract.test.ts` y `sale-history.service.int.test.ts` |
+| Anular: la venta no existe o ya se anuló | `NOT_FOUND` | La venta ya no existe. | `sale-history.contract.test.ts` y `sale-history.service.int.test.ts` |
 | Anular: id inválido | `VALIDATION` | Los datos proporcionados no son válidos. | `sale-history.contract.test.ts` |
 | Anular: un gusto ya no existe, o cambió en el medio | `NOT_FOUND` / `STALE_VERSION` | idem | `sale-history.service.test.ts` |
 

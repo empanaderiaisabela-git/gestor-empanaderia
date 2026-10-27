@@ -23,20 +23,20 @@ describe('acciones de proveedores (camino feliz)', () => {
 
   it('crea, edita, desactiva, reactiva por nombre y borra con los mensajes de siempre', async () => {
     const created = await createProviderAction(INPUT);
-    expect(created).toMatchObject({ success: true, message: 'Proveedor registrado/a exitosamente', data: { ...INPUT, version: 1 } });
+    expect(created).toMatchObject({ success: true, message: 'Se registró el proveedor', data: { ...INPUT, version: 1 } });
     const id = created.success ? created.data.id : '';
 
-    expect(await updateProviderAction(id, { phone: '1199990000', version: 1 })).toMatchObject({ success: true, message: 'Proveedor actualizado/a exitosamente', data: { version: 2 } });
-    expect(await toggleProviderActiveAction({ id, isActive: false, version: 2 })).toEqual({ success: true, message: 'Proveedor desactivado/a exitosamente' });
-    expect(await createProviderAction(INPUT)).toMatchObject({ success: true, message: 'El/la Proveedor ya existía (inactivo) y ha sido reactivado con los nuevos datos' });
-    expect(await deleteProviderAction({ id, version: 4 })).toEqual({ success: true, message: 'Proveedor eliminado/a exitosamente' });
+    expect(await updateProviderAction(id, { phone: '1199990000', version: 1 })).toMatchObject({ success: true, message: 'Se actualizó el proveedor', data: { version: 2 } });
+    expect(await toggleProviderActiveAction({ id, isActive: false, version: 2 })).toEqual({ success: true, message: 'Se desactivó el proveedor' });
+    expect(await createProviderAction(INPUT)).toMatchObject({ success: true, message: 'Se reactivó el proveedor que ya existía, con los datos nuevos' });
+    expect(await deleteProviderAction({ id, version: 4 })).toEqual({ success: true, message: 'Se eliminó el proveedor' });
   });
 
   it('activar devuelve el mensaje de activación', async () => {
     const created = await createProviderAction(INPUT);
     const id = created.success ? created.data.id : '';
     await toggleProviderActiveAction({ id, isActive: false, version: 1 });
-    expect(await toggleProviderActiveAction({ id, isActive: true, version: 2 })).toEqual({ success: true, message: 'Proveedor activado/a exitosamente' });
+    expect(await toggleProviderActiveAction({ id, isActive: true, version: 2 })).toEqual({ success: true, message: 'Se activó el proveedor' });
   });
 
   it('lista los proveedores con su fila validada; un vendedor también puede listar', async () => {

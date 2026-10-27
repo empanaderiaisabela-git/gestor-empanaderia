@@ -19,7 +19,7 @@ describe('pantalla de Promociones (US-8)', () => {
   beforeEach(() => {
     usePromotionStore.setState({ promotions: [], isLoaded: false });
     actions.fetch.mockResolvedValue([PROMO, { ...PROMO, id: 'p2', name: 'Vieja', isActive: false }]);
-    actions.create.mockResolvedValue({ success: true, message: 'Promoción registrado/a exitosamente' });
+    actions.create.mockResolvedValue({ success: true, message: 'Se registró la promoción' });
   });
 
   it('muestra las promos activas; las inactivas, sólo al pedirlas; y busca por nombre', async () => {

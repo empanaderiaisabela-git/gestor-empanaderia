@@ -8,7 +8,7 @@ describe('ActionResult (T-4 CA-2)', () => {
   });
 
   it('fail usa la entidad en los mensajes que la nombran', () => {
-    expect(fail('NOT_FOUND', 'Proveedor')).toEqual({ success: false, code: 'NOT_FOUND', error: MESSAGES.ERROR.DATABASE.NOT_FOUND('Proveedor') });
+    expect(fail('NOT_FOUND', 'el proveedor')).toEqual({ success: false, code: 'NOT_FOUND', error: MESSAGES.ERROR.DATABASE.NOT_FOUND('el proveedor') });
   });
 
   it('el caso de error heredado, sin code, sigue siendo un ActionResult válido', () => {

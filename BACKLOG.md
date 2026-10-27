@@ -1844,7 +1844,8 @@ la leen.
 | 12  | [BUG-15](#bug-15--los-precios-del-grupo-borran-lo-que-se-está-escribiendo)       | Los precios del grupo borran lo que se está escribiendo     | En revisión | US-3        | 30 min          |
 | 13  | [BUG-16](#bug-16--un-e2e-de-clientes-falla-a-veces-en-el-ci)                     | Un E2E de Clientes falla a veces en el CI                   | Pendiente | T-6         | 45 min          |
 | 14  | [T-16](#t-16--skill-para-delegar-en-subagentes-según-el-costo)                   | Skill para delegar en subagentes según el costo             | En revisión | —         | 40 min          |
-|     |                                                                                  | **Total del sprint**                                        |           |             | **22 h**        |
+| 15  | [BUG-19](#bug-19--los-mensajes-dicen-ella-y-registradoa)                         | Los mensajes dicen "el/la" y "registrado/a"                 | En revisión | T-4       | 55 min          |
+|     |                                                                                  | **Total del sprint**                                        |           |             | **22 h 55 min** |
 
 ### T-15 · Respuestas del cliente en el backlog del Sprint 2
 
@@ -2380,3 +2381,39 @@ de forma que las tareas simples no gasten como las difíciles.
 - `skills:check`, lint y typecheck en verde. El resto de `npm run verify` en verde: 867 tests, cobertura
   96/88,76, mutación 89,31 y build. `test:int` no corrió: Docker estaba apagado y el dev decidió integrar sin él,
   porque el cambio es sólo texto.
+
+### BUG-19 · Los mensajes dicen "el/la" y "registrado/a"
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente |
+| Inicio       | 2026-10-26 |
+| Tamaño       | S         |
+| Depende de   | T-4       |
+| Plan         | [`docs/plans/BUG-19-mensajes-con-articulo.md`](docs/plans/BUG-19-mensajes-con-articulo.md) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Actual**: los mensajes del catálogo no concuerdan en género. Una venta que falla dice "Ocurrió un error inesperado
+al procesar el/la venta.", lo que no existe dice "El/la tarjeta seleccionado ya no existe." y lo que sale bien dice
+"Tarjeta registrado/a exitosamente".
+
+**Esperado**: cada mensaje se lee como una frase normal: "Ocurrió un error inesperado al procesar la venta.", "La
+tarjeta ya no existe.", "Se registró la tarjeta".
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · Las plantillas de `src/config/messages.ts` no llevan "el/la" ni "/a": los avisos de éxito usan un verbo ("Se registró…", "Se actualizó…", "Se eliminó…", "Se activó…", "Se desactivó…", "Se reactivó…") y los errores reciben la entidad con su artículo (test de cada plantilla con una entidad femenina y una masculina) · Estimación: 20 min · Completado: 2026-10-27 02:47
+
+- [x] **CA-2** · Todas las acciones y servicios pasan la entidad con su artículo y en minúscula ('la venta', 'el producto'…); las entidades del log de auditoría ('SALE', 'MENU_ITEM'…) no cambian · Estimación: 15 min · Completado: 2026-10-27 02:47
+
+- [x] **CA-3** · Los tests unitarios, de contrato, de componente y E2E y las tablas de errores de `docs/features/` esperan los textos nuevos; `npm run verify` en verde · Estimación: 20 min · Completado: 2026-10-27 02:47
+
+**Notas**
+
+- Apareció al simular una venta en desarrollo. El error en sí no era de código: a la base de desarrollo le faltaban
+  las migraciones 0012 a 0016 del Sprint 2, y cobrar escribía columnas que no existían. Se corrigió con
+  `npm run db:migrate` (2026-10-26, con el OK del dev); este ítem arregla sólo el texto del mensaje.
+- `npm run verify` en verde: 871 tests, cobertura 96/88,76, 83 de integración, mutación 89,31 y build. Los 6 E2E que
+  cambiaron, en verde (12 casos).

@@ -21,11 +21,11 @@ describe('acciones de Gastos (camino feliz)', () => {
 
   it('carga, lista, edita y borra un gasto con sus mensajes (CA-1 y CA-2)', async () => {
     const created = await createExpenseAction(EXPENSE_INPUT);
-    expect(created).toMatchObject({ success: true, message: 'Gasto registrado/a exitosamente', data: { ...EXPENSE_INPUT, version: 1 } });
+    expect(created).toMatchObject({ success: true, message: 'Se registró el gasto', data: { ...EXPENSE_INPUT, version: 1 } });
     const id = created.success ? created.data.id : '';
     expect(await fetchExpenses()).toMatchObject([{ id, invoiceNumber: EXPENSE_INPUT.invoiceNumber, amount: 18500.5 }]);
-    expect(await updateExpenseAction(id, { ...EXPENSE_INPUT, title: 'Harina 50 kg', version: 1 })).toMatchObject({ success: true, message: 'Gasto actualizado/a exitosamente', data: { title: 'Harina 50 kg', version: 2 } });
-    expect(await deleteExpenseAction({ id, version: 2 })).toEqual({ success: true, message: 'Gasto eliminado/a exitosamente' });
+    expect(await updateExpenseAction(id, { ...EXPENSE_INPUT, title: 'Harina 50 kg', version: 1 })).toMatchObject({ success: true, message: 'Se actualizó el gasto', data: { title: 'Harina 50 kg', version: 2 } });
+    expect(await deleteExpenseAction({ id, version: 2 })).toEqual({ success: true, message: 'Se eliminó el gasto' });
   });
 
   it('VALIDATION: editar con un id inválido', async () => {

@@ -49,7 +49,7 @@ describe('cobrar promos (US-9 CA-2 y CA-3)', () => {
   it('NOT_FOUND: una promo desactivada o que ya no existe', async () => {
     const id = await loadPromo();
     await fake.promotions.read.update({ id, version: 1 }, { isActive: false });
-    await expect(service.checkout(CALLER, checkoutOf([], { promos: [promoOf(id)], payments: cash(9000) }))).rejects.toMatchObject({ code: 'NOT_FOUND', message: 'El/la promoción seleccionado ya no existe.' });
+    await expect(service.checkout(CALLER, checkoutOf([], { promos: [promoOf(id)], payments: cash(9000) }))).rejects.toMatchObject({ code: 'NOT_FOUND', message: 'La promoción ya no existe.' });
     await expect(service.checkout(CALLER, checkoutOf([], { promos: [promoOf(crypto.randomUUID())], payments: cash(9000) }))).rejects.toMatchObject({ code: 'NOT_FOUND' });
   });
 

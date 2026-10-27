@@ -10,7 +10,7 @@ async function crearTarjeta(page: Page, nombre: string): Promise<void> {
   await page.getByLabel('Cuotas del plan 1').selectOption('3');
   await page.getByLabel('Recargo % del plan 1').fill('10');
   await page.getByRole('button', { name: 'Crear tarjeta' }).click();
-  await expect(page.getByText('Tarjeta registrado/a exitosamente')).toBeVisible();
+  await expect(page.getByText('Se registró la tarjeta')).toBeVisible();
 }
 
 test.describe('cobrar con crédito en cuotas (US-11)', () => {

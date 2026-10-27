@@ -15,6 +15,6 @@ export async function saveMenuGroupPricesAction(input: MenuGroupPricesInput): Pr
     const saved = await menuGroupPriceService.save(caller, parsed.data);
     return afterCatalogChange({ success: true, message: 'Precios del grupo guardados exitosamente', data: menuGroupPriceRowSchema.parse(saved) });
   } catch (error) {
-    return toActionFailure(error, 'precio del grupo');
+    return toActionFailure(error, 'los precios del grupo');
   }
 }

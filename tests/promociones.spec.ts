@@ -18,14 +18,14 @@ test.describe('Promociones (US-8)', () => {
     await page.getByLabel('Grupo del producto 2').selectOption({ label: 'Coca-Cola' });
     await page.getByLabel('Precio de venta de la promo').fill('15000');
     await page.getByRole('button', { name: 'Crear promoción' }).click();
-    await expect(page.getByText('Promoción registrado/a exitosamente')).toBeVisible();
+    await expect(page.getByText('Se registró la promoción')).toBeVisible();
 
     await page.getByPlaceholder('Buscar promoción por nombre...').filter({ visible: true }).fill(nombre);
     const fila = page.getByRole('row', { name: new RegExp(nombre) });
     await expect(fila.getByText('Empanadas · 1 docena + Coca-Cola · 1 unidad')).toBeVisible();
     await expect(fila.getByText('$15.000')).toBeVisible();
     await fila.getByTitle('Desactivar').click();
-    await expect(page.getByText('Promoción desactivado/a exitosamente')).toBeVisible();
+    await expect(page.getByText('Se desactivó la promoción')).toBeVisible();
   });
 
   test.describe('vendedor', () => {

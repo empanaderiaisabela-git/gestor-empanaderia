@@ -17,6 +17,6 @@ export async function registerStockLossAction(input: StockLossInput): Promise<Ac
     const stock = Number(item.stock);
     return afterCatalogChange({ success: true, message: `Merma registrada: ${item.name} queda con ${stock.toLocaleString('es-AR')}`, data: { menuItemId: item.id, stock, version: item.version } });
   } catch (error) {
-    return toActionFailure(error, 'producto');
+    return toActionFailure(error, 'el producto');
   }
 }

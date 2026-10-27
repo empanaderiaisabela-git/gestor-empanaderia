@@ -22,12 +22,12 @@ describe('acciones de Tarjetas (camino feliz)', () => {
 
   it('crea, edita, desactiva, reactiva y borra con sus mensajes (CA-1 y CA-2)', async () => {
     const created = await createCardAction(CARD_INPUT);
-    expect(created).toMatchObject({ success: true, message: 'Tarjeta registrado/a exitosamente', data: { name: 'Visa', plans: [{ installments: 1, surchargePct: 0 }, { installments: 3, surchargePct: 10.5 }] } });
+    expect(created).toMatchObject({ success: true, message: 'Se registró la tarjeta', data: { name: 'Visa', plans: [{ installments: 1, surchargePct: 0 }, { installments: 3, surchargePct: 10.5 }] } });
     const id = created.success ? created.data.id : '';
-    expect(await updateCardAction(id, { ...CARD_INPUT, version: 1 })).toMatchObject({ success: true, message: 'Tarjeta actualizado/a exitosamente', data: { version: 2 } });
-    expect(await toggleCardActiveAction({ id, isActive: false, version: 2 })).toEqual({ success: true, message: 'Tarjeta desactivado/a exitosamente' });
-    expect(await toggleCardActiveAction({ id, isActive: true, version: 3 })).toEqual({ success: true, message: 'Tarjeta activado/a exitosamente' });
-    expect(await deleteCardAction({ id, version: 4 })).toEqual({ success: true, message: 'Tarjeta eliminado/a exitosamente' });
+    expect(await updateCardAction(id, { ...CARD_INPUT, version: 1 })).toMatchObject({ success: true, message: 'Se actualizó la tarjeta', data: { version: 2 } });
+    expect(await toggleCardActiveAction({ id, isActive: false, version: 2 })).toEqual({ success: true, message: 'Se desactivó la tarjeta' });
+    expect(await toggleCardActiveAction({ id, isActive: true, version: 3 })).toEqual({ success: true, message: 'Se activó la tarjeta' });
+    expect(await deleteCardAction({ id, version: 4 })).toEqual({ success: true, message: 'Se eliminó la tarjeta' });
   });
 
   it('el vendedor también puede listarlas (las elige al cobrar con crédito)', async () => {

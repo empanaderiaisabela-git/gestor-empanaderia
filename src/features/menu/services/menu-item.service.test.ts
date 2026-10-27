@@ -54,7 +54,7 @@ describe('menu-item.service (US-3)', () => {
   });
 
   it('NOT_FOUND: editar un gusto que ya no existe', async () => {
-    await expect(service.update(CALLER, '11111111-1111-4111-8111-111111111111', EDIT)).rejects.toMatchObject({ code: 'NOT_FOUND', message: 'El/la producto seleccionado ya no existe.' });
+    await expect(service.update(CALLER, '11111111-1111-4111-8111-111111111111', EDIT)).rejects.toMatchObject({ code: 'NOT_FOUND', message: 'El producto ya no existe.' });
   });
 
   it.each([

@@ -70,7 +70,7 @@ con el costo congelado) y los pagos (con el recargo); y las mermas de la jornada
 | Sin sesión | `UNAUTHENTICATED` | No autorizado (Token faltante) | `workday-stats.contract.test.ts` |
 | El vendedor la pide | `FORBIDDEN` | Solo los administradores pueden realizar esta acción | `workday-stats.contract.test.ts` |
 | Jornada inválida | `VALIDATION` | Los datos proporcionados no son válidos. | `workday-stats.contract.test.ts` |
-| Falla inesperada | `UNEXPECTED` | Ocurrió un error inesperado al procesar el/la panel de estadísticas. | `workday-stats.contract.test.ts` |
+| Falla inesperada | `UNEXPECTED` | Ocurrió un error inesperado al procesar el panel de estadísticas. | `workday-stats.contract.test.ts` |
 
 ## Pantallas
 

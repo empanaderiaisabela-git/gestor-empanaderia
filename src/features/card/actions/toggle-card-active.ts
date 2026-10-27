@@ -13,9 +13,9 @@ export async function toggleCardActiveAction(input: CardToggleInput): Promise<Ac
     const parsed = cardToggleSchema.safeParse(input);
     if (!parsed.success) return fail('VALIDATION');
     await cardService.setActive(caller, parsed.data);
-    const message = parsed.data.isActive ? MESSAGES.SUCCESS.ACTIVATED('Tarjeta') : MESSAGES.SUCCESS.DEACTIVATED('Tarjeta');
+    const message = parsed.data.isActive ? MESSAGES.SUCCESS.ACTIVATED('la tarjeta') : MESSAGES.SUCCESS.DEACTIVATED('la tarjeta');
     return { success: true, message };
   } catch (error) {
-    return toActionFailure(error, 'Tarjeta');
+    return toActionFailure(error, 'la tarjeta');
   }
 }

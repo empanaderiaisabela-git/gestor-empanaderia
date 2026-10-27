@@ -16,7 +16,7 @@ export type StockService = {
 
 async function lockedItem({ stock }: StockScope, id: string): Promise<StockItem> {
   const item = await stock.lockItem(id);
-  if (!item) throw new AppError('NOT_FOUND', { entity: 'producto' });
+  if (!item) throw new AppError('NOT_FOUND', { entity: 'el producto' });
   return item;
 }
 

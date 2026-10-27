@@ -74,7 +74,7 @@ describe('tabla de errores de Alta de productos (US-3 CA-2 a CA-4)', () => {
   it('NOT_FOUND: editar un producto que ya no existe', async () => {
     await asUser({ role: 'admin' });
     const result = await updateMenuItemAction('11111111-1111-4111-8111-111111111111', EDIT);
-    expect(result).toEqual({ success: false, code: 'NOT_FOUND', error: 'El/la producto seleccionado ya no existe.' });
+    expect(result).toEqual({ success: false, code: 'NOT_FOUND', error: 'El producto ya no existe.' });
   });
 
   it('HAS_RELATIONS: no deja borrar un producto con movimientos', async () => {

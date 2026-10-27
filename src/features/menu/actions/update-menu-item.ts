@@ -16,8 +16,8 @@ export async function updateMenuItemAction(id: string, input: MenuItemUpdateInpu
     const parsed = menuItemUpdateSchema.safeParse(input);
     if (!parsedId.success || !parsed.success) return fail('VALIDATION');
     const item = await menuItemService.update(caller, parsedId.data, parsed.data);
-    return afterCatalogChange({ success: true, message: MESSAGES.SUCCESS.UPDATED('Producto'), data: menuItemRowSchema.parse(item) });
+    return afterCatalogChange({ success: true, message: MESSAGES.SUCCESS.UPDATED('el producto'), data: menuItemRowSchema.parse(item) });
   } catch (error) {
-    return toActionFailure(error, 'producto');
+    return toActionFailure(error, 'el producto');
   }
 }
