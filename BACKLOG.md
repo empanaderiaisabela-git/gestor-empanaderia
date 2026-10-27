@@ -1688,6 +1688,10 @@ un vistazo.
   - Colores y emojis viven en `src/config/group-theme.ts`, listo para el KPI de dinero por comida (US-12).
   - Los helpers de contraste se comparten en `src/test/contrast.ts`.
 
+**Notas**
+
+- 2026-10-27: US-20 vuelve a los íconos de lucide (pedido del dev en el Sprint 3).
+
 ### T-12 · Retirar el modelo heredado de la casa de celulares
 
 | Campo        | Valor      |
@@ -2446,7 +2450,7 @@ decisiones provisorias D-1 y D-2, el orden y la trazabilidad de cada línea de `
 | 6   | [US-18](#us-18--ingresar-stock-primero-la-categoría-después-el-gusto)  | Ingresar stock: primero la categoría, después el gusto     | En revisión | US-17      | 45 min           |
 | 7   | [US-19](#us-19--ventas-muestra-sólo-gustos-con-stock)                  | Ventas muestra sólo gustos con stock                       | En revisión | US-17      | 40 min           |
 | 8   | [US-22](#us-22--ventas-quitar-de-a-uno-en-el-pedido)                   | Ventas: quitar de a uno en el pedido                       | En revisión | T-17       | 40 min           |
-| 9   | [US-20](#us-20--íconos-de-lucide-por-grupo-en-ventas-y-estadísticas)   | Íconos de lucide por grupo en Ventas y Estadísticas        | Pendiente   | T-17       | 2 h              |
+| 9   | [US-20](#us-20--íconos-de-lucide-por-grupo-en-ventas-y-estadísticas)   | Íconos de lucide por grupo en Ventas y Estadísticas        | En revisión | T-17       | 2 h              |
 | 10  | [US-21](#us-21--estadísticas-como-el-panel-de-referencia)              | Estadísticas como el panel de referencia                   | Pendiente   | US-20      | 2 h              |
 | 11  | [T-18](#t-18--cierre-del-sprint-3)                                     | Cierre del Sprint 3                                        | Pendiente   | todos      | 1 h              |
 | 12  | [BUG-21](#bug-21--la-carga-inicial-de-datos-falla-si-quedaron-gastos)   | La carga inicial de datos falla si quedaron gastos         | En revisión | US-14      | 15 min           |
@@ -2736,9 +2740,9 @@ de 3 no tenga que borrar todo y empezar de nuevo.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
-| Dueño        | —         |
-| Inicio       | —         |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-27 |
 | Tamaño       | M         |
 | Depende de   | T-17      |
 | Plan         | — (plan propio: `docs/plans/US-20-iconos-lucide.md`) |
@@ -2750,15 +2754,22 @@ nativos.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · `lucide-react` actualizado; Pizzas usa `Pizza`, Sanguches `Sandwich`, Coca-Cola y Pepsi `CanSoda` y Promos `HandCoins`, definidos en un solo lugar · Estimación: 40 min · Completado: —
+- [x] **CA-1** · `lucide-react` actualizado; Pizzas usa `Pizza`, Sanguches `Sandwich`, Coca-Cola y Pepsi `CanSoda` y Promos `HandCoins`, definidos en un solo lugar · Estimación: 40 min · Completado: 2026-10-27 04:09
 
-- [ ] **CA-2** · Empanadas y Ciabattas usan íconos propios al estilo lucide, redibujados de los PNG del dev, con el color de su grupo · Estimación: 50 min · Completado: —
+- [x] **CA-2** · Empanadas y Ciabattas usan íconos propios al estilo lucide, redibujados de los PNG del dev, con el color de su grupo · Estimación: 50 min · Completado: 2026-10-27 04:09
 
-- [ ] **CA-3** · No queda ningún emoji de grupo en la app; tests de componente, de contraste y E2E del tablero en verde · Estimación: 30 min · Completado: —
+- [x] **CA-3** · No queda ningún emoji de grupo en la app; tests de componente, de contraste y E2E del tablero en verde · Estimación: 30 min · Completado: 2026-10-27 04:09
 
 **Notas**
 
 - Revierte US-15 CA-2, que había pasado de lucide a emojis a pedido del dev.
+- `lucide-react` pasa a ^1.61.0 (trae `CanSoda`). `GROUP_THEME` lleva `icon` en lugar de `emoji`: Pizzas `Pizza`,
+  Sanguches `Sandwich`, Coca-Cola y Pepsi `CanSoda`, Promos `HandCoins`. Empanadas y Ciabattas usan íconos propios
+  (`src/components/icons/`, con `createLucideIcon`), redibujados de los PNG del dev: la empanada con su repulgue y
+  la ciabatta alargada con tres cortes en el pan. Lo hizo un subagente (Sonnet); los dos íconos propios se
+  redibujaron después de verlos en la app, porque la primera versión parecía una nube y una hamburguesa.
+- Nivel 2: lint, typecheck, `test:coverage` (864 tests) y E2E de tablero, estadísticas y promo (7 casos) en verde,
+  más los tests relacionados después de redibujar los íconos.
 
 ### US-21 · Estadísticas como el panel de referencia
 

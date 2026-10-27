@@ -1,5 +1,8 @@
 import { readFileSync } from 'node:fs';
+import { CanSoda, Pizza, Sandwich } from 'lucide-react';
 import { describe, expect, it } from 'vitest';
+import { Ciabatta } from '@/components/icons/ciabatta';
+import { Empanada } from '@/components/icons/empanada';
 import { GROUP_THEME } from '@/config/group-theme';
 import { MENU_GROUPS } from '@/features/menu/domain/menu-groups';
 import { AA_NORMAL_TEXT, contrast, cssToken } from './contrast';
@@ -33,15 +36,15 @@ describe('colores de cada grupo (US-15 CA-1)', () => {
   });
 });
 
-describe('emojis de cada grupo (US-15 CA-2)', () => {
-  it('son los que pidió el dev, en Unicode', () => {
-    expect(MENU_GROUPS.map((group) => [group, GROUP_THEME[group].emoji])).toEqual([
-      ['empanadas', '🥟'],
-      ['pizzas', '🍕'],
-      ['sanguches', '🥪'],
-      ['ciabattas', '🥖'],
-      ['coca_cola', '🥤'],
-      ['pepsi', '🥤'],
+describe('íconos de cada grupo (US-20)', () => {
+  it('son los de lucide que pidió el dev, con los dibujos propios para empanadas y ciabattas', () => {
+    expect(MENU_GROUPS.map((group) => [group, GROUP_THEME[group].icon])).toEqual([
+      ['empanadas', Empanada],
+      ['pizzas', Pizza],
+      ['sanguches', Sandwich],
+      ['ciabattas', Ciabatta],
+      ['coca_cola', CanSoda],
+      ['pepsi', CanSoda],
     ]);
   });
 });

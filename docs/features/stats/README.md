@@ -20,7 +20,7 @@ Muestra los números de una **jornada** del local, por defecto la de hoy, con un
 - **Ventas registradas**: cuántas ventas hubo.
 - **Total facturado**: lo que cobró el local por los productos. El recargo de las cuotas es de la tarjeta (BUG-20).
 - **Dinero generado por comida**: Empanadas, Pizzas, Sanguches, Ciabattas, Coca-Cola y Pepsi, cada cuadro con el color
-  y el emoji de su grupo (US-15), y un cuadro aparte para las **Promos**.
+  y el ícono de lucide de su grupo (US-20), y un cuadro aparte para las **Promos**.
 - **Facturado por medio de pago**: Efectivo, Transferencia, Débito y Crédito.
 - Abajo del todo (US-13), dos cuadros:
   - **Vendedores**: vendedor, turno, número de ventas e importe, de a una fila por vendedor y turno;

@@ -1,5 +1,6 @@
 'use client';
 
+import { HandCoins } from 'lucide-react';
 import { type JSX, useEffect } from 'react';
 import { fetchPromotions } from '@/features/promotion/actions/fetch-promotions';
 import { describeComponents } from '@/features/promotion/domain/promotion-describe';
@@ -37,8 +38,8 @@ export function PromoCard({ board }: { board: OrderBoardModel }): JSX.Element {
   return (
     <section aria-label='Promos' className='rounded-2xl border p-4 space-y-3 bg-brand-50 border-brand-200 dark:bg-brand-500/10 dark:border-brand-800'>
       <header className='flex items-center gap-3'>
-        <span aria-hidden='true' className='w-10 h-10 rounded-xl bg-white/70 dark:bg-zinc-950/40 flex items-center justify-center text-2xl leading-none'>
-          🏷️
+        <span className='w-10 h-10 rounded-xl bg-white/70 dark:bg-zinc-950/40 flex items-center justify-center'>
+          <HandCoins className='w-6 h-6' aria-hidden='true' />
         </span>
         <div>
           <p className='text-xs font-bold uppercase tracking-wider text-zinc-600 dark:text-zinc-400'>Promos</p>

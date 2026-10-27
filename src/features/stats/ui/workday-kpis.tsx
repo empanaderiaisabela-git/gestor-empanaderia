@@ -1,3 +1,4 @@
+import { HandCoins } from 'lucide-react';
 import type { JSX } from 'react';
 import { GROUP_THEME } from '@/config/group-theme';
 import { GROUPS, MENU_GROUPS } from '@/features/menu/domain/menu-groups';
@@ -15,9 +16,9 @@ export function GroupKpis({ stats }: { stats: WorkdayStats }): JSX.Element {
       <h2 className={title}>Dinero generado por comida</h2>
       <div className={grid}>
         {MENU_GROUPS.map((group) => (
-          <KpiCard key={group} label={GROUPS[group].label} value={stats.byGroup[group]} emoji={GROUP_THEME[group].emoji} tone={GROUP_THEME[group].card} />
+          <KpiCard key={group} label={GROUPS[group].label} value={stats.byGroup[group]} icon={GROUP_THEME[group].icon} tone={GROUP_THEME[group].card} />
         ))}
-        <KpiCard label='Promos' value={stats.promos} emoji='🏷️' tone={PROMOS_TONE} />
+        <KpiCard label='Promos' value={stats.promos} icon={HandCoins} tone={PROMOS_TONE} />
       </div>
     </div>
   );

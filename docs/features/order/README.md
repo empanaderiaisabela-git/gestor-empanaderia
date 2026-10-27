@@ -176,8 +176,8 @@ que sumar el total".
 
 `src/app/(main)/ventas/nueva/page.tsx` → `OrderBoard`:
 
-- `GroupCard` por grupo, rellena con el color de su grupo y con su emoji Unicode (US-15: `src/config/group-theme.ts`
-  y `src/app/group-colors.css`, que también usará el KPI de dinero por comida), "N en pedido" y botones de presentación
+- `GroupCard` por grupo, rellena con el color de su grupo y con su ícono de lucide (US-20; Empanadas y Ciabattas usan íconos propios de `src/components/icons/`; `src/config/group-theme.ts`
+  y `src/app/group-colors.css`, que también usa el KPI de dinero por comida), "N en pedido" y botones de presentación
   con el precio (del grupo) o "desde $X".
   Avisa si el grupo no tiene gustos o si falta el precio del grupo, y deshabilita los botones.
 - `FlavorPicker` / `FlavorRow`: gustos con precio y stock disponible, y los botones según la presentación.

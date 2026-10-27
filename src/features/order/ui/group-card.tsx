@@ -32,8 +32,8 @@ export function GroupCard({ group, board }: { group: MenuGroup; board: OrderBoar
   return (
     <section aria-label={GROUPS[group].label} className={`rounded-2xl border p-4 space-y-3 ${theme.card}`}>
       <header className='flex items-center gap-3'>
-        <span aria-hidden='true' className='w-10 h-10 rounded-xl bg-white/70 dark:bg-zinc-950/40 flex items-center justify-center text-2xl leading-none'>
-          {theme.emoji}
+        <span className='w-10 h-10 rounded-xl bg-white/70 dark:bg-zinc-950/40 flex items-center justify-center'>
+          <theme.icon className='w-6 h-6' aria-hidden='true' />
         </span>
         <div>
           <p className='text-xs font-bold uppercase tracking-wider text-zinc-600 dark:text-zinc-400'>{GROUPS[group].label}</p>
