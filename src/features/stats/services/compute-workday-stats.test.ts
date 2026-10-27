@@ -28,11 +28,11 @@ describe('KPI de la jornada (US-12 CA-2, CA-3 y CA-5)', () => {
     expect([stats.byGroup.empanadas, stats.byGroup.coca_cola]).toEqual([13500, 4500]);
   });
 
-  it('el recargo de las cuotas no es de ninguna comida, pero suma al crédito, a lo facturado y a la ganancia', () => {
+  it('el recargo de las cuotas es de la tarjeta: no suma a las comidas, al crédito, a lo facturado ni a la ganancia (BUG-20)', () => {
     const payments = [cash('4000.00'), { type: 'credito' as const, amount: '6000.00', surchargeAmount: '600.00' }];
     const items = [{ units: '12', unitCost: '400.00' }];
-    const stats = computeWorkdayStats('2026-10-25', { sales: [sale({ total: '10600.00', lines: [{ group: 'empanadas', subtotal: '10000.00' }], items, payments })], losses: [] });
-    expect(stats).toMatchObject({ revenue: 10600, profit: 5800, byPayment: { efectivo: 4000, credito: 6600 } });
+    const stats = computeWorkdayStats('2026-10-25', { sales: [sale({ total: '10000.00', lines: [{ group: 'empanadas', subtotal: '10000.00' }], items, payments })], losses: [] });
+    expect(stats).toMatchObject({ revenue: 10000, profit: 5200, byPayment: { efectivo: 4000, credito: 6000 } });
     expect(stats.byGroup.empanadas).toBe(10000);
   });
 

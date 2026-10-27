@@ -8,12 +8,12 @@ import { formatMoney } from '@/lib/format-money';
 import { type CheckoutForm, paymentsOf, toggleMethod } from './checkout-form';
 import { CreditFields } from './credit-fields';
 
-type PaymentPickerProps = { form: CheckoutForm; total: number; credit: { cards: CardDef[]; surcharge: number }; onChange: (form: CheckoutForm) => void };
+type PaymentPickerProps = { form: CheckoutForm; total: number; cards: CardDef[]; onChange: (form: CheckoutForm) => void };
 
 const chip = (pressed: boolean): string =>
   `px-3 py-2 rounded-lg border text-sm font-semibold transition ${pressed ? 'bg-brand-600 border-brand-600 text-white' : 'border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300'}`;
 
-export function PaymentPicker({ form, total, credit, onChange }: PaymentPickerProps): JSX.Element {
+export function PaymentPicker({ form, total, cards, onChange }: PaymentPickerProps): JSX.Element {
   const [first, second] = form.methods;
   const rest = paymentsOf(total, form)[1]?.amount ?? 0;
   return (
@@ -36,7 +36,7 @@ export function PaymentPicker({ form, total, credit, onChange }: PaymentPickerPr
           </p>
         </>
       )}
-      {form.methods.includes('credito') && <CreditFields form={form} cards={credit.cards} surcharge={credit.surcharge} onChange={onChange} />}
+      {form.methods.includes('credito') && <CreditFields form={form} cards={cards} onChange={onChange} />}
     </fieldset>
   );
 }

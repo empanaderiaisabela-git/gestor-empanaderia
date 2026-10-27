@@ -2003,6 +2003,8 @@ recargo del plan.
 
 - Decisión provisoria D-3 (`docs/plans/sprint-2.md`): el total de la venta incluye el recargo de cuotas (lo que pagó el cliente).
 - Cierre: `npm run verify` (784 tests, cobertura 96/89, mutación 89) y 69 E2E en verde. Hallazgo: en una base nueva todas las migraciones corren en una sola transacción, y Postgres no deja usar el valor `credito` del enum en la misma transacción en que se agregó (0008). El `CHECK` de 0015 compara `type::text`; se probó migrar desde cero, como pasará en Supabase.
+- 2026-10-27: el dev respondió la decisión provisoria D-3: el recargo lo cobra la tarjeta y el total de la venta es el
+  precio original. Se corrigió en BUG-20 (Sprint 3).
 
 ### US-12 · Estadísticas del día: dinero por comida, ganancia y ventas
 
@@ -2448,7 +2450,8 @@ decisiones provisorias D-1 y D-2, el orden y la trazabilidad de cada línea de `
 | 10  | [US-21](#us-21--estadísticas-como-el-panel-de-referencia)              | Estadísticas como el panel de referencia                   | Pendiente   | US-20      | 2 h              |
 | 11  | [T-18](#t-18--cierre-del-sprint-3)                                     | Cierre del Sprint 3                                        | Pendiente   | todos      | 1 h              |
 | 12  | [BUG-21](#bug-21--la-carga-inicial-de-datos-falla-si-quedaron-gastos)   | La carga inicial de datos falla si quedaron gastos         | En revisión | US-14      | 15 min           |
-|     |                                                                        | **Total del sprint**                                       |             |            | **12 h 55 min**  |
+| 13  | [BUG-20](#bug-20--el-recargo-de-cuotas-se-cuenta-como-plata-del-local)   | El recargo de cuotas se cuenta como plata del local        | En revisión | US-11      | 1 h 30 min       |
+|     |                                                                        | **Total del sprint**                                       |             |            | **14 h 25 min**  |
 
 ### T-17 · Backlog del Sprint 3 desde `specs.md`
 
@@ -2793,3 +2796,39 @@ violates foreign key constraint expenses_user_id_users_id_fk".
 - Apareció al verificar BUG-18. En el CI no se ve porque cada corrida arranca con la base vacía.
 - Nivel 2 (script de datos): la prueba es el E2E repetido. Primera corrida: 6 casos en verde; segunda, con los gastos
   de la primera ya en la base: 4 casos en verde.
+
+### BUG-20 · El recargo de cuotas se cuenta como plata del local
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-27 |
+| Tamaño       | M         |
+| Depende de   | US-11     |
+| Plan         | [`docs/plans/BUG-20-recargo-de-la-tarjeta.md`](docs/plans/BUG-20-recargo-de-la-tarjeta.md) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Actual**: por la decisión provisoria D-3 del Sprint 2, un pedido de $10.000 pagado con $4.000 en efectivo y $6.000
+con Visa en 3 cuotas al 10 % queda en $10.600, y el recargo suma a lo facturado, al crédito y a la ganancia.
+
+**Esperado** (dev, 2026-10-27): el recargo lo cobra la emisora de la tarjeta. El local ve sólo el precio original: la
+venta es de $10.000 y el pago con Visa, de $6.000.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · El cobro confirma y guarda el total sin el recargo, que queda guardado sólo como dato del pago (tests unit, de componente y de integración) · Estimación: 40 min · Completado: 2026-10-27 00:41
+
+- [x] **CA-2** · Estadísticas: lo facturado, la ganancia, el dinero por comida y el crédito no suman el recargo (test unit) · Estimación: 20 min · Completado: 2026-10-27 00:41
+
+- [x] **CA-3** · El comprobante y el historial muestran cada pago por su monto, sin el recargo; `docs/features/order` y `stats`, y la D-3 del Sprint 2, dicen la regla nueva; `npm run verify` y el E2E de crédito en verde · Estimación: 30 min · Completado: 2026-10-27 00:41
+
+**Notas**
+
+- `checkout.service.ts` guarda el total de los productos con descuento. El recargo sigue en el pago
+  (`surcharge_pct`, `surcharge_amount`) como dato. La base no cambia y no se migran ventas (dev: no hay producción).
+- Decisión provisoria D-5 (`docs/plans/sprint-3.md`): el cobro y el comprobante no muestran el recargo.
+- Nivel 3: `npm run verify` en verde (870 tests, cobertura 95,97/88,64, 83 de integración, mutación 89,22 y build) y
+  E2E de crédito, cobro y promo en verde (5 casos). La revisión con `/ponytail-review` sumó un test del comprobante
+  con crédito.

@@ -14,7 +14,7 @@ async function crearTarjeta(page: Page, nombre: string): Promise<void> {
 }
 
 test.describe('cobrar con crédito en cuotas (US-11)', () => {
-  test('elige la tarjeta y las cuotas, ve el recargo, cobra con recargo y el historial lo muestra', async ({ page }) => {
+  test('elige la tarjeta y las cuotas, cobra el precio original sin el recargo de la tarjeta y el historial lo muestra (BUG-20)', async ({ page }) => {
     const tarjeta = `Visa E2E ${Date.now()}`;
     await crearTarjeta(page, tarjeta);
 
@@ -30,14 +30,14 @@ test.describe('cobrar con crédito en cuotas (US-11)', () => {
     await page.getByRole('button', { name: 'Crédito' }).click();
     await page.getByRole('combobox', { name: 'Tarjeta', exact: true }).selectOption({ label: tarjeta });
     await page.getByRole('combobox', { name: 'Cuotas', exact: true }).selectOption('3');
-    await expect(page.getByText('Recargo de cuotas: $300')).toBeVisible();
-    await page.getByRole('button', { name: 'Confirmar $3.300' }).click();
-    await expect(page.getByText('Venta registrada por $3.300')).toBeVisible();
+    await expect(page.getByText(/Recargo de cuotas/)).toHaveCount(0);
+    await page.getByRole('button', { name: 'Confirmar $3.000' }).click();
+    await expect(page.getByText('Venta registrada por $3.000')).toBeVisible();
 
     await page.goto('/ventas');
     await page.getByPlaceholder('Buscar por comprador o vendedor...').filter({ visible: true }).fill('Comprador crédito');
     const fila = page.getByRole('row').filter({ hasText: 'Comprador crédito' });
-    await expect(fila).toContainText('$3.300');
+    await expect(fila).toContainText('$3.000');
     await expect(fila).toContainText(`Crédito · ${tarjeta} · 3 cuotas`);
   });
 });

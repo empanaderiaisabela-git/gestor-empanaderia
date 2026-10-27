@@ -71,23 +71,24 @@ estaba, se muestra el motivo y también se recargan precios y stock, porque pued
 ## Crédito en cuotas (US-11)
 
 Al elegir **Crédito** en el modal de cobro aparecen "Tarjeta" (las activas de US-10) y "Cuotas" (los planes de esa
-tarjeta, con su recargo). El modal muestra "Recargo de cuotas: $X" y el total a cobrar con el recargo antes de
-confirmar. Débito, efectivo y transferencia no piden tarjeta.
+tarjeta, con su recargo). El total a cobrar es el precio original: el recargo lo cobra la emisora de la tarjeta
+(dev, 2026-10-27, BUG-20). Débito, efectivo y transferencia no piden tarjeta.
 
-- El recargo va **sólo sobre la parte pagada con crédito** (dev, 2026-10-25). Ej.: $10.000 con $4.000 en efectivo
-  y $6.000 con crédito al 10 % ⇒ recargo $600, total $10.600.
+- El recargo se calcula **sólo sobre la parte pagada con crédito** y queda guardado como dato. Ej.: $10.000 con
+  $4.000 en efectivo y $6.000 con crédito al 10 % ⇒ el pago guarda un recargo de $600, pero el total de la venta es
+  $10.000 y el pago con Visa, $6.000.
 - El navegador manda `cardId` e `installments` en el pago con crédito, nunca el % ni el monto del recargo.
   `checkout-payments.ts` lee la tarjeta en la transacción: inexistente o desactivada ⇒ `NOT_FOUND` ("tarjeta"); sin
   ese plan ⇒ `NOT_FOUND` ("plan de cuotas"). Calcula el recargo con el % guardado y lo guarda en el pago
   (`card_id`, `installments`, `surcharge_pct`, `surcharge_amount`).
-- Los pagos tienen que cubrir el total de los productos (con descuento); el **total de la venta** suma además el
-  recargo, porque es lo que pagó el cliente (decisión provisoria D-3).
+- Los pagos tienen que cubrir el total de los productos (con descuento), que es el **total de la venta**. El local
+  no ve el recargo: lo cobra la emisora de la tarjeta (dev, 2026-10-27, BUG-20; reemplaza la decisión provisoria D-3).
 - Un `CHECK` exige que la tarjeta, las cuotas y el recargo vayan juntos y sólo en crédito. Las ventas con crédito
   anteriores a US-11, sin tarjeta, siguen siendo válidas. El `CHECK` compara el medio como texto (`type::text`):
   Postgres no deja usar el valor `credito` del enum en la misma transacción en que se agregó, y una base nueva
   corre todas las migraciones juntas.
-- El comprobante muestra "Recargo de cuotas" y cada pago como "Crédito · Visa · 3 cuotas" por lo cobrado; el
-  historial, la misma etiqueta. Una tarjeta ya usada en un cobro no se puede borrar (FK sin cascada).
+- El comprobante muestra cada pago como "Crédito · Visa · 3 cuotas" por su monto, sin el recargo; el historial, la
+  misma etiqueta. Una tarjeta ya usada en un cobro no se puede borrar (FK sin cascada).
 
 ## Promos en el tablero (US-9)
 

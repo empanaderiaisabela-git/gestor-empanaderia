@@ -6,7 +6,7 @@ const form = (overrides: Partial<typeof BLANK_CHECKOUT>) => ({ ...BLANK_CHECKOUT
 
 describe('formulario de cobro (US-6 CA-1 y CA-5)', () => {
   it('arranca en efectivo por el total, sin descuento', () => {
-    expect(checkCheckout(18500, BLANK_CHECKOUT)).toEqual({ total: 18500, payments: [{ type: 'efectivo', amount: 18500 }], discount: { percentage: 0, amount: 0 }, surcharge: 0, charged: 18500, error: null });
+    expect(checkCheckout(18500, BLANK_CHECKOUT)).toEqual({ total: 18500, payments: [{ type: 'efectivo', amount: 18500 }], discount: { percentage: 0, amount: 0 }, error: null });
   });
 
   it('con dos medios, el segundo se lleva el resto', () => {
@@ -38,12 +38,12 @@ describe('formulario de cobro (US-6 CA-1 y CA-5)', () => {
     expect(checkCheckout(18500, value).error).toBe(error);
   });
 
-  it('crédito: pide la tarjeta y las cuotas, y suma el recargo sólo a la parte en crédito (US-11)', () => {
-    const visa = { id: 'v', name: 'Visa', isActive: true, version: 1, plans: [{ installments: 3, surchargePct: 10 }], createdAt: '', updatedAt: '' };
+  it('crédito: pide la tarjeta y las cuotas, y el recargo no suma al total porque lo cobra la tarjeta (BUG-20)', () => {
     const mixed = form({ methods: ['efectivo', 'credito'], split: '4000' });
-    expect(checkCheckout(10000, mixed, [visa]).error).toBe('Elegí la tarjeta y las cuotas');
-    const check = checkCheckout(10000, { ...mixed, cardId: 'v', installments: '3' }, [visa]);
-    expect(check).toMatchObject({ total: 10000, surcharge: 600, charged: 10600, error: null });
+    expect(checkCheckout(10000, mixed).error).toBe('Elegí la tarjeta y las cuotas');
+    const check = checkCheckout(10000, { ...mixed, cardId: 'v', installments: '3' });
+    expect(check).toEqual(expect.objectContaining({ total: 10000, error: null }));
+    expect(check).not.toHaveProperty('charged');
     expect(check.payments).toEqual([{ type: 'efectivo', amount: 4000 }, { type: 'credito', amount: 6000, cardId: 'v', installments: 3 }]);
   });
 

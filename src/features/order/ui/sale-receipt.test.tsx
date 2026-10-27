@@ -19,6 +19,13 @@ describe('comprobante de una venta (US-7 CA-2)', () => {
     expect(screen.queryByText('Descuento')).toBeNull();
   });
 
+  it('el pago con crédito figura por su monto, sin el recargo de la tarjeta (BUG-20)', () => {
+    const payments = [{ type: 'efectivo' as const, amount: 4000, cardName: null, installments: null, surchargeAmount: null }, { type: 'credito' as const, amount: 6000, cardName: 'Visa', installments: 3, surchargeAmount: 600 }];
+    render(<SaleReceipt sale={saleDef({ total: 10000, payments })} onClose={vi.fn()} />);
+    expect(screen.getByText('Crédito · Visa · 3 cuotas').nextSibling?.textContent).toBe('$6.000');
+    expect(screen.queryByText(/Recargo/)).toBeNull();
+  });
+
   it('muestra los descuentos en % y en $, y "Sin nombre" si no hay comprador', () => {
     render(<SaleReceipt sale={MORNING_SALE} onClose={vi.fn()} />);
     expect(screen.getByText('Sin nombre')).toBeDefined();

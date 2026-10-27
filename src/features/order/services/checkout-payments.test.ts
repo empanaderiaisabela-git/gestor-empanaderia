@@ -14,12 +14,12 @@ async function visa(): Promise<string> {
 describe('cobrar con crédito en cuotas (US-11 CA-1 y CA-2)', () => {
   beforeEach(() => loadMenu(fake));
 
-  it('el recargo va sólo sobre la parte en crédito y suma al total: $4.000 en efectivo + $6.000 al 10 % = $10.600', async () => {
+  it('el recargo de $600 queda guardado en el pago con crédito, pero el total de la venta es el precio original: $10.000 (BUG-20)', async () => {
     const cardId = await visa();
     const payments = [{ type: 'efectivo' as const, amount: 4000 }, { type: 'credito' as const, amount: 6000, cardId, installments: 3 }];
     const result = await service.checkout(CALLER, checkoutOf([cokes(4)], { payments }));
-    expect(result.total).toBe(10600);
-    expect(fake.sales[0]).toMatchObject({ total: 10600 });
+    expect(result.total).toBe(10000);
+    expect(fake.sales[0]).toMatchObject({ total: 10000 });
     expect(fake.sales[0].payments).toEqual([
       { type: 'efectivo', amount: 4000, cardId: null, installments: null, surchargePct: null, surchargeAmount: null },
       { type: 'credito', amount: 6000, cardId, installments: 3, surchargePct: 10, surchargeAmount: 600 },
@@ -35,7 +35,8 @@ describe('cobrar con crédito en cuotas (US-11 CA-1 y CA-2)', () => {
   it('el recargo lo calcula el servidor con el % guardado, aunque el plan haya cambiado', async () => {
     const cardId = await visa();
     await fake.cards.read.update({ id: cardId, version: 1 }, { plans: [{ installments: 3, surchargePct: 20 }] });
-    expect((await service.checkout(CALLER, checkoutOf([cokes(2)], { payments: [{ type: 'credito', amount: 5000, cardId, installments: 3 }] }))).total).toBe(6000);
+    expect((await service.checkout(CALLER, checkoutOf([cokes(2)], { payments: [{ type: 'credito', amount: 5000, cardId, installments: 3 }] }))).total).toBe(5000);
+    expect(fake.sales.at(-1)?.payments[0]).toMatchObject({ surchargePct: 20, surchargeAmount: 1000 });
   });
 
   it.each([

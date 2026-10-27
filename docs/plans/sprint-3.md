@@ -64,6 +64,29 @@ cambio de base.
 - **Si el dev responde otra cosa**: el margen interno se achica en las 12 páginas de `src/app/(main)/` (`p-6` a
   `p-4`). Es un cambio de clases, de nivel 1.
 
+### D-4 · La grilla de Alta deja de mostrar costo y precio (BUG-17 y US-17)
+
+- **Pregunta**: si el costo y el precio de venta se cargan sólo en Ingresar stock, ¿la grilla de Alta de productos
+  los sigue mostrando?
+- **Situación**: a 1280 px, con el nombre del gusto al 36 % del ancho, las columnas "Costo para el local", "Precio de
+  venta" y "Stock" quedan de 87 px y su título se parte en cuatro renglones. La grilla de Stock ya muestra los tres.
+- **Elegido**: en US-17, la grilla de Alta muestra grupo, gusto, stock y acciones. El costo y el precio se ven en
+  Stock, donde se cargan.
+- **Si el dev responde otra cosa**: se vuelven a agregar las dos columnas en `menu-item-columns.tsx` y se angosta el
+  gusto. Es un cambio de nivel 1.
+
+### D-5 · El recargo de las cuotas no se muestra al cobrar (BUG-20)
+
+- **Pregunta**: si el recargo de las cuotas lo cobra la tarjeta, ¿el cobro y el comprobante lo siguen mostrando como
+  dato para el cliente?
+- **Situación**: un pedido de $10.000 se paga con $4.000 en efectivo y $6.000 con Visa en 3 cuotas al 10 %. Antes, el
+  cobro decía "Recargo de cuotas: $600" y "Confirmar $10.600", y el comprobante sumaba el recargo.
+- **Elegido**: el cobro confirma $10.000 y el comprobante lista "Crédito · Visa · 3 cuotas" por $6.000, sin el
+  recargo. El % del plan se sigue viendo al elegir las cuotas, y el recargo queda guardado en el pago por si hace
+  falta después. Es lo que pidió el dev: el local ve sólo el precio original.
+- **Si el dev responde otra cosa**: se vuelve a mostrar "Recargo de la tarjeta: $600" como dato en
+  `credit-fields.tsx` y en `sale-receipt.tsx`, sin sumarlo al total. Es un cambio de nivel 1.
+
 ## Orden de ejecución
 
 | # | Ítem | Depende de | Rama |
@@ -81,6 +104,7 @@ cambio de base.
 | 10 | US-21 Estadísticas como el panel de referencia | US-20 | `feat/us-21-estadisticas-referencia` |
 | 11 | T-18 Cierre del Sprint 3 | todos | `docs/t-18-cierre-sprint-3` |
 | 12 | BUG-21 La carga inicial de datos falla si quedaron gastos (apareció en BUG-18) | US-14 | `fix/bug-21-seed-con-gastos` |
+| 13 | BUG-20 El recargo de cuotas se cuenta como plata del local (respuesta del dev a D-3 del Sprint 2) | US-11 | `fix/bug-20-recargo-de-la-tarjeta` |
 
 T-19 va primero porque define cuánto se prueba cada ítem que sigue. BUG-17, BUG-18, US-22 y US-20 no dependen de los
 demás: se pueden adelantar si un ítem queda bloqueado.

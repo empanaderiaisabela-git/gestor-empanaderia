@@ -11,13 +11,9 @@ const sumBy = <T>(rows: readonly T[], value: (row: T) => number): number => rows
 const zeroGroups = (): Record<MenuGroup, number> => ({ empanadas: 0, pizzas: 0, sanguches: 0, ciabattas: 0, coca_cola: 0, pepsi: 0 });
 const zeroPayments = (): Record<PaymentType, number> => ({ efectivo: 0, transferencia: 0, debito: 0, credito: 0 });
 
-function goodsOf(sale: StatsSale): number {
-  return amount(sale.total) - sumBy(sale.payments, (payment) => amount(payment.surchargeAmount));
-}
-
 function addShares(sale: StatsSale, shares: Shares): void {
   const subtotal = sumBy(sale.lines, (line) => amount(line.subtotal));
-  const factor = subtotal > 0 ? goodsOf(sale) / subtotal : 0;
+  const factor = subtotal > 0 ? amount(sale.total) / subtotal : 0;
   for (const line of sale.lines) {
     const share = amount(line.subtotal) * factor;
     if (line.group === null) shares.promos += share;
@@ -27,7 +23,7 @@ function addShares(sale: StatsSale, shares: Shares): void {
 
 function byPaymentOf(sales: readonly StatsSale[]): Record<PaymentType, number> {
   const totals = zeroPayments();
-  for (const payment of sales.flatMap((sale) => sale.payments)) totals[payment.type] += amount(payment.amount) + amount(payment.surchargeAmount);
+  for (const payment of sales.flatMap((sale) => sale.payments)) totals[payment.type] += amount(payment.amount);
   for (const type of PAYMENT_TYPES) totals[type] = round2(totals[type]);
   return totals;
 }

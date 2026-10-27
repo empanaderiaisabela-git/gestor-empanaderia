@@ -18,7 +18,7 @@ Muestra los números de una **jornada** del local, por defecto la de hoy, con un
 
 - **Ganancia en limpio**: lo facturado menos el costo para el local de lo vendido y las mermas de la jornada.
 - **Ventas registradas**: cuántas ventas hubo.
-- **Total facturado**: lo que pagaron los clientes, con el recargo de las cuotas.
+- **Total facturado**: lo que cobró el local por los productos. El recargo de las cuotas es de la tarjeta (BUG-20).
 - **Dinero generado por comida**: Empanadas, Pizzas, Sanguches, Ciabattas, Coca-Cola y Pepsi, cada cuadro con el color
   y el emoji de su grupo (US-15), y un cuadro aparte para las **Promos**.
 - **Facturado por medio de pago**: Efectivo, Transferencia, Débito y Crédito.
@@ -36,13 +36,13 @@ mejores vendedores (cliente, 2026-10-25).
 - **Dinero por comida**: cada línea suma en su grupo. El descuento de la venta se reparte entre las comidas en
   proporción a lo que pesa cada una (dev, 2026-10-25): la suma de los cuadros es lo cobrado por los productos. Las
   líneas de promo van al cuadro Promos. El recargo de las cuotas no es de ninguna comida.
-- **Ganancia en limpio** = total facturado (con recargo) − Σ unidades × costo congelado (también lo que usó cada
+- **Ganancia en limpio** = total facturado − Σ unidades × costo congelado (también lo que usó cada
   promo) − Σ mermas de la jornada × su costo. Ejemplo del cliente: comprada a $10 y vendida a $30 ⇒ $20.
-- **Por medio de pago**: cada pago suma su monto y, en crédito, su recargo.
+- **Por medio de pago**: cada pago suma su monto, sin el recargo de las cuotas (BUG-20).
 - **Turno** (`domain/shift.ts`): mañana de 7:00 a 16:59 y tarde de 17:00 a 6:59, en hora de Argentina (cliente,
   2026-10-25: el local abre de 11 a 16 y de 19 a 1, y el margen cubre lo que se cargue fuera de horario). Una venta
   de la 0:30 es de la tarde de la jornada anterior.
-- El importe de cada venta es lo que pagó el cliente, recargo incluido (decisión provisoria D-3).
+- El importe de cada venta es el precio original: el recargo de las cuotas lo cobra la tarjeta (BUG-20).
 - Montos redondeados a 2 decimales al final.
 
 ## Roles y permisos

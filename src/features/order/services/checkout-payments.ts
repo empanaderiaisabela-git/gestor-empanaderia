@@ -23,5 +23,3 @@ export async function chargePayments(scope: CheckoutScope, payments: readonly Re
   }
   return charged;
 }
-
-export const surchargeOf = (payments: readonly NewPayment[]): number => round2(payments.reduce((sum, payment) => sum + (payment.surchargeAmount ?? 0), 0));
