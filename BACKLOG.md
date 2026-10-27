@@ -2451,7 +2451,7 @@ decisiones provisorias D-1 y D-2, el orden y la trazabilidad de cada línea de `
 | 7   | [US-19](#us-19--ventas-muestra-sólo-gustos-con-stock)                  | Ventas muestra sólo gustos con stock                       | En revisión | US-17      | 40 min           |
 | 8   | [US-22](#us-22--ventas-quitar-de-a-uno-en-el-pedido)                   | Ventas: quitar de a uno en el pedido                       | En revisión | T-17       | 40 min           |
 | 9   | [US-20](#us-20--íconos-de-lucide-por-grupo-en-ventas-y-estadísticas)   | Íconos de lucide por grupo en Ventas y Estadísticas        | En revisión | T-17       | 2 h              |
-| 10  | [US-21](#us-21--estadísticas-como-el-panel-de-referencia)              | Estadísticas como el panel de referencia                   | Pendiente   | US-20      | 2 h              |
+| 10  | [US-21](#us-21--estadísticas-como-el-panel-de-referencia)              | Estadísticas como el panel de referencia                   | En revisión | US-20      | 2 h              |
 | 11  | [T-18](#t-18--cierre-del-sprint-3)                                     | Cierre del Sprint 3                                        | Pendiente   | todos      | 1 h              |
 | 12  | [BUG-21](#bug-21--la-carga-inicial-de-datos-falla-si-quedaron-gastos)   | La carga inicial de datos falla si quedaron gastos         | En revisión | US-14      | 15 min           |
 | 13  | [BUG-20](#bug-20--el-recargo-de-cuotas-se-cuenta-como-plata-del-local)   | El recargo de cuotas se cuenta como plata del local        | En revisión | US-11      | 1 h 30 min       |
@@ -2775,9 +2775,9 @@ nativos.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
-| Dueño        | —         |
-| Inicio       | —         |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-27 |
 | Tamaño       | M         |
 | Depende de   | US-20     |
 | Plan         | — (plan propio: `docs/plans/US-21-estadisticas-referencia.md`) |
@@ -2789,11 +2789,21 @@ un vistazo (`referencia-de-otro-sistema.png`).
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · Sin la descripción de la jornada ni "Dinero generado por comida"; comidas arriba en filas de 4, 3 y 2 (Empanadas, Pizzas, Sanguches, Ciabattas · Coca-Cola, Pepsi, Promos · Ventas registradas, Ganancia); debajo, los medios de pago · Estimación: 40 min · Completado: —
+- [x] **CA-1** · Sin la descripción de la jornada ni "Dinero generado por comida"; comidas arriba en filas de 4, 3 y 2 (Empanadas, Pizzas, Sanguches, Ciabattas · Coca-Cola, Pepsi, Promos · Ventas registradas, Ganancia); debajo, los medios de pago · Estimación: 40 min · Completado: 2026-10-27 04:18
 
-- [ ] **CA-2** · Comidas, Promos, Ventas registradas y Ganancia llevan borde de color y fondo neutro; "Ganancia" sin aclaración, borde verde e ícono de dinero; "Ventas registradas" borde azul e ícono de maletín; "Total facturado" ya no está · Estimación: 50 min · Completado: —
+- [x] **CA-2** · Comidas, Promos, Ventas registradas y Ganancia llevan borde de color y fondo neutro; "Ganancia" sin aclaración, borde verde e ícono de dinero; "Ventas registradas" borde azul e ícono de maletín; "Total facturado" ya no está · Estimación: 50 min · Completado: 2026-10-27 04:18
 
-- [ ] **CA-3** · Medios de pago con fondo de color (Transferencia amarillo, Crédito naranja, Efectivo verde, Débito azul), con contraste AA en claro y oscuro (test); tests de componente y E2E de Estadísticas en verde · Estimación: 30 min · Completado: —
+- [x] **CA-3** · Medios de pago con fondo de color (Transferencia amarillo, Crédito naranja, Efectivo verde, Débito azul), con contraste AA en claro y oscuro (test); tests de componente y E2E de Estadísticas en verde · Estimación: 30 min · Completado: 2026-10-27 04:18
+
+**Notas**
+
+- Hecho por un subagente (Sonnet) y revisado en la app a 1440 px: comidas arriba en filas de 4 y 3 (con Promos),
+  Ventas registradas y Ganancia en la tercera, y los medios de pago abajo con fondo de color. Comidas, Promos,
+  Ventas y Ganancia llevan borde de color, fondo neutro y el ícono en un cuadrito teñido. Salen la descripción de la
+  jornada, "Dinero generado por comida", "Total facturado" y la aclaración de la ganancia.
+- Colores nuevos en `src/app/group-colors.css` (acento por grupo) y `src/app/stat-colors.css`, en claro y oscuro,
+  con test de contraste (`stat-colors-contrast.test.ts`: texto AA y bordes 3:1).
+- Nivel 2: lint, typecheck, `test:coverage` (884 tests) y E2E de estadísticas y tablero en verde.
 
 ### T-18 · Cierre del Sprint 3
 

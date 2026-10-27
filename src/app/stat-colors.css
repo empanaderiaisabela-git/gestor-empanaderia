@@ -1,0 +1,44 @@
+@theme {
+  --color-stat-promos: #fef3c7;
+  --color-stat-promos-accent: #b45309;
+  --color-stat-promos-dark: #3b2a0a;
+  --color-stat-promos-dark-accent: #fbbf24;
+
+  --color-stat-profit: #dcfce7;
+  --color-stat-profit-accent: #15803d;
+  --color-stat-profit-dark: #14301f;
+  --color-stat-profit-dark-accent: #4ade80;
+
+  --color-stat-sales: #dbeafe;
+  --color-stat-sales-accent: #1d4ed8;
+  --color-stat-sales-dark: #172554;
+  --color-stat-sales-dark-accent: #60a5fa;
+
+  --color-pay-transferencia: #fef08a;
+  --color-pay-transferencia-accent: #a16207;
+  --color-pay-transferencia-ink: #422006;
+  --color-pay-transferencia-dark: #422006;
+  --color-pay-transferencia-dark-accent: #ca8a04;
+  --color-pay-transferencia-dark-ink: #fde047;
+
+  --color-pay-credito: #fed7aa;
+  --color-pay-credito-accent: #c2410c;
+  --color-pay-credito-ink: #431407;
+  --color-pay-credito-dark: #431407;
+  --color-pay-credito-dark-accent: #ea580c;
+  --color-pay-credito-dark-ink: #fdba74;
+
+  --color-pay-efectivo: #bbf7d0;
+  --color-pay-efectivo-accent: #15803d;
+  --color-pay-efectivo-ink: #052e16;
+  --color-pay-efectivo-dark: #052e16;
+  --color-pay-efectivo-dark-accent: #16a34a;
+  --color-pay-efectivo-dark-ink: #86efac;
+
+  --color-pay-debito: #bfdbfe;
+  --color-pay-debito-accent: #1d4ed8;
+  --color-pay-debito-ink: #172554;
+  --color-pay-debito-dark: #172554;
+  --color-pay-debito-dark-accent: #3b82f6;
+  --color-pay-debito-dark-ink: #93c5fd;
+}
