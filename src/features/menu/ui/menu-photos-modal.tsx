@@ -24,7 +24,7 @@ export function MenuPhotosModal({ item, onClose }: MenuPhotosModalProps): JSX.El
         <input type='file' accept='image/jpeg,image/png,image/webp' className='sr-only' onChange={pick} disabled={pending} aria-label='Agregar foto' />
       </label>
       {photos.length === 0 ? (
-        <p className='mt-4 text-sm text-zinc-500'>Todavía no tiene fotos.</p>
+        <p className='mt-4 text-sm text-zinc-700 dark:text-zinc-200'>Todavía no tiene fotos.</p>
       ) : (
         <ul aria-label='Fotos del producto' className='mt-4 grid grid-cols-2 sm:grid-cols-3 gap-3'>
           {photos.map((photo) => (

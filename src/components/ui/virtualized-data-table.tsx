@@ -34,7 +34,7 @@ const VirtuosoTableHead = React.forwardRef<HTMLTableSectionElement, any>((props,
   <thead
     {...props}
     ref={ref}
-    className='sticky top-0 z-10 text-sm uppercase bg-zinc-50/95 dark:bg-zinc-800/95 backdrop-blur-sm text-zinc-500 dark:text-zinc-400 shadow-sm'
+    className='sticky top-0 z-10 text-sm uppercase bg-zinc-50/95 dark:bg-zinc-800/95 backdrop-blur-sm text-zinc-800 dark:text-zinc-100 shadow-sm'
   />
 ));
 VirtuosoTableHead.displayName = 'VirtuosoTableHead';
@@ -53,7 +53,7 @@ const VirtuosoComponents: TableComponents<any> = {
   Table: (props) => (
     <table
       {...props}
-      className='w-full text-[17px] text-left text-zinc-600 dark:text-zinc-400 border-separate border-spacing-0 table-fixed'
+      className='w-full text-[17px] text-left text-zinc-800 dark:text-zinc-200 border-separate border-spacing-0 table-fixed'
     />
   ),
   TableHead: VirtuosoTableHead,

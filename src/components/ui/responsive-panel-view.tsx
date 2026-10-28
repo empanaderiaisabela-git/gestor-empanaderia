@@ -67,7 +67,7 @@ export function ResponsivePanelView<T extends { id: string | number }>({
       {/* Mobile/tablet: virtualized card list — hidden at xl+ */}
       <div className='flex flex-col flex-1 overflow-hidden xl:hidden'>
         {data.length === 0 && !isLoading ? (
-          <div className='flex flex-1 items-center justify-center py-20 text-zinc-400 text-sm font-medium text-center opacity-60'>
+          <div className='flex flex-1 items-center justify-center py-20 text-zinc-600 dark:text-zinc-300 text-sm font-medium text-center opacity-60'>
             {emptyMessage}
           </div>
         ) : (

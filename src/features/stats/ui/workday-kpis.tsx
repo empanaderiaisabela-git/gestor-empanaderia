@@ -9,7 +9,7 @@ import { KpiCard } from './kpi-card';
 const FOUR = 'grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4';
 const THREE = 'grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4';
 const TWO = 'grid grid-cols-1 sm:grid-cols-2 gap-4';
-const title = 'text-sm font-bold uppercase tracking-wider text-zinc-600 dark:text-zinc-400';
+const title = 'text-base font-bold uppercase tracking-wider text-zinc-800 dark:text-zinc-200';
 
 export function GroupKpis({ stats }: { stats: WorkdayStats }): JSX.Element {
   const card = (group: (typeof MENU_GROUPS)[number]): JSX.Element => {

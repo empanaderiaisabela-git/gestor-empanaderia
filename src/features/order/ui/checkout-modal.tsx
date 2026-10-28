@@ -56,14 +56,14 @@ export function CheckoutModal({ model, board }: CheckoutModalProps): JSX.Element
     <ResponsiveModal isOpen={model.isOpen} onClose={model.close} title='Cobrar pedido' icon={<Wallet className='w-5 h-5 text-brand-600' />} width='sm' onSubmit={submit} submitLabel={`Confirmar ${formatMoney(check.total)}`} isPending={pending}>
       <ErrorAlert error={error} />
       <div className='space-y-4'>
-        <p className='text-sm text-zinc-500'>
+        <p className='text-sm text-zinc-700 dark:text-zinc-200'>
           Comprador: {buyerName.trim() || 'Sin nombre'} · Subtotal {formatMoney(subtotal)}
         </p>
         <DiscountFields form={form} onChange={setForm} />
         <PaymentPicker form={form} total={check.total} cards={cards} onChange={setForm} />
         <p className='text-right'>
-          <span className='block text-xs font-bold uppercase text-zinc-500'>Total a cobrar</span>
-          <span className='text-2xl font-black text-zinc-900 dark:text-zinc-100'>{formatMoney(check.total)}</span>
+          <span className='block text-xs font-bold uppercase text-zinc-700 dark:text-zinc-200'>Total a cobrar</span>
+          <span className='text-2xl font-black text-zinc-900 dark:text-zinc-50'>{formatMoney(check.total)}</span>
         </p>
       </div>
     </ResponsiveModal>

@@ -44,7 +44,7 @@ export default function MainLayout({ children }: { children: ReactNode }) {
         <BrandLogo />
         <button
           onClick={() => setIsMobileMenuOpen(false)}
-          className='xl:hidden p-2 text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100'
+          className='xl:hidden p-2 text-zinc-700 dark:text-zinc-200 hover:text-zinc-900 dark:hover:text-zinc-100'
         >
           <X className='w-6 h-6' />
         </button>
@@ -59,7 +59,7 @@ export default function MainLayout({ children }: { children: ReactNode }) {
       <div className='p-4 border-t border-zinc-200 dark:border-zinc-800 shrink-0'>
         <button
           onClick={() => setShowLogoutModal(true)}
-          className='w-full flex items-center justify-between px-3 py-2 text-zinc-600 hover:text-red-500 hover:bg-red-50 dark:text-zinc-400 dark:hover:bg-red-500/10 transition-colors rounded-lg group'
+          className='w-full flex items-center justify-between px-3 py-2 text-zinc-800 hover:text-red-500 hover:bg-red-50 dark:text-zinc-200 dark:hover:bg-red-500/10 transition-colors rounded-lg group'
         >
           <div className='flex flex-col text-left'>
             <span className='text-md font-medium group-hover:text-red-600 dark:group-hover:text-red-400'>Cerrar sesión</span>
@@ -113,7 +113,7 @@ export default function MainLayout({ children }: { children: ReactNode }) {
         <header className='shrink-0 h-16 flex items-center justify-between px-4 lg:px-8 transition-colors bg-transparent border-none no-print xl:absolute xl:top-0 xl:right-0 xl:z-10 xl:h-auto xl:p-1'>
           <button
             onClick={() => setIsMobileMenuOpen(true)}
-            className='xl:hidden p-2 -ml-2 text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-100'
+            className='xl:hidden p-2 -ml-2 text-zinc-700 hover:text-zinc-700 dark:text-zinc-200 dark:hover:text-zinc-100'
           >
             <Menu className='w-6 h-6' />
           </button>
@@ -122,7 +122,7 @@ export default function MainLayout({ children }: { children: ReactNode }) {
             {mounted && (
               <button
                 onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
-                className='p-2 xl:p-1 text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 bg-zinc-100 dark:bg-zinc-800 rounded-full transition-colors'
+                className='p-2 xl:p-1 text-zinc-700 hover:text-zinc-900 dark:text-zinc-200 dark:hover:text-zinc-100 bg-zinc-100 dark:bg-zinc-800 rounded-full transition-colors'
                 aria-label='Alternar tema'
               >
                 {resolvedTheme === 'dark' ? <Sun className='w-5 h-5' /> : <Moon className='w-5 h-5' />}
@@ -154,13 +154,13 @@ export default function MainLayout({ children }: { children: ReactNode }) {
                 <div className='p-2 bg-amber-100 dark:bg-amber-500/10 rounded-full mr-3'>
                   <ShieldAlert className='w-6 h-6' />
                 </div>
-                <h3 className='text-lg font-bold text-zinc-900 dark:text-zinc-100'>Cerrar sesión</h3>
+                <h3 className='text-lg font-bold text-zinc-900 dark:text-zinc-50'>Cerrar sesión</h3>
               </div>
-              <p className='text-zinc-500 dark:text-zinc-400 text-md mb-6'>¿Estás seguro de que deseas salir del panel de control? Tendrás que volver a ingresar tus credenciales.</p>
+              <p className='text-zinc-700 dark:text-zinc-200 text-md mb-6'>¿Estás seguro de que deseas salir del panel de control? Tendrás que volver a ingresar tus credenciales.</p>
               <div className='flex justify-end gap-3'>
                 <button
                   onClick={() => setShowLogoutModal(false)}
-                  className='px-4 py-2 bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 rounded-lg transition-colors'
+                  className='px-4 py-2 bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-900 dark:text-zinc-100 rounded-lg transition-colors'
                 >
                   Cancelar
                 </button>

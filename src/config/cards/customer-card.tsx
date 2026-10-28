@@ -15,18 +15,18 @@ export function renderCustomerCard(actions: CustomerCardActionsProps) {
       title={customer.name}
       subtitle={customer.email}
       badges={
-        <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${customer.isActive ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' : 'bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400'}`}>
+        <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${customer.isActive ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' : 'bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-200'}`}>
           {customer.isActive ? 'Activo' : 'Inactivo'}
         </span>
       }
       details={
         <div className='flex flex-col gap-1 mt-1'>
           <div className='flex justify-between'>
-            <span className='text-xs text-zinc-400'>Teléfono</span>
+            <span className='text-xs text-zinc-600 dark:text-zinc-300'>Teléfono</span>
             <span>{customer.phone || '--'}</span>
           </div>
           <div className='flex justify-between'>
-            <span className='text-xs text-zinc-400'>DNI</span>
+            <span className='text-xs text-zinc-600 dark:text-zinc-300'>DNI</span>
             <span>{customer.documentNumber || '--'}</span>
           </div>
         </div>

@@ -22,7 +22,7 @@ const getActionColor = (action: string) => {
     case 'LOGIN':
       return 'bg-blue-100 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400 border-blue-200 dark:border-blue-500/20';
     default:
-      return 'bg-zinc-100 text-zinc-700 dark:bg-zinc-500/10 dark:text-zinc-400 border-zinc-200 dark:border-zinc-800';
+      return 'bg-zinc-100 text-zinc-900 dark:bg-zinc-500/10 dark:text-zinc-200 border-zinc-200 dark:border-zinc-800';
   }
 };
 
@@ -36,7 +36,7 @@ export function getAuditColumns({ onView }: ColumnActions): ColumnDef<AuditLogDe
         const timeString = date.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
 
         return (
-          <div className='font-bold text-zinc-900 dark:text-zinc-100 whitespace-nowrap truncate'>
+          <div className='font-bold text-zinc-900 dark:text-zinc-50 whitespace-nowrap truncate'>
             {dateString}
             <span
               title={timeString}
@@ -50,7 +50,7 @@ export function getAuditColumns({ onView }: ColumnActions): ColumnDef<AuditLogDe
     },
     {
       header: 'Operador',
-      cellClassName: 'font-bold text-zinc-700 dark:text-zinc-300 uppercase text-[15px] max-w-[120px] truncate',
+      cellClassName: 'font-bold text-zinc-900 dark:text-zinc-100 uppercase text-[15px] max-w-[120px] truncate',
       cell: (log) => <span title={log.user?.username || 'SISTEMA'}>{log.user?.username || 'SISTEMA'}</span>,
     },
     {
@@ -67,7 +67,7 @@ export function getAuditColumns({ onView }: ColumnActions): ColumnDef<AuditLogDe
     },
     {
       header: 'Entidad',
-      cellClassName: 'font-black uppercase text-zinc-400 tracking-widest text-[14px] max-w-[100px] truncate',
+      cellClassName: 'font-black uppercase text-zinc-600 dark:text-zinc-300 tracking-widest text-[14px] max-w-[100px] truncate',
       cell: (log) => (
         <span title={log.entity}>
           {entityLabel(log.entity)}

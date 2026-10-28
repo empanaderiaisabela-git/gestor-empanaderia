@@ -14,9 +14,9 @@ export type PromotionRowActions = {
 
 function NameCell({ promotion }: { promotion: PromotionDef }): JSX.Element {
   return (
-    <div className='flex items-center gap-2 font-bold text-zinc-900 dark:text-zinc-100 truncate min-w-0' title={promotion.name}>
+    <div className='flex items-center gap-2 font-bold text-zinc-900 dark:text-zinc-50 truncate min-w-0' title={promotion.name}>
       <span className='truncate'>{promotion.name}</span>
-      {!promotion.isActive && <span className='shrink-0 px-1.5 py-0.5 bg-zinc-100 text-zinc-500 dark:bg-zinc-800 text-[10px] font-bold rounded uppercase'>Inactiva</span>}
+      {!promotion.isActive && <span className='shrink-0 px-1.5 py-0.5 bg-zinc-100 text-zinc-700 dark:text-zinc-200 dark:bg-zinc-800 text-[10px] font-bold rounded uppercase'>Inactiva</span>}
     </div>
   );
 }
@@ -41,8 +41,8 @@ export function PromotionRowButtons({ promotion, actions }: { promotion: Promoti
 export function getPromotionColumns(actions: PromotionRowActions): ColumnDef<PromotionDef>[] {
   return [
     { header: 'Promoción', cellClassName: 'max-w-[220px]', cell: (promotion) => <NameCell promotion={promotion} /> },
-    { header: 'Contenido', cellClassName: 'text-zinc-600 dark:text-zinc-300 text-sm', cell: (promotion) => describeComponents(promotion.components) },
-    { header: SALE_PRICE_TERM, cellClassName: 'font-bold text-zinc-900 dark:text-zinc-100', cell: (promotion) => formatMoney(promotion.price) },
+    { header: 'Contenido', cellClassName: 'text-zinc-800 dark:text-zinc-100 text-sm', cell: (promotion) => describeComponents(promotion.components) },
+    { header: SALE_PRICE_TERM, cellClassName: 'font-bold text-zinc-900 dark:text-zinc-50', cell: (promotion) => formatMoney(promotion.price) },
     { header: 'Acciones', headerClassName: 'text-right', cellClassName: 'flex gap-1 justify-end', cell: (promotion) => <PromotionRowButtons promotion={promotion} actions={actions} /> },
   ];
 }

@@ -11,12 +11,12 @@ const cell = 'py-2 pr-3';
 function StatsTable({ title, headers, empty, children }: TableProps): JSX.Element {
   return (
     <section className='rounded-2xl border border-zinc-200 dark:border-zinc-800 p-4 space-y-2'>
-      <h2 className='text-sm font-bold uppercase tracking-wider text-zinc-600 dark:text-zinc-400'>{title}</h2>
+      <h2 className='text-base font-bold uppercase tracking-wider text-zinc-800 dark:text-zinc-200'>{title}</h2>
       {children.length === 0 ? (
-        <p className='text-sm text-zinc-500'>{empty}</p>
+        <p className='text-sm text-zinc-700 dark:text-zinc-200'>{empty}</p>
       ) : (
         <table aria-label={title} className='w-full text-left text-sm'>
-          <thead className='text-xs uppercase text-zinc-500'>
+          <thead className='text-xs uppercase text-zinc-700 dark:text-zinc-200'>
             <tr>
               {headers.map((header, index) => (
                 <th key={header} className={`${cell} ${index === headers.length - 1 ? 'text-right' : ''}`}>

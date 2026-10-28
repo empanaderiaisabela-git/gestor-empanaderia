@@ -6,7 +6,7 @@ import type { MenuItemDef } from '@/features/menu/domain/menu-item.schema';
 import type { MenuItemRowActions } from './menu-item-columns';
 
 function Details({ item }: { item: MenuItemDef }): JSX.Element {
-  return <p className='mt-1 text-sm text-zinc-500'>Stock {item.stock.toLocaleString('es-AR')}</p>;
+  return <p className='mt-1 text-sm text-zinc-700 dark:text-zinc-200'>Stock {item.stock.toLocaleString('es-AR')}</p>;
 }
 
 function CardButtons({ item, actions }: { item: MenuItemDef; actions: MenuItemRowActions }): JSX.Element {

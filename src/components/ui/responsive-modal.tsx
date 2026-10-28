@@ -89,9 +89,9 @@ export function ConfirmModal({ isOpen, onClose, onConfirm, title, description, s
           <div className='p-2 bg-red-100 dark:bg-red-500/10 rounded-full mr-3'>
             <Trash2 className='w-6 h-6' />
           </div>
-          <h3 className='text-lg font-bold text-zinc-900 dark:text-zinc-100'>{title}</h3>
+          <h3 className='text-xl font-bold text-zinc-900 dark:text-zinc-50'>{title}</h3>
         </div>
-        <p className='text-zinc-500 dark:text-zinc-400 text-sm mb-6'>{description}</p>
+        <p className='text-zinc-700 dark:text-zinc-200 text-sm mb-6'>{description}</p>
         <div className='flex justify-end gap-3'>
           <button
             onClick={onClose}

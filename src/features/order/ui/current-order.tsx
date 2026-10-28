@@ -19,13 +19,13 @@ export function CurrentOrder({ board, onCheckout }: CurrentOrderProps): JSX.Elem
   return (
     <section aria-label='Pedido actual' className='rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 space-y-3'>
       <div className='flex flex-wrap items-center justify-between gap-3'>
-        <h2 className='text-lg font-bold text-zinc-900 dark:text-zinc-100'>Pedido actual</h2>
+        <h2 className='text-xl font-bold text-zinc-900 dark:text-zinc-50'>Pedido actual</h2>
         <p className='text-right'>
-          <span className='block text-xs font-bold uppercase text-zinc-500'>Total pedido</span>
-          <span className='text-2xl font-black text-zinc-900 dark:text-zinc-100'>{formatMoney(total ?? 0)}</span>
+          <span className='block text-xs font-bold uppercase text-zinc-700 dark:text-zinc-200'>Total pedido</span>
+          <span className='text-2xl font-black text-zinc-900 dark:text-zinc-50'>{formatMoney(total ?? 0)}</span>
         </p>
       </div>
-      <label className='block text-sm text-zinc-700 dark:text-zinc-300'>
+      <label className='block text-sm text-zinc-900 dark:text-zinc-100'>
         Comprador (opcional)
         <input value={buyerName} maxLength={60} onChange={(event) => setBuyerName(event.target.value)} placeholder='Sin nombre' className='mt-1 w-full px-3 py-2 border rounded-lg border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-950' />
       </label>

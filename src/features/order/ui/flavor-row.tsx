@@ -32,8 +32,8 @@ export function FlavorRow({ line, lines, item, board, inPromo = false, onAdd }: 
   return (
     <li className='flex items-center justify-between gap-3 py-2 border-b border-zinc-100 dark:border-zinc-800'>
       <div>
-        <p className='font-semibold text-zinc-900 dark:text-zinc-100'>{item.name}</p>
-        <p className='text-xs text-zinc-500'>
+        <p className='font-semibold text-zinc-900 dark:text-zinc-50'>{item.name}</p>
+        <p className='text-xs text-zinc-700 dark:text-zinc-200'>
           {priceLabel(price, inPromo)} · stock {available.toLocaleString('es-AR')}
         </p>
       </div>

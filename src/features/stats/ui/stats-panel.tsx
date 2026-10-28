@@ -13,7 +13,7 @@ import { SalesTable, VendorsTable } from './workday-tables';
 function StatsToolbar({ model }: { model: StatsModel }): JSX.Element {
   return (
     <div className='flex flex-wrap items-end gap-3'>
-      <label className='text-sm font-medium text-zinc-700 dark:text-zinc-300'>
+      <label className='text-sm font-medium text-zinc-900 dark:text-zinc-100'>
         Jornada
         <input type='date' value={model.day} onChange={(event) => event.target.value && model.setDay(event.target.value)} className={inputClass(false)} />
       </label>
@@ -30,7 +30,7 @@ function StatsBody({ model }: { model: StatsModel }): JSX.Element {
   const { stats } = model;
   return (
     <div className='space-y-8'>
-      {stats.salesCount === 0 && <p className='text-sm font-semibold text-zinc-600 dark:text-zinc-400'>No hubo ventas en esta jornada.</p>}
+      {stats.salesCount === 0 && <p className='text-sm font-semibold text-zinc-800 dark:text-zinc-200'>No hubo ventas en esta jornada.</p>}
       <GroupKpis stats={stats} />
       <SummaryKpis stats={stats} />
       <PaymentKpis stats={stats} />

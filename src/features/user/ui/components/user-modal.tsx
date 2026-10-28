@@ -75,7 +75,7 @@ export function UserModal({ isOpen, onClose, editingItem, onSubmit, isPending, s
         <ErrorAlert error={serverError} />
 
         <div>
-          <label className='block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5'>Nombre de Usuario</label>
+          <label className='block text-sm font-medium text-zinc-900 dark:text-zinc-100 mb-1.5'>Nombre de Usuario</label>
           <input
             type='text'
             {...register('username')}
@@ -86,9 +86,9 @@ export function UserModal({ isOpen, onClose, editingItem, onSubmit, isPending, s
         </div>
 
         <div>
-          <label className='block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5'>
+          <label className='block text-sm font-medium text-zinc-900 dark:text-zinc-100 mb-1.5'>
             Contraseña de Ingreso
-            {editingItem && <span className='text-zinc-500 font-normal'> (Dejar en blanco para no cambiar)</span>}
+            {editingItem && <span className='text-zinc-700 dark:text-zinc-200 font-normal'> (Dejar en blanco para no cambiar)</span>}
           </label>
           <input
             type='password'
@@ -100,7 +100,7 @@ export function UserModal({ isOpen, onClose, editingItem, onSubmit, isPending, s
         </div>
 
         <div>
-          <label className='block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5'>Nivel de Autoridad</label>
+          <label className='block text-sm font-medium text-zinc-900 dark:text-zinc-100 mb-1.5'>Nivel de Autoridad</label>
           <select
             {...register('role')}
             className={`w-full px-4 py-2 text-sm sm:text-base placeholder:text-[11px] sm:placeholder:text-sm border rounded-lg focus:outline-none focus:border-brand-500 bg-zinc-50 dark:bg-zinc-950 dark:text-zinc-100 transition-colors ${errors.role ? 'border-red-500' : 'border-zinc-300 dark:border-zinc-700'}`}

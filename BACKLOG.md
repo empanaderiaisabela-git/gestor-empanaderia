@@ -3115,7 +3115,7 @@ las decisiones provisorias D-1 a D-11, el orden y la trazabilidad de cada punto 
 | --- | ------------------------------------------------------------------------------- | ------------------------------------------------------- | ----------- | ---------- | --------------- |
 | 0   | [T-21](#t-21--backlog-del-sprint-4-desde-el-pedido-del-cliente)                 | Backlog del Sprint 4 desde el pedido del cliente        | En revisión | T-18       | 30 min          |
 | 1   | [US-26](#us-26--clientes-sólo-el-nombre-es-obligatorio)                         | Clientes: sólo el nombre es obligatorio                 | En revisión | T-21       | 1 h             |
-| 2   | [US-30](#us-30--títulos-más-grandes-y-letras-con-más-contraste)                 | Títulos más grandes y letras con más contraste          | Pendiente   | T-21       | 1 h 30 min      |
+| 2   | [US-30](#us-30--títulos-más-grandes-y-letras-con-más-contraste)                 | Títulos más grandes y letras con más contraste          | En revisión | T-21       | 1 h 30 min      |
 | 3   | [US-27](#us-27--gastos-el-proveedor-de-la-factura)                              | Gastos: el proveedor de la factura                      | Pendiente   | T-21       | 1 h 30 min      |
 | 4   | [US-28](#us-28--todos-los-precios-en-stock)                                     | Todos los precios en Stock                              | Pendiente   | T-21       | 3 h             |
 | 5   | [US-29](#us-29--prepizzas-y-panes-de-ciabatta)                                  | Prepizzas y panes de ciabatta                           | Pendiente   | US-28      | 5 h 30 min      |
@@ -3188,12 +3188,12 @@ teléfono, correo ni DNI.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
-| Dueño        | —         |
-| Inicio       | —         |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-28 |
 | Tamaño       | M         |
 | Depende de   | T-21      |
-| Plan         | —         |
+| Plan         | [`docs/plans/sprint-4.md`](docs/plans/sprint-4.md#2--us-30-títulos-y-contraste-m-1-h-30-min) |
 | Merge        | —         |
 | Horas reales | —         |
 
@@ -3202,17 +3202,27 @@ información principal sin esfuerzo, con el tema claro o con el oscuro.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · El título de cada página (`PageHeader`) pasa de `text-3xl` a `text-4xl` y los títulos de sección suben un escalón · Estimación: 10 min · Completado: —
+- [x] **CA-1** · El título de cada página (`PageHeader`) pasa de `text-3xl` a `text-4xl` y los títulos de sección suben un escalón · Estimación: 10 min · Completado: 2026-10-28 15:01
 
-- [ ] **CA-2** · En el panel de gestión, los grises del texto (también los encabezados de tabla) suben un escalón de contraste: en modo claro, más oscuros; en modo oscuro, más claros. El texto secundario queda en ≥ 7:1 sobre su fondo en los dos temas. El catálogo público no cambia · Estimación: 1 h · Completado: —
+- [x] **CA-2** · En el panel de gestión, los grises del texto (también los encabezados de tabla) suben un escalón de contraste: en modo claro, más oscuros; en modo oscuro, más claros. El texto secundario queda en ≥ 7:1 sobre su fondo en los dos temas. El catálogo público no cambia · Estimación: 1 h · Completado: 2026-10-28 15:01
 
-- [ ] **CA-3** · Capturas de Ventas, Stock y Estadísticas en los dos temas; los E2E siguen en verde · Estimación: 20 min · Completado: —
+- [x] **CA-3** · Capturas de Ventas, Stock y Estadísticas en los dos temas; los E2E siguen en verde · Estimación: 20 min · Completado: 2026-10-28 15:01
 
 **Notas**
 
 - Nivel 1 (estilo), aunque toca unos 50 componentes: los colores del texto son clases `text-zinc-*` sueltas, no un
   token (D-7 del plan del sprint).
 - El cliente vio la demo en modo claro. El pedido es más contraste en los dos temas, no letras oscuras siempre.
+- Reemplazo con un script sobre 60 archivos del panel: en claro, cada gris de texto sube dos tonos (`zinc-500` →
+  `zinc-700`); en oscuro, baja dos (`zinc-400` → `zinc-200`). Donde una clase tenía un solo gris para los dos temas,
+  se le agregó su par oscuro, porque si no el texto oscurecido quedaba ilegible en modo oscuro. Quedan fuera el
+  catálogo público (`src/app/home/`, `src/app/product/`, la barra de búsqueda y el selector de tema que comparte) y el
+  comprobante, que siempre es blanco porque se imprime.
+- Títulos: página `text-4xl`; secciones de Estadísticas `text-base`; "Pedido actual", Auditoría y los diálogos
+  `text-xl`. Encabezados de tabla `zinc-800` en claro y `zinc-100` en oscuro.
+- Medición en el navegador (sin las transiciones de color), en Stock, Estadísticas y Nueva venta: ningún texto del
+  panel queda por debajo de 7:1 en ninguno de los dos temas. El subtítulo de la página pasó de 4,8:1 a 10,4:1 en
+  claro. Tests relacionados (141) y los 66 E2E en verde.
 
 ### US-27 · Gastos: el proveedor de la factura
 

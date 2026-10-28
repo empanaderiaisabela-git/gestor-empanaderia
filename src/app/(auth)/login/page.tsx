@@ -45,8 +45,8 @@ export default function LoginPage() {
             showName={false}
           />
         </div>
-        <h2 className='text-2xl font-bold text-zinc-900 dark:text-zinc-100'>Bienvenido a {BRAND.name}</h2>
-        <p className='text-zinc-500 dark:text-zinc-400 text-sm mt-1 text-center'>Inicia sesión para acceder a tu sistema de gestión.</p>
+        <h2 className='text-2xl font-bold text-zinc-900 dark:text-zinc-50'>Bienvenido a {BRAND.name}</h2>
+        <p className='text-zinc-700 dark:text-zinc-200 text-sm mt-1 text-center'>Inicia sesión para acceder a tu sistema de gestión.</p>
       </div>
 
       <form
@@ -59,7 +59,7 @@ export default function LoginPage() {
         <div>
           <label
             htmlFor='username'
-            className='block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1'
+            className='block text-sm font-medium text-zinc-900 dark:text-zinc-100 mb-1'
           >
             Usuario
           </label>
@@ -77,7 +77,7 @@ export default function LoginPage() {
         <div>
           <label
             htmlFor='password'
-            className='block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1'
+            className='block text-sm font-medium text-zinc-900 dark:text-zinc-100 mb-1'
           >
             Contraseña
           </label>

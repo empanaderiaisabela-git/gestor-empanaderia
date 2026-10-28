@@ -42,7 +42,7 @@ export function PanelToolbar({
     <div className='flex flex-col gap-3 mb-6 shrink-0 relative z-30' ref={filterRef}>
       {/* Row 1: Search Input (hidden on xl) */}
       <div className='relative w-full xl:hidden'>
-        <Search className='absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400 pointer-events-none' />
+        <Search className='absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-600 dark:text-zinc-300 pointer-events-none' />
         <input
           type='text'
           value={search}
@@ -66,7 +66,7 @@ export function PanelToolbar({
         <div className='flex items-center gap-2 flex-1'>
           {/* Inline Search for XL screens */}
           <div className='hidden xl:block relative flex-1'>
-            <Search className='absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400 pointer-events-none' />
+            <Search className='absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-600 dark:text-zinc-300 pointer-events-none' />
             <input
               type='text'
               value={search}
@@ -85,7 +85,7 @@ export function PanelToolbar({
                 className={`xl:hidden flex items-center justify-center gap-2 px-4 h-11 border rounded-lg text-sm font-bold transition-colors flex-1 sm:flex-none ${
                   showFilters 
                     ? 'bg-brand-50 border-brand-200 text-brand-700 dark:bg-brand-500/20 dark:border-brand-500/30 dark:text-brand-300' 
-                    : 'bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800'
+                    : 'bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-200 hover:bg-zinc-50 dark:hover:bg-zinc-800'
                 }`}
               >
                 <Filter className='w-4 h-4 shrink-0' />
@@ -124,7 +124,7 @@ export function PanelToolbar({
             <div className='flex items-center justify-between mb-4 px-2'>
               <div className='flex items-center gap-2'>
                 <Filter className='w-4 h-4 text-brand-500' />
-                <span className='text-sm font-bold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider'>Filtros</span>
+                <span className='text-sm font-bold text-zinc-900 dark:text-zinc-100 uppercase tracking-wider'>Filtros</span>
               </div>
               <button
                 onClick={() => setShowFilters(false)}

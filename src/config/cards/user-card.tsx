@@ -17,7 +17,7 @@ const roleLabel: Record<string, string> = {
 
 const roleColors: Record<string, string> = {
   admin: 'bg-brand-100 text-brand-700 dark:bg-brand-500/20 dark:text-brand-400',
-  vendedor: 'bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400',
+  vendedor: 'bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-200',
 };
 
 export function renderUserCard(actions: UserCardActionsProps) {
@@ -30,7 +30,7 @@ export function renderUserCard(actions: UserCardActionsProps) {
           <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold uppercase ${roleColors[user.role] ?? roleColors.vendedor}`}>
             {roleLabel[user.role] ?? user.role}
           </span>
-          <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${user.isActive ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' : 'bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400'}`}>
+          <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${user.isActive ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' : 'bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-200'}`}>
             {user.isActive ? 'Activo' : 'Inactivo'}
           </span>
         </>

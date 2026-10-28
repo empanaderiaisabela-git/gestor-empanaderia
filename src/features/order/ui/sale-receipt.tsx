@@ -29,7 +29,7 @@ function ReceiptTotals({ sale }: { sale: SaleDef }): JSX.Element {
         <span>{formatMoney(sale.total)}</span>
       </p>
       {sale.payments.map((payment) => (
-        <p key={payment.type} className={`${row} text-zinc-600`}>
+        <p key={payment.type} className={`${row} text-zinc-800`}>
           <span>{describePayment(payment)}</span>
           <span>{formatMoney(payment.amount)}</span>
         </p>
@@ -41,7 +41,7 @@ function ReceiptTotals({ sale }: { sale: SaleDef }): JSX.Element {
 function ReceiptLines({ sale }: { sale: SaleDef }): JSX.Element {
   return (
     <table className='w-full text-sm'>
-      <thead className='text-left text-xs uppercase text-zinc-500'>
+      <thead className='text-left text-xs uppercase text-zinc-700'>
         <tr>
           <th className='py-2'>Comida</th>
           <th className='py-2'>Gustos</th>
@@ -81,7 +81,7 @@ export function SaleReceipt({ sale, onClose }: SaleReceiptProps): JSX.Element {
             </div>
             <div className='text-right text-sm'>
               <p className='font-bold'>Venta {sale.id.slice(0, 8).toUpperCase()}</p>
-              <p className='text-zinc-500'>{formatDateTime(sale.createdAt)}</p>
+              <p className='text-zinc-700'>{formatDateTime(sale.createdAt)}</p>
             </div>
           </div>
           <p className='text-sm'>

@@ -49,11 +49,11 @@ function PriceCell({ item, groupPrices }: { item: MenuItemDef; groupPrices: Menu
 
 export function getStockColumns(actions: StockRowActions, groupPrices: MenuGroupPriceDef[]): ColumnDef<MenuItemDef>[] {
   const columns: ColumnDef<MenuItemDef>[] = [
-    { header: 'Grupo', cellClassName: 'text-zinc-500', cell: (item) => GROUPS[item.group].label },
-    { header: 'Gusto / bebida', cellClassName: 'font-bold text-zinc-900 dark:text-zinc-100', cell: (item) => item.name },
+    { header: 'Grupo', cellClassName: 'text-zinc-700 dark:text-zinc-200', cell: (item) => GROUPS[item.group].label },
+    { header: 'Gusto / bebida', cellClassName: 'font-bold text-zinc-900 dark:text-zinc-50', cell: (item) => item.name },
     { header: 'Stock', cell: (item) => <StockBadge item={item} /> },
-    { header: SALE_PRICE_TERM, cellClassName: 'text-zinc-600 dark:text-zinc-300 text-sm', cell: (item) => <PriceCell item={item} groupPrices={groupPrices} /> },
+    { header: SALE_PRICE_TERM, cellClassName: 'text-zinc-800 dark:text-zinc-100 text-sm', cell: (item) => <PriceCell item={item} groupPrices={groupPrices} /> },
   ];
-  const cost: ColumnDef<MenuItemDef> = { header: COST_TERM, cellClassName: 'text-zinc-500', cell: (item) => (item.unitCost === null ? 'Sin costo' : formatMoney(item.unitCost)) };
+  const cost: ColumnDef<MenuItemDef> = { header: COST_TERM, cellClassName: 'text-zinc-700 dark:text-zinc-200', cell: (item) => (item.unitCost === null ? 'Sin costo' : formatMoney(item.unitCost)) };
   return [...columns, cost, { header: 'Acciones', headerClassName: 'text-right', cellClassName: 'flex gap-1 justify-end', cell: (item) => <StockButtons item={item} actions={actions} /> }];
 }

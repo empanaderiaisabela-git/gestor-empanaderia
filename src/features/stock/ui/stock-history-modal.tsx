@@ -14,7 +14,7 @@ function EntryRow({ entry }: { entry: StockEntryDef }): JSX.Element {
   const costs = ` · ${COST_TERM} ${entry.unitCost === null ? '—' : formatMoney(entry.unitCost)} · ${entry.providerName ?? 'Sin proveedor'}`;
   return (
     <li className='flex justify-between gap-3 py-2 border-b border-zinc-100 dark:border-zinc-800 text-sm'>
-      <span className='text-zinc-500'>{formatDateTime(entry.createdAt)}</span>
+      <span className='text-zinc-700 dark:text-zinc-200'>{formatDateTime(entry.createdAt)}</span>
       <span className='text-right'>
         <strong>+{entry.quantity}</strong>
         {costs} · {entry.username}
@@ -34,8 +34,8 @@ export function StockHistoryModal({ model }: { model: StockPanelModel }): JSX.El
 
   return (
     <ResponsiveModal isOpen={Boolean(item)} onClose={() => model.setDialog(null)} title={`Historial de ingresos · ${item?.name ?? ''}`} icon={<History className='w-5 h-5 text-brand-500' />} width='md'>
-      {entries === null && <p className='text-sm text-zinc-500'>Cargando...</p>}
-      {entries?.length === 0 && <p className='text-sm text-zinc-500'>Todavía no hay ingresos de stock para este producto.</p>}
+      {entries === null && <p className='text-sm text-zinc-700 dark:text-zinc-200'>Cargando...</p>}
+      {entries?.length === 0 && <p className='text-sm text-zinc-700 dark:text-zinc-200'>Todavía no hay ingresos de stock para este producto.</p>}
       <ul>
         {entries?.map((entry) => (
           <EntryRow key={entry.id} entry={entry} />

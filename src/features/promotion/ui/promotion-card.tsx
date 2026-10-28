@@ -8,16 +8,16 @@ import { formatMoney } from '@/lib/format-money';
 import type { PromotionRowActions } from './promotion-columns';
 
 function StatusBadge({ isActive }: { isActive: boolean }): JSX.Element {
-  const tone = isActive ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' : 'bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400';
+  const tone = isActive ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' : 'bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-200';
   return <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${tone}`}>{isActive ? 'Activa' : 'Inactiva'}</span>;
 }
 
 function Details({ promotion }: { promotion: PromotionDef }): JSX.Element {
   return (
     <div className='flex flex-col gap-1 mt-1 text-sm'>
-      <span className='text-zinc-500'>{describeComponents(promotion.components)}</span>
+      <span className='text-zinc-700 dark:text-zinc-200'>{describeComponents(promotion.components)}</span>
       <span>
-        <span className='font-medium text-zinc-600 dark:text-zinc-300'>{SALE_PRICE_TERM}</span> {formatMoney(promotion.price)}
+        <span className='font-medium text-zinc-800 dark:text-zinc-100'>{SALE_PRICE_TERM}</span> {formatMoney(promotion.price)}
       </span>
     </div>
   );

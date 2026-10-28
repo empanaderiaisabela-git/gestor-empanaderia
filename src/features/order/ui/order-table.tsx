@@ -10,10 +10,10 @@ type OrderTableProps = { lines: OrderLine[]; promos?: PromoLine[]; board: OrderB
 const NO_PROMO_ACTIONS: PromoRowActions = { onRemove: () => undefined, onReopen: () => undefined };
 
 export function OrderTable({ lines, promos = [], board, onRemove, onRemoveOne, promoActions = NO_PROMO_ACTIONS }: OrderTableProps): JSX.Element {
-  if (lines.length === 0 && promos.length === 0) return <p className='py-6 text-center text-sm font-semibold uppercase text-zinc-400'>No hay productos en el pedido</p>;
+  if (lines.length === 0 && promos.length === 0) return <p className='py-6 text-center text-sm font-semibold uppercase text-zinc-600 dark:text-zinc-300'>No hay productos en el pedido</p>;
   return (
     <table className='w-full text-left'>
-      <thead className='text-xs uppercase text-zinc-500'>
+      <thead className='text-xs uppercase text-zinc-700 dark:text-zinc-200'>
         <tr>
           <th className='pb-2'>Comida</th>
           <th className='pb-2'>Cantidad</th>

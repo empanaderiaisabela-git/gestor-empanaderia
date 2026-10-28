@@ -46,13 +46,13 @@ interface ModalHeaderProps {
 
 const ModalHeader = ({ title, icon, onClose, className = '', titleClassName = '' }: ModalHeaderProps) => (
   <div className={`flex justify-between items-center p-6 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800/50 ${className}`}>
-    <h3 className={`text-xl font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2 ${titleClassName}`}>
+    <h3 className={`text-xl font-bold text-zinc-900 dark:text-zinc-50 flex items-center gap-2 ${titleClassName}`}>
       {icon}
       {title}
     </h3>
     <button
       onClick={onClose}
-      className='text-zinc-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 p-1.5 rounded-md transition-colors'
+      className='text-zinc-600 dark:text-zinc-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 p-1.5 rounded-md transition-colors'
     >
       <X className='w-5 h-5' />
     </button>

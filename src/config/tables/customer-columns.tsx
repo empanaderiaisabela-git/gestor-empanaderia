@@ -15,27 +15,27 @@ export function getCustomerColumns({ role, onEdit, onToggleActive }: ColumnActio
       cellClassName: 'max-w-[200px]',
       cell: (c) => (
         <div
-          className='flex items-center gap-2 font-bold text-zinc-900 dark:text-zinc-100 truncate min-w-0'
+          className='flex items-center gap-2 font-bold text-zinc-900 dark:text-zinc-50 truncate min-w-0'
           title={c.name}
         >
           <span className='truncate'>{c.name}</span>
-          {!c.isActive && <span className='shrink-0 px-1.5 py-0.5 bg-zinc-100 text-zinc-500 dark:bg-zinc-800 text-[10px] font-bold rounded uppercase'>Inactivo</span>}
+          {!c.isActive && <span className='shrink-0 px-1.5 py-0.5 bg-zinc-100 text-zinc-700 dark:text-zinc-200 dark:bg-zinc-800 text-[10px] font-bold rounded uppercase'>Inactivo</span>}
         </div>
       ),
     },
     {
       header: 'Documento',
-      cellClassName: 'text-zinc-500',
+      cellClassName: 'text-zinc-700 dark:text-zinc-200',
       cell: (c) => c.documentNumber || '--',
     },
     {
       header: 'Teléfono',
-      cellClassName: 'text-zinc-500',
+      cellClassName: 'text-zinc-700 dark:text-zinc-200',
       cell: (c) => c.phone || '--',
     },
     {
       header: 'Email',
-      cellClassName: 'text-zinc-500 max-w-[150px] truncate',
+      cellClassName: 'text-zinc-700 dark:text-zinc-200 max-w-[150px] truncate',
       cell: (c) => <span title={c.email || '--'}>{c.email || '--'}</span>,
     },
     {

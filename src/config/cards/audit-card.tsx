@@ -26,7 +26,7 @@ export function renderAuditCard(actions: AuditCardActionsProps) {
     const date = new Date(log.createdAt);
     const dateStr = date.toLocaleDateString('es-AR');
     const timeStr = date.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
-    const actionColor = ACTION_COLORS[log.action.toUpperCase()] ?? 'bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-400';
+    const actionColor = ACTION_COLORS[log.action.toUpperCase()] ?? 'bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-zinc-200';
 
     return (
       <EntityCard
@@ -43,15 +43,15 @@ export function renderAuditCard(actions: AuditCardActionsProps) {
             <span className={`px-2.5 py-1 rounded text-[10px] font-black tracking-widest uppercase leading-tight inline-block ${actionColor}`}>
               {log.action.replace(/_/g, ' ')}
             </span>
-            <span className='px-2.5 py-0.5 rounded text-xs font-black tracking-widest uppercase bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400'>
+            <span className='px-2.5 py-0.5 rounded text-xs font-black tracking-widest uppercase bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-200'>
               {ENTITY_LABELS[log.entity] ?? log.entity}
             </span>
           </>
         }
         details={
           <div className='flex justify-between items-center mt-1'>
-            <span className='text-xs text-zinc-400'>Referencia</span>
-            <span className='font-bold text-zinc-700 dark:text-zinc-300 truncate max-w-[180px]'>{getReference(log)}</span>
+            <span className='text-xs text-zinc-600 dark:text-zinc-300'>Referencia</span>
+            <span className='font-bold text-zinc-900 dark:text-zinc-100 truncate max-w-[180px]'>{getReference(log)}</span>
           </div>
         }
         actions={
