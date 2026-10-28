@@ -1,6 +1,7 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { MenuItemDef } from '@/features/menu/domain/menu-item.schema';
+import { useAuthStore } from '@/features/auth/store/auth.store';
 import { useMenuStore } from '@/features/menu/store/menu.store';
 import { StockPanel } from './stock-panel';
 
@@ -20,9 +21,19 @@ const PREPIZZA: MenuItemDef = { ...ITEM, id: '44444444-4444-4444-8444-4444444444
 
 describe('pantalla de Stock (US-4)', () => {
   beforeEach(() => {
+    useAuthStore.setState({ user: { id: 'u', username: 'admin', role: 'admin' }, isAuthenticated: true });
     useMenuStore.setState({ items: [ITEM], isLoaded: false });
     actions.fetchItems.mockResolvedValue([ITEM]);
     actions.entry.mockResolvedValue({ success: true, message: 'Stock ingresado: Humita queda con 29', data: { menuItemId: ITEM.id, stock: 29, version: 2 } });
+  });
+
+  it('el vendedor sólo ve grupo, gusto y stock, sin botones ni costo (US-31)', async () => {
+    useAuthStore.setState({ user: { id: 'v', username: 'vendedor', role: 'vendedor' }, isAuthenticated: true });
+    actions.fetchItems.mockResolvedValue([PREPIZZA, COCA]);
+    render(<StockPanel />);
+    const headers = await screen.findAllByRole('columnheader');
+    expect(headers.map((header) => header.textContent)).toEqual(['Grupo', 'Gusto / bebida', 'Stock']);
+    expect(screen.queryByRole('button', { name: 'Ingresar stock' })).toBeNull();
   });
 
   it('el admin carga cantidad, costo y proveedor', async () => {

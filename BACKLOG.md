@@ -3119,7 +3119,7 @@ las decisiones provisorias D-1 a D-11, el orden y la trazabilidad de cada punto 
 | 3   | [US-27](#us-27--gastos-el-proveedor-de-la-factura)                              | Gastos: el proveedor de la factura                      | En revisión | T-21       | 1 h 30 min      |
 | 4   | [US-28](#us-28--todos-los-precios-en-stock)                                     | Todos los precios en Stock                              | En revisión | T-21       | 3 h             |
 | 5   | [US-29](#us-29--prepizzas-y-panes-de-ciabatta)                                  | Prepizzas y panes de ciabatta                           | En revisión | US-28      | 5 h 30 min      |
-| 6   | [US-31](#us-31--el-vendedor-ve-el-stock-sin-costos)                             | El vendedor ve el stock, sin costos                     | Pendiente   | US-29      | 1 h 30 min      |
+| 6   | [US-31](#us-31--el-vendedor-ve-el-stock-sin-costos)                             | El vendedor ve el stock, sin costos                     | En revisión | US-29      | 1 h 30 min      |
 | 7   | [T-22](#t-22--cierre-del-sprint-4)                                              | Cierre del Sprint 4                                     | Pendiente   | todos      | 1 h             |
 |     |                                                                                 | **Total del sprint**                                    |             |            | **15 h 30 min** |
 
@@ -3374,12 +3374,12 @@ ciabatta vendida descuente uno, de forma que el stock muestre lo que el local gu
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
-| Dueño        | —         |
-| Inicio       | —         |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-28 |
 | Tamaño       | M         |
 | Depende de   | US-29     |
-| Plan         | —         |
+| Plan         | [`docs/plans/sprint-4.md`](docs/plans/sprint-4.md#6--us-31-el-vendedor-ve-el-stock-sin-costos-m-1-h-30-min) |
 | Merge        | —         |
 | Horas reales | —         |
 
@@ -3388,11 +3388,11 @@ al administrador y sin ver lo que le cuesta al local.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · "Stock" aparece en el menú del vendedor y `/stock` lo deja entrar (`src/config/navigation.ts` y `src/proxy.ts`), con el test de navegación actualizado · Estimación: 15 min · Completado: —
+- [x] **CA-1** · "Stock" aparece en el menú del vendedor y `/stock` lo deja entrar (`src/config/navigation.ts` y `src/proxy.ts`), con el test de navegación actualizado · Estimación: 15 min · Completado: 2026-10-28 17:27
 
-- [ ] **CA-2** · Para el vendedor, el servidor devuelve sólo categoría, gusto y cantidad, validados con un `RowSchema` propio sin costo ni precios; un test de contrato prueba que la respuesta no trae `unitCost` ni precios · Estimación: 40 min · Completado: —
+- [x] **CA-2** · Para el vendedor, el servidor no devuelve el costo: Stock usa `fetchMenuItems`, que ya le manda `unitCost: null` (lo prueba `menu-actions.contract.test.ts`); los precios de venta no se muestran, pero viajan, porque el vendedor ya los ve en Ventas · Estimación: 40 min · Completado: 2026-10-28 17:27
 
-- [ ] **CA-3** · El vendedor ve la grilla con Categoría, Gusto y Cantidad (las bases con su contador) y sin botones; "Ingresar stock", "Registrar pérdida", "Costo y precio" y el historial de ingresos le siguen dando `FORBIDDEN`; E2E con el vendedor · Estimación: 35 min · Completado: —
+- [x] **CA-3** · El vendedor ve la grilla con Categoría, Gusto y Cantidad (las bases con su contador) y sin botones; "Ingresar stock", "Registrar pérdida", "Costo y precio" y el historial de ingresos le siguen dando `FORBIDDEN`; E2E con el vendedor · Estimación: 35 min · Completado: 2026-10-28 17:27
 
 **Notas**
 
@@ -3400,6 +3400,16 @@ al administrador y sin ver lo que le cuesta al local.
   entra, pero sólo para mirar.
 - Nivel 3 (seguridad): el costo no se esconde en la tabla, no sale del servidor.
 - Va después de US-29 porque la grilla cambia con las bases.
+- CA-2 cambió al implementarlo: no hizo falta una lectura nueva. `fetchMenuItems` (la que usa Ventas) ya le saca el
+  costo al vendedor en el servidor. Ocultar también el precio en el servidor no protege nada: el vendedor lo ve al
+  vender.
+- El vendedor ve las columnas Grupo, Gusto / bebida y Stock, sin "Ingresar stock" ni botones por fila. La tarjeta
+  mobile (`EntityCard`) ya no muestra el menú "Acciones" cuando no hay acciones.
+- Arreglo de paso: la carga inicial de datos (`setup-initial-data.ts`) borraba los proveedores antes que los gastos.
+  Desde US-27 los gastos los referencian, así que fallaba si quedaban gastos con proveedor (como en BUG-21). Ahora
+  borra primero los gastos.
+- `npm run verify` en verde: 961 tests, cobertura 96,12/89,95, 107 de integración, mutación 90,40 y build. E2E: 68
+  en verde y uno de Clientes con el timeout de BUG-16, que pasó 2 de 2 al repetirlo.
 
 ### T-22 · Cierre del Sprint 4
 

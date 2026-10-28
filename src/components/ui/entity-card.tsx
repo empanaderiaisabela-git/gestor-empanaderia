@@ -46,6 +46,7 @@ export function EntityCard({ title, subtitle, badges, details, actions }: Entity
           {subtitle && <div className='text-xs text-zinc-700 dark:text-zinc-200 truncate mt-0.5'>{subtitle}</div>}
         </div>
 
+        {actions && (
         <div className='relative shrink-0' ref={menuRef}>
           <button
             onClick={() => setOpen((v) => !v)}
@@ -66,6 +67,7 @@ export function EntityCard({ title, subtitle, badges, details, actions }: Entity
             </div>
           )}
         </div>
+        )}
       </div>
 
       {badges && <div className='flex flex-wrap gap-1.5'>{badges}</div>}

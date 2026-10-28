@@ -18,13 +18,22 @@ test.describe('menú y navegación por rol (US-2)', () => {
     test('entra a Ventas/Pedidos, ve sólo su menú y no puede abrir secciones ajenas', async ({ page }) => {
       await loginComo(page, 'vendedor');
       await expect(page).toHaveURL(/\/ventas$/);
-      await expect(menu(page).getByRole('link')).toHaveText(['Ventas/Pedidos', 'Clientes']);
-      await page.goto('/stock');
-      await expect(page).toHaveURL(/\/ventas$/);
+      await expect(menu(page).getByRole('link')).toHaveText(['Ventas/Pedidos', 'Stock', 'Clientes']);
       await page.goto('/usuarios');
       await expect(page).toHaveURL(/\/ventas$/);
       await page.goto('/');
       await expect(page).toHaveURL(/\/ventas$/);
+    });
+
+    test('entra a Stock sólo para mirar: grupo, gusto y cantidad, sin costos ni botones (US-31)', async ({ page }) => {
+      await loginComo(page, 'vendedor');
+      await expect(page).toHaveURL(/\/ventas$/);
+      await page.goto('/stock');
+      await expect(page).toHaveURL(/\/stock$/);
+      await page.getByLabel('Filtrar por grupo').selectOption('pizzas');
+      await expect(page.getByRole('row').nth(1)).toContainText('Prepizza');
+      await expect(page.getByRole('columnheader')).toHaveText(['Grupo', 'Gusto / bebida', 'Stock']);
+      await expect(page.getByRole('button', { name: 'Ingresar stock' })).toHaveCount(0);
     });
   });
 

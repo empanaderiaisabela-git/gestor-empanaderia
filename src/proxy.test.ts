@@ -27,12 +27,12 @@ describe('proxy.ts usa el mismo menú por rol (US-2)', () => {
 
   it('el vendedor entra a las secciones de su menú', async () => {
     const token = await tokenFor('vendedor');
-    expect(await Promise.all(['/ventas', '/clientes'].map((path) => outcome(path, token)))).toEqual(['pasa', 'pasa']);
+    expect(await Promise.all(['/ventas', '/stock', '/clientes'].map((path) => outcome(path, token)))).toEqual(['pasa', 'pasa', 'pasa']);
   });
 
-  it('el vendedor que entra a una sección ajena (Stock incluido, US-16), o a Estadísticas, va a Ventas/Pedidos', async () => {
+  it('el vendedor que entra a una sección ajena, o a Estadísticas, va a Ventas/Pedidos (Stock sí lo deja, US-31)', async () => {
     const token = await tokenFor('vendedor');
-    expect(await Promise.all(['/', '/stock', '/logs', '/usuarios', '/productos'].map((path) => outcome(path, token)))).toEqual(['→ /ventas', '→ /ventas', '→ /ventas', '→ /ventas', '→ /ventas']);
+    expect(await Promise.all(['/', '/logs', '/usuarios', '/productos', '/gastos'].map((path) => outcome(path, token)))).toEqual(['→ /ventas', '→ /ventas', '→ /ventas', '→ /ventas', '→ /ventas']);
   });
 
   it('con sesión, /login lleva al inicio de cada rol', async () => {

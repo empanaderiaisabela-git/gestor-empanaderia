@@ -64,11 +64,17 @@ const costText = (item: MenuItemDef): string => {
   return item.unitCost === null ? 'Sin costo' : formatMoney(item.unitCost);
 };
 
-export function getStockColumns(actions: StockRowActions): ColumnDef<MenuItemDef>[] {
-  const columns: ColumnDef<MenuItemDef>[] = [
+export function getStockViewColumns(): ColumnDef<MenuItemDef>[] {
+  return [
     { header: 'Grupo', cellClassName: 'text-zinc-700 dark:text-zinc-200', cell: (item) => GROUPS[item.group].label },
     { header: 'Gusto / bebida', cellClassName: 'font-bold text-zinc-900 dark:text-zinc-50', cell: (item) => item.name },
     { header: 'Stock', cell: (item) => <StockBadge item={item} /> },
+  ];
+}
+
+export function getStockColumns(actions: StockRowActions): ColumnDef<MenuItemDef>[] {
+  const columns: ColumnDef<MenuItemDef>[] = [
+    ...getStockViewColumns(),
     { header: SALE_PRICE_TERM, cellClassName: 'text-zinc-800 dark:text-zinc-100 text-sm', cell: (item) => <PriceCell item={item} /> },
   ];
   const cost: ColumnDef<MenuItemDef> = { header: COST_TERM, cellClassName: 'text-zinc-700 dark:text-zinc-200', cell: (item) => costText(item) };
