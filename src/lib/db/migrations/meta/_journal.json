@@ -127,6 +127,13 @@
       "when": 1793073450983,
       "tag": "0017_precios-en-stock",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1793208764804,
+      "tag": "0018_cliente-dni-opcional",
+      "breakpoints": true
     }
   ]
 }

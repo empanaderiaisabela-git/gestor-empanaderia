@@ -23,11 +23,11 @@ export function renderCustomerCard(actions: CustomerCardActionsProps) {
         <div className='flex flex-col gap-1 mt-1'>
           <div className='flex justify-between'>
             <span className='text-xs text-zinc-400'>Teléfono</span>
-            <span>{customer.phone}</span>
+            <span>{customer.phone || '--'}</span>
           </div>
           <div className='flex justify-between'>
             <span className='text-xs text-zinc-400'>DNI</span>
-            <span>{customer.documentNumber}</span>
+            <span>{customer.documentNumber || '--'}</span>
           </div>
         </div>
       }

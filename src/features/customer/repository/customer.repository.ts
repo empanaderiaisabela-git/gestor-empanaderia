@@ -65,7 +65,7 @@ export class CustomerRepository {
         name: input.name,
         phone: input.phone || '',
         email: input.email || '',
-        documentNumber: input.documentNumber || '',
+        documentNumber: input.documentNumber || null,
         isActive: true,
         version: 1,
       })
@@ -83,8 +83,10 @@ export class CustomerRepository {
     if (input.phone !== undefined) updateData.phone = input.phone || '';
     if (input.email !== undefined) updateData.email = input.email || '';
 
-    if (input.documentNumber !== undefined) {
-      const normalizedInput = (input.documentNumber || '').replace(/[.\-]/g, '');
+    if (input.documentNumber !== undefined) updateData.documentNumber = input.documentNumber || null;
+
+    if (input.documentNumber) {
+      const normalizedInput = input.documentNumber.replace(/[.\-]/g, '');
       const existing = await dbtx.query.customers.findFirst({
         where: and(sql`REPLACE(REPLACE(${customers.documentNumber}, '.', ''), '-', '') ILIKE ${normalizedInput}`, sql`${customers.id} != ${id}`),
       });
@@ -92,8 +94,6 @@ export class CustomerRepository {
       if (existing) {
         throw new DuplicateEntityError();
       }
-
-      updateData.documentNumber = input.documentNumber || '';
     }
 
     const result = await dbtx

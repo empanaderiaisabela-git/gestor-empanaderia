@@ -38,7 +38,7 @@ export const customers = pgTable('customers', {
   name: varchar('name', { length: 100 }).notNull(),
   phone: varchar('phone', { length: 30 }).notNull().default(''),
   email: varchar('email', { length: 100 }).notNull().default(''),
-  documentNumber: varchar('document_number', { length: 20 }).notNull().default('').unique(),
+  documentNumber: varchar('document_number', { length: 20 }).unique(),
   isActive: boolean('is_active').default(true).notNull(),
   version: integer('version').default(1).notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),

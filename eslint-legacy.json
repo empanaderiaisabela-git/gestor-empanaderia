@@ -57,7 +57,6 @@
   "src/features/auth/store/auth.store.ts",
   "src/features/auth/ui/auth/session-initializer.tsx",
   "src/features/customer/actions/customer.actions.ts",
-  "src/features/customer/domain/customer.schema.ts",
   "src/features/customer/repository/customer.repository.ts",
   "src/features/customer/ui/components/customer-modal.tsx",
   "src/features/user/actions/user.actions.ts",

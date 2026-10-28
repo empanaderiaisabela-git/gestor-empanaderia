@@ -3114,7 +3114,7 @@ las decisiones provisorias D-1 a D-11, el orden y la trazabilidad de cada punto 
 | #   | ID                                                                              | Título                                                  | Estado      | Depende de | Estimación      |
 | --- | ------------------------------------------------------------------------------- | ------------------------------------------------------- | ----------- | ---------- | --------------- |
 | 0   | [T-21](#t-21--backlog-del-sprint-4-desde-el-pedido-del-cliente)                 | Backlog del Sprint 4 desde el pedido del cliente        | En revisión | T-18       | 30 min          |
-| 1   | [US-26](#us-26--clientes-sólo-el-nombre-es-obligatorio)                         | Clientes: sólo el nombre es obligatorio                 | Pendiente   | T-21       | 1 h             |
+| 1   | [US-26](#us-26--clientes-sólo-el-nombre-es-obligatorio)                         | Clientes: sólo el nombre es obligatorio                 | En revisión | T-21       | 1 h             |
 | 2   | [US-30](#us-30--títulos-más-grandes-y-letras-con-más-contraste)                 | Títulos más grandes y letras con más contraste          | Pendiente   | T-21       | 1 h 30 min      |
 | 3   | [US-27](#us-27--gastos-el-proveedor-de-la-factura)                              | Gastos: el proveedor de la factura                      | Pendiente   | T-21       | 1 h 30 min      |
 | 4   | [US-28](#us-28--todos-los-precios-en-stock)                                     | Todos los precios en Stock                              | Pendiente   | T-21       | 3 h             |
@@ -3149,12 +3149,12 @@ su criterio, su estimación y su rama.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
-| Dueño        | —         |
-| Inicio       | —         |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-28 |
 | Tamaño       | S         |
 | Depende de   | T-21      |
-| Plan         | —         |
+| Plan         | [`docs/plans/sprint-4.md`](docs/plans/sprint-4.md#1--us-26-clientes-con-sólo-el-nombre-s-1-h) |
 | Merge        | —         |
 | Horas reales | —         |
 
@@ -3163,18 +3163,26 @@ teléfono, correo ni DNI.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · El alta y la edición de Clientes guardan un cliente con sólo el nombre (2 a 100 caracteres); teléfono, correo y DNI son opcionales y, si se cargan, se validan como hoy · Estimación: 20 min · Completado: —
+- [x] **CA-1** · El alta y la edición de Clientes guardan un cliente con sólo el nombre (2 a 100 caracteres); teléfono, correo y DNI son opcionales y, si se cargan, se validan como hoy · Estimación: 20 min · Completado: 2026-10-28 14:47
 
-- [ ] **CA-2** · `customers.document_number` admite `null` (migración de `''` a `null`): dos clientes sin DNI se guardan y un DNI repetido sigue dando `DUPLICATE`, con test de integración · Estimación: 30 min · Completado: —
+- [x] **CA-2** · `customers.document_number` admite `null` (migración de `''` a `null`): dos clientes sin DNI se guardan y un DNI repetido sigue dando `DUPLICATE`, con test de integración · Estimación: 30 min · Completado: 2026-10-28 14:47
 
-- [ ] **CA-3** · El formulario marca como obligatorio sólo el nombre; E2E del alta con sólo el nombre · Estimación: 10 min · Completado: —
+- [x] **CA-3** · El formulario marca como obligatorio sólo el nombre; E2E del alta con sólo el nombre · Estimación: 10 min · Completado: 2026-10-28 14:47
 
 **Notas**
 
 - Nivel 3: cambia el schema. Hoy el DNI vacío se guarda como `''` y es único, así que dos clientes sin DNI chocarían
   (D-6 del plan del sprint).
-- `customer.repository.ts` está en `eslint-legacy.json` y busca el DNI con `sql`. Si el ítem lo toca, sale de la
-  lista y pasa al query builder (ADR 0003).
+- `customer.schema.ts` se reescribió con el molde de Proveedores (`strictObject`, sin `createInsertSchema`) y salió de
+  `eslint-legacy.json`. `customer.repository.ts` y `customer-card.tsx` sólo cambiaron un par de líneas y siguen en la
+  lista: pasarlos al molde nuevo (servicio, unidad de trabajo y DNI normalizado sin `sql`) es un ítem propio (ADR 0003
+  permite que no salgan si la lista no crece).
+- Migración `0018_cliente-dni-opcional`: el DNI admite `null` y los `''` que hubiera pasan a `null`. Postgres permite
+  varios `null` en una columna `unique`.
+- El formulario no marca ningún campo como obligatorio: el único que lo es, el nombre, avisa con su mensaje.
+- Tests: 13 unitarios del schema (con fuzz), 3 de integración del repositorio y E2E de Clientes (sólo el nombre, dos
+  clientes sin DNI). `npm run verify` en verde: 921 tests, cobertura 96,11/89,2, 99 de integración, mutación 90,08 y
+  build. `clientes.spec.ts` dio una vez el timeout de BUG-16 y pasó 2 de 2 al repetirlo.
 
 ### US-30 · Títulos más grandes y letras con más contraste
 

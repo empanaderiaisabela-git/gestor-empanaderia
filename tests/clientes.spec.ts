@@ -28,12 +28,12 @@ const UI = {
 
 const CASOS_DE_VALIDACION = [
   {
-    descripcion: 'Debería requerir campos obligatorios',
-    nombre: 'Cliente Valido',
+    descripcion: 'Debería requerir sólo el nombre',
+    nombre: '',
     telefono: '',
     correo: '',
     dni: '',
-    erroresEsperados: ['El teléfono es obligatorio', 'Formato de correo electrónico', 'El DNI es obligatorio'],
+    erroresEsperados: ['El nombre debe tener al menos'],
   },
   {
     descripcion: 'Debería requerir un nombre de al menos 2 caracteres',
@@ -197,6 +197,17 @@ test.describe.parallel('Gestión de Clientes: Validaciones y Lógica', () => {
 
     await clientesPage.buscarCliente(testEntity.nombre);
     await expect(page.getByText(testEntity.nombre, { exact: true })).toBeVisible();
+  });
+
+  test('Debería crear dos clientes con sólo el nombre (US-26)', async ({ page }) => {
+    const clientesPage = new ClientesPage(page);
+    const nombres = [`SoloNombre ${Date.now()}`, `SoloNombre ${Date.now() + 1}`];
+
+    for (const nombre of nombres) {
+      await clientesPage.crearCliente(nombre);
+      await clientesPage.buscarCliente(nombre);
+      await expect(page.getByText(nombre, { exact: true })).toBeVisible();
+    }
   });
 
   test('Debería editar exitosamente los datos', async ({ page }) => {
