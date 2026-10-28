@@ -64,16 +64,20 @@ cambio de modelo.
 
 - **Pregunta**: "Todos los precios van en stock" para que "las empanadas se vendan con precios diferentes por gusto".
   ¿Cómo se cobra una docena con gustos mezclados?
-- **Situación**: la docena de Carne está a $30.000 y la de Pollo a $27.000. El vendedor arma una docena con 6 de
-  cada una.
+- **Situación**: hoy el local vende la docena al mismo precio, sea cual sea el gusto. El cliente quiere cargar el
+  precio de cada gusto por si algún día cambia.
 - **Elegido**: Empanadas y Ciabattas pasan a precio por gusto, como Sanguches y Pizzas. La docena surtida se cobra con
-  la regla que ya usan los Sanguches: Σ (unidades del gusto ÷ 12 × precio de la docena del gusto) = $28.500. La
-  migración copia el precio de grupo que haya a cada gusto antes de borrar `menu_group_prices`, así los precios de
-  hoy no cambian.
+  la regla que ya usan los Sanguches: Σ (unidades del gusto ÷ 12 × precio de la docena del gusto). Con todos los
+  gustos al mismo precio, da el precio de la docena: 7 de Carne y 5 de Pollo a $30.000 dan $30.000. Es la regla de
+  hoy, sin código nuevo. La migración copia el precio de grupo que haya a cada gusto antes de borrar
+  `menu_group_prices`, así los precios de hoy no cambian.
 - **Corrección**: en el plan aprobado decía que las empanadas "vuelven a tener precio por gusto, como en US-17". No es
   así: en US-17 el precio también era del grupo, y se editaba desde Ingresar stock. El precio por gusto es nuevo.
-- **Si el dev responde otra cosa**: la docena surtida se cobra al precio del gusto más caro ($30.000), como la
-  mitad y mitad. Cambia sólo `order-pricing.ts` en US-28.
+- **Respuesta del dev (2026-10-28)**: de acuerdo. Hoy todas las docenas valen lo mismo y se cobra el precio de la
+  docena. Cómo se cobra una docena surtida cuando los gustos tengan precios distintos lo pacta el cliente ese día: es
+  una pregunta abierta de US-28.
+- **Si el cliente elige otra regla**: por ejemplo, el precio del gusto más caro, como la mitad y mitad. Cambia sólo
+  `unitLinePrice` en `order-pricing.ts`, sin tocar la base ni las pantallas.
 
 ### D-5 · Gastos ya cargados sin proveedor
 

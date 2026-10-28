@@ -3256,7 +3256,7 @@ y las ciabattas, de forma que el día que un gusto se venda a otro precio el sis
 
 - [ ] **CA-2** · "Ingresar stock" de una empanada pide costo y precios de 1, 3, 6 y 12 del gusto, como Sanguches; el de una ciabatta, costo y precio de unidad, como Pizzas · Estimación: 35 min · Completado: —
 
-- [ ] **CA-3** · Ventas, el cobro y el catálogo usan el precio de cada gusto: una docena surtida de empanadas se cobra con la regla de Sanguches (Σ unidades del gusto ÷ 12 × precio de la docena del gusto), con tests de dominio, contrato e integración · Estimación: 35 min · Completado: —
+- [ ] **CA-3** · Ventas, el cobro y el catálogo usan el precio de cada gusto: una docena surtida de empanadas se cobra con la regla de Sanguches (Σ unidades del gusto ÷ 12 × precio de la docena del gusto), y con todos los gustos al mismo precio da exactamente el precio de la docena; con tests de dominio, contrato e integración · Estimación: 35 min · Completado: —
 
 - [ ] **CA-4** · La columna "Precio de venta" de Stock muestra los precios del gusto, uno por renglón (como dejó BUG-22) · Estimación: 10 min · Completado: —
 
@@ -3266,6 +3266,12 @@ y las ciabattas, de forma que el día que un gusto se venda a otro precio el sis
   `git revert` de `e78bd12` porque la columna de BUG-22 se queda.
 - Nivel 3: cambia el schema y la regla de precios del cobro.
 - Las ciabattas cargan su precio con la cantidad sólo hasta US-29, que lo pasa al formulario sin cantidad.
+
+**Preguntas abiertas**
+
+- Para el cliente, cuando los gustos de empanada tengan precios distintos: ¿cómo se cobra una docena surtida?
+  ¿Proporcional a cada gusto (la regla de hoy), al precio del gusto más caro u otra? Hasta que lo pacte, rige la
+  proporcional, que con precios iguales da el precio de la docena (D-4 del plan del sprint).
 
 ### US-29 · Prepizzas y panes de ciabatta
 
