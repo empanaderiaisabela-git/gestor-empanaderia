@@ -4,6 +4,8 @@ import { menuItems } from '@/lib/db/menu-schema';
 import { providers, users } from '@/lib/db/schema';
 import { stockEntries, stockLosses } from '@/lib/db/stock-schema';
 import type { DbTransaction } from '@/lib/db/transaction';
+import type { MenuPrices } from '@/features/menu/domain/menu-prices';
+import { priceColumns } from '@/features/menu/repository/menu-item.repository';
 
 export type StockItem = typeof menuItems.$inferSelect;
 export type StockEntry = typeof stockEntries.$inferSelect;
@@ -12,7 +14,7 @@ export type NewEntry = { menuItemId: string; quantity: number; unitCost: number;
 export type NewLoss = { menuItemId: string; quantity: number; unitCost: number; reason: string; userId: string };
 export type EntryView = { id: string; menuItemId: string; quantity: number; unitCost: string; providerName: string | null; username: string; createdAt: Date };
 export type ItemRef = { id: string; version: number };
-export type StockChange = { stock: number; unitCost?: number };
+export type StockChange = { stock: number; unitCost?: number; prices?: MenuPrices };
 
 export type StockRepository = {
   lockItem(id: string): Promise<StockItem | null>;
@@ -29,11 +31,11 @@ const HISTORY_LIMIT = 50;
 export function drizzleStockRepository(executor: Executor = db): StockRepository {
   return {
     lockItem: async (id) => (await executor.select().from(menuItems).where(eq(menuItems.id, id)).for('update'))[0] ?? null,
-    saveItem: async ({ id, version }, { stock, unitCost }) => {
+    saveItem: async ({ id, version }, { stock, unitCost, prices }) => {
       const cost = unitCost === undefined ? {} : { unitCost: unitCost.toFixed(2) };
       const rows = await executor
         .update(menuItems)
-        .set({ stock: stock.toFixed(1), ...cost, version: version + 1, updatedAt: new Date() })
+        .set({ stock: stock.toFixed(1), ...cost, ...(prices ? priceColumns(prices) : {}), version: version + 1, updatedAt: new Date() })
         .where(and(eq(menuItems.id, id), eq(menuItems.version, version)))
         .returning();
       return rows[0] ?? null;

@@ -13,8 +13,8 @@ export async function createCardAction(input: CardInput): Promise<ActionResult<C
     const parsed = cardCreateSchema.safeParse(input);
     if (!parsed.success) return fail('VALIDATION');
     const card = await cardService.create(caller, parsed.data);
-    return { success: true, message: MESSAGES.SUCCESS.CREATED('Tarjeta'), data: cardRowSchema.parse(card) };
+    return { success: true, message: MESSAGES.SUCCESS.CREATED('la tarjeta'), data: cardRowSchema.parse(card) };
   } catch (error) {
-    return toActionFailure(error, 'Tarjeta');
+    return toActionFailure(error, 'la tarjeta');
   }
 }

@@ -2,7 +2,6 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import type { MenuItemDef } from '@/features/menu/domain/menu-item.schema';
 import { renderMenuItemCard } from './menu-item-card';
-import { priceSummary } from '@/features/menu/domain/menu-price-list';
 import { getMenuItemColumns, type MenuItemRowActions } from './menu-item-columns';
 
 const BASE: MenuItemDef = { id: 'x', group: 'empanadas', name: 'Carne', unitCost: 400, stock: 24, price1: null, price3: null, price6: null, price12: null, isActive: true, isVisible: false, version: 1, createdAt: '', updatedAt: '' };
@@ -11,29 +10,17 @@ function rowActions(): MenuItemRowActions {
   return { onEdit: vi.fn(), onToggleActive: vi.fn(), onDelete: vi.fn(), onToggleVisible: vi.fn(), onPhotos: vi.fn() };
 }
 
-describe('resumen de precios de la grilla', () => {
-  it('los gustos de empanadas y ciabattas avisan que el precio de venta es el del grupo (BUG-13)', () => {
-    expect(priceSummary(BASE)).toBe('Igual para todas las Empanadas');
-    expect(priceSummary({ ...BASE, group: 'ciabattas' })).toBe('Igual para todas las Ciabattas');
-  });
-
-  it('un sanguche lista sus cuatro precios y una pizza el de la entera', () => {
-    expect(priceSummary({ ...BASE, group: 'sanguches', price1: 1500, price3: 4200, price6: 8000, price12: 15000 })).toBe('1 unidad: $1.500 · 3 unidades: $4.200 · 6 unidades: $8.000 · 12 unidades: $15.000');
-    expect(priceSummary({ ...BASE, group: 'pizzas', price1: 11000 })).toBe('pizza entera: $11.000');
-  });
-});
-
 describe('fila de la grilla y tarjeta mobile (US-3 CA-5)', () => {
-  it('muestra grupo, gusto, costo, precio y stock, y marca los inactivos', () => {
+  it('muestra grupo, gusto y stock, y marca los inactivos', () => {
     const columns = getMenuItemColumns(rowActions());
-    render(<div>{columns.slice(0, 5).map((column, index) => <span key={index}>{column.cell({ ...BASE, isActive: false })}</span>)}</div>);
-    expect(columns.map((column) => column.header)).toEqual(['Grupo', 'Gusto / bebida', 'Costo para el local', 'Precio de venta', 'Stock', 'Acciones']);
-    ['Empanadas', 'Carne', 'Inactivo', '$400', 'Igual para todas las Empanadas', '24'].forEach((text) => expect(screen.getByText(text)).toBeDefined());
+    render(<div>{columns.slice(0, 3).map((column, index) => <span key={index}>{column.cell({ ...BASE, isActive: false })}</span>)}</div>);
+    expect(columns.map((column) => column.header)).toEqual(['Grupo', 'Gusto / bebida', 'Stock', 'Acciones']);
+    ['Empanadas', 'Carne', 'Inactivo', '24'].forEach((text) => expect(screen.getByText(text)).toBeDefined());
   });
 
   it('los botones de la fila editan, desactivan y borran', () => {
     const actions = rowActions();
-    render(<div>{getMenuItemColumns(actions)[5].cell(BASE)}</div>);
+    render(<div>{getMenuItemColumns(actions)[3].cell(BASE)}</div>);
     fireEvent.click(screen.getByTitle('Editar'));
     fireEvent.click(screen.getByTitle('Desactivar'));
     fireEvent.click(screen.getByTitle('Eliminar'));
@@ -42,12 +29,11 @@ describe('fila de la grilla y tarjeta mobile (US-3 CA-5)', () => {
     expect(actions.onDelete).toHaveBeenCalledWith('x');
   });
 
-  it('la tarjeta mobile muestra el grupo, el resumen y las mismas acciones', () => {
+  it('la tarjeta mobile muestra el grupo, el stock y las mismas acciones', () => {
     const actions = rowActions();
     render(renderMenuItemCard(actions)({ ...BASE, group: 'pizzas', name: 'Muzza', price1: 11000, isActive: false }));
     expect(screen.getByText('Pizzas')).toBeDefined();
-    expect(screen.getByText('pizza entera: $11.000')).toBeDefined();
-    ['Precio de venta', 'Costo para el local', '$400 · Stock 24'].forEach((text) => expect(screen.getByText(text)).toBeDefined());
+    expect(screen.getByText('Stock 24')).toBeDefined();
     fireEvent.click(screen.getByRole('button', { name: 'Acciones' }));
     fireEvent.click(screen.getByText('Activar'));
     expect(actions.onToggleActive).toHaveBeenCalled();
@@ -55,7 +41,7 @@ describe('fila de la grilla y tarjeta mobile (US-3 CA-5)', () => {
 
   it('mostrar u ocultar en el catálogo y abrir las fotos (T-12)', () => {
     const actions = rowActions();
-    const { unmount } = render(<div>{getMenuItemColumns(actions)[5].cell(BASE)}</div>);
+    const { unmount } = render(<div>{getMenuItemColumns(actions)[3].cell(BASE)}</div>);
     fireEvent.click(screen.getByTitle('Mostrar en el catálogo'));
     fireEvent.click(screen.getByTitle('Fotos'));
     expect(actions.onToggleVisible).toHaveBeenCalledWith(BASE);

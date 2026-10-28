@@ -1,7 +1,7 @@
 import { MESSAGES } from '@/config/messages';
 
 const { VALIDATION, DATABASE } = MESSAGES.ERROR;
-const DEFAULT_ENTITY = 'registro';
+const DEFAULT_ENTITY = 'el registro';
 
 const CATALOG = {
   VALIDATION: () => VALIDATION.INVALID_DATA,
@@ -15,6 +15,8 @@ const CATALOG = {
   RELATION_NOT_FOUND: () => DATABASE.RELATION_NOT_FOUND,
   STALE_VERSION: () => DATABASE.CONCURRENCY,
   INSUFFICIENT_STOCK: (entity: string) => `No hay stock suficiente de ${entity}.`,
+  MISSING_COST: () => 'Falta el costo para el local.',
+  MISSING_PRICE: () => 'Falta el precio de venta.',
   UNEXPECTED: (entity: string) => DATABASE.GENERIC(entity),
 } satisfies Record<string, (entity: string) => string>;
 

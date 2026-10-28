@@ -1,5 +1,6 @@
 @import 'tailwindcss';
 @import './group-colors.css';
+@import './stat-colors.css';
 
 @theme {
   --color-background: var(--background);

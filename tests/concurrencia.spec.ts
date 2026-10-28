@@ -65,6 +65,7 @@ test.describe.parallel('Pruebas de Concurrencia', () => {
     // Usuario 1 empieza a cargar un ingreso de stock con ese proveedor
     await page1.goto('/stock');
     await page1.getByRole('button').filter({ hasText: 'Ingresar stock' }).click();
+    await page1.getByLabel('Categoría').selectOption({ label: 'Coca-Cola' });
     const gusto = await page1.getByLabel('Gusto o bebida').locator('option', { hasText: 'Fanta 1,5 L' }).getAttribute('value');
     await page1.getByLabel('Gusto o bebida').selectOption(gusto ?? '');
     await page1.getByLabel('Cantidad que entra').fill('6');
@@ -72,7 +73,7 @@ test.describe.parallel('Pruebas de Concurrencia', () => {
 
     // Usuario 2 elimina el proveedor
     await proveedoresPage2.eliminarProveedor(proveedor);
-    await expect(page2.getByText('Proveedor eliminado/a exitosamente')).toBeVisible();
+    await expect(page2.getByText('Se eliminó el proveedor')).toBeVisible();
 
     // Usuario 1 confirma el ingreso
     await page1.getByRole('button', { name: 'Ingresar', exact: true }).click();

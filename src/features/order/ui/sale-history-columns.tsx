@@ -3,7 +3,7 @@ import type { JSX } from 'react';
 import { EntityCard } from '@/components/ui/entity-card';
 import type { ColumnDef } from '@/components/ui/virtualized-data-table';
 import { describeSaleLine } from '@/features/order/domain/order-describe';
-import { chargedAmount, describePayment } from '@/features/order/domain/payment-describe';
+import { describePayment } from '@/features/order/domain/payment-describe';
 import { buyerLabel, type SaleDef } from '@/features/order/domain/sale-history.schema';
 import { formatDateTime } from '@/lib/format-date-time';
 import { formatMoney } from '@/lib/format-money';
@@ -16,7 +16,7 @@ export function PaymentChips({ sale }: { sale: SaleDef }): JSX.Element {
   return (
     <span className='flex flex-wrap gap-1'>
       {sale.payments.map((payment) => (
-        <span key={payment.type} className={chip} title={`${describePayment(payment)}: ${formatMoney(chargedAmount(payment))}`}>
+        <span key={payment.type} className={chip} title={`${describePayment(payment)}: ${formatMoney(payment.amount)}`}>
           {describePayment(payment)}
         </span>
       ))}
@@ -47,16 +47,18 @@ export function SaleButtons({ sale, actions }: { sale: SaleDef; actions: SaleRow
 
 const orderSummary = (sale: SaleDef): string => sale.lines.map(describeSaleLine).join(' · ');
 
+const pad = 'px-3!';
+
 export function getSaleHistoryColumns(actions: SaleRowActions): ColumnDef<SaleDef>[] {
   return [
-    { header: 'Fecha y hora', cellClassName: 'whitespace-nowrap font-bold text-zinc-900 dark:text-zinc-100', cell: (sale) => formatDateTime(sale.createdAt) },
-    { header: 'Comprador', cellClassName: 'max-w-[160px] truncate', cell: (sale) => buyerLabel(sale.buyerName) },
-    { header: 'Vendedor', cellClassName: 'text-zinc-500 max-w-[110px] truncate', cell: (sale) => sale.vendorName },
-    { header: 'Pedido', cellClassName: 'text-zinc-500 max-w-[260px] truncate', cell: (sale) => <span title={orderSummary(sale)}>{orderSummary(sale)}</span> },
-    { header: 'Pago', cell: (sale) => <PaymentChips sale={sale} /> },
-    { header: 'Desc.', headerClassName: 'text-right', cellClassName: 'text-right whitespace-nowrap', cell: (sale) => <DiscountCell sale={sale} /> },
-    { header: 'Total', headerClassName: 'text-right', cellClassName: 'text-right font-black text-zinc-900 dark:text-zinc-100', cell: (sale) => formatMoney(sale.total) },
-    { header: 'Acciones', headerClassName: 'text-right', cellClassName: 'flex gap-1 justify-end', cell: (sale) => <SaleButtons sale={sale} actions={actions} /> },
+    { header: 'Fecha y hora', headerClassName: `${pad} w-44`, cellClassName: `${pad} whitespace-nowrap font-bold text-zinc-900 dark:text-zinc-100`, cell: (sale) => formatDateTime(sale.createdAt) },
+    { header: 'Comprador', headerClassName: `${pad} w-28`, cellClassName: `${pad} truncate`, cell: (sale) => buyerLabel(sale.buyerName) },
+    { header: 'Vendedor', headerClassName: `${pad} w-24`, cellClassName: `${pad} text-zinc-500 truncate`, cell: (sale) => sale.vendorName },
+    { header: 'Pedido', headerClassName: pad, cellClassName: `${pad} text-zinc-500 break-words`, cell: (sale) => orderSummary(sale) },
+    { header: 'Pago', headerClassName: `${pad} w-32`, cellClassName: pad, cell: (sale) => <PaymentChips sale={sale} /> },
+    { header: 'Desc.', headerClassName: `${pad} w-20 text-right`, cellClassName: `${pad} text-right`, cell: (sale) => <DiscountCell sale={sale} /> },
+    { header: 'Total', headerClassName: `${pad} w-28 text-right`, cellClassName: `${pad} text-right font-black text-zinc-900 dark:text-zinc-100`, cell: (sale) => formatMoney(sale.total) },
+    { header: 'Acciones', headerClassName: `${pad} w-28 text-right`, cellClassName: `${pad} flex gap-1 justify-end`, cell: (sale) => <SaleButtons sale={sale} actions={actions} /> },
   ];
 }
 

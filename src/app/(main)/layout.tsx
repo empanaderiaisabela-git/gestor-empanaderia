@@ -106,11 +106,11 @@ export default function MainLayout({ children }: { children: ReactNode }) {
 
       {/* Main Column */}
       <div
-        className='flex flex-col flex-1 min-w-0 overflow-hidden outline-none'
+        className='relative flex flex-col flex-1 min-w-0 overflow-hidden outline-none'
         tabIndex={-1}
       >
         {/* Top Header */}
-        <header className='shrink-0 h-16 flex items-center justify-between px-4 lg:px-8 transition-colors bg-transparent border-none no-print'>
+        <header className='shrink-0 h-16 flex items-center justify-between px-4 lg:px-8 transition-colors bg-transparent border-none no-print xl:absolute xl:top-0 xl:right-0 xl:z-10 xl:h-auto xl:p-1'>
           <button
             onClick={() => setIsMobileMenuOpen(true)}
             className='xl:hidden p-2 -ml-2 text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-100'
@@ -122,7 +122,7 @@ export default function MainLayout({ children }: { children: ReactNode }) {
             {mounted && (
               <button
                 onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
-                className='p-2 text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 bg-zinc-100 dark:bg-zinc-800 rounded-full transition-colors'
+                className='p-2 xl:p-1 text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 bg-zinc-100 dark:bg-zinc-800 rounded-full transition-colors'
                 aria-label='Alternar tema'
               >
                 {resolvedTheme === 'dark' ? <Sun className='w-5 h-5' /> : <Moon className='w-5 h-5' />}

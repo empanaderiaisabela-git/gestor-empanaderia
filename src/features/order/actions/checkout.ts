@@ -16,6 +16,6 @@ export async function checkoutAction(input: CheckoutInput): Promise<ActionResult
     const result = await checkoutService.checkout(caller, parsed.data);
     return afterCatalogChange({ success: true, message: `Venta registrada por ${formatMoney(result.total)}`, data: result });
   } catch (error) {
-    return toActionFailure(error, 'venta');
+    return toActionFailure(error, 'la venta');
   }
 }

@@ -46,7 +46,7 @@ describe('fotos de los gustos (T-12 CA-1 y BUG-11)', () => {
   });
 
   it('borrar una foto que ya no está da NOT_FOUND y no toca Cloudinary', async () => {
-    await expect(service.remove(ADMIN, { publicId: 'menu/x/9' })).rejects.toMatchObject({ code: 'NOT_FOUND', message: 'El/la foto seleccionado ya no existe.' });
+    await expect(service.remove(ADMIN, { publicId: 'menu/x/9' })).rejects.toMatchObject({ code: 'NOT_FOUND', message: 'La foto ya no existe.' });
     expect(store.deleted).toEqual([]);
   });
 });

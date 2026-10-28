@@ -16,11 +16,11 @@ import { ProveedoresPage } from './pages/ProveedoresPage';
 
 const CASOS_DE_VALIDACION = [
   {
-    descripcion: 'Debería requerir todos los campos',
+    descripcion: 'Debería pedir sólo el nombre: el teléfono y el correo son opcionales',
     nombre: '',
     telefono: '',
     correo: '',
-    erroresEsperados: ['El nombre debe tener al menos', 'El teléfono es obligatorio', 'Formato de correo electrónico'],
+    erroresEsperados: ['El nombre debe tener al menos'],
   },
   {
     descripcion: 'Debería requerir el nombre',
@@ -28,41 +28,6 @@ const CASOS_DE_VALIDACION = [
     telefono: '291 7181273',
     correo: 'correo@ejemplo.com',
     erroresEsperados: ['El nombre debe tener al menos'],
-  },
-  {
-    descripcion: 'Debería requerir el teléfono',
-    nombre: 'Proveedor de Prueba',
-    telefono: '',
-    correo: 'correo@ejemplo.com',
-    erroresEsperados: ['El teléfono es obligatorio'],
-  },
-  {
-    descripcion: 'Debería requerir el correo',
-    nombre: 'Proveedor de Prueba',
-    telefono: '291 7181273',
-    correo: '',
-    erroresEsperados: ['Formato de correo electrónico'],
-  },
-  {
-    descripcion: 'Debería requerir nombre y teléfono',
-    nombre: '',
-    telefono: '',
-    correo: 'correo@ejemplo.com',
-    erroresEsperados: ['El nombre debe tener al menos', 'El teléfono es obligatorio'],
-  },
-  {
-    descripcion: 'Debería requerir nombre y correo',
-    nombre: '',
-    telefono: '291 7181273',
-    correo: '',
-    erroresEsperados: ['El nombre debe tener al menos', 'Formato de correo electrónico'],
-  },
-  {
-    descripcion: 'Debería requerir teléfono y correo',
-    nombre: 'Proveedor de Prueba',
-    telefono: '',
-    correo: '',
-    erroresEsperados: ['El teléfono es obligatorio', 'Formato de correo electrónico'],
   },
   {
     descripcion: 'Debería respetar los límites de longitud máxima de los campos',
@@ -161,6 +126,14 @@ test.describe.parallel('Gestión de Proveedores: Validaciones y Lógica', () => 
     await proveedoresPage.crearProveedor(proveedorTest.nombre, proveedorTest.telefono, proveedorTest.correo);
     await proveedoresPage.buscarProveedor(proveedorTest.nombre);
     await expect(page.getByText(proveedorTest.nombre, { exact: true })).toBeVisible();
+  });
+
+  test('Debería crear un proveedor sin teléfono ni correo (US-25)', async ({ page }) => {
+    const proveedoresPage = new ProveedoresPage(page);
+
+    await proveedoresPage.crearProveedor('ProveedorSinContacto', '', '');
+    await proveedoresPage.buscarProveedor('ProveedorSinContacto');
+    await expect(page.getByText('ProveedorSinContacto', { exact: true })).toBeVisible();
   });
 
   test('Debería editar exitosamente los datos de un proveedor', async ({ page }) => {

@@ -14,21 +14,21 @@ proveedores, usuarios y auditoría para la empanadería de un cliente. Next.js 1
 | Ruta | Qué hace |
 |---|---|
 | `/login` | Acceso con bcrypt y JWT en cookie HttpOnly |
-| `/home`, `/product/[id]` | Catálogo público: gustos y bebidas visibles, por grupo, con fotos y precios (sin login) |
-| `/` | Estadísticas de la jornada, de 7:00 a 6:59 (sólo admin): ganancia en limpio, ventas, dinero por comida y por promos, lo facturado por medio de pago y los cuadros de vendedores por turno y de ventas |
+| `/home`, `/product/[id]` | Catálogo público: gustos y bebidas visibles y con precio, por grupo, con fotos (sin login) |
+| `/` | Estadísticas de la jornada, de 7:00 a 6:59 (sólo admin): ganancia en limpio, ventas, dinero por comida (con ícono por grupo) y por promos, lo cobrado por medio de pago y los cuadros de vendedores por turno y de ventas |
 | `/gastos` | Anotador de gastos con número de factura único (sólo admin); no cambia las Estadísticas |
 | `/ventas` | Ventas/Pedidos: historial con comprobante y anulación (sólo admin); "Nuevo pedido" abre el tablero |
-| `/ventas/nueva` | Tablero de pedidos por grupo, con colores y emojis, surtidas, mitad y mitad y promos; cobro en 4 medios de pago, con crédito en cuotas y su recargo |
+| `/ventas/nueva` | Tablero de pedidos por grupo, con colores e íconos de lucide, sólo los gustos con stock, surtidas, mitad y mitad y promos; "Quitar uno" en cada línea; cobro en 4 medios de pago, con crédito en cuotas (el recargo es de la tarjeta: la venta y los pagos quedan al precio original) |
 | `/promociones` | Promociones: presentaciones con un precio de venta propio, que aparecen en el tablero (sólo admin) |
-| `/stock` | Stock por gusto: ingresos con costo y proveedor, mermas (sólo admin) e historial |
-| `/alta-de-productos` | Gustos y bebidas, precios del grupo o por gusto, fotos y visibilidad en el catálogo (sólo admin) |
+| `/stock` | Stock por gusto, sólo admin: ingresos (se elige la categoría y después el gusto) con costo, precio de venta (salvo Empanadas y Ciabattas) y proveedor, pérdidas e historial |
+| `/alta-de-productos` | Gustos y bebidas (sólo grupo y nombre; el costo y el precio se cargan en Ingresar stock), el precio único de Empanadas y Ciabattas, fotos y visibilidad en el catálogo (sólo admin) |
 | `/tarjetas` | Tarjetas de crédito aceptadas y sus planes de 1, 3, 6 o 12 cuotas con recargo (sólo admin) |
 | `/clientes` | Directorio de clientes |
 | `/proveedores` | Proveedores, sólo admin (feature molde de la arquitectura: [`docs/features/provider/`](docs/features/provider/README.md)) |
 | `/usuarios` | Usuarios internos (sólo admin) |
 | `/logs` | Auditoría de todas las escrituras (sólo admin) |
 
-Roles: `admin` (todo) y `vendedor` (Ventas/Pedidos, Stock y Clientes). Cada Server Action verifica sesión y rol en el
+Roles: `admin` (todo) y `vendedor` (Ventas/Pedidos y Clientes). Cada Server Action verifica sesión y rol en el
 servidor; las únicas lecturas públicas son las del catálogo.
 
 ## Puesta en marcha local
@@ -80,9 +80,10 @@ npm run test:coverage                 # unit, contrato, fuzz y componentes; cobe
 npm run test:int                      # integración de repositorios sobre db-test
 npm run test:e2e                      # Playwright en Chromium sobre db-test
 npm run test:mutation                 # Stryker, score ≥ 70
-npm run verify                        # todo lo anterior salvo E2E, más el build. Antes de integrar a develop
+npm run verify                        # todo lo anterior salvo E2E, más el build. Nivel 3 y cierre de sprint
 ```
 
+- **Tests por nivel** ([`docs/testing.md`](docs/testing.md#nivel-de-tests-de-cada-ítem)): 1 texto o estilo, 2 lógica acotada, 3 profundo con `npm run verify`; el verify completo se corre al cerrar el sprint.
 - **Hooks** (lefthook): `pre-commit` bloquea `.env` reales y corre ESLint y tipos; `commit-msg` corre commitlint;
   `pre-push` corre la cobertura y `skills:check`.
 - **CI** (GitHub Actions, en cada push a `develop` y `main`): calidad, unit, mutación, integración, build y E2E.

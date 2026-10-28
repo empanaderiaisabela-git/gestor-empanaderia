@@ -15,8 +15,8 @@ export async function updatePromotionAction(id: string, input: PromotionUpdateIn
     const parsed = promotionUpdateSchema.safeParse(input);
     if (!parsedId.success || !parsed.success) return fail('VALIDATION');
     const promotion = await promotionService.update(caller, parsedId.data, parsed.data);
-    return { success: true, message: MESSAGES.SUCCESS.UPDATED('Promoción'), data: promotionRowSchema.parse(promotion) };
+    return { success: true, message: MESSAGES.SUCCESS.UPDATED('la promoción'), data: promotionRowSchema.parse(promotion) };
   } catch (error) {
-    return toActionFailure(error, 'Promoción');
+    return toActionFailure(error, 'la promoción');
   }
 }

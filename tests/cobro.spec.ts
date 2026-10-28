@@ -21,6 +21,7 @@ test.describe('cobrar el pedido (US-6)', () => {
     await gusto(page, 'Roquefort').getByRole('button', { name: 'Agregar' }).click();
     await page.getByRole('button', { name: 'Listo' }).click();
 
+    await page.getByRole('button', { name: /^Ver pedido/ }).click();
     const pedido = page.getByRole('region', { name: 'Pedido actual' });
     await pedido.getByLabel('Comprador (opcional)').fill('Marta');
     await pedido.getByRole('button', { name: 'Cobrar $20.500' }).click();
@@ -30,6 +31,7 @@ test.describe('cobrar el pedido (US-6)', () => {
     await page.getByRole('button', { name: 'Confirmar $20.500' }).click();
 
     await expect(page.getByText('Venta registrada por $20.500')).toBeVisible();
+    await page.getByRole('button', { name: /^Ver pedido/ }).click();
     await expect(pedido.getByText('No hay productos en el pedido')).toBeVisible();
 
     await page.goto('/stock');

@@ -12,8 +12,8 @@ vi.mock('@/features/menu/repository/menu-unit-of-work', async () => {
   return { drizzleMenuUnitOfWork: fake };
 });
 
-const PIZZA = { group: 'pizzas' as const, name: 'Mozzarella', unitCost: 3000, prices: { price1: 11000 } };
-const EDIT = { name: 'Mozzarella', unitCost: 3000, prices: { price1: 12000 }, version: 1 };
+const PIZZA = { group: 'pizzas' as const, name: 'Mozzarella' };
+const EDIT = { name: 'Mozzarella', version: 1 };
 const { DATABASE, VALIDATION } = MESSAGES.ERROR;
 
 async function existingItem(): Promise<string> {
@@ -43,17 +43,16 @@ describe('tabla de errores de Alta de productos (US-3 CA-2 a CA-4)', () => {
 
   it.each([
     { caso: 'nombre de 61 caracteres', input: { ...PIZZA, name: 'A'.repeat(61) } },
-    { caso: 'precio 0', input: { ...PIZZA, prices: { price1: 0 } } },
-    { caso: 'empanada sin los precios de 3, 6 y 12', input: { ...PIZZA, group: 'empanadas' as const } },
   ])('VALIDATION: $caso', async ({ input }) => {
     await asUser({ role: 'admin' });
     expect(await createMenuItemAction(input)).toEqual({ success: false, code: 'VALIDATION', error: VALIDATION.INVALID_DATA });
   });
 
-  it('VALIDATION: editar con precios de otro grupo o con un id inválido', async () => {
+  it('VALIDATION: editar con un id inválido o con campos de más', async () => {
     const id = await existingItem();
     await asUser({ role: 'admin' });
-    expect(await updateMenuItemAction(id, { ...EDIT, prices: { price1: 1, price3: 3 } })).toMatchObject({ code: 'VALIDATION' });
+    const withCost = { ...EDIT, unitCost: 1 };
+    expect(await updateMenuItemAction(id, withCost)).toMatchObject({ code: 'VALIDATION' });
     expect(await updateMenuItemAction('no-es-un-uuid', EDIT)).toMatchObject({ code: 'VALIDATION' });
   });
 
@@ -74,7 +73,7 @@ describe('tabla de errores de Alta de productos (US-3 CA-2 a CA-4)', () => {
   it('NOT_FOUND: editar un producto que ya no existe', async () => {
     await asUser({ role: 'admin' });
     const result = await updateMenuItemAction('11111111-1111-4111-8111-111111111111', EDIT);
-    expect(result).toEqual({ success: false, code: 'NOT_FOUND', error: 'El/la producto seleccionado ya no existe.' });
+    expect(result).toEqual({ success: false, code: 'NOT_FOUND', error: 'El producto ya no existe.' });
   });
 
   it('HAS_RELATIONS: no deja borrar un producto con movimientos', async () => {

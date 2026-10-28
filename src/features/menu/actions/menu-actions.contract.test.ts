@@ -13,8 +13,8 @@ vi.mock('@/features/menu/repository/menu-unit-of-work', async () => {
   return { drizzleMenuUnitOfWork: fake };
 });
 
-const SANGUCHE = { group: 'sanguches' as const, name: 'Primavera', unitCost: 500, prices: { price1: 1500, price3: 4200, price6: 8000, price12: 15000 } };
-const EMPANADA = { group: 'empanadas' as const, name: 'Carne suave', unitCost: 400 };
+const SANGUCHE = { group: 'sanguches' as const, name: 'Primavera' };
+const EMPANADA = { group: 'empanadas' as const, name: 'Carne suave' };
 
 describe('acciones de Alta de productos (camino feliz)', () => {
   beforeEach(async () => {
@@ -24,13 +24,12 @@ describe('acciones de Alta de productos (camino feliz)', () => {
 
   it('crea, edita, desactiva, reactiva y borra con los mensajes de siempre', async () => {
     const created = await createMenuItemAction(SANGUCHE);
-    expect(created).toMatchObject({ success: true, message: 'Producto registrado/a exitosamente', data: { name: 'Primavera', unitCost: 500, stock: 0, price12: 15000, version: 1 } });
+    expect(created).toMatchObject({ success: true, message: 'Se registró el producto', data: { name: 'Primavera', unitCost: null, stock: 0, price1: null, price12: null, version: 1 } });
     const id = created.success ? created.data.id : '';
-    const edit = { name: 'Primavera especial', unitCost: 550, prices: { ...SANGUCHE.prices, price1: 1600 }, version: 1 };
-    expect(await updateMenuItemAction(id, edit)).toMatchObject({ success: true, message: 'Producto actualizado/a exitosamente', data: { name: 'Primavera especial', price1: 1600, version: 2 } });
-    expect(await toggleMenuItemActiveAction({ id, isActive: false, version: 2 })).toEqual({ success: true, message: 'Producto desactivado/a exitosamente' });
-    expect(await toggleMenuItemActiveAction({ id, isActive: true, version: 3 })).toEqual({ success: true, message: 'Producto activado/a exitosamente' });
-    expect(await deleteMenuItemAction({ id, version: 4 })).toEqual({ success: true, message: 'Producto eliminado/a exitosamente' });
+    expect(await updateMenuItemAction(id, { name: 'Primavera especial', version: 1 })).toMatchObject({ success: true, message: 'Se actualizó el producto', data: { name: 'Primavera especial', version: 2 } });
+    expect(await toggleMenuItemActiveAction({ id, isActive: false, version: 2 })).toEqual({ success: true, message: 'Se desactivó el producto' });
+    expect(await toggleMenuItemActiveAction({ id, isActive: true, version: 3 })).toEqual({ success: true, message: 'Se activó el producto' });
+    expect(await deleteMenuItemAction({ id, version: 4 })).toEqual({ success: true, message: 'Se eliminó el producto' });
   });
 
   it('el vendedor también lista los productos (los necesita para vender)', async () => {
@@ -40,10 +39,15 @@ describe('acciones de Alta de productos (camino feliz)', () => {
   });
 
   it('el vendedor no recibe el costo; el admin sí (pregunta abierta de US-4 y BUG-8)', async () => {
-    await createMenuItemAction(EMPANADA);
+    await fakeMenu.read.items.insert({ ...EMPANADA, unitCost: 400 });
     expect(await fetchMenuItems()).toMatchObject([{ unitCost: 400 }]);
     await asUser({ role: 'vendedor' });
     expect(await fetchMenuItems()).toMatchObject([{ unitCost: null }]);
+  });
+
+  it('VALIDATION: el alta ya no acepta costo ni precios', async () => {
+    const withCost = { ...EMPANADA, unitCost: 400 };
+    expect(await createMenuItemAction(withCost)).toMatchObject({ code: 'VALIDATION' });
   });
 
   it('sin sesión, listar devuelve una lista vacía', async () => {

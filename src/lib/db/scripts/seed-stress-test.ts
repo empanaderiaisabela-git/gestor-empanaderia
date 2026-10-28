@@ -17,7 +17,7 @@ async function insertSale(vendorId: string, drink: typeof menuItems.$inferSelect
   const [sale] = await db.insert(sales).values({ vendorId, total, buyerName: pick(BUYERS), createdAt }).returning({ id: sales.id });
   const line = { saleId: sale.id, group: drink.group, presentationKey: 'u1', quantity, unitPrice: drink.price1 ?? '0', subtotal: total, description: drink.name };
   const [saleLine] = await db.insert(saleLines).values(line).returning({ id: saleLines.id });
-  await db.insert(saleLineItems).values({ saleLineId: saleLine.id, menuItemId: drink.id, units: String(quantity), unitCost: drink.unitCost });
+  await db.insert(saleLineItems).values({ saleLineId: saleLine.id, menuItemId: drink.id, units: String(quantity), unitCost: drink.unitCost ?? '0' });
   await db.insert(salePayments).values({ saleId: sale.id, type: pick(['efectivo', 'transferencia', 'debito', 'credito'] as const), amount: total });
 }
 

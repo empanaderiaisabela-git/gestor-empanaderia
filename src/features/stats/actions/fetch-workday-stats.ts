@@ -15,6 +15,6 @@ export async function fetchWorkdayStats(day?: string): Promise<ActionResult<Work
     return { success: true, data: await getWorkdayStats(parsed.data) };
   } catch (error) {
     console.error('fetchWorkdayStats error:', error);
-    return toActionFailure(error, 'panel de estadísticas');
+    return toActionFailure(error, 'el panel de estadísticas');
   }
 }

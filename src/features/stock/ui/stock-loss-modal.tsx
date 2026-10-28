@@ -30,7 +30,7 @@ export function StockLossModal({ model }: { model: StockPanelModel }): JSX.Eleme
   };
 
   return (
-    <ResponsiveModal isOpen={Boolean(item)} onClose={() => model.setDialog(null)} title={`Registrar merma · ${item?.name ?? ''}`} icon={<PackageMinus className='w-5 h-5 text-amber-600' />} width='sm' onSubmit={submit} submitLabel='Registrar merma'>
+    <ResponsiveModal isOpen={Boolean(item)} onClose={() => model.setDialog(null)} title={`Registrar pérdida · ${item?.name ?? ''}`} icon={<PackageMinus className='w-5 h-5 text-amber-600' />} width='sm' onSubmit={submit} submitLabel='Registrar pérdida'>
       <ErrorAlert error={serverError} />
       <div className='space-y-4'>
         <p className='text-sm text-zinc-500'>Stock actual: {item?.stock.toLocaleString('es-AR')}</p>

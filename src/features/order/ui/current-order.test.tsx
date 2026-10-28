@@ -19,6 +19,14 @@ function build(group: 'empanadas' | 'pizzas', key: string, picks: [string, 'one'
 describe('pedido actual (US-5 CA-5 y CA-6)', () => {
   beforeEach(() => store().clear());
 
+  it('"Quitar uno" resta una unidad de la línea (US-22)', () => {
+    build('empanadas', 'u1', [['carne', 'one'], ['carne', 'one']]);
+    render(<CurrentOrder board={board} onCheckout={vi.fn()} />);
+    expect(screen.getByText('1 unidad × 2')).toBeDefined();
+    fireEvent.click(screen.getByTitle('Quitar uno'));
+    expect(screen.getByText('1 unidad')).toBeDefined();
+  });
+
   it('vacío: lo dice y no se puede cobrar', () => {
     render(<CurrentOrder board={board} onCheckout={vi.fn()} />);
     expect(screen.getByText('No hay productos en el pedido')).toBeDefined();

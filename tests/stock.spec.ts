@@ -4,6 +4,7 @@ test.describe('Stock (US-4)', () => {
   test('el admin ingresa stock de un gusto y la grilla lo refleja', async ({ page }) => {
     await page.goto('/stock');
     await page.getByRole('button').filter({ hasText: 'Ingresar stock' }).click();
+    await page.getByLabel('Categoría').selectOption({ label: 'Empanadas' });
     await page.getByLabel('Gusto o bebida').selectOption({ label: 'Humita (stock 48)' });
     await page.getByLabel('Cantidad que entra').fill('12');
     await page.getByLabel(/Costo para el local, por unidad/).fill('460');

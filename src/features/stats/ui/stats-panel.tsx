@@ -31,8 +31,8 @@ function StatsBody({ model }: { model: StatsModel }): JSX.Element {
   return (
     <div className='space-y-8'>
       {stats.salesCount === 0 && <p className='text-sm font-semibold text-zinc-600 dark:text-zinc-400'>No hubo ventas en esta jornada.</p>}
-      <SummaryKpis stats={stats} />
       <GroupKpis stats={stats} />
+      <SummaryKpis stats={stats} />
       <PaymentKpis stats={stats} />
       <div className='grid grid-cols-1 xl:grid-cols-2 gap-4'>
         <VendorsTable rows={stats.vendorTable} />

@@ -19,11 +19,12 @@ const isOnCatalog = (item: MenuItem): boolean => item.isActive && item.isVisible
 async function catalogOf(read: MenuRepositories, items: MenuItem[]): Promise<CatalogItemDef[]> {
   const photos: MenuPhoto[] = await read.photos.ofItems(items.map((item) => item.id));
   const groupPrices: MenuGroupPrice[] = await read.groupPrices.findAll();
-  return items.map((item) => {
+  const defs = items.map((item) => {
     const images = photos.filter((photo) => photo.menuItemId === item.id).map(({ publicId, url }) => ({ publicId, url }));
     const group = groupPrices.find((row) => row.group === item.group);
     return catalogItemOf({ id: item.id, group: item.group, name: item.name, stock: Number(item.stock), prices: pricesOf(item), images }, group && pricesOf(group));
   });
+  return defs.filter((item) => item.prices.length > 0);
 }
 
 export function createCatalogService({ unitOfWork }: { unitOfWork: MenuUnitOfWork }): CatalogService {

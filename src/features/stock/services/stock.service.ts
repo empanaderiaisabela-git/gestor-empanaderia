@@ -3,6 +3,7 @@ import { allowsHalfStock } from '@/features/menu/domain/menu-groups';
 import type { StockEntryInput, StockLossInput } from '@/features/stock/domain/stock.schema';
 import type { EntryView, StockEntry, StockItem, StockLoss } from '@/features/stock/repository/stock.repository';
 import { drizzleStockUnitOfWork, type StockScope, type StockUnitOfWork } from '@/features/stock/repository/stock-unit-of-work';
+import { planEntry } from './stock-entry-plan';
 
 type Caller = { id: string };
 export type EntryResult = { item: StockItem; entry: StockEntry };
@@ -16,7 +17,7 @@ export type StockService = {
 
 async function lockedItem({ stock }: StockScope, id: string): Promise<StockItem> {
   const item = await stock.lockItem(id);
-  if (!item) throw new AppError('NOT_FOUND', { entity: 'producto' });
+  if (!item) throw new AppError('NOT_FOUND', { entity: 'el producto' });
   return item;
 }
 
@@ -27,11 +28,11 @@ function saved(item: StockItem | null): StockItem {
 
 async function registerEntry(scope: StockScope, caller: Caller, input: StockEntryInput): Promise<EntryResult> {
   const current = await lockedItem(scope, input.menuItemId);
-  const unitCost = input.unitCost ?? Number(current.unitCost);
+  const { unitCost, itemPrices } = planEntry(current, input);
   const stockBefore = Number(current.stock);
-  const item = saved(await scope.stock.saveItem(current, { stock: stockBefore + input.quantity, unitCost }));
+  const item = saved(await scope.stock.saveItem(current, { stock: stockBefore + input.quantity, unitCost, prices: itemPrices }));
   const entry = await scope.stock.insertEntry({ menuItemId: current.id, quantity: input.quantity, unitCost, providerId: input.providerId ?? null, userId: caller.id });
-  const detail = { name: current.name, quantity: input.quantity, unitCost, stockBefore, stockAfter: Number(item.stock) };
+  const detail = { name: current.name, quantity: input.quantity, unitCost, ...(input.prices ? { prices: input.prices } : {}), stockBefore, stockAfter: Number(item.stock) };
   await scope.audit({ userId: caller.id, action: 'CREAR', entity: 'STOCK_ENTRY', entityId: entry.id, detail });
   return { item, entry };
 }

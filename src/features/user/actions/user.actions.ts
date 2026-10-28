@@ -42,11 +42,11 @@ export async function toggleUserActiveAction(id: string, isActive: boolean): Pro
       }, tx);
       return {
         success: true,
-        message: isActive ? MESSAGES.SUCCESS.ACTIVATED('Usuario') : MESSAGES.SUCCESS.DEACTIVATED('Usuario'),
+        message: isActive ? MESSAGES.SUCCESS.ACTIVATED('el usuario') : MESSAGES.SUCCESS.DEACTIVATED('el usuario'),
       };
     });
   } catch (error: any) {
-    return { success: false, error: handleDatabaseError(error, 'Usuario') };
+    return { success: false, error: handleDatabaseError(error, 'el usuario') };
   }
 }
 
@@ -75,12 +75,12 @@ export async function createUserAction(input: UserInput): Promise<ActionResult<U
 
       return {
         success: true,
-        message: wasReactivated ? MESSAGES.SUCCESS.REACTIVATED('Usuario') : MESSAGES.SUCCESS.CREATED('Usuario'),
+        message: wasReactivated ? MESSAGES.SUCCESS.REACTIVATED('el usuario') : MESSAGES.SUCCESS.CREATED('el usuario'),
         data: userRowSchema.parse(result),
       };
     });
   } catch (error: any) {
-    return { success: false, error: handleDatabaseError(error, 'Usuario') };
+    return { success: false, error: handleDatabaseError(error, 'el usuario') };
   }
 }
 
@@ -106,12 +106,12 @@ export async function updateUserAction(id: string, input: UserUpdateInput): Prom
       }, tx);
       return {
         success: true,
-        message: MESSAGES.SUCCESS.UPDATED('Usuario'),
+        message: MESSAGES.SUCCESS.UPDATED('el usuario'),
         data: userRowSchema.parse(updated),
       };
     });
   } catch (error: any) {
-    return { success: false, error: handleDatabaseError(error, 'Usuario') };
+    return { success: false, error: handleDatabaseError(error, 'el usuario') };
   }
 }
 
@@ -124,7 +124,7 @@ export async function deleteUserAction(id: string): Promise<ActionResult> {
 
     return await db.transaction(async (tx) => {
       const user = await userRepository.getUserById(id, tx);
-      if (!user) return { success: false, error: MESSAGES.ERROR.DATABASE.NOT_FOUND('Usuario') };
+      if (!user) return { success: false, error: MESSAGES.ERROR.DATABASE.NOT_FOUND('el usuario') };
 
       // Rule 1: Only inactive users can be deleted
       if (user.isActive) {
@@ -144,9 +144,9 @@ export async function deleteUserAction(id: string): Promise<ActionResult> {
         note: 'Eliminado permanentemente (sin historial previo)',
       }, tx);
 
-      return { success: true, message: MESSAGES.SUCCESS.DELETED('Usuario') };
+      return { success: true, message: MESSAGES.SUCCESS.DELETED('el usuario') };
     });
   } catch (error: any) {
-    return { success: false, error: handleDatabaseError(error, 'Usuario') };
+    return { success: false, error: handleDatabaseError(error, 'el usuario') };
   }
 }

@@ -13,7 +13,7 @@ export const menuItems = pgTable(
       .default(sql`gen_random_uuid()`),
     group: menuGroupEnum('menu_group').notNull(),
     name: varchar('name', { length: 60 }).notNull(),
-    unitCost: money('unit_cost').notNull(),
+    unitCost: money('unit_cost'),
     stock: numeric('stock', { precision: 10, scale: 1 }).notNull().default('0'),
     price1: money('price_1'),
     price3: money('price_3'),
@@ -27,7 +27,7 @@ export const menuItems = pgTable(
   },
   (table) => [
     unique('menu_items_group_name_unique').on(table.group, table.name),
-    check('menu_items_unit_cost_check', sql`${table.unitCost} >= 0`),
+    check('menu_items_unit_cost_check', sql`${table.unitCost} is null or ${table.unitCost} >= 0`),
     check('menu_items_stock_check', sql`${table.stock} >= 0 and ${table.stock} * 2 = trunc(${table.stock} * 2)`),
     check('menu_items_whole_stock_check', sql`${table.group} = 'pizzas' or ${table.stock} = trunc(${table.stock})`),
     check(
@@ -36,8 +36,9 @@ export const menuItems = pgTable(
         when ${table.group} in ('empanadas', 'ciabattas')
           then ${table.price1} is null and ${table.price3} is null and ${table.price6} is null and ${table.price12} is null
         when ${table.group} = 'sanguches'
-          then coalesce(${table.price1}, 0) > 0 and coalesce(${table.price3}, 0) > 0 and coalesce(${table.price6}, 0) > 0 and coalesce(${table.price12}, 0) > 0
-        else coalesce(${table.price1}, 0) > 0 and ${table.price3} is null and ${table.price6} is null and ${table.price12} is null end`
+          then (${table.price1} is null and ${table.price3} is null and ${table.price6} is null and ${table.price12} is null)
+            or (coalesce(${table.price1}, 0) > 0 and coalesce(${table.price3}, 0) > 0 and coalesce(${table.price6}, 0) > 0 and coalesce(${table.price12}, 0) > 0)
+        else (${table.price1} is null or ${table.price1} > 0) and ${table.price3} is null and ${table.price6} is null and ${table.price12} is null end`
     ),
   ]
 );

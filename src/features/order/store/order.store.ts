@@ -12,6 +12,7 @@ type OrderState = PromoState &
     add: (menuItemId: string, mode: AddMode) => boolean;
     close: () => void;
     remove: (lineId: string) => void;
+    removeOne: (lineId: string) => void;
     clear: () => void;
     setBuyerName: (buyerName: string) => void;
   };
@@ -45,6 +46,11 @@ export const useOrderStore = create<OrderState>((set, get) => ({
   },
   close: () => set({ lines: withoutEmpty(get().lines), openLineId: null, openPromo: null }),
   remove: (lineId) => set({ lines: get().lines.filter((line) => line.id !== lineId), openLineId: get().openLineId === lineId ? null : get().openLineId }),
+  removeOne: (lineId) => {
+    const line = get().lines.find((candidate) => candidate.id === lineId);
+    if (!line || line.quantity <= 1) return get().remove(lineId);
+    set({ lines: get().lines.map((candidate) => (candidate.id === lineId ? { ...line, quantity: line.quantity - 1 } : candidate)) });
+  },
   clear: () => set({ lines: [], openLineId: null, buyerName: '', promos: [], openPromo: null }),
   setBuyerName: (buyerName) => set({ buyerName }),
 }));

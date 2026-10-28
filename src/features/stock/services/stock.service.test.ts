@@ -11,7 +11,7 @@ describe('stock.service (US-4)', () => {
   let fake: FakeStockUnitOfWork;
   let service: StockService;
   const empanada = stockItem({ id: '11111111-1111-4111-8111-111111111111' });
-  const pizza = stockItem({ id: '33333333-3333-4333-8333-333333333333', group: 'pizzas', name: 'Muzza', stock: '2.5', unitCost: '3000.00' });
+  const pizza = stockItem({ id: '33333333-3333-4333-8333-333333333333', group: 'pizzas', name: 'Muzza', stock: '2.5', unitCost: '3000.00', price1: '11000.00' });
 
   beforeEach(() => {
     fake = createFakeStockUnitOfWork();
@@ -59,7 +59,7 @@ describe('stock.service (US-4)', () => {
 
   it('NOT_FOUND: el gusto ya no existe', async () => {
     const ghost = '44444444-4444-4444-8444-444444444444';
-    await expect(service.registerEntry(CALLER, { menuItemId: ghost, quantity: 1 })).rejects.toMatchObject({ code: 'NOT_FOUND', message: 'El/la producto seleccionado ya no existe.' });
+    await expect(service.registerEntry(CALLER, { menuItemId: ghost, quantity: 1 })).rejects.toMatchObject({ code: 'NOT_FOUND', message: 'El producto ya no existe.' });
     await expect(service.registerLoss(CALLER, { menuItemId: ghost, quantity: 1, reason: 'x' })).rejects.toMatchObject({ code: 'NOT_FOUND' });
   });
 

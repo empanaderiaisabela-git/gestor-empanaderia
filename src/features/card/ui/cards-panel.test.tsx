@@ -19,7 +19,7 @@ describe('pantalla de Tarjetas (US-10)', () => {
   beforeEach(() => {
     useCardStore.setState({ cards: [], isLoaded: false });
     actions.fetch.mockResolvedValue([VISA, { ...VISA, id: 'c2', name: 'Cabal', isActive: false }]);
-    actions.create.mockResolvedValue({ success: true, message: 'Tarjeta registrado/a exitosamente' });
+    actions.create.mockResolvedValue({ success: true, message: 'Se registró la tarjeta' });
   });
 
   it('muestra las activas; las inactivas, sólo al pedirlas; y busca por nombre', async () => {

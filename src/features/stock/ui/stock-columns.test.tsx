@@ -6,18 +6,32 @@ import { getStockColumns, StockBadge, StockButtons } from './stock-columns';
 const ITEM: MenuItemDef = { id: 'a', group: 'sanguches', name: 'Primavera', unitCost: 650, stock: 24, price1: 1600, price3: 4500, price6: 8600, price12: 16500, isActive: true, isVisible: false, version: 1, createdAt: '', updatedAt: '' };
 
 describe('grilla de Stock (US-4 CA-1)', () => {
-  it('el admin ve el costo; el vendedor no', () => {
-    expect(getStockColumns({ isAdmin: true, open: vi.fn() }).map((column) => column.header)).toEqual(['Grupo', 'Gusto / bebida', 'Stock', 'Precio de venta', 'Costo para el local', 'Acciones']);
-    expect(getStockColumns({ isAdmin: false, open: vi.fn() }).map((column) => column.header)).toEqual(['Grupo', 'Gusto / bebida', 'Stock', 'Precio de venta', 'Acciones']);
+  it('muestra el costo para el local (US-16)', () => {
+    expect(getStockColumns({ open: vi.fn() }, []).map((column) => column.header)).toEqual(['Grupo', 'Gusto / bebida', 'Stock', 'Precio de venta', 'Costo para el local', 'Acciones']);
   });
 
   it('cada celda muestra grupo, gusto, stock, precio y costo', () => {
-    const columns = getStockColumns({ isAdmin: true, open: vi.fn() });
+    const columns = getStockColumns({ open: vi.fn() }, []);
     render(<div>{columns.slice(0, 5).map((column, index) => <span key={index}>{column.cell(ITEM)}</span>)}</div>);
     ['Sanguches', 'Primavera', '24', '$650'].forEach((text) => expect(screen.getByText(text)).toBeDefined());
     expect(screen.getByText(/1 unidad: \$1\.600/)).toBeDefined();
     render(<div>{columns[5].cell(ITEM)}</div>);
     expect(screen.getAllByTitle('Ingresar stock')).toHaveLength(1);
+  });
+
+  it('avisa cuando falta el precio o el costo', () => {
+    const sin: MenuItemDef = { ...ITEM, unitCost: null, price1: null, price3: null, price6: null, price12: null };
+    const columns = getStockColumns({ open: vi.fn() }, []);
+    render(<div>{columns.slice(3, 5).map((column, index) => <span key={index}>{column.cell(sin)}</span>)}</div>);
+    expect(screen.getByText('Sin precio')).toBeDefined();
+    expect(screen.getByText('Sin costo')).toBeDefined();
+  });
+
+  it('muestra los precios reales del grupo en Empanadas, uno por renglón (US-23, BUG-22)', () => {
+    const empanada: MenuItemDef = { ...ITEM, group: 'empanadas', price1: null };
+    const grupo = [{ group: 'empanadas' as const, price1: 2000, price3: 5500, price6: 10000, price12: 32000, version: 1, updatedAt: '' }];
+    render(<div>{getStockColumns({ open: vi.fn() }, grupo)[3].cell(empanada)}</div>);
+    expect(screen.getAllByRole('listitem').map((row) => row.textContent)).toEqual(['1 unidad: $2.000', '3 unidades: $5.500', '½ docena: $10.000', '1 docena: $32.000']);
   });
 
   it('muestra el stock y avisa cuando no hay', () => {
@@ -31,19 +45,12 @@ describe('grilla de Stock (US-4 CA-1)', () => {
     expect(screen.getByText('Sin stock')).toBeDefined();
   });
 
-  it('el vendedor puede ingresar y ver el historial, pero no registrar mermas', () => {
+  it('el admin ingresa, registra mermas y ve el historial (US-16)', () => {
     const open = vi.fn();
-    render(<StockButtons item={ITEM} actions={{ isAdmin: false, open }} />);
-    expect(screen.queryByTitle('Registrar merma')).toBeNull();
+    render(<StockButtons item={ITEM} actions={{ open }} />);
     fireEvent.click(screen.getByTitle('Ingresar stock'));
+    fireEvent.click(screen.getByTitle('Registrar pérdida'));
     fireEvent.click(screen.getByTitle('Historial de ingresos'));
-    expect(open.mock.calls).toEqual([[{ kind: 'entry', item: ITEM }], [{ kind: 'history', item: ITEM }]]);
-  });
-
-  it('el admin además registra mermas', () => {
-    const open = vi.fn();
-    render(<StockButtons item={ITEM} actions={{ isAdmin: true, open }} />);
-    fireEvent.click(screen.getByTitle('Registrar merma'));
-    expect(open).toHaveBeenCalledWith({ kind: 'loss', item: ITEM });
+    expect(open.mock.calls).toEqual([[{ kind: 'entry', item: ITEM }], [{ kind: 'loss', item: ITEM }], [{ kind: 'history', item: ITEM }]]);
   });
 });

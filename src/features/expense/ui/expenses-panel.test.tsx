@@ -19,7 +19,7 @@ describe('pantalla de Gastos (US-14)', () => {
   beforeEach(() => {
     useExpenseStore.setState({ expenses: [], isLoaded: false });
     actions.fetch.mockResolvedValue([HARINA, GAS]);
-    actions.create.mockResolvedValue({ success: true, message: 'Gasto registrado/a exitosamente' });
+    actions.create.mockResolvedValue({ success: true, message: 'Se registró el gasto' });
   });
 
   it('busca por número de factura o por título (CA-2)', async () => {

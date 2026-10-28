@@ -1,7 +1,7 @@
 # Prompt inicial: contexto completo de gestor-empanaderia
 
 > **Uso.** Al empezar una sesión nueva de Claude Code: `Leé @docs/initial_prompt.md y seguilo.`
-> Foto del proyecto al **2026-10-26**. Se adapta en cada avance significativo
+> Foto del proyecto al **2026-10-27**. Se adapta en cada avance significativo
 > ([criterios](how-to-document.md#mantener-al-día-docsinitial_promptmd)). Si algo de acá contradice a
 > [`AGENTS.md`](../AGENTS.md) o a los docs que enlaza, **ganan ellos**: avisale al dev que este archivo quedó
 > desactualizado.
@@ -27,21 +27,22 @@ Sistema de **gestión de stock y punto de venta + catálogo web** para la rotise
 | Cara | Rutas | Quién |
 |---|---|---|
 | Catálogo público | `/home`, `/product/[id]` | Clientes del local, sin login. Consultan por WhatsApp o Instagram; no hay pedidos online. **Por ahora no se publica**: sólo se despliega el gestor y el catálogo queda en el código. |
-| Panel de gestión | `/` (Estadísticas), `/gastos`, `/ventas` (Ventas/Pedidos: historial, comprobante y anulación), `/ventas/nueva` (tablero de pedidos y cobro), `/promociones`, `/stock`, `/alta-de-productos`, `/tarjetas`, `/clientes`, `/proveedores`, `/usuarios`, `/logs` (Auditoría) | `admin`: todo. `vendedor`: sólo Ventas/Pedidos, Stock y Clientes, y entra a Ventas/Pedidos. El menú y `proxy.ts` salen de `src/config/navigation.ts` (US-2). |
+| Panel de gestión | `/` (Estadísticas), `/gastos`, `/ventas` (Ventas/Pedidos: historial, comprobante y anulación), `/ventas/nueva` (tablero de pedidos y cobro), `/promociones`, `/stock`, `/alta-de-productos`, `/tarjetas`, `/clientes`, `/proveedores`, `/usuarios`, `/logs` (Auditoría) | `admin`: todo. `vendedor`: sólo Ventas/Pedidos y Clientes, y entra a Ventas/Pedidos. El menú y `proxy.ts` salen de `src/config/navigation.ts` (US-2). |
 
-Funciones que ya existen (Sprints 1 y 2):
-- Alta de gustos y bebidas por grupo fijo, con precio del grupo (Empanadas, Ciabattas) o por gusto, fotos y
-  visibilidad en el catálogo.
-- Stock por gusto: ingresos con costo y proveedor, mermas e historial.
-- Tablero de pedidos con colores y emojis por grupo, surtidas ("Agregar uno" / "Completar") y pizzas mitad y mitad.
+Funciones que ya existen (Sprints 1 a 3):
+- Alta de gustos y bebidas por grupo fijo: sólo grupo y nombre, con fotos y visibilidad en el catálogo (US-17), y
+  las tarjetas del precio único de Empanadas y Ciabattas (US-23).
+- Stock por gusto, sólo admin: ingresos (primero la categoría, después el gusto) con costo, precio de venta
+  (por gusto; Empanadas y Ciabattas sólo costo) y proveedor, pérdidas (mermas) e historial (US-16 a US-18, US-23).
+- Tablero de pedidos con colores e íconos de lucide por grupo (US-20), sólo con los gustos con stock (US-19), el pedido en un carrito desplegable (US-24), "Quitar uno" en cada línea (US-22), surtidas ("Agregar uno" / "Completar") y pizzas mitad y mitad.
 - Cobro con efectivo, transferencia, débito o crédito (hasta 2 medios) y descuentos, con precios recalculados en el
   servidor. Historial en Ventas/Pedidos, comprobante imprimible y anulación con reposición de stock.
 - Promociones con precio de venta a mano, que se venden desde el tablero eligiendo los gustos de cada parte
   (US-8 y US-9).
-- Tarjetas con planes de 1, 3, 6 o 12 cuotas y su recargo; el crédito en cuotas cobra el recargo sólo sobre la
-  parte pagada con crédito (US-10 y US-11).
+- Tarjetas con planes de 1, 3, 6 o 12 cuotas y su recargo; el recargo es de la tarjeta: la venta y los pagos
+  quedan al precio original y el recargo sólo se guarda como dato (US-10, US-11 y BUG-20).
 - Estadísticas de la jornada (7:00 a 6:59): ganancia en limpio, ventas, dinero por comida y por promos, lo
-  facturado por medio de pago y los cuadros de vendedores por turno y de ventas (US-12 y US-13).
+  cobrado por medio de pago (sin "Total facturado") y los cuadros de vendedores por turno y de ventas (US-12, US-13 y US-21).
 - Anotador de gastos con número de factura único, que no cambia las Estadísticas (US-14).
 - ABM de clientes, proveedores y usuarios, y auditoría de toda operación.
 - Catálogo público que se regenera a demanda.
@@ -82,7 +83,7 @@ jornada y los gastos. Las decisiones del Sprint 2 están en [`sprint-2.md`](plan
 
 Hacer preguntas de más es mejor que inventar.
 
-## 4. Estado actual del repo (al 2026-10-26)
+## 4. Estado actual del repo (al 2026-10-27)
 
 - **Sprint 0 terminado** (base técnica): todos sus ítems están integrados y en `En revisión` en `BACKLOG.md`,
   esperando que el dev los pase a `Hecho`. `main` tiene el tag `sprint-0`.
@@ -95,17 +96,19 @@ Hacer preguntas de más es mejor que inventar.
     decidir dudas nuevas. Esas decisiones están marcadas en
     [`sprint-2.md`](plans/sprint-2.md#decisiones-provisorias-del-agente) con la pregunta, un ejemplo y qué cambia
     si el dev responde otra cosa. Al final del mismo archivo hay un resumen para principiantes.
-  - Las migraciones 0012 a 0016 son del Sprint 2. Se probó que todas corren desde cero en una base nueva; la
+  - Las migraciones 0012 a 0016 son del Sprint 2 (la 0017, del Sprint 3). Se probó que todas corren desde cero en una base nueva; la
     de Supabase la migra el dev.
   - Planes maestros en `docs/plans/sprint-1.md` y `docs/plans/sprint-2.md`: decisiones del dev, enfoque de cada
     ítem y trazabilidad con `specs.md` y con las respuestas del cliente.
-- **No hay Sprint 3 cargado**: el próximo trabajo lo define el dev. Ningún ítem nuevo se arranca sin su OK.
+- **Sprint 3 implementado** ("Aclaraciones del dev": T-19, BUG-17 a BUG-21, US-16 a US-22 y T-18) en `develop`,
+  a la espera de la revisión del dev y del merge a `main` con el tag `sprint-3`. La migración 0017 es del Sprint 3.
+  Ningún ítem nuevo se arranca sin el OK del dev.
 - Git: `main` recibe un merge de `develop` al cierre de cada sprint. El trabajo nuevo sale de `develop`. El repo de GitHub
   es **público**: todo lo que se pushea queda publicado.
 - **No existe todavía**: `docs/conventions/`.
 - **Sí existen**:
-  - `BACKLOG.md`, con los Sprints 0, 1 y 2 en orden de ejecución.
-  - Los planes de cada sprint en `docs/plans/sprint-0.md`, `sprint-1.md` y `sprint-2.md`: orden, decisiones del
+  - `BACKLOG.md`, con los Sprints 0 a 3 en orden de ejecución.
+  - Los planes de cada sprint en `docs/plans/sprint-0.md`, `sprint-1.md`, `sprint-2.md` y `sprint-3.md`: orden, decisiones del
     dev y enfoque de cada ítem.
   - Las plantillas en `docs/templates/` (`plan.md`, `feature.md`, `adr.md`), los planes en `docs/plans/` y los
     ADR en `docs/adr/`.
@@ -123,7 +126,7 @@ Hacer preguntas de más es mejor que inventar.
     `src/lib/errors`.
 - Features del dominio, cada uno con su README en `docs/features/`:
   - `menu` (US-3, T-12, ADR 0005): gustos y bebidas por grupo fijo, precios, fotos y catálogo público.
-  - `stock` (US-4): ingresos, mermas e historial por gusto.
+  - `stock` (US-4, US-16 a US-18): ingresos con costo y precio, mermas e historial por gusto; sólo admin.
   - `order` (US-5 a US-7, US-9, US-11 y US-15): tablero, promos, cobro con crédito en cuotas, historial,
     comprobante y anulación.
   - `promotion` (US-8): promociones con precio de venta a mano.
@@ -221,7 +224,7 @@ exacto de archivos es `eslint-legacy.json`. Si tu ítem corrige un archivo hered
   - En desarrollo, Next ya no imprime los argumentos de las Server Actions (`logging.serverFunctions: false`), y
     Drizzle loguea el SQL sin parámetros. Fuera de `auth`, las lecturas no traen `password_hash` (BUG-6).
   - Ninguna respuesta al navegador ni el usuario de `verifyAuthOrAdmin` llevan el `password_hash` (BUG-7).
-  - `fetchMenuItems` exige sesión y al vendedor no le manda el costo: no ve costos ni proveedores (decisión del dev,
+  - `fetchMenuItems` exige sesión y al vendedor no le manda el costo: no ve costos ni proveedores, y Stock es sólo admin (US-16) (decisión del dev,
     2026-10-25).
   - `handleDatabaseError` lee el error original de Postgres (también en `error.cause` de Drizzle): un duplicado,
     una referencia inexistente y un borrado de algo referenciado tienen cada uno su mensaje (BUG-9). Un error sin código conocido ya no manda a
@@ -287,7 +290,8 @@ Requerimiento → Ítem de backlog → Descubrimiento → Plan aprobado → Rama
 5. **`finish-task`**:
    - Recorré la [Definition of Done](definition-of-done.md) **con evidencia**, es decir, mostrando la salida de
      los comandos.
-   - `npm run verify` en verde: cobertura ≥ 90/85 y mutación ≥ 70.
+   - Los tests del nivel del ítem en verde ([`testing.md`](testing.md#nivel-de-tests-de-cada-ítem)). En nivel 3,
+     `npm run verify`: cobertura ≥ 90/85 y mutación ≥ 70.
    - Actualizá `docs/features/<f>/README.md` con `docs/templates/feature.md`, que incluye la tabla
      *acción inválida → code → mensaje → test*.
    - Escribí un ADR si hubo una decisión de arquitectura.
@@ -318,9 +322,12 @@ Requerimiento → Ítem de backlog → Descubrimiento → Plan aprobado → Rama
 - **Este prompt también es doc.** Si tu tarea es un avance significativo, es decir, si vuelve falsa alguna línea
   de este archivo, lo adaptás en el mismo cambio y actualizás la fecha de la foto.
 - **Contradicciones entre docs:** avisá y proponé cuál corregir; `AGENTS.md` es la fuente canónica.
-- **Cambios mínimos y enfocados.** Nada de refactors, dependencias ni "mejoras" que nadie pidió.
-- **Skills:** las propias (`start-task`, `finish-task`) se editan en `.agents/skills/` y después se corre
-  `npm run skills:sync`.
+- **Cambios mínimos y enfocados.** Nada de refactors, dependencias ni "mejoras" que nadie pidió. El cambio más
+  chico que resuelva el problema: un texto mal armado se arregla en su plantilla, no en cada llamada.
+- **Skills:** las propias (`start-task`, `finish-task`, `delegate-task`) se editan en `.agents/skills/` y después
+  se corre `npm run skills:sync`.
+- **Subagentes:** con `delegate-task`, cada parte del trabajo va al modelo más barato que pueda hacerla (Haiku,
+  Sonnet u Opus; Opus es el techo). Lo chico se hace directo, y commits y comandos sobre la base nunca se delegan.
 - **Dudas que quedan abiertas:** las tuyas para el dev van a `docs/preguntas-dev.md`; las de negocio, a
   "Preguntas abiertas" del ítem en `BACKLOG.md`.
 
@@ -337,7 +344,7 @@ Requerimiento → Ítem de backlog → Descubrimiento → Plan aprobado → Rama
 | E2E | `docker compose up -d --wait db-test` → `npm run test:e2e` (Chromium) o `npm run test:e2e:all` (tres navegadores) |
 | Skills | `npm run skills:sync` · `npm run skills:check` |
 | Mutación | `npm run test:mutation` (Stryker, score ≥ 70) |
-| Antes de integrar a `develop` | `npm run verify` (lint, tipos, cobertura, integración, mutación y build) |
+| Antes de integrar a `develop` | Los tests del nivel del ítem; en nivel 3 y al cerrar el sprint, `npm run verify` (lint, tipos, cobertura, integración, mutación y build) |
 
 La configuración local va en `.env.local` (plantilla: `.env.example`): `LOCAL_DATABASE_URL`, `JWT_SECRET`
 (**obligatoria**) y `CLOUDINARY_URL`. Usuarios del seed: `admin`/`admin` y `vendedor`/`vendedor`. Son temporales: después se crean
@@ -377,8 +384,8 @@ las cuentas reales y se borran esas.
 | Línea del pedido | Una presentación con sus gustos y su cantidad. En el código, `sale_lines` y `sale_line_items`. |
 | Surtida | Una presentación de varias unidades con gustos distintos, armada con "Agregar uno" y "Completar". |
 | Costo para el local | Lo que le cuesta al local hacer o comprar una unidad (en la pizza, la pizza entera). Va por gusto y sirve para la ganancia. En el código, `unitCost`. Los campos, columnas y títulos nunca dicen "costo" a secas. |
-| Precio de venta | Lo que paga el cliente. Va por grupo en Empanadas y Ciabattas y por gusto en el resto. En el código, `price1` a `price12`. Los campos, columnas y títulos nunca dicen "precio" a secas. |
+| Precio de venta | Lo que paga el cliente. Va por grupo en Empanadas y Ciabattas (se carga en Alta de productos) y por gusto en el resto (se carga en Ingresar stock). En el código, `price1` a `price12`. Los campos, columnas y títulos nunca dicen "precio" a secas. |
 | Promo | Presentaciones con un precio de venta propio que escribe el admin; al venderla se eligen los gustos de cada parte (US-8 y US-9). En el código, `promotions`. |
-| Recargo de cuotas | El % del plan de la tarjeta, cobrado sólo sobre la parte pagada con crédito. Suma al total de la venta y a la ganancia (US-11). |
+| Recargo de cuotas | El % del plan de la tarjeta sobre la parte pagada con crédito. Es de la tarjeta, no del local: no suma al total de la venta ni a la ganancia, sólo se guarda como dato (US-11, BUG-20). |
 | Jornada | El día del local para Estadísticas: de 7:00 a 6:59 del día siguiente, en hora de Argentina (US-12). |
 | Turno | Mañana (7:00 a 16:59) o tarde (17:00 a 6:59), en el cuadro de vendedores (US-13). |

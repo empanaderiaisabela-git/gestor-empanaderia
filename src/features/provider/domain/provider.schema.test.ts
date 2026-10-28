@@ -18,12 +18,15 @@ describe('providerCreateSchema', () => {
   it.each([
     { caso: 'nombre de 1 carácter', input: { ...VALID, name: 'A' }, message: 'El nombre debe tener al menos 2 caracteres' },
     { caso: 'nombre de 101 caracteres', input: { ...VALID, name: 'A'.repeat(101) }, message: 'Nombre demasiado largo' },
-    { caso: 'teléfono vacío', input: { ...VALID, phone: '   ' }, message: 'El teléfono es obligatorio' },
     { caso: 'teléfono de 31 caracteres', input: { ...VALID, phone: '1'.repeat(31) }, message: 'Número de teléfono demasiado largo' },
     { caso: 'correo inválido', input: { ...VALID, email: 'no-es-un-correo' }, message: 'Formato de correo electrónico inválido' },
     { caso: 'correo de 101 caracteres', input: { ...VALID, email: `${'a'.repeat(90)}@molino.com` }, message: 'El correo electrónico es demasiado largo' },
   ])('rechaza $caso con el mensaje exacto', ({ input, message }) => {
     expect(firstMessage(input)).toBe(message);
+  });
+
+  it('el teléfono y el correo son opcionales: vacíos o con espacios quedan en blanco (US-25)', () => {
+    expect(providerCreateSchema.parse({ name: 'Molino del Sur', phone: '   ', email: '' })).toEqual({ name: 'Molino del Sur', phone: '', email: '' });
   });
 
   it('acepta los límites: nombre de 2 y de 100, teléfono de 30', () => {

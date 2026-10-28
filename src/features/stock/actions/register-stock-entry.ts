@@ -11,15 +11,13 @@ export type StockMovementResult = { menuItemId: string; stock: number; version: 
 
 export async function registerStockEntryAction(input: StockEntryInput): Promise<ActionResult<StockMovementResult>> {
   try {
-    const caller = await verifyAuthOrAdmin(false);
+    const caller = await verifyAuthOrAdmin(true);
     const parsed = stockEntrySchema.safeParse(input);
     if (!parsed.success) return fail('VALIDATION');
-    const setsCost = parsed.data.unitCost !== undefined || Boolean(parsed.data.providerId);
-    if (setsCost && caller.role !== 'admin') return fail('FORBIDDEN');
     const { item } = await stockService.registerEntry(caller, parsed.data);
     const stock = Number(item.stock);
     return afterCatalogChange({ success: true, message: `Stock ingresado: ${item.name} queda con ${stock.toLocaleString('es-AR')}`, data: { menuItemId: item.id, stock, version: item.version } });
   } catch (error) {
-    return toActionFailure(error, 'producto');
+    return toActionFailure(error, 'el producto');
   }
 }

@@ -13,8 +13,8 @@ export async function deleteCardAction(input: CardDeleteInput): Promise<ActionRe
     const parsed = cardDeleteSchema.safeParse(input);
     if (!parsed.success) return fail('VALIDATION');
     await cardService.remove(caller, parsed.data);
-    return { success: true, message: MESSAGES.SUCCESS.DELETED('Tarjeta') };
+    return { success: true, message: MESSAGES.SUCCESS.DELETED('la tarjeta') };
   } catch (error) {
-    return toActionFailure(error, 'Tarjeta');
+    return toActionFailure(error, 'la tarjeta');
   }
 }

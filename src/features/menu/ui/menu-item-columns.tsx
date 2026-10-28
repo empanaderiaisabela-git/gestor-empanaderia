@@ -3,9 +3,6 @@ import type { JSX } from 'react';
 import type { ColumnDef } from '@/components/ui/virtualized-data-table';
 import { GROUPS } from '@/features/menu/domain/menu-groups';
 import type { MenuItemDef } from '@/features/menu/domain/menu-item.schema';
-import { priceSummary } from '@/features/menu/domain/menu-price-list';
-import { COST_TERM, SALE_PRICE_TERM } from '@/features/menu/domain/menu-terms';
-import { formatMoney } from '@/lib/format-money';
 
 export type MenuItemRowActions = {
   onEdit: (item: MenuItemDef) => void;
@@ -17,8 +14,8 @@ export type MenuItemRowActions = {
 
 function NameCell({ item }: { item: MenuItemDef }): JSX.Element {
   return (
-    <div className='flex items-center gap-2 font-bold text-zinc-900 dark:text-zinc-100 truncate min-w-0' title={item.name}>
-      <span className='truncate'>{item.name}</span>
+    <div className='flex items-center gap-2 font-bold text-zinc-900 dark:text-zinc-100 min-w-0' title={item.name}>
+      <span className='line-clamp-2 break-words'>{item.name}</span>
       {!item.isActive && <span className='shrink-0 px-1.5 py-0.5 bg-zinc-100 text-zinc-500 dark:bg-zinc-800 text-[10px] font-bold rounded uppercase'>Inactivo</span>}
       {item.isVisible && <span className='shrink-0 px-1.5 py-0.5 bg-brand-50 text-brand-700 dark:bg-brand-500/10 dark:text-brand-300 text-[10px] font-bold rounded uppercase'>En catálogo</span>}
     </div>
@@ -51,11 +48,9 @@ export function MenuItemRowButtons({ item, actions }: { item: MenuItemDef; actio
 
 export function getMenuItemColumns(actions: MenuItemRowActions): ColumnDef<MenuItemDef>[] {
   return [
-    { header: 'Grupo', cellClassName: 'text-zinc-500', cell: (item) => GROUPS[item.group].label },
-    { header: 'Gusto / bebida', cellClassName: 'max-w-[220px]', cell: (item) => <NameCell item={item} /> },
-    { header: COST_TERM, cellClassName: 'text-zinc-500', cell: (item) => (item.unitCost === null ? '—' : formatMoney(item.unitCost)) },
-    { header: SALE_PRICE_TERM, cellClassName: 'text-zinc-600 dark:text-zinc-300 text-sm', cell: (item) => priceSummary(item) },
+    { header: 'Grupo', headerClassName: 'w-32', cellClassName: 'text-zinc-500', cell: (item) => GROUPS[item.group].label },
+    { header: 'Gusto / bebida', cell: (item) => <NameCell item={item} /> },
     { header: 'Stock', cellClassName: 'text-zinc-500', cell: (item) => item.stock.toLocaleString('es-AR') },
-    { header: 'Acciones', headerClassName: 'text-right', cellClassName: 'flex gap-1 justify-end', cell: (item) => <MenuItemRowButtons item={item} actions={actions} /> },
+    { header: 'Acciones', headerClassName: 'w-44 text-right', cellClassName: 'flex gap-1 justify-end', cell: (item) => <MenuItemRowButtons item={item} actions={actions} /> },
   ];
 }

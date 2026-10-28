@@ -27,7 +27,7 @@ export function ProviderFormFields({ register, errors }: ProviderFormFieldsProps
       <Field label='Razón Social / Identificador' error={errors.name?.message}>
         <input type='text' {...register('name')} placeholder='Ej: Distribuidora del Sur SRL' className={inputClass(Boolean(errors.name))} />
       </Field>
-      <Field label='Línea Telefónica Directa' error={errors.phone?.message}>
+      <Field label='Teléfono' error={errors.phone?.message}>
         <input
           type='text'
           {...phone}
@@ -39,7 +39,7 @@ export function ProviderFormFields({ register, errors }: ProviderFormFieldsProps
           className={inputClass(Boolean(errors.phone))}
         />
       </Field>
-      <Field label='Correo Electrónico Comercial' error={errors.email?.message}>
+      <Field label='Correo electrónico' error={errors.email?.message}>
         <input type='email' {...register('email')} placeholder='ventas@distribuidora.com' className={inputClass(Boolean(errors.email))} />
       </Field>
     </div>

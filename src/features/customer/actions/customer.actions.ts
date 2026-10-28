@@ -38,11 +38,11 @@ export async function toggleCustomerActiveAction(id: string, isActive: boolean):
       }, tx);
       return {
         success: true,
-        message: isActive ? MESSAGES.SUCCESS.ACTIVATED('Cliente') : MESSAGES.SUCCESS.DEACTIVATED('Cliente'),
+        message: isActive ? MESSAGES.SUCCESS.ACTIVATED('el cliente') : MESSAGES.SUCCESS.DEACTIVATED('el cliente'),
       };
     });
   } catch (error: any) {
-    return { success: false, error: handleDatabaseError(error, 'Cliente') };
+    return { success: false, error: handleDatabaseError(error, 'el cliente') };
   }
 }
 
@@ -70,12 +70,12 @@ export async function createCustomerAction(input: CustomerInput): Promise<Action
 
       return {
         success: true,
-        message: wasReactivated ? MESSAGES.SUCCESS.REACTIVATED('Cliente') : MESSAGES.SUCCESS.CREATED('Cliente'),
+        message: wasReactivated ? MESSAGES.SUCCESS.REACTIVATED('el cliente') : MESSAGES.SUCCESS.CREATED('el cliente'),
         data: result as CustomerDef,
       };
     });
   } catch (error: any) {
-    return { success: false, error: handleDatabaseError(error, 'Cliente') };
+    return { success: false, error: handleDatabaseError(error, 'el cliente') };
   }
 }
 
@@ -95,12 +95,12 @@ export async function updateCustomerAction(id: string, input: CustomerUpdateInpu
       }, tx);
       return {
         success: true,
-        message: MESSAGES.SUCCESS.UPDATED('Cliente'),
+        message: MESSAGES.SUCCESS.UPDATED('el cliente'),
         data: updated as CustomerDef,
       };
     });
   } catch (error: any) {
-    return { success: false, error: handleDatabaseError(error, 'Cliente') };
+    return { success: false, error: handleDatabaseError(error, 'el cliente') };
   }
 }
 
@@ -124,9 +124,9 @@ export async function deleteCustomerAction(id: string): Promise<ActionResult> {
         documentNumber: customer?.documentNumber ?? '',
         note: 'Eliminación permanente',
       }, tx);
-      return { success: true, message: MESSAGES.SUCCESS.DELETED('Cliente') };
+      return { success: true, message: MESSAGES.SUCCESS.DELETED('el cliente') };
     });
   } catch (error: any) {
-    return { success: false, error: handleDatabaseError(error, 'Cliente') };
+    return { success: false, error: handleDatabaseError(error, 'el cliente') };
   }
 }

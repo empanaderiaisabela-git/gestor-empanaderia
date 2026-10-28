@@ -14,8 +14,8 @@ export async function createMenuItemAction(input: MenuItemInput): Promise<Action
     const parsed = menuItemCreateSchema.safeParse(input);
     if (!parsed.success) return fail('VALIDATION');
     const item = await menuItemService.create(caller, parsed.data);
-    return afterCatalogChange({ success: true, message: MESSAGES.SUCCESS.CREATED('Producto'), data: menuItemRowSchema.parse(item) });
+    return afterCatalogChange({ success: true, message: MESSAGES.SUCCESS.CREATED('el producto'), data: menuItemRowSchema.parse(item) });
   } catch (error) {
-    return toActionFailure(error, 'producto');
+    return toActionFailure(error, 'el producto');
   }
 }

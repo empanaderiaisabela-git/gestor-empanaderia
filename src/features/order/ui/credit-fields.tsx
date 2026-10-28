@@ -6,10 +6,9 @@ import { fetchCards } from '@/features/card/actions/fetch-cards';
 import { describePlan } from '@/features/card/domain/card-describe';
 import type { CardDef } from '@/features/card/domain/card.schema';
 import { useCardStore } from '@/features/card/store/card.store';
-import { formatMoney } from '@/lib/format-money';
 import type { CheckoutForm } from './checkout-form';
 
-type CreditFieldsProps = { form: CheckoutForm; cards: CardDef[]; surcharge: number; onChange: (form: CheckoutForm) => void };
+type CreditFieldsProps = { form: CheckoutForm; cards: CardDef[]; onChange: (form: CheckoutForm) => void };
 
 export function useActiveCards(): CardDef[] {
   const { cards, isLoaded, setCards } = useCardStore();
@@ -19,7 +18,7 @@ export function useActiveCards(): CardDef[] {
   return cards.filter((card) => card.isActive);
 }
 
-export function CreditFields({ form, cards, surcharge, onChange }: CreditFieldsProps): JSX.Element {
+export function CreditFields({ form, cards, onChange }: CreditFieldsProps): JSX.Element {
   const card = cards.find((candidate) => candidate.id === form.cardId);
   if (cards.length === 0) return <p className='text-sm font-semibold text-amber-800 dark:text-amber-300'>No hay tarjetas cargadas: el admin las da de alta en Tarjetas.</p>;
   return (
@@ -44,7 +43,6 @@ export function CreditFields({ form, cards, surcharge, onChange }: CreditFieldsP
           ))}
         </select>
       </FormField>
-      {surcharge > 0 && <p className='col-span-2 text-sm text-zinc-600 dark:text-zinc-400'>Recargo de cuotas: {formatMoney(surcharge)}</p>}
     </div>
   );
 }

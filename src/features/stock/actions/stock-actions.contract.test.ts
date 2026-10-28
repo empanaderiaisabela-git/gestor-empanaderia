@@ -30,21 +30,22 @@ describe('acciones de Stock (US-4)', () => {
     expect(await fetchStockEntries(ITEM.id)).toMatchObject([{ quantity: 12, unitCost: 450, providerName: 'Molino del Sur', username: 'admin' }]);
   });
 
-  it('el vendedor ingresa sólo la cantidad y no ve costos ni proveedores en el historial', async () => {
+  it('MISSING_COST y MISSING_PRICE: un gusto nuevo sin costo ni precio no admite ingresos', async () => {
+    await asUser({ role: 'admin' });
+    const bare = stockItem({ id: '55555555-5555-4555-8555-555555555555', group: 'pizzas', name: 'Napolitana', unitCost: null, stock: '0.0' });
+    fakeStock.state.items.push(bare);
+    expect(await registerStockEntryAction({ menuItemId: bare.id, quantity: 6 })).toEqual({ success: false, code: 'MISSING_COST', error: 'Falta el costo para el local.' });
+    expect(await registerStockEntryAction({ menuItemId: bare.id, quantity: 6, unitCost: 3000 })).toEqual({ success: false, code: 'MISSING_PRICE', error: 'Falta el precio de venta.' });
+    expect(await registerStockEntryAction({ menuItemId: bare.id, quantity: 6, unitCost: 3000, prices: { price1: 11000 } })).toMatchObject({ success: true, data: { stock: 6, version: 2 } });
+  });
+
+  it('FORBIDDEN: el vendedor no entra a Stock: no ingresa, no lee el historial ni registra mermas (US-16)', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
     await asUser({ role: 'admin' });
     await registerStockEntryAction({ menuItemId: ITEM.id, quantity: 12, unitCost: 450, providerId: PROVIDER });
     await asUser({ role: 'vendedor' });
-    expect(await registerStockEntryAction({ menuItemId: ITEM.id, quantity: 6 })).toMatchObject({ success: true, data: { stock: 28 } });
-    expect(await fetchStockEntries(ITEM.id)).toMatchObject([
-      { quantity: 6, unitCost: null, providerName: null, username: 'vendedor' },
-      { quantity: 12, unitCost: null, providerName: null },
-    ]);
-  });
-
-  it('FORBIDDEN: el vendedor no carga costo ni proveedor, ni registra mermas', async () => {
-    await asUser({ role: 'vendedor' });
-    expect(await registerStockEntryAction({ menuItemId: ITEM.id, quantity: 1, unitCost: 1 })).toMatchObject({ code: 'FORBIDDEN' });
-    expect(await registerStockEntryAction({ menuItemId: ITEM.id, quantity: 1, providerId: PROVIDER })).toMatchObject({ code: 'FORBIDDEN' });
+    expect(await registerStockEntryAction({ menuItemId: ITEM.id, quantity: 1 })).toMatchObject({ code: 'FORBIDDEN' });
+    expect(await fetchStockEntries(ITEM.id)).toEqual([]);
     expect(await registerStockLossAction({ menuItemId: ITEM.id, quantity: 1, reason: 'x' })).toMatchObject({ code: 'FORBIDDEN' });
   });
 
@@ -62,13 +63,13 @@ describe('acciones de Stock (US-4)', () => {
 
   it('NOT_FOUND: el gusto ya no existe (CA-5)', async () => {
     await asUser({ role: 'admin' });
-    expect(await registerStockEntryAction({ menuItemId: '44444444-4444-4444-8444-444444444444', quantity: 1 })).toEqual({ success: false, code: 'NOT_FOUND', error: 'El/la producto seleccionado ya no existe.' });
+    expect(await registerStockEntryAction({ menuItemId: '44444444-4444-4444-8444-444444444444', quantity: 1 })).toEqual({ success: false, code: 'NOT_FOUND', error: 'El producto ya no existe.' });
   });
 
   it('INSUFFICIENT_STOCK: la merma supera el stock (CA-5)', async () => {
     await asUser({ role: 'admin' });
     expect(await registerStockLossAction({ menuItemId: ITEM.id, quantity: 11, reason: 'Se cayó' })).toEqual({ success: false, code: 'INSUFFICIENT_STOCK', error: 'No hay stock suficiente de Carne suave.' });
-    expect(await registerStockLossAction({ menuItemId: ITEM.id, quantity: 4, reason: 'Se cayó' })).toEqual({ success: true, message: 'Merma registrada: Carne suave queda con 6', data: { menuItemId: ITEM.id, stock: 6, version: 2 } });
+    expect(await registerStockLossAction({ menuItemId: ITEM.id, quantity: 4, reason: 'Se cayó' })).toEqual({ success: true, message: 'Pérdida registrada: Carne suave queda con 6', data: { menuItemId: ITEM.id, stock: 6, version: 2 } });
   });
 
   it('fuzz: ninguna entrada hace lanzar ni devuelve un error fuera del catálogo', async () => {

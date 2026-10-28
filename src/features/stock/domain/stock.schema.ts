@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { unitCostSchema } from '@/features/menu/domain/menu-prices';
+import { menuPricesSchema, unitCostSchema } from '@/features/menu/domain/menu-prices';
 
 const MAX_QUANTITY = 100_000;
 
@@ -9,6 +9,7 @@ export const stockEntrySchema = z.strictObject({
   menuItemId,
   quantity: z.number('Ingresá una cantidad').int('La cantidad tiene que ser un número entero').positive('La cantidad debe ser mayor a 0').max(MAX_QUANTITY, 'La cantidad es demasiado grande'),
   unitCost: unitCostSchema.optional(),
+  prices: menuPricesSchema.optional(),
   providerId: z.uuid('Elegí un proveedor válido').nullable().optional(),
 });
 export type StockEntryInput = z.infer<typeof stockEntrySchema>;

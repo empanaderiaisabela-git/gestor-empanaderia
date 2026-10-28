@@ -10,11 +10,11 @@ async function crearTarjeta(page: Page, nombre: string): Promise<void> {
   await page.getByLabel('Cuotas del plan 1').selectOption('3');
   await page.getByLabel('Recargo % del plan 1').fill('10');
   await page.getByRole('button', { name: 'Crear tarjeta' }).click();
-  await expect(page.getByText('Tarjeta registrado/a exitosamente')).toBeVisible();
+  await expect(page.getByText('Se registró la tarjeta')).toBeVisible();
 }
 
 test.describe('cobrar con crédito en cuotas (US-11)', () => {
-  test('elige la tarjeta y las cuotas, ve el recargo, cobra con recargo y el historial lo muestra', async ({ page }) => {
+  test('elige la tarjeta y las cuotas, cobra el precio original sin el recargo de la tarjeta y el historial lo muestra (BUG-20)', async ({ page }) => {
     const tarjeta = `Visa E2E ${Date.now()}`;
     await crearTarjeta(page, tarjeta);
 
@@ -23,6 +23,7 @@ test.describe('cobrar con crédito en cuotas (US-11)', () => {
     await gusto(page, '7up 1,5 L').getByRole('button', { name: 'Agregar' }).click();
     await page.getByRole('button', { name: 'Listo' }).click();
 
+    await page.getByRole('button', { name: /^Ver pedido/ }).click();
     const pedido = page.getByRole('region', { name: 'Pedido actual' });
     await pedido.getByLabel('Comprador (opcional)').fill('Comprador crédito');
     await pedido.getByRole('button', { name: 'Cobrar $3.000' }).click();
@@ -30,14 +31,14 @@ test.describe('cobrar con crédito en cuotas (US-11)', () => {
     await page.getByRole('button', { name: 'Crédito' }).click();
     await page.getByRole('combobox', { name: 'Tarjeta', exact: true }).selectOption({ label: tarjeta });
     await page.getByRole('combobox', { name: 'Cuotas', exact: true }).selectOption('3');
-    await expect(page.getByText('Recargo de cuotas: $300')).toBeVisible();
-    await page.getByRole('button', { name: 'Confirmar $3.300' }).click();
-    await expect(page.getByText('Venta registrada por $3.300')).toBeVisible();
+    await expect(page.getByText(/Recargo de cuotas/)).toHaveCount(0);
+    await page.getByRole('button', { name: 'Confirmar $3.000' }).click();
+    await expect(page.getByText('Venta registrada por $3.000')).toBeVisible();
 
     await page.goto('/ventas');
     await page.getByPlaceholder('Buscar por comprador o vendedor...').filter({ visible: true }).fill('Comprador crédito');
     const fila = page.getByRole('row').filter({ hasText: 'Comprador crédito' });
-    await expect(fila).toContainText('$3.300');
+    await expect(fila).toContainText('$3.000');
     await expect(fila).toContainText(`Crédito · ${tarjeta} · 3 cuotas`);
   });
 });

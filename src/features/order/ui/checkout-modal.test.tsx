@@ -27,7 +27,8 @@ async function openCheckout(): Promise<void> {
     store().close();
   });
   render(<OrderBoard />);
-  fireEvent.click(await screen.findByRole('button', { name: 'Cobrar $15.500' }));
+  fireEvent.click(await screen.findByRole('button', { name: 'Ver pedido (2)' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Cobrar $15.500' }));
 }
 
 describe('cobrar desde el tablero (US-6 CA-1 y CA-5)', () => {
@@ -73,15 +74,15 @@ describe('cobrar desde el tablero (US-6 CA-1 y CA-5)', () => {
     expect(checkoutAction).not.toHaveBeenCalled();
   });
 
-  it('crédito en cuotas: elige tarjeta y plan, ve el recargo y cobra el total con recargo (US-11)', async () => {
-    vi.mocked(checkoutAction).mockResolvedValue({ success: true, message: 'Venta registrada por $17.050', data: { saleId: 's1', total: 17050 } });
+  it('crédito en cuotas: elige tarjeta y plan y cobra el precio original, sin el recargo de la tarjeta (BUG-20)', async () => {
+    vi.mocked(checkoutAction).mockResolvedValue({ success: true, message: 'Venta registrada por $15.500', data: { saleId: 's1', total: 15500 } });
     await openCheckout();
     fireEvent.click(screen.getByRole('button', { name: 'Efectivo' }));
     fireEvent.click(screen.getByRole('button', { name: 'Crédito' }));
     fireEvent.change(await screen.findByLabelText('Tarjeta'), { target: { value: 'v1' } });
     fireEvent.change(screen.getByLabelText('Cuotas'), { target: { value: '3' } });
-    expect(screen.getByText('Recargo de cuotas: $1.550')).toBeDefined();
-    fireEvent.click(screen.getByRole('button', { name: 'Confirmar $17.050' }));
+    expect(screen.queryByText(/Recargo de cuotas/)).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: 'Confirmar $15.500' }));
     await waitFor(() => expect(checkoutAction).toHaveBeenCalledWith(expect.objectContaining({ payments: [{ type: 'credito', amount: 15500, cardId: 'v1', installments: 3 }] })));
   });
 

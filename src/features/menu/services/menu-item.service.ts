@@ -1,6 +1,5 @@
 import { AppError } from '@/lib/errors';
 import type { MenuItemDeleteInput, MenuItemInput, MenuItemToggleInput, MenuItemUpdateInput, MenuItemVisibilityInput } from '@/features/menu/domain/menu-item.schema';
-import { itemPriceIssues } from '@/features/menu/domain/menu-prices';
 import type { MenuItem } from '@/features/menu/repository/menu-item.repository';
 import { drizzleMenuUnitOfWork, type MenuAuditEntry, type MenuScope, type MenuUnitOfWork } from '@/features/menu/repository/menu-unit-of-work';
 
@@ -33,12 +32,10 @@ async function createItem({ items, audit }: MenuScope, caller: Caller, input: Me
 
 async function updateItem({ items, audit }: MenuScope, caller: Caller, { id, input }: { id: string; input: MenuItemUpdateInput }): Promise<MenuItem> {
   const current = await items.findById(id);
-  if (!current) throw new AppError('NOT_FOUND', { entity: 'producto' });
-  if (itemPriceIssues(current.group, input.prices).length > 0) throw new AppError('VALIDATION');
+  if (!current) throw new AppError('NOT_FOUND', { entity: 'el producto' });
   const sameName = await items.findByName(current.group, input.name);
   if (sameName && sameName.id !== id) throw new AppError('DUPLICATE');
-  const { version, ...changes } = input;
-  const item = orStale(await items.update({ id, version }, changes));
+  const item = orStale(await items.update({ id, version: input.version }, { name: input.name }));
   await audit(entry(caller, { action: 'ACTUALIZAR', item, detail: snapshotOf(item) }));
   return item;
 }

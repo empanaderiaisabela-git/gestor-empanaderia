@@ -10,6 +10,7 @@
 - [Sprint 0 · Base técnica](#sprint-0--base-técnica)
 - [Sprint 1 · Vender con el modelo de la empanadería](#sprint-1--vender-con-el-modelo-de-la-empanadería)
 - [Sprint 2 · Promociones, tarjetas, estadísticas y gastos](#sprint-2--promociones-tarjetas-estadísticas-y-gastos)
+- [Sprint 3 · Aclaraciones del dev](#sprint-3--aclaraciones-del-dev)
 
 ## Convenciones
 
@@ -1687,6 +1688,10 @@ un vistazo.
   - Colores y emojis viven en `src/config/group-theme.ts`, listo para el KPI de dinero por comida (US-12).
   - Los helpers de contraste se comparten en `src/test/contrast.ts`.
 
+**Notas**
+
+- 2026-10-27: US-20 vuelve a los íconos de lucide (pedido del dev en el Sprint 3).
+
 ### T-12 · Retirar el modelo heredado de la casa de celulares
 
 | Campo        | Valor      |
@@ -1843,7 +1848,9 @@ la leen.
 | 11  | [T-14](#t-14--cierre-del-sprint-2)                                               | Cierre del Sprint 2                                         | En revisión | todos       | 1 h             |
 | 12  | [BUG-15](#bug-15--los-precios-del-grupo-borran-lo-que-se-está-escribiendo)       | Los precios del grupo borran lo que se está escribiendo     | En revisión | US-3        | 30 min          |
 | 13  | [BUG-16](#bug-16--un-e2e-de-clientes-falla-a-veces-en-el-ci)                     | Un E2E de Clientes falla a veces en el CI                   | Pendiente | T-6         | 45 min          |
-|     |                                                                                  | **Total del sprint**                                        |           |             | **21 h 20 min** |
+| 14  | [T-16](#t-16--skill-para-delegar-en-subagentes-según-el-costo)                   | Skill para delegar en subagentes según el costo             | En revisión | —         | 40 min          |
+| 15  | [BUG-19](#bug-19--los-mensajes-dicen-ella-y-registradoa)                         | Los mensajes dicen "el/la" y "registrado/a"                 | En revisión | T-4       | 55 min          |
+|     |                                                                                  | **Total del sprint**                                        |           |             | **22 h 55 min** |
 
 ### T-15 · Respuestas del cliente en el backlog del Sprint 2
 
@@ -2000,6 +2007,8 @@ recargo del plan.
 
 - Decisión provisoria D-3 (`docs/plans/sprint-2.md`): el total de la venta incluye el recargo de cuotas (lo que pagó el cliente).
 - Cierre: `npm run verify` (784 tests, cobertura 96/89, mutación 89) y 69 E2E en verde. Hallazgo: en una base nueva todas las migraciones corren en una sola transacción, y Postgres no deja usar el valor `credito` del enum en la misma transacción en que se agregó (0008). El `CHECK` de 0015 compara `type::text`; se probó migrar desde cero, como pasará en Supabase.
+- 2026-10-27: el dev respondió la decisión provisoria D-3: el recargo lo cobra la tarjeta y el total de la venta es el
+  precio original. Se corrigió en BUG-20 (Sprint 3).
 
 ### US-12 · Estadísticas del día: dinero por comida, ganancia y ventas
 
@@ -2339,3 +2348,749 @@ desactivado, la búsqueda por DNI no lo encuentra en 15 s. En local nunca falló
 
 - ¿Podés bajar el artefacto `playwright-report` de una corrida fallida (c67ae43 o 3c28a35) y dejarlo en el repo local,
   sin commitearlo? Sin el trace, la causa no se puede ver.
+
+**Notas**
+
+- 2026-10-27: falló por primera vez en local, en la corrida completa del cierre del Sprint 3 (4 workers): la prueba
+  se quedó esperando la grilla (`getByTestId('virtuoso-scroller')`) hasta los 60 s. Corrido solo, `clientes.spec.ts`
+  pasó entero (16 casos). Queda en `test-results/` hasta la próxima corrida.
+
+### T-16 · Skill para delegar en subagentes según el costo
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente |
+| Inicio       | 2026-10-26 |
+| Tamaño       | S         |
+| Depende de   | —         |
+| Plan         | [`docs/plans/T-16-delegate-task.md`](docs/plans/T-16-delegate-task.md) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como dev quiero que el agente reparta el trabajo entre subagentes baratos y caros según la dificultad,
+de forma que las tareas simples no gasten como las difíciles.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · `delegate-task` con 3 niveles (Haiku/Sonnet/Opus, Opus como techo), cuándo no delegar, escalado único y verificación; la skill no nombra ningún otro modelo · Estimación: 20 min · Completado: 2026-10-26 15:06
+
+- [x] **CA-2** · `skills:sync` y `skills:check` en verde; `AGENTS.md`, `docs/workflow.md` §8 y `docs/initial_prompt.md` la listan entre las skills propias · Estimación: 10 min · Completado: 2026-10-26 15:06
+
+- [x] **CA-3** · Prueba real: una tarea de sólo lectura se delega con `Explore` + `haiku` + `low` y se informa en la tabla subtarea · nivel · resultado · Estimación: 10 min · Completado: 2026-10-26 15:06
+
+**Decisiones del dev** (2026-10-26)
+
+- Vive sólo en este proyecto y es una sola skill, sin agentes propios en `.claude/agents/`.
+- Tres niveles: Haiku, Sonnet y Opus. Opus es el techo, también al escalar: los modelos por encima están
+  prohibidos, fuera de todo presupuesto.
+- Se activa con `/delegate-task` y también sola, cuando el trabajo se puede repartir.
+
+**Notas**
+
+- Prueba de CA-3: "archivos de `src/features` de más de 80 líneas, con un resumen de cada uno". La skill lo mandó a
+  nivel 1 (`Explore` + `haiku` + `low`, 3 llamadas, ~24 s). La lista de 21 archivos coincidió con un `wc -l`
+  propio; sólo el total que informó estaba mal (22) y se corrigió sin escalar.
+- `skills:check`, lint y typecheck en verde. El resto de `npm run verify` en verde: 867 tests, cobertura
+  96/88,76, mutación 89,31 y build. `test:int` no corrió: Docker estaba apagado y el dev decidió integrar sin él,
+  porque el cambio es sólo texto.
+
+**Ajustes (2026-10-27)**, aprobados por el dev después de revisar la skill:
+
+- Entre Sonnet y Opus, si verificar cuesta, se va directo a `opus` con `effort: medium`: Opus cuesta sólo el doble.
+- Los precios llevan la fecha y el aviso de que Haiku sube a 0,50/2,50 cuando un pedido pasa los 100K tokens.
+- `Explore` sólo ubica código; leer y resumir archivos va con `general-purpose`.
+- El pedido a un subagente que edita prohíbe también los comentarios `shortcut:` que pida un plugin.
+- Un detalle chico (lint, una línea) se arregla directo; se escala sólo si el enfoque está mal.
+
+### BUG-19 · Los mensajes dicen "el/la" y "registrado/a"
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente |
+| Inicio       | 2026-10-26 |
+| Tamaño       | S         |
+| Depende de   | T-4       |
+| Plan         | [`docs/plans/BUG-19-mensajes-con-articulo.md`](docs/plans/BUG-19-mensajes-con-articulo.md) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Actual**: los mensajes del catálogo no concuerdan en género. Una venta que falla dice "Ocurrió un error inesperado
+al procesar el/la venta.", lo que no existe dice "El/la tarjeta seleccionado ya no existe." y lo que sale bien dice
+"Tarjeta registrado/a exitosamente".
+
+**Esperado**: cada mensaje se lee como una frase normal: "Ocurrió un error inesperado al procesar la venta.", "La
+tarjeta ya no existe.", "Se registró la tarjeta".
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · Las plantillas de `src/config/messages.ts` no llevan "el/la" ni "/a": los avisos de éxito usan un verbo ("Se registró…", "Se actualizó…", "Se eliminó…", "Se activó…", "Se desactivó…", "Se reactivó…") y los errores reciben la entidad con su artículo (test de cada plantilla con una entidad femenina y una masculina) · Estimación: 20 min · Completado: 2026-10-26 23:47
+
+- [x] **CA-2** · Todas las acciones y servicios pasan la entidad con su artículo y en minúscula ('la venta', 'el producto'…); las entidades del log de auditoría ('SALE', 'MENU_ITEM'…) no cambian · Estimación: 15 min · Completado: 2026-10-26 23:47
+
+- [x] **CA-3** · Los tests unitarios, de contrato, de componente y E2E y las tablas de errores de `docs/features/` esperan los textos nuevos; `npm run verify` en verde · Estimación: 20 min · Completado: 2026-10-26 23:47
+
+**Notas**
+
+- Apareció al simular una venta en desarrollo. El error en sí no era de código: a la base de desarrollo le faltaban
+  las migraciones 0012 a 0016 del Sprint 2, y cobrar escribía columnas que no existían. Se corrigió con
+  `npm run db:migrate` (2026-10-26, con el OK del dev); este ítem arregla sólo el texto del mensaje.
+- `npm run verify` en verde: 871 tests, cobertura 96/88,76, 83 de integración, mutación 89,31 y build. Los 6 E2E que
+  cambiaron, en verde (12 casos).
+
+
+## Sprint 3 · Aclaraciones del dev
+
+------------------------------------------------------------------------------------------------------------------------
+
+**Objetivo**: lo que el dev pidió al probar el Sprint 2. Alta de productos más simple, con el costo y el precio de venta
+en Stock; Stock por categoría y sólo para el administrador; Estadísticas con la forma del panel de referencia e íconos
+de lucide; quitar de a uno en el pedido; y tests según el tamaño del cambio.
+
+**Plan del sprint**: [`docs/plans/sprint-3.md`](docs/plans/sprint-3.md). Tiene las decisiones del dev (2026-10-26), las
+decisiones provisorias D-1 y D-2, el orden y la trazabilidad de cada línea de `specs.md` a su ítem. Los ítems 14 a 17
+son los ajustes que pidió el dev al revisar el sprint (2026-10-27), con sus decisiones R-1 a R-5 en el mismo plan.
+El 18 es un arreglo rápido que pidió después.
+
+### Resumen del Sprint 3
+
+| #   | ID                                                                     | Título                                                     | Estado      | Depende de | Estimación       |
+| --- | ---------------------------------------------------------------------- | ---------------------------------------------------------- | ----------- | ---------- | ---------------- |
+| 0   | [T-17](#t-17--backlog-del-sprint-3-desde-specsmd)                      | Backlog del Sprint 3 desde `specs.md`                      | En revisión | —          | 30 min           |
+| 1   | [T-19](#t-19--tests-por-nivel-según-el-tamaño-del-cambio)              | Tests por nivel según el tamaño del cambio                 | En revisión | T-17       | 30 min           |
+| 2   | [BUG-18](#bug-18--franja-vacía-arriba-de-cada-página)                  | Franja vacía arriba de cada página                         | En revisión | T-17       | 30 min           |
+| 3   | [BUG-17](#bug-17--el-nombre-del-gusto-se-corta-en-alta-de-productos)   | El nombre del gusto se corta en Alta de productos          | En revisión | T-17       | 20 min           |
+| 4   | [US-16](#us-16--stock-sólo-para-el-administrador)                      | Stock sólo para el administrador                           | En revisión | T-17       | 45 min           |
+| 5   | [US-17](#us-17--alta-pide-grupo-y-nombre-costo-y-precio-en-ingresar-stock) | Alta pide grupo y nombre; costo y precio en Ingresar stock | En revisión | US-16      | 3 h              |
+| 6   | [US-18](#us-18--ingresar-stock-primero-la-categoría-después-el-gusto)  | Ingresar stock: primero la categoría, después el gusto     | En revisión | US-17      | 45 min           |
+| 7   | [US-19](#us-19--ventas-muestra-sólo-gustos-con-stock)                  | Ventas muestra sólo gustos con stock                       | En revisión | US-17      | 40 min           |
+| 8   | [US-22](#us-22--ventas-quitar-de-a-uno-en-el-pedido)                   | Ventas: quitar de a uno en el pedido                       | En revisión | T-17       | 40 min           |
+| 9   | [US-20](#us-20--íconos-de-lucide-por-grupo-en-ventas-y-estadísticas)   | Íconos de lucide por grupo en Ventas y Estadísticas        | En revisión | T-17       | 2 h              |
+| 10  | [US-21](#us-21--estadísticas-como-el-panel-de-referencia)              | Estadísticas como el panel de referencia                   | En revisión | US-20      | 2 h              |
+| 11  | [T-18](#t-18--cierre-del-sprint-3)                                     | Cierre del Sprint 3                                        | En revisión | todos      | 1 h              |
+| 12  | [BUG-21](#bug-21--la-carga-inicial-de-datos-falla-si-quedaron-gastos)   | La carga inicial de datos falla si quedaron gastos         | En revisión | US-14      | 15 min           |
+| 13  | [BUG-20](#bug-20--el-recargo-de-cuotas-se-cuenta-como-plata-del-local)   | El recargo de cuotas se cuenta como plata del local        | En revisión | US-11      | 1 h 30 min       |
+| 14  | [T-20](#t-20--textos-y-estilos-de-la-revisión-del-sprint-3)              | Textos y estilos de la revisión del Sprint 3               | En revisión | T-18       | 30 min           |
+| 15  | [US-25](#us-25--proveedor-sin-teléfono-ni-correo-obligatorios)           | Proveedor sin teléfono ni correo obligatorios              | En revisión | T-18       | 30 min           |
+| 16  | [US-24](#us-24--ventas-el-pedido-en-un-carrito-desplegable)              | Ventas: el pedido en un carrito desplegable                | En revisión | T-18       | 1 h 30 min       |
+| 17  | [US-23](#us-23--precios-de-empanadas-y-ciabattas-en-alta)                | Precios de Empanadas y Ciabattas en Alta                   | En revisión | US-17      | 1 h 30 min       |
+| 18  | [BUG-22](#bug-22--los-precios-de-stock-se-leen-mal)                      | Los precios de Stock se leen mal                           | En revisión | US-23      | 15 min           |
+|     |                                                                        | **Total del sprint**                                       |             |            | **18 h 40 min**  |
+
+### T-17 · Backlog del Sprint 3 desde `specs.md`
+
+| Campo        | Valor                                              |
+| ------------ | -------------------------------------------------- |
+| Estado       | En revisión                                        |
+| Dueño        | Agente                                             |
+| Inicio       | 2026-10-27                                         |
+| Tamaño       | S                                                  |
+| Depende de   | —                                                  |
+| Plan         | [`docs/plans/sprint-3.md`](docs/plans/sprint-3.md) |
+| Merge        | —                                                  |
+| Horas reales | —                                                  |
+
+**Historia**: Como dev quiero las aclaraciones del Sprint 3 cargadas como ítems, de forma que cada cambio tenga su
+criterio, su estimación y su rama.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · `BACKLOG.md` con el Sprint 3: cada ítem con historia (o actual/esperado), CA medibles con estimación y dependencias; `docs/plans/sprint-3.md` con las decisiones del dev, las provisorias, el orden y la trazabilidad de `specs.md` · Estimación: 25 min · Completado: 2026-10-26 23:52
+
+- [x] **CA-2** · `specs.md` y los 7 wireframes nuevos quedan commiteados tal como los dejó el dev · Estimación: 5 min · Completado: 2026-10-26 23:52
+
+### T-19 · Tests por nivel según el tamaño del cambio
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-26 |
+| Tamaño       | S         |
+| Depende de   | T-17      |
+| Plan         | [`docs/plans/sprint-3.md`](docs/plans/sprint-3.md#1--t-19-tests-por-nivel-según-el-tamaño-del-cambio-s-30-min) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como dev quiero que cada cambio se pruebe en proporción a su tamaño, de forma que un cartel no cueste
+tiempo ni tokens como un cambio de base.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · `AGENTS.md`, `docs/testing.md`, `docs/definition-of-done.md`, `start-task` y `finish-task` definen 3 niveles (texto o estilo: lint, typecheck, tests relacionados y E2E del texto; lógica acotada: + `test:coverage` y `test:int` si tocó un repositorio; profundo: `npm run verify`) y el plan de cada ítem declara el suyo · Estimación: 20 min · Completado: 2026-10-27 00:02
+
+- [x] **CA-2** · `npm run verify` completo queda obligatorio en el cierre de cada sprint, y `AGENTS.md` pide el diff más chico que resuelva el problema; `skills:check` en verde · Estimación: 10 min · Completado: 2026-10-27 00:02
+
+**Notas**
+
+- Pedido del dev al cerrar BUG-19: cambiar un cartel tocó 80 archivos y corrió el `verify` completo.
+- Nivel 1 (sólo docs y skills): `skills:check` en verde y lint y typecheck en el hook del commit. El comando de
+  tests relacionados se probó con `src/config/messages.ts`: corrió 343 tests de 50 archivos en lugar de los 871.
+
+### BUG-18 · Franja vacía arriba de cada página
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-27 |
+| Tamaño       | S         |
+| Depende de   | T-17      |
+| Plan         | [`docs/plans/sprint-3.md`](docs/plans/sprint-3.md#2--bug-18-franja-vacía-arriba-s-30-min) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Actual**: arriba de cada página queda una franja vacía de 64 px (el header que sólo tiene el botón de tema) más un
+padding doble. En Estadísticas obliga a scrollear para ver datos (`espacio-inecesario-estadisticas.png`).
+
+**Esperado**: el contenido empieza arriba. El botón de tema sigue a mano y, en móvil, el botón del menú.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · Desde `xl`, el header no ocupa alto y el botón de tema queda arriba a la derecha; en móvil se ve como hoy · Estimación: 15 min · Completado: 2026-10-27 00:19
+
+- [x] **CA-2** · Ninguna página suma su propio padding al del layout; capturas de Estadísticas, Stock y Ventas sin la franja; E2E de navegación en verde · Estimación: 15 min · Completado: 2026-10-27 00:19
+
+**Notas**
+
+- Desde `xl`, el header sale del flujo (`xl:absolute`) y el botón de tema queda en el margen de arriba a la derecha,
+  sin pisar la tarjeta. Medido a 1440 px: la tarjeta de Estadísticas pasa de empezar a 96 px a empezar a 34 px. Por
+  debajo de `xl` sigue igual, porque ahí el header lleva el botón del menú.
+- Decisión provisoria D-3 (`docs/plans/sprint-3.md`): el margen interno de la tarjeta de cada página no se toca.
+- Nivel 1: tests relacionados (`main-layout.test.tsx`) en verde, lint y typecheck en el hook del commit, y
+  `navegacion.spec.ts` en verde (4 casos), después del arreglo de BUG-21.
+
+### BUG-17 · El nombre del gusto se corta en Alta de productos
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-27 |
+| Tamaño       | S         |
+| Depende de   | T-17      |
+| Plan         | [`docs/plans/sprint-3.md`](docs/plans/sprint-3.md#3--bug-17-nombre-cortado-en-alta-s-20-min) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Actual**: la columna GRUPO ocupa mucho y GUSTO / BEBIDA corta el nombre en ~220 px: "RUCULA Y JAMON CRUDO" se ve
+"RUCULA Y …" (`error-visual-1.png`).
+
+**Esperado**: GRUPO angosta, pegada a GUSTO / BEBIDA, y el nombre se lee entero.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · A 1280 px de ancho, "RUCULA Y JAMON CRUDO" con su etiqueta "En catálogo" se lee entero; GRUPO tiene ancho fijo angosto · Estimación: 20 min · Completado: 2026-10-27 00:30
+
+**Notas**
+
+- GRUPO pasa a ancho fijo angosto (`w-32`), GUSTO / BEBIDA al 36 % y ACCIONES a `w-44`, para que sus 5 botones
+  entren. El nombre ya no se corta en una línea: se parte en dos (`line-clamp-2`) y el nombre completo sigue en el
+  `title`.
+- Medido a 1280 px con la base de desarrollo: "RUCULA Y JAMON CRUDO" con "En catálogo" entra entero en dos líneas.
+  Costo, precio y stock quedan más angostos; US-17 los saca de esta grilla (decisión provisoria D-4).
+- Nivel 1: tests relacionados (2 archivos, 12 tests) en verde, y lint y typecheck en el hook del commit.
+
+### US-16 · Stock sólo para el administrador
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-27 |
+| Tamaño       | S         |
+| Depende de   | T-17      |
+| Plan         | [`docs/plans/sprint-3.md`](docs/plans/sprint-3.md#4--us-16-stock-sólo-para-el-administrador-s-45-min) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como dueño quiero que sólo el administrador entre a Stock, de forma que el costo y el precio los cargue
+siempre quien los conoce.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · El menú del vendedor no muestra Stock y `/stock` lo redirige como cualquier página sin permiso (test de navegación y E2E) · Estimación: 15 min · Completado: 2026-10-27 00:53
+
+- [x] **CA-2** · Ingresar stock, registrar merma y las lecturas de Stock devuelven `FORBIDDEN` al vendedor (tests de contrato) · Estimación: 20 min · Completado: 2026-10-27 00:53
+
+- [x] **CA-3** · La UI de Stock ya no bifurca por rol y `docs/features/stock/README.md` lo dice · Estimación: 10 min · Completado: 2026-10-27 00:53
+
+**Notas**
+
+- El vendedor ya no tiene Stock en el menú (`src/config/navigation.ts`), y `proxy.ts` lo manda a Ventas/Pedidos
+  si entra a `/stock`. `registerStockEntryAction` y `fetchStockEntries` exigen admin, igual que la merma.
+- La UI de Stock dejó de bifurcar por rol: siempre muestra costo, proveedor, merma e historial completo. La limpieza
+  de la UI la hizo un subagente (Sonnet) y se revisó el diff.
+- Nivel 3: `npm run verify` en verde (867 tests, cobertura 95,96/88,54, 83 de integración, mutación 89,22 y build)
+  y E2E de stock, navegación y concurrencia en verde (8 casos). El primer `verify` encontró `proxy.test.ts`
+  esperando que el vendedor entrara a `/stock`; se corrigió.
+
+### US-17 · Alta pide grupo y nombre; costo y precio en Ingresar stock
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-27 |
+| Tamaño       | L         |
+| Depende de   | US-16     |
+| Plan         | — (plan propio: `docs/plans/US-17-precios-en-stock.md`) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como administrador quiero dar de alta un gusto sólo con su grupo y su nombre, y cargar el costo y el
+precio de venta al ingresar stock, de forma que no cargue lo mismo dos veces.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · "Nuevo gusto o bebida" pide sólo grupo y nombre, y la edición sólo el nombre; salen de Alta las tarjetas de precios del grupo y las aclaraciones largas · Estimación: 30 min · Completado: 2026-10-27 01:21
+
+- [x] **CA-2** · La base acepta un gusto sin costo ni precio (migración con los checks nuevos y test de integración); los datos actuales no cambian · Estimación: 40 min · Completado: 2026-10-27 01:21
+
+- [x] **CA-3** · En el primer ingreso de un gusto, el costo y el precio de venta son obligatorios; después son opcionales y vacío deja el valor actual. En Empanadas y Ciabattas el precio es el del grupo (D-1). Stock, costo y precio se guardan juntos, con concurrencia optimista · Estimación: 1 h · Completado: 2026-10-27 01:21
+
+- [x] **CA-4** · La grilla de Stock marca "Sin precio" o "Sin costo" y el catálogo público no muestra gustos sin precio · Estimación: 20 min · Completado: 2026-10-27 01:21
+
+- [x] **CA-5** · E2E: alta de un gusto, primer ingreso con costo y precio, y venta · Estimación: 30 min · Completado: 2026-10-27 01:21
+
+**Notas**
+
+- Decisión provisoria D-1 (`docs/plans/sprint-3.md`): los precios de Empanadas y Ciabattas se cargan en Ingresar
+  stock y editan el precio del grupo.
+- Hecho con tres subagentes Sonnet (servidor; UI de Alta; UI de Stock) y revisado. Migración
+  `0017_precios-en-stock` (costo nulo y precios nulos permitidos); `stock-entry-plan.ts` decide costo y precio del
+  ingreso (`MISSING_COST`, `MISSING_PRICE`, precio del grupo para Empanadas y Ciabattas, D-1). Las tarjetas de
+  precio del grupo y su acción de guardar salieron de Alta; la grilla de Alta muestra grupo, gusto, stock y
+  acciones (D-4). El catálogo público sólo muestra gustos con precio.
+- Nivel 3: `npm run verify` en verde (856 tests, 96 de integración, mutación 89,51 y build) y todos los E2E en
+  verde: 72 en la corrida completa más `stock-precios.spec.ts` (alta → primer ingreso con costo y precio → precio en
+  la grilla), que se corrigió dos veces (selector de "Grupo" y la grilla virtual de Alta).
+- `npm run db:migrate` corrido en la base de desarrollo (autorizado por el dev).
+
+### US-18 · Ingresar stock: primero la categoría, después el gusto
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-27 |
+| Tamaño       | S         |
+| Depende de   | US-17     |
+| Plan         | [`docs/plans/sprint-3.md`](docs/plans/sprint-3.md#6--us-18-ingresar-stock-por-categoría-s-45-min) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como administrador quiero elegir primero la categoría y después el gusto, de forma que no tenga que
+recorrer los gustos de todas las categorías (`error-form-stock.png`).
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · "Ingresar stock" tiene un select "Categoría" y otro "Gusto o bebida" que muestra sólo los de esa categoría; sin categoría está deshabilitado y cambiarla limpia el gusto · Estimación: 30 min · Completado: 2026-10-27 03:46
+
+- [x] **CA-2** · Tests de componente y E2E de Stock en verde con los dos selects · Estimación: 15 min · Completado: 2026-10-27 03:46
+
+**Notas**
+
+- "Ingresar stock" tiene dos selects: "Categoría" y "Gusto o bebida", que lista sólo los de esa categoría y está
+  deshabilitado sin categoría; cambiar de categoría limpia el gusto. Al abrirlo desde una fila, viene con la
+  categoría y el gusto de esa fila. La categoría vive sólo en el formulario: la acción sigue recibiendo el gusto.
+- Nivel 1: lint, typecheck, tests relacionados (4 archivos, 18 tests, con `stock-entry-fields.test.tsx` nuevo) y E2E
+  de Stock (`stock.spec.ts` y `stock-precios.spec.ts`, 5 casos) en verde. Verificado también en la app.
+
+### US-19 · Ventas muestra sólo gustos con stock
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-27 |
+| Tamaño       | S         |
+| Depende de   | US-17     |
+| Plan         | [`docs/plans/sprint-3.md`](docs/plans/sprint-3.md#7--us-19-ventas-sólo-con-stock-s-40-min) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como vendedor quiero ver en el tablero sólo los gustos que hay, de forma que no ofrezca algo que no
+existe todavía.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · El tablero lista sólo gustos activos con stock mayor a 0; un gusto recién dado de alta o agotado no aparece · Estimación: 25 min · Completado: 2026-10-27 03:52
+
+- [x] **CA-2** · Tests de componente y E2E del tablero en verde · Estimación: 15 min · Completado: 2026-10-27 03:52
+
+**Notas**
+
+- `boardModelOf` (`use-order-board.ts`) lista sólo gustos activos con stock mayor a 0, según el stock del
+  servidor. Un gusto recién dado de alta o agotado no aparece en el tablero ni para elegir en las promos. El cobro
+  ya rechazaba stock insuficiente.
+- Nivel 2: lint, typecheck, `test:coverage` (860 tests) y E2E de tablero, cobro y promo (7 casos) en verde.
+
+### US-22 · Ventas: quitar de a uno en el pedido
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-27 |
+| Tamaño       | S         |
+| Depende de   | T-17      |
+| Plan         | [`docs/plans/sprint-3.md`](docs/plans/sprint-3.md#8--us-22-quitar-de-a-uno-en-el-pedido-s-40-min) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como vendedor quiero quitar de a una unidad en el pedido actual, de forma que si cargué 4 pizzas en vez
+de 3 no tenga que borrar todo y empezar de nuevo.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · Cada línea del pedido tiene un "−" que resta una unidad y recalcula el total; con una sola unidad, quita la línea (D-2) · Estimación: 30 min · Completado: 2026-10-27 03:58
+
+- [x] **CA-2** · Tests del store y del componente del pedido en verde · Estimación: 10 min · Completado: 2026-10-27 03:58
+
+**Notas**
+
+- Decisión provisoria D-2 (`docs/plans/sprint-3.md`): con una sola unidad, el "−" quita la línea.
+- Cada línea del pedido tiene un botón "Quitar uno" (ícono −) junto al tacho. Resta una unidad y el importe se
+  recalcula; con una sola unidad quita la línea (D-2). Las líneas de promo siguen con su tacho, sin cambios.
+- Nivel 2: lint, typecheck, `test:coverage` (862 tests, con un test nuevo del store y uno de componente) y E2E de
+  tablero y cobro (6 casos) en verde.
+
+### US-20 · Íconos de lucide por grupo en Ventas y Estadísticas
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-27 |
+| Tamaño       | M         |
+| Depende de   | T-17      |
+| Plan         | — (plan propio: `docs/plans/US-20-iconos-lucide.md`) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como dev quiero íconos de lucide en lugar de emojis en Ventas y Estadísticas, de forma que se vean
+nativos.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · `lucide-react` actualizado; Pizzas usa `Pizza`, Sanguches `Sandwich`, Coca-Cola y Pepsi `CanSoda` y Promos `HandCoins`, definidos en un solo lugar · Estimación: 40 min · Completado: 2026-10-27 04:09
+
+- [x] **CA-2** · Empanadas y Ciabattas usan íconos propios al estilo lucide, redibujados de los PNG del dev, con el color de su grupo · Estimación: 50 min · Completado: 2026-10-27 04:09
+
+- [x] **CA-3** · No queda ningún emoji de grupo en la app; tests de componente, de contraste y E2E del tablero en verde · Estimación: 30 min · Completado: 2026-10-27 04:09
+
+**Notas**
+
+- Revierte US-15 CA-2, que había pasado de lucide a emojis a pedido del dev.
+- `lucide-react` pasa a ^1.61.0 (trae `CanSoda`). `GROUP_THEME` lleva `icon` en lugar de `emoji`: Pizzas `Pizza`,
+  Sanguches `Sandwich`, Coca-Cola y Pepsi `CanSoda`, Promos `HandCoins`. Empanadas y Ciabattas usan íconos propios
+  (`src/components/icons/`, con `createLucideIcon`), redibujados de los PNG del dev: la empanada con su repulgue y
+  la ciabatta alargada con tres cortes en el pan. Lo hizo un subagente (Sonnet); los dos íconos propios se
+  redibujaron después de verlos en la app, porque la primera versión parecía una nube y una hamburguesa.
+- Nivel 2: lint, typecheck, `test:coverage` (864 tests) y E2E de tablero, estadísticas y promo (7 casos) en verde,
+  más los tests relacionados después de redibujar los íconos.
+
+### US-21 · Estadísticas como el panel de referencia
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-27 |
+| Tamaño       | M         |
+| Depende de   | US-20     |
+| Plan         | — (plan propio: `docs/plans/US-21-estadisticas-referencia.md`) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como dueño quiero Estadísticas con la forma del panel de referencia, de forma que vea lo importante de
+un vistazo (`referencia-de-otro-sistema.png`).
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · Sin la descripción de la jornada ni "Dinero generado por comida"; comidas arriba en filas de 4, 3 y 2 (Empanadas, Pizzas, Sanguches, Ciabattas · Coca-Cola, Pepsi, Promos · Ventas registradas, Ganancia); debajo, los medios de pago · Estimación: 40 min · Completado: 2026-10-27 04:18
+
+- [x] **CA-2** · Comidas, Promos, Ventas registradas y Ganancia llevan borde de color y fondo neutro; "Ganancia" sin aclaración, borde verde e ícono de dinero; "Ventas registradas" borde azul e ícono de maletín; "Total facturado" ya no está · Estimación: 50 min · Completado: 2026-10-27 04:18
+
+- [x] **CA-3** · Medios de pago con fondo de color (Transferencia amarillo, Crédito naranja, Efectivo verde, Débito azul), con contraste AA en claro y oscuro (test); tests de componente y E2E de Estadísticas en verde · Estimación: 30 min · Completado: 2026-10-27 04:18
+
+**Notas**
+
+- Hecho por un subagente (Sonnet) y revisado en la app a 1440 px: comidas arriba en filas de 4 y 3 (con Promos),
+  Ventas registradas y Ganancia en la tercera, y los medios de pago abajo con fondo de color. Comidas, Promos,
+  Ventas y Ganancia llevan borde de color, fondo neutro y el ícono en un cuadrito teñido. Salen la descripción de la
+  jornada, "Dinero generado por comida", "Total facturado" y la aclaración de la ganancia.
+- Colores nuevos en `src/app/group-colors.css` (acento por grupo) y `src/app/stat-colors.css`, en claro y oscuro,
+  con test de contraste (`stat-colors-contrast.test.ts`: texto AA y bordes 3:1).
+- Nivel 2: lint, typecheck, `test:coverage` (884 tests) y E2E de estadísticas y tablero en verde.
+
+### T-18 · Cierre del Sprint 3
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-27 |
+| Tamaño       | S         |
+| Depende de   | todos     |
+| Plan         | [`docs/plans/sprint-3.md`](docs/plans/sprint-3.md#11--t-18-cierre-del-sprint-3-s-1-h) |
+| Merge        | `chore(release): sprint 3` en `main`, tag `sprint-3` |
+| Horas reales | —         |
+
+**Historia**: Como dev quiero el Sprint 3 verificado completo y en `main`, de forma que la demo muestre lo que se
+probó.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · `npm run verify` completo y todos los E2E en verde sobre `develop` · Estimación: 30 min · Completado: 2026-10-27 04:29
+
+- [x] **CA-2** · README, `docs/architecture.md` y `docs/initial_prompt.md` al día; merge local `develop → main` con el tag `sprint-3` · Estimación: 30 min · Completado: 2026-10-28 10:55
+
+**Notas**
+
+- CA-1: `npm run verify` en verde sobre la rama de T-18 (884 tests, cobertura 95,97/89,38, 96 de integración,
+  mutación 89,51 y build) y todos los E2E en verde: 72 en la corrida completa y `concurrencia.spec.ts`, que fallaba
+  porque seguía eligiendo el gusto sin la categoría (US-18) y se corrigió acá.
+- CA-2: README, `docs/architecture.md` y `docs/initial_prompt.md` al día (lo hizo un subagente Sonnet y se
+  revisó). Falta el merge local `develop → main` con el tag `sprint-3`, que el dev pidió dejar para su OK.
+- Se corrigieron las horas de cierre de BUG-19, T-17, T-19, BUG-18 y BUG-21: se habían cargado en UTC.
+- El resumen del sprint, en lenguaje simple, está al final de `docs/plans/sprint-3.md`.
+- Cierre de nuevo tras los ajustes de la revisión (T-20, US-25, US-24 y US-23, 2026-10-27): `npm run verify` en verde
+  sobre el código final (mutación 89,88 y build) y 65 E2E en verde. Uno de Clientes falló una vez y pasó al
+  repetirlo (BUG-16). El cambio 5 de la revisión ("2 de 4" en la promo) se descartó: el dev vio que no es un bug.
+- Antes del merge a `main` (2026-10-28) se repitió todo, porque BUG-22 entró después del último verify: `npm run
+  verify` en verde (908 tests, cobertura 96,1/89,18, 96 de integración, mutación 90,08 y build) y los 65 E2E en verde.
+- El dev dio el OK al cierre el 2026-10-28, al decidir que el pedido del cliente tras la demo va en un Sprint 4.
+
+### BUG-21 · La carga inicial de datos falla si quedaron gastos
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-27 |
+| Tamaño       | S         |
+| Depende de   | US-14     |
+| Plan         | —         |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Actual**: `npm run db:seed` borra los usuarios sin borrar antes los gastos, que los referencian. Si una corrida de E2E
+(por ejemplo `gastos.spec.ts`) dejó gastos en `db-test`, la siguiente no arranca: "update or delete on table users
+violates foreign key constraint expenses_user_id_users_id_fk".
+
+**Esperado**: la carga inicial borra los gastos antes que los usuarios y los E2E corren una vez tras otra.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · `setup-initial-data.ts` borra `expenses` antes que `users`; `gastos.spec.ts` y después `navegacion.spec.ts` corren en verde dos veces seguidas · Estimación: 15 min · Completado: 2026-10-27 00:22
+
+**Notas**
+
+- Apareció al verificar BUG-18. En el CI no se ve porque cada corrida arranca con la base vacía.
+- Nivel 2 (script de datos): la prueba es el E2E repetido. Primera corrida: 6 casos en verde; segunda, con los gastos
+  de la primera ya en la base: 4 casos en verde.
+
+### BUG-20 · El recargo de cuotas se cuenta como plata del local
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-27 |
+| Tamaño       | M         |
+| Depende de   | US-11     |
+| Plan         | [`docs/plans/BUG-20-recargo-de-la-tarjeta.md`](docs/plans/BUG-20-recargo-de-la-tarjeta.md) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Actual**: por la decisión provisoria D-3 del Sprint 2, un pedido de $10.000 pagado con $4.000 en efectivo y $6.000
+con Visa en 3 cuotas al 10 % queda en $10.600, y el recargo suma a lo facturado, al crédito y a la ganancia.
+
+**Esperado** (dev, 2026-10-27): el recargo lo cobra la emisora de la tarjeta. El local ve sólo el precio original: la
+venta es de $10.000 y el pago con Visa, de $6.000.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · El cobro confirma y guarda el total sin el recargo, que queda guardado sólo como dato del pago (tests unit, de componente y de integración) · Estimación: 40 min · Completado: 2026-10-27 00:41
+
+- [x] **CA-2** · Estadísticas: lo facturado, la ganancia, el dinero por comida y el crédito no suman el recargo (test unit) · Estimación: 20 min · Completado: 2026-10-27 00:41
+
+- [x] **CA-3** · El comprobante y el historial muestran cada pago por su monto, sin el recargo; `docs/features/order` y `stats`, y la D-3 del Sprint 2, dicen la regla nueva; `npm run verify` y el E2E de crédito en verde · Estimación: 30 min · Completado: 2026-10-27 00:41
+
+**Notas**
+
+- `checkout.service.ts` guarda el total de los productos con descuento. El recargo sigue en el pago
+  (`surcharge_pct`, `surcharge_amount`) como dato. La base no cambia y no se migran ventas (dev: no hay producción).
+- Decisión provisoria D-5 (`docs/plans/sprint-3.md`): el cobro y el comprobante no muestran el recargo.
+- Nivel 3: `npm run verify` en verde (870 tests, cobertura 95,97/88,64, 83 de integración, mutación 89,22 y build) y
+  E2E de crédito, cobro y promo en verde (5 casos). La revisión con `/ponytail-review` sumó un test del comprobante
+  con crédito.
+
+### T-20 · Textos y estilos de la revisión del Sprint 3
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-27 |
+| Tamaño       | S         |
+| Depende de   | T-18      |
+| Plan         | [`docs/plans/sprint-3.md`](docs/plans/sprint-3.md#ajustes-de-la-revisión-del-dev-2026-10-27) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como dev quiero los textos y anchos que marqué al revisar el sprint, de forma que Stock hable de
+pérdidas, el pedido se lea entero en Ventas/Pedidos y Estadísticas diga qué muestra cada grupo de cuadros.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · Stock dice "Registrar pérdida" en el botón naranja, en el diálogo y en el mensaje, y "pérdidas" en la descripción (cambio 2, R-2) · Estimación: 10 min · Completado: 2026-10-27 11:31
+
+- [x] **CA-2** · En Ventas/Pedidos las columnas cortas tienen ancho fijo y la columna Pedido usa el resto y muestra el pedido completo (cambio 4, R-4) · Estimación: 10 min · Completado: 2026-10-27 11:31
+
+- [x] **CA-3** · Estadísticas se titula "Resumen de la actividad" y tiene los subtítulos "Venta por categoría" y "Cantidad de ventas y sus ganancias" (cambios 8 y 9) · Estimación: 10 min · Completado: 2026-10-27 11:31
+
+**Notas**
+
+- Cambio 4: a 1440 px la tabla mide 1077 px y las 8 columnas tenían 135 px cada una. Las celdas de esta tabla bajan
+  el margen lateral a `px-3!`, y Pedido pasa de 87 px útiles a 185 px. Si el pedido no entra en una línea, sigue en
+  la siguiente, sin cortarse.
+- Nivel 1: lint, typecheck, `vitest related` (36 tests) y E2E de Estadísticas, Ventas/Pedidos y Stock (6 casos) en
+  verde.
+
+### US-25 · Proveedor sin teléfono ni correo obligatorios
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-27 |
+| Tamaño       | S         |
+| Depende de   | T-18      |
+| Plan         | [`docs/plans/sprint-3.md`](docs/plans/sprint-3.md#ajustes-de-la-revisión-del-dev-2026-10-27) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como administrador quiero anotar un proveedor sin su teléfono ni su correo, de forma que pueda cargarlo
+aunque todavía no tenga esos datos.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · El proveedor se guarda con teléfono y correo vacíos; un correo cargado sigue validándose (tests del schema y de contrato) · Estimación: 20 min · Completado: 2026-10-27 11:41
+
+- [x] **CA-2** · El formulario dice "Teléfono" y "Correo electrónico"; E2E de Proveedores en verde · Estimación: 10 min · Completado: 2026-10-27 11:41
+
+**Notas**
+
+- `provider.schema.ts`: el teléfono deja de exigir `min(1)` y el correo acepta vacío o un correo válido (un `refine`
+  con `z.email()`, para conservar los mensajes de siempre). La base ya tenía `default('')`: no hay migración.
+- E2E: salen los casos que exigían teléfono o correo y entra "crear un proveedor sin teléfono ni correo".
+- Nivel 2: lint, typecheck, `test:coverage` (885 tests, cobertura 95,97/89,4) y E2E de Proveedores (15 casos) en
+  verde.
+
+### US-24 · Ventas: el pedido en un carrito desplegable
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-27 |
+| Tamaño       | M         |
+| Depende de   | T-18      |
+| Plan         | [`docs/plans/sprint-3.md`](docs/plans/sprint-3.md#ajustes-de-la-revisión-del-dev-2026-10-27) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como vendedor quiero el pedido actual en un panel que se abre desde la derecha, con un ticket que cuenta
+lo que agregué, de forma que los grupos de comida ocupen la pantalla y el pedido esté a un toque.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · Un botón con el ícono de ticket abre el panel desde la derecha con el pedido actual; se cierra con la X, con Escape o tocando afuera (cambio 7, R-5) · Estimación: 50 min · Completado: 2026-10-27 11:49
+
+- [x] **CA-2** · El globito del botón cuenta los productos: una docena suma 1, una promo suma 1; con 0 no se muestra · Estimación: 15 min · Completado: 2026-10-27 11:49
+
+- [x] **CA-3** · El botón Cobrar es verde, con contraste AA (cambio 6) · Estimación: 5 min · Completado: 2026-10-27 11:49
+
+- [x] **CA-4** · Tests de componente y los 7 E2E de Ventas en verde, abriendo el carrito · Estimación: 20 min · Completado: 2026-10-27 11:49
+
+**Notas**
+
+- `order-drawer.tsx`: el botón flotante con `Ticket` y el número, y el panel que entra desde la derecha. Va con
+  transición de CSS (`translate-x` y `visibility`) en lugar de `framer-motion`: el panel cerrado queda `inert` y
+  `aria-hidden`, así los tests y el lector de pantalla no lo ven. `CurrentOrder` no cambia.
+- Decisión provisoria R-5 (`docs/plans/sprint-3.md`): el botón flota abajo a la derecha y Cobrar cierra el carrito.
+- El tablero suma `pb-24` para que el botón no tape la última tarjeta.
+- Nivel 2: lint, typecheck, tests de componente del carrito, el tablero y el cobro (21), `test:coverage` en el hook
+  de pre-push y los 7 E2E de Ventas (11 casos) en verde, que ahora abren el carrito con "Ver pedido". En el
+  navegador: a 1440 px el panel mide 612 px; en el celular, todo el ancho y sin scroll horizontal.
+
+### US-23 · Precios de Empanadas y Ciabattas en Alta
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-27 |
+| Tamaño       | M         |
+| Depende de   | US-17     |
+| Plan         | [`docs/plans/sprint-3.md`](docs/plans/sprint-3.md#ajustes-de-la-revisión-del-dev-2026-10-27) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como administrador quiero cargar una sola vez, en Alta de productos, el precio único de las Empanadas
+(unidad, 3, 6 y 12) y de las Ciabattas (unidad), de forma que Stock sólo me pida el costo y la cantidad.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · Alta de productos tiene las tarjetas "Precios de Empanadas" y "Precios de Ciabattas", que sólo el admin guarda y que quedan auditadas (cambio 3) · Estimación: 40 min · Completado: 2026-10-27 12:09
+
+- [x] **CA-2** · Ingresar stock de una empanada o una ciabatta no pide precio y el servidor rechaza un precio para esos grupos (R-3) · Estimación: 25 min · Completado: 2026-10-27 12:09
+
+- [x] **CA-3** · La columna "Precio de venta" de Stock muestra los precios reales, también los del grupo (cambio 1, R-1) · Estimación: 10 min · Completado: 2026-10-27 12:09
+
+- [x] **CA-4** · `npm run verify` y los E2E de Stock, cobro y tablero en verde · Estimación: 15 min · Completado: 2026-10-27 12:09
+
+**Notas**
+
+- Vuelven la acción `save-menu-group-prices.ts`, `menuGroupPricesSchema`, el `save` auditado del servicio, la tarjeta
+  `group-price-card.tsx` y sus tests, tal como estaban antes de US-17 (`16b4cd2`). La tarjeta queda con textos
+  mínimos: "Precios de Empanadas", "Sin precio" y "Guardar".
+- Stock deja de tocar el precio del grupo: `planEntry` es sincrónico, rechaza un precio para Empanadas o Ciabattas
+  (`VALIDATION`) y ya no exige que el grupo tenga precio (decisión provisoria R-3). Salen `groupPrices` del
+  `StockScope` y de su fake, y `groupPriceRow`. El formulario no muestra ni manda esos precios.
+- `priceSummary(group, prices)` deja de decir "Igual para todas las …": la columna de Stock muestra los precios del
+  grupo (decisión provisoria R-1).
+- Nivel 3: `npm run verify` en verde (mutación 89,88 y build) y E2E de Stock, precios, cobro y tablero (10 casos),
+  con uno nuevo: el precio de Ciabattas se guarda en Alta y Stock lo muestra sin pedirlo.
+
+### BUG-22 · Los precios de Stock se leen mal
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-27 |
+| Tamaño       | XS        |
+| Depende de   | US-23     |
+| Plan         | [`docs/plans/sprint-3.md`](docs/plans/sprint-3.md#ajustes-de-la-revisión-del-dev-2026-10-27) |
+| Merge        | —         |
+| Horas reales | 15 min    |
+
+**Historia**: Como administrador quiero ver en la columna "Precio de venta" de Stock un precio por renglón, de forma
+que se lea de un vistazo cuánto sale la unidad, 3, 6 y 12.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · Cada precio de la columna "Precio de venta" va en su propio renglón, sin cortarse ("1 unidad: $2.000", abajo "3 unidades: $8.000", etc.) · Estimación: 15 min · Completado: 2026-10-27 15:39
+
+**Notas**
+
+- Antes la columna unía los precios con " · " en un solo texto, y al no entrar en el ancho el corte caía en la mitad
+  de un precio. Ahora es una lista con un renglón por precio (`whitespace-nowrap`). Sale `priceSummary`, que ya no
+  usaba nadie.
+- Nivel 1: lint, typecheck, `vitest related` (40 tests) y E2E de Stock y precios (4 casos) en verde, y mirado en el
+  navegador a 1440 px.

@@ -12,7 +12,7 @@ const PIZZA: MenuItemDef = { id: '11111111-1111-4111-8111-111111111111', group: 
 
 function model(overrides: Partial<StockPanelModel>): StockPanelModel {
   const noop = vi.fn(async () => null);
-  return { isAdmin: true, loading: false, items: [], activeItems: [], providers: [], search: '', setSearch: vi.fn(), groupFilter: 'todos', setGroupFilter: vi.fn(), dialog: null, setDialog: vi.fn(), message: null, submitEntry: noop, submitLoss: noop, ...overrides };
+  return { loading: false, items: [], activeItems: [], providers: [], groupPrices: [], search: '', setSearch: vi.fn(), groupFilter: 'todos', setGroupFilter: vi.fn(), dialog: null, setDialog: vi.fn(), message: null, submitEntry: noop, submitLoss: noop, ...overrides };
 }
 
 describe('merma e historial (US-4 CA-3 y CA-4)', () => {
@@ -22,7 +22,7 @@ describe('merma e historial (US-4 CA-3 y CA-4)', () => {
     expect(screen.getByText('Stock actual: 2,5')).toBeDefined();
     fireEvent.change(screen.getByLabelText('Cantidad perdida'), { target: { value: '0,5' } });
     fireEvent.change(screen.getByLabelText('Motivo'), { target: { value: 'Se quemó' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Registrar merma' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Registrar pérdida' }));
     await waitFor(() => expect(submitLoss).toHaveBeenCalledWith({ menuItemId: PIZZA.id, quantity: 0.5, reason: 'Se quemó' }));
   });
 
@@ -30,7 +30,7 @@ describe('merma e historial (US-4 CA-3 y CA-4)', () => {
     render(<StockLossModal model={model({ dialog: { kind: 'loss', item: PIZZA }, submitLoss: async () => 'No hay stock suficiente de Muzza.' })} />);
     fireEvent.change(screen.getByLabelText('Cantidad perdida'), { target: { value: '3' } });
     fireEvent.change(screen.getByLabelText('Motivo'), { target: { value: 'x' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Registrar merma' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Registrar pérdida' }));
     expect(await screen.findByText('No hay stock suficiente de Muzza.')).toBeDefined();
   });
 
@@ -44,7 +44,7 @@ describe('merma e historial (US-4 CA-3 y CA-4)', () => {
 
   it('sin ingresos lo dice', async () => {
     history.mockResolvedValue([]);
-    render(<StockHistoryModal model={model({ dialog: { kind: 'history', item: PIZZA }, isAdmin: false })} />);
+    render(<StockHistoryModal model={model({ dialog: { kind: 'history', item: PIZZA } })} />);
     expect(await screen.findByText('Todavía no hay ingresos de stock para este producto.')).toBeDefined();
   });
 });

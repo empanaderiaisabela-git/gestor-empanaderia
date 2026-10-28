@@ -15,6 +15,6 @@ export async function uploadMenuPhotoAction(input: UploadMenuPhotoInput): Promis
     const photo = menuPhotoRowSchema.parse(await menuPhotoService.upload(caller, parsed.data));
     return afterCatalogChange({ success: true, message: 'Foto agregada', data: photo });
   } catch (error) {
-    return toActionFailure(error, 'foto');
+    return toActionFailure(error, 'la foto');
   }
 }

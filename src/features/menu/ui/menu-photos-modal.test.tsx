@@ -39,10 +39,10 @@ describe('fotos de un gusto en Alta de productos (T-12 CA-1)', () => {
 
   it('borrar una foto la saca; un rechazo del servidor se muestra', async () => {
     vi.mocked(fetchMenuPhotos).mockResolvedValue([PHOTO]);
-    vi.mocked(deleteMenuPhotoAction).mockResolvedValue({ success: false, code: 'NOT_FOUND', error: 'El/la foto seleccionado ya no existe.' });
+    vi.mocked(deleteMenuPhotoAction).mockResolvedValue({ success: false, code: 'NOT_FOUND', error: 'La foto ya no existe.' });
     render(<MenuPhotosModal item={MUZZA} onClose={vi.fn()} />);
     fireEvent.click(await screen.findByTitle('Eliminar foto'));
-    expect(await screen.findByText('El/la foto seleccionado ya no existe.')).toBeDefined();
+    expect(await screen.findByText('La foto ya no existe.')).toBeDefined();
     expect(deleteMenuPhotoAction).toHaveBeenCalledWith({ publicId: PHOTO.publicId });
   });
 });

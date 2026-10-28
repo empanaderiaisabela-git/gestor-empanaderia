@@ -15,8 +15,8 @@ export async function updateCardAction(id: string, input: CardUpdateInput): Prom
     const parsed = cardUpdateSchema.safeParse(input);
     if (!parsedId.success || !parsed.success) return fail('VALIDATION');
     const card = await cardService.update(caller, parsedId.data, parsed.data);
-    return { success: true, message: MESSAGES.SUCCESS.UPDATED('Tarjeta'), data: cardRowSchema.parse(card) };
+    return { success: true, message: MESSAGES.SUCCESS.UPDATED('la tarjeta'), data: cardRowSchema.parse(card) };
   } catch (error) {
-    return toActionFailure(error, 'Tarjeta');
+    return toActionFailure(error, 'la tarjeta');
   }
 }

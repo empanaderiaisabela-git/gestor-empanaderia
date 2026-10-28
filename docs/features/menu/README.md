@@ -8,20 +8,13 @@
 
 ## Qué hace
 
-El admin da de alta los gustos de cada comida y las bebidas de Coca-Cola y Pepsi, con su **costo para el local**
-(lo que le cuesta hacerlo o comprarlo; con él se calcula la ganancia), y carga los **precios de venta** (lo que paga
-el cliente):
+El admin da de alta los gustos de cada comida y las bebidas de Coca-Cola y Pepsi con **sólo el grupo y el nombre**.
+El nombre es lo único que se edita después. El **costo para el local** y los **precios de venta** se cargan al
+ingresar stock (US-17): ver [stock](../stock/README.md). La excepción es el **precio único** de Empanadas (1, 3, 6 y
+12 unidades) y Ciabattas (unidad), que el admin carga en las tarjetas "Precios de Empanadas" y "Precios de
+Ciabattas" de Alta (US-23).
 
-- **Empanadas y Ciabattas** tienen un precio por presentación **para todo el grupo**: todos los gustos valen lo
-  mismo. Se cargan una sola vez, arriba de la grilla.
-- **Sanguches, Pizzas y bebidas** tienen precio **por gusto**: Primavera no vale lo mismo que Jamón y queso, y cada
-  pizza tiene el suyo.
-
-Los campos, columnas y títulos dicen siempre **"Costo para el local"** y **"Precio de venta"**, nunca "costo" o
-"precio" a secas, para que no se confundan (BUG-13). El costo es siempre por gusto, también en Empanadas y Ciabattas. La pizza lleva el
-costo y el precio de la pizza entera.
-
-Un gusto nace sin stock. El stock entra por "Ingresar stock" (US-4).
+Un gusto nace sin stock, sin costo y sin precio. El stock entra por "Ingresar stock" (US-4).
 
 Desde la grilla, el admin también decide qué gustos se **muestran en el catálogo público** (`/home`) y les carga
 **fotos** (T-12). El catálogo muestra los gustos activos y visibles, por grupo, con sus precios ("desde $X" si tiene
@@ -43,7 +36,7 @@ varias presentaciones), sus fotos y si hay stock.
   "Aclaración de precios" de `specs.md`.
 - El nombre es único dentro del grupo, sin distinguir mayúsculas. El mismo nombre puede repetirse en otro grupo
   (una Capresse de empanada y otra de ciabatta).
-- Mientras Empanadas o Ciabattas no tengan precio cargado, sus gustos no se pueden vender. La pantalla lo avisa.
+- Mientras Empanadas o Ciabattas no tengan precio cargado, sus gustos no se pueden vender.
 - Un gusto con ventas o movimientos no se borra: se desactiva. La base rechaza el borrado (`HAS_RELATIONS`).
 
 ## Roles y permisos
@@ -52,7 +45,8 @@ varias presentaciones), sus fotos y si hay stock.
 |---|---|---|---|
 | Ver la pantalla `/alta-de-productos` | Sí | No: `proxy.ts` lo lleva a `/ventas` | No |
 | Listar gustos, bebidas y precios del grupo | Sí | Sí (los necesita para vender), **sin el costo** (`unitCost: null`) por decisión del dev (2026-10-25) | No |
-| Crear, editar, activar, desactivar y borrar; cambiar precios del grupo | Sí | No (`FORBIDDEN`) | No (`UNAUTHENTICATED`) |
+| Crear, editar, activar, desactivar y borrar| Sí | No (`FORBIDDEN`) | No (`UNAUTHENTICATED`) |
+| Guardar los precios del grupo (`saveMenuGroupPricesAction`, US-23) | Sí | No (`FORBIDDEN`) | No (`UNAUTHENTICATED`) |
 | Mostrar u ocultar en el catálogo; subir y borrar fotos | Sí | No (`FORBIDDEN`) | No (`UNAUTHENTICATED`) |
 | Ver el catálogo (`fetchCatalog`, `fetchCatalogItem`) | Sí | Sí | **Sí: son las únicas lecturas públicas** |
 
@@ -62,11 +56,10 @@ varias presentaciones), sus fotos y si hay stock.
 |---|---|---|---|
 | `fetchMenuItems()` | Cualquier usuario activo | — | `MenuItemDef[]` (vacía ante cualquier error) |
 | `createMenuItemAction(input)` | admin | `menuItemCreateSchema` | `ActionResult<MenuItemDef>` |
-| `updateMenuItemAction(id, input)` | admin | `menuItemUpdateSchema` (+ precios del grupo del gusto) | `ActionResult<MenuItemDef>` |
+| `updateMenuItemAction(id, input)` | admin | `menuItemUpdateSchema` (nombre y versión) | `ActionResult<MenuItemDef>` |
 | `toggleMenuItemActiveAction(input)` | admin | `menuItemToggleSchema` | `ActionResult` |
 | `deleteMenuItemAction(input)` | admin | `menuItemDeleteSchema` | `ActionResult` |
 | `fetchMenuGroupPrices()` | Cualquier usuario activo | — | `MenuGroupPriceDef[]` (vacía ante cualquier error) |
-| `saveMenuGroupPricesAction(input)` | admin | `menuGroupPricesSchema` (versión 0 = primera carga) | `ActionResult<MenuGroupPriceDef>` |
 | `toggleMenuItemVisibilityAction(input)` | admin | `menuItemVisibilitySchema` | `ActionResult` |
 | `fetchMenuPhotos(menuItemId)` | admin | uuid | `MenuPhotoDef[]` (vacía ante cualquier error) |
 | `uploadMenuPhotoAction(input)` | admin | `uploadMenuPhotoSchema`: JPG, PNG o WEBP en base64, hasta 5 MB | `ActionResult<MenuPhotoDef>` |
@@ -100,18 +93,20 @@ T-11).
 | Acción inválida | code | Mensaje | Test |
 |---|---|---|---|
 | Sin sesión | `UNAUTHENTICATED` | No autorizado (Token faltante) | `actions/menu-errors.contract.test.ts` |
-| Un vendedor crea, edita, activa, borra o cambia precios | `FORBIDDEN` | Solo los administradores pueden realizar esta acción | `menu-errors.contract.test.ts`, `menu-group-prices.contract.test.ts` |
-| Nombre vacío o de más de 60, costo o precio inválido, precios que no corresponden al grupo | `VALIDATION` | Los datos proporcionados no son válidos. | `menu-errors.contract.test.ts`, `domain/*.schema.test.ts` |
+| Un vendedor crea, edita, activa o borra | `FORBIDDEN` | Solo los administradores pueden realizar esta acción | `menu-errors.contract.test.ts` |
+| Nombre vacío o de más de 60 | `VALIDATION` | Los datos proporcionados no son válidos. | `menu-errors.contract.test.ts`, `domain/*.schema.test.ts` |
 | Nombre repetido en el grupo | `DUPLICATE` | Ya existe un registro con esos datos (DNI, nombre o código duplicado). | `menu-errors.contract.test.ts` |
-| Editar, activar o borrar con una versión vieja; precios del grupo cambiados por otra persona | `STALE_VERSION` | Los datos en el servidor han cambiado. Por favor, sincroniza la lista e intenta nuevamente. | `menu-errors.contract.test.ts`, `menu-group-prices.contract.test.ts` |
-| Editar un producto que ya no existe | `NOT_FOUND` | El/la producto seleccionado ya no existe. | `menu-errors.contract.test.ts` |
+| Editar, activar o borrar con una versión vieja | `STALE_VERSION` | Los datos en el servidor han cambiado. Por favor, sincroniza la lista e intenta nuevamente. | `menu-errors.contract.test.ts` |
+| Editar un producto que ya no existe | `NOT_FOUND` | El producto ya no existe. | `menu-errors.contract.test.ts` |
 | Borrar un producto con movimientos | `HAS_RELATIONS` | No se puede completar la operación porque existen registros relacionados. | `menu-errors.contract.test.ts` |
 | Un vendedor muestra u oculta un gusto o maneja fotos | `FORBIDDEN` | Solo los administradores pueden realizar esta acción | `menu-catalog.contract.test.ts` |
 | Foto que no es JPG, PNG o WEBP, o una URL (no se llama a Cloudinary) | `VALIDATION` | La imagen tiene que ser JPG, PNG o WEBP | `upload-menu-photo.contract.test.ts`, `menu-catalog.contract.test.ts`, `domain/catalog.test.ts` |
 | Foto de más de 5 MB (no se llama a Cloudinary) | `VALIDATION` | La imagen no puede superar los 5 MB | `upload-menu-photo.contract.test.ts`, `domain/catalog.test.ts` |
-| Foto para un gusto que ya no existe (no se llama a Cloudinary) | `NOT_FOUND` | El/la producto seleccionado ya no existe. | `upload-menu-photo.contract.test.ts`, `services/menu-photo.service.test.ts` |
-| Borrar una foto que ya no está | `NOT_FOUND` | El/la foto seleccionado ya no existe. | `menu-catalog.contract.test.ts` |
+| Foto para un gusto que ya no existe (no se llama a Cloudinary) | `NOT_FOUND` | El producto ya no existe. | `upload-menu-photo.contract.test.ts`, `services/menu-photo.service.test.ts` |
+| Borrar una foto que ya no está | `NOT_FOUND` | La foto ya no existe. | `menu-catalog.contract.test.ts` |
 | Visibilidad con una versión vieja | `STALE_VERSION` | Los datos en el servidor han cambiado. Por favor, sincroniza la lista e intenta nuevamente. | `menu-catalog.contract.test.ts` |
+| Precios del grupo con una presentación de más o de menos, o de un grupo sin precio único | `VALIDATION` | Los datos proporcionados no son válidos. | `menu-group-prices.contract.test.ts`, `domain/menu-group-price.schema.test.ts` |
+| Precios del grupo con una versión vieja | `STALE_VERSION` | Los datos en el servidor han cambiado. Por favor, sincroniza la lista e intenta nuevamente. | `menu-group-prices.contract.test.ts` |
 
 Si Cloudinary sube la foto pero falla el guardado en la base, la imagen se borra de Cloudinary (BUG-11). Los límites (JPG, PNG o WEBP de hasta 5 MB) son una decisión provisoria del agente (D-5 de [`sprint-2.md`](../../plans/sprint-2.md#d-5--formatos-y-tamaño-de-las-fotos-bug-11)).
 
@@ -119,16 +114,12 @@ Si Cloudinary sube la foto pero falla el guardado en la base, la imagen se borra
 
 `src/app/(main)/alta-de-productos/page.tsx` → `MenuPanel`:
 
-- Arriba, las tarjetas "Precios de venta de Empanadas" y "Precios de venta de Ciabattas" (`GroupPriceCard`). Sin
-  precio cargado, muestran "Sin precio: todavía no se puede vender". Cada tarjeta toma los precios guardados al
-  armarse y se vuelve a armar sólo cuando cambia la versión guardada de su grupo (`key` con la versión): guardar un
-  grupo no borra lo que se está escribiendo en el otro (BUG-15).
-- Debajo, la barra con búsqueda, filtro por grupo y "Ver inactivos", y la grilla: tabla en escritorio y tarjetas en
+- La barra con búsqueda, filtro por grupo y "Ver inactivos", y la grilla: tabla en escritorio y tarjetas en
   mobile.
-- El formulario (`MenuItemFormModal`) pide el costo ("Costo para el local, por unidad"; en la pizza, "por pizza
-  entera") y los precios de venta que corresponden al grupo elegido ("Precio de venta, 6 unidades"), cada uno con su
-  aclaración. En Empanadas y Ciabattas avisa que el precio de venta se carga arriba. El grupo no se cambia al editar.
-  Los textos salen de `domain/menu-terms.ts`.
+- Arriba, `GroupPriceCard` por cada grupo de precio único: sus precios, "Sin precio" si todavía no tiene y
+  "Guardar" (`save-menu-group-prices.ts`, sólo admin, auditado como `MENU_GROUP_PRICES`).
+- El formulario (`MenuItemFormModal`) pide sólo "Grupo" y "Nombre del gusto o bebida". El grupo no se cambia al editar.
+- La grilla muestra Grupo, Gusto / bebida, Stock y Acciones.
 - Cada fila tiene "Mostrar en el catálogo" / "Ocultar del catálogo" y "Fotos" (`MenuPhotosModal`, `use-menu-photos.ts`).
   Los visibles llevan la marca "En catálogo".
 - Estados: esqueleto mientras carga, mensaje cuando el grupo no tiene gustos, y errores del servidor en el

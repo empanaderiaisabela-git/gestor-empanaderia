@@ -6,7 +6,7 @@ import type { MenuGroup } from '@/features/menu/domain/menu-groups';
 import type { MenuPrices } from '@/features/menu/domain/menu-prices';
 
 export type MenuItem = typeof menuItems.$inferSelect;
-export type MenuItemData = { group: MenuGroup; name: string; unitCost: number; prices?: MenuPrices };
+export type MenuItemData = { group: MenuGroup; name: string; unitCost?: number; prices?: MenuPrices };
 export type MenuItemChanges = Partial<{ name: string; unitCost: number; prices: MenuPrices; isActive: boolean; isVisible: boolean }>;
 export type VersionedRef = { id: string; version: number };
 
@@ -42,7 +42,7 @@ export function drizzleMenuItemRepository(executor: Executor = db): MenuItemRepo
       return rows[0] ?? null;
     },
     insert: async ({ group, name, unitCost, prices }) => {
-      const values = { group, name, unitCost: unitCost.toFixed(2), ...priceColumns(prices) };
+      const values = { group, name, unitCost: unitCost === undefined ? null : unitCost.toFixed(2), ...priceColumns(prices) };
       return (await executor.insert(menuItems).values(values).returning())[0];
     },
     update: async (ref, changes) => {

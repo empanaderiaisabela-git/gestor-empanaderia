@@ -55,7 +55,7 @@ describe('historial y anulación de ventas (US-7)', () => {
 
   it.each([
     { caso: 'FORBIDDEN: el vendedor no anula', role: 'vendedor' as const, input: 'venta', code: 'FORBIDDEN', error: 'Solo los administradores pueden realizar esta acción' },
-    { caso: 'NOT_FOUND: venta inexistente', role: 'admin' as const, input: '20000000-0000-4000-8000-0000000000ff', code: 'NOT_FOUND', error: 'El/la venta seleccionado ya no existe.' },
+    { caso: 'NOT_FOUND: venta inexistente', role: 'admin' as const, input: '20000000-0000-4000-8000-0000000000ff', code: 'NOT_FOUND', error: 'La venta ya no existe.' },
     { caso: 'VALIDATION: id inválido', role: 'admin' as const, input: 'x', code: 'VALIDATION', error: MESSAGES.ERROR.VALIDATION.INVALID_DATA },
   ])('$caso (CA-4)', async ({ role, input, code, error }) => {
     const saleId = await sellTwoCokes();

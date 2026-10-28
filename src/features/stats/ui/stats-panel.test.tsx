@@ -33,12 +33,22 @@ describe('pantalla de Estadísticas (US-12 CA-1 a CA-5)', () => {
   it('abre con la jornada de hoy y muestra cada comida con su color, las promos, la ganancia, las ventas y los 4 medios', async () => {
     render(<StatsPanel />);
     expect(await within(await screen.findByRole('region', { name: 'Empanadas' })).findByText('$12.000')).toBeDefined();
-    expect(card('Empanadas').className).toContain('bg-group-empanadas');
+    expect(card('Empanadas').className).toContain('border-group-empanadas-accent');
+    expect(card('Empanadas').className).toContain('bg-white');
+    expect(card('Efectivo').className).toContain('bg-pay-efectivo');
     expect(within(card('Promos')).getByText('$9.000')).toBeDefined();
-    expect(within(card('Ganancia en limpio')).getByText('$20.000')).toBeDefined();
+    expect(within(card('Ganancia')).getByText('$20.000')).toBeDefined();
     expect(within(card('Ventas registradas')).getByText('7')).toBeDefined();
     expect(['Efectivo', 'Transferencia', 'Débito', 'Crédito'].map((name) => within(card(name)).getByText(/\$/).textContent)).toEqual(['$20.000', '$10.000', '$5.500', '$6.600']);
     expect(action.fetch).toHaveBeenCalledWith(expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/));
+  });
+
+  it('muestra las comidas en filas de 4 y 3, después ventas y ganancia, y los medios de pago; sin Total facturado (US-21)', async () => {
+    render(<StatsPanel />);
+    await screen.findByRole('region', { name: 'Empanadas' });
+    expect(screen.getAllByRole('region').map((region) => region.getAttribute('aria-label'))).toEqual(['Empanadas', 'Pizzas', 'Sanguches', 'Ciabattas', 'Coca-Cola', 'Pepsi', 'Promos', 'Ventas registradas', 'Ganancia', 'Efectivo', 'Transferencia', 'Débito', 'Crédito']);
+    expect(screen.queryByText('Dinero generado por comida')).toBeNull();
+    expect(screen.queryByRole('region', { name: 'Total facturado' })).toBeNull();
   });
 
   it('abajo, el cuadro de vendedores por turno y el de ventas con su hora en Argentina (US-13)', async () => {
@@ -63,8 +73,8 @@ describe('pantalla de Estadísticas (US-12 CA-1 a CA-5)', () => {
   });
 
   it('si el servidor falla, muestra el motivo', async () => {
-    action.fetch.mockResolvedValue({ success: false, code: 'UNEXPECTED', error: 'Ocurrió un error inesperado al procesar el/la panel de estadísticas.' });
+    action.fetch.mockResolvedValue({ success: false, code: 'UNEXPECTED', error: 'Ocurrió un error inesperado al procesar el panel de estadísticas.' });
     render(<StatsPanel />);
-    expect(await screen.findByText('Ocurrió un error inesperado al procesar el/la panel de estadísticas.')).toBeDefined();
+    expect(await screen.findByText('Ocurrió un error inesperado al procesar el panel de estadísticas.')).toBeDefined();
   });
 });

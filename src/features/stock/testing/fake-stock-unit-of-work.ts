@@ -1,3 +1,4 @@
+import { priceColumns } from '@/features/menu/repository/menu-item.repository';
 import type { EntryView, StockEntry, StockItem, StockLoss, StockRepository } from '@/features/stock/repository/stock.repository';
 import type { StockAuditEntry, StockUnitOfWork } from '@/features/stock/repository/stock-unit-of-work';
 
@@ -16,10 +17,10 @@ function viewOf(state: FakeState, entry: StockEntry): EntryView {
 export function fakeStockRepository(state: FakeState): StockRepository {
   return {
     lockItem: async (id) => state.items.find((item) => item.id === id) ?? null,
-    saveItem: async ({ id, version }, { stock, unitCost }) => {
+    saveItem: async ({ id, version }, { stock, unitCost, prices }) => {
       const item = state.items.find((row) => row.id === id && row.version === version);
       if (!item) return null;
-      Object.assign(item, { stock: stock.toFixed(1), version: version + 1 }, unitCost === undefined ? {} : { unitCost: unitCost.toFixed(2) });
+      Object.assign(item, { stock: stock.toFixed(1), version: version + 1 }, unitCost === undefined ? {} : { unitCost: unitCost.toFixed(2) }, prices ? priceColumns(prices) : {});
       return { ...item };
     },
     insertEntry: async ({ unitCost, ...entry }) => {

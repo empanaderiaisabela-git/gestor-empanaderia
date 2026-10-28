@@ -63,11 +63,11 @@ describe('cobro contra Postgres (US-6 CA-3 y CA-4)', () => {
     expect(await stockOf(coca)).toBe(0);
   });
 
-  it('cobra con crédito en 3 cuotas: guarda la tarjeta, el % y el recargo, y el total los incluye (US-11)', async () => {
+  it('cobra con crédito en 3 cuotas: guarda la tarjeta, el % y el recargo, y el total es el precio original (BUG-20)', async () => {
     const card = await drizzleCardRepository(db).insert({ name: 'Visa', plans: [{ installments: 3, surchargePct: 10 }] });
     const { total } = await checkoutService.checkout(CALLER, { ...order([line(coca)], 2500), payments: [{ type: 'credito', amount: 2500, cardId: card.id, installments: 3 }] });
-    expect(total).toBe(2750);
-    expect(await db.select({ total: sales.total }).from(sales)).toEqual([{ total: '2750.00' }]);
+    expect(total).toBe(2500);
+    expect(await db.select({ total: sales.total }).from(sales)).toEqual([{ total: '2500.00' }]);
     expect(await db.select({ cardId: salePayments.cardId, installments: salePayments.installments, surchargePct: salePayments.surchargePct, surchargeAmount: salePayments.surchargeAmount }).from(salePayments)).toEqual([
       { cardId: card.id, installments: 3, surchargePct: '10.00', surchargeAmount: '250.00' },
     ]);

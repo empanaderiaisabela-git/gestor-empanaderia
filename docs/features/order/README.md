@@ -71,23 +71,24 @@ estaba, se muestra el motivo y también se recargan precios y stock, porque pued
 ## Crédito en cuotas (US-11)
 
 Al elegir **Crédito** en el modal de cobro aparecen "Tarjeta" (las activas de US-10) y "Cuotas" (los planes de esa
-tarjeta, con su recargo). El modal muestra "Recargo de cuotas: $X" y el total a cobrar con el recargo antes de
-confirmar. Débito, efectivo y transferencia no piden tarjeta.
+tarjeta, con su recargo). El total a cobrar es el precio original: el recargo lo cobra la emisora de la tarjeta
+(dev, 2026-10-27, BUG-20). Débito, efectivo y transferencia no piden tarjeta.
 
-- El recargo va **sólo sobre la parte pagada con crédito** (dev, 2026-10-25). Ej.: $10.000 con $4.000 en efectivo
-  y $6.000 con crédito al 10 % ⇒ recargo $600, total $10.600.
+- El recargo se calcula **sólo sobre la parte pagada con crédito** y queda guardado como dato. Ej.: $10.000 con
+  $4.000 en efectivo y $6.000 con crédito al 10 % ⇒ el pago guarda un recargo de $600, pero el total de la venta es
+  $10.000 y el pago con Visa, $6.000.
 - El navegador manda `cardId` e `installments` en el pago con crédito, nunca el % ni el monto del recargo.
   `checkout-payments.ts` lee la tarjeta en la transacción: inexistente o desactivada ⇒ `NOT_FOUND` ("tarjeta"); sin
   ese plan ⇒ `NOT_FOUND` ("plan de cuotas"). Calcula el recargo con el % guardado y lo guarda en el pago
   (`card_id`, `installments`, `surcharge_pct`, `surcharge_amount`).
-- Los pagos tienen que cubrir el total de los productos (con descuento); el **total de la venta** suma además el
-  recargo, porque es lo que pagó el cliente (decisión provisoria D-3).
+- Los pagos tienen que cubrir el total de los productos (con descuento), que es el **total de la venta**. El local
+  no ve el recargo: lo cobra la emisora de la tarjeta (dev, 2026-10-27, BUG-20; reemplaza la decisión provisoria D-3).
 - Un `CHECK` exige que la tarjeta, las cuotas y el recargo vayan juntos y sólo en crédito. Las ventas con crédito
   anteriores a US-11, sin tarjeta, siguen siendo válidas. El `CHECK` compara el medio como texto (`type::text`):
   Postgres no deja usar el valor `credito` del enum en la misma transacción en que se agregó, y una base nueva
   corre todas las migraciones juntas.
-- El comprobante muestra "Recargo de cuotas" y cada pago como "Crédito · Visa · 3 cuotas" por lo cobrado; el
-  historial, la misma etiqueta. Una tarjeta ya usada en un cobro no se puede borrar (FK sin cascada).
+- El comprobante muestra cada pago como "Crédito · Visa · 3 cuotas" por su monto, sin el recargo; el historial, la
+  misma etiqueta. Una tarjeta ya usada en un cobro no se puede borrar (FK sin cascada).
 
 ## Promos en el tablero (US-9)
 
@@ -142,16 +143,16 @@ borre.
 | Sin sesión | `UNAUTHENTICATED` | No autorizado (Token faltante) | `checkout.contract.test.ts` |
 | Entrada mal formada o con precios, costos o total | `VALIDATION` | Los datos proporcionados no son válidos. | `checkout.contract.test.ts` |
 | Línea incompleta, gusto de otro grupo o dado de baja, grupo sin precio, descuento mayor al total o pagos que no suman | `VALIDATION` | idem | `checkout-errors.test.ts` |
-| Un gusto que ya no existe | `NOT_FOUND` | El/la producto seleccionado ya no existe. | `checkout-errors.test.ts` |
+| Un gusto que ya no existe | `NOT_FOUND` | El producto ya no existe. | `checkout-errors.test.ts` |
 | Un gusto no alcanza | `INSUFFICIENT_STOCK` | No hay stock suficiente de {gusto}. | `checkout-errors.test.ts` y `checkout.service.int.test.ts` |
 | Crédito sin tarjeta o sin cuotas, o tarjeta en otro medio (US-11) | `VALIDATION` | Los datos proporcionados no son válidos. | `checkout.schema.test.ts` |
-| Tarjeta inexistente o desactivada (US-11) | `NOT_FOUND` | El/la tarjeta seleccionado ya no existe. | `checkout-payments.test.ts` |
-| Plan de cuotas que la tarjeta no tiene (US-11) | `NOT_FOUND` | El/la plan de cuotas seleccionado ya no existe. | `checkout-payments.test.ts` |
-| Promo inexistente o desactivada (US-9) | `NOT_FOUND` | El/la promoción seleccionado ya no existe. | `checkout-promos.test.ts`, `checkout.contract.test.ts` |
+| Tarjeta inexistente o desactivada (US-11) | `NOT_FOUND` | La tarjeta ya no existe. | `checkout-payments.test.ts` |
+| Plan de cuotas que la tarjeta no tiene (US-11) | `NOT_FOUND` | El plan de cuotas ya no existe. | `checkout-payments.test.ts` |
+| Promo inexistente o desactivada (US-9) | `NOT_FOUND` | La promoción ya no existe. | `checkout-promos.test.ts`, `checkout.contract.test.ts` |
 | Partes de la promo que no coinciden con sus productos, gustos incompletos o de otro grupo (US-9) | `VALIDATION` | Los datos proporcionados no son válidos. | `checkout-promos.test.ts` |
 | Otro movimiento cambió el gusto entre el bloqueo y el guardado | `STALE_VERSION` | mensaje de concurrencia | `checkout-errors.test.ts` |
 | Anular: el vendedor lo intenta | `FORBIDDEN` | Solo los administradores pueden realizar esta acción | `sale-history.contract.test.ts` |
-| Anular: la venta no existe o ya se anuló | `NOT_FOUND` | El/la venta seleccionado ya no existe. | `sale-history.contract.test.ts` y `sale-history.service.int.test.ts` |
+| Anular: la venta no existe o ya se anuló | `NOT_FOUND` | La venta ya no existe. | `sale-history.contract.test.ts` y `sale-history.service.int.test.ts` |
 | Anular: id inválido | `VALIDATION` | Los datos proporcionados no son válidos. | `sale-history.contract.test.ts` |
 | Anular: un gusto ya no existe, o cambió en el medio | `NOT_FOUND` / `STALE_VERSION` | idem | `sale-history.service.test.ts` |
 
@@ -175,12 +176,15 @@ que sumar el total".
 
 `src/app/(main)/ventas/nueva/page.tsx` → `OrderBoard`:
 
-- `GroupCard` por grupo, rellena con el color de su grupo y con su emoji Unicode (US-15: `src/config/group-theme.ts`
-  y `src/app/group-colors.css`, que también usará el KPI de dinero por comida), "N en pedido" y botones de presentación
+- `GroupCard` por grupo, rellena con el color de su grupo y con su ícono de lucide (US-20; Empanadas y Ciabattas usan íconos propios de `src/components/icons/`; `src/config/group-theme.ts`
+  y `src/app/group-colors.css`, que también usa el KPI de dinero por comida), "N en pedido" y botones de presentación
   con el precio (del grupo) o "desde $X".
   Avisa si el grupo no tiene gustos o si falta el precio del grupo, y deshabilita los botones.
 - `FlavorPicker` / `FlavorRow`: gustos con precio y stock disponible, y los botones según la presentación.
-- `CurrentOrder` / `OrderTable`: el pedido, con el total, Vaciar y Cobrar.
+- `OrderDrawer` (US-24): un botón flotante abajo a la derecha, con el ícono `Ticket` y un número que cuenta los
+  productos (una docena suma 1, una promo suma 1), abre desde la derecha el panel con `CurrentOrder`. Se cierra con
+  la X, con Escape o tocando afuera; Cobrar lo cierra y abre el cobro.
+- `CurrentOrder` / `OrderTable`: el pedido, con el total, Vaciar y Cobrar (verde, `emerald-700`).
 - `CheckoutModal` / `PaymentPicker` (`use-checkout.ts`): el cobro.
 
 Al tablero se entra con "Nuevo pedido", desde Ventas/Pedidos.

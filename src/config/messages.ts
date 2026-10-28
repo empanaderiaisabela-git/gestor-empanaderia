@@ -2,14 +2,16 @@
  * Centralized messages for the application.
  * This includes success messages, validation errors, and system errors.
  */
+const sentence = (text: string): string => text.charAt(0).toUpperCase() + text.slice(1);
+
 export const MESSAGES = {
   SUCCESS: {
-    CREATED: (entity: string) => `${entity} registrado/a exitosamente`,
-    UPDATED: (entity: string) => `${entity} actualizado/a exitosamente`,
-    DELETED: (entity: string) => `${entity} eliminado/a exitosamente`,
-    ACTIVATED: (entity: string) => `${entity} activado/a exitosamente`,
-    DEACTIVATED: (entity: string) => `${entity} desactivado/a exitosamente`,
-    REACTIVATED: (entity: string) => `El/la ${entity} ya existía (inactivo) y ha sido reactivado con los nuevos datos`,
+    CREATED: (entity: string) => `Se registró ${entity}`,
+    UPDATED: (entity: string) => `Se actualizó ${entity}`,
+    DELETED: (entity: string) => `Se eliminó ${entity}`,
+    ACTIVATED: (entity: string) => `Se activó ${entity}`,
+    DEACTIVATED: (entity: string) => `Se desactivó ${entity}`,
+    REACTIVATED: (entity: string) => `Se reactivó ${entity} que ya existía, con los datos nuevos`,
   },
   ERROR: {
     VALIDATION: {
@@ -20,9 +22,9 @@ export const MESSAGES = {
     DATABASE: {
       UNIQUE_VIOLATION: 'Ya existe un registro con esos datos (DNI, nombre o código duplicado).',
       FOREIGN_KEY_VIOLATION: 'No se puede completar la operación porque existen registros relacionados.',
-      NOT_FOUND: (entity: string) => `El/la ${entity} seleccionado ya no existe.`,
+      NOT_FOUND: (entity: string) => `${sentence(entity)} ya no existe.`,
       CONCURRENCY: 'Los datos en el servidor han cambiado. Por favor, sincroniza la lista e intenta nuevamente.',
-      GENERIC: (entity: string) => `Ocurrió un error inesperado al procesar el/la ${entity}.`,
+      GENERIC: (entity: string) => `Ocurrió un error inesperado al procesar ${entity}.`,
       RELATION_NOT_FOUND: 'Una de las entidades relacionadas ya no existe. Por favor, sincroniza los datos.',
     },
     AUTH: {

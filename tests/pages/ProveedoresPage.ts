@@ -157,7 +157,7 @@ export class ProveedoresPage {
     const [provider] = await db.select({ id: providers.id }).from(providers).where(eq(providers.name, nombre));
     const [admin] = await db.select({ id: users.id }).from(users).where(eq(users.username, 'admin'));
     const [item] = await db.select({ id: menuItems.id, unitCost: menuItems.unitCost }).from(menuItems).limit(1);
-    await db.insert(stockEntries).values({ menuItemId: item.id, providerId: provider.id, userId: admin.id, quantity: 1, unitCost: item.unitCost });
+    await db.insert(stockEntries).values({ menuItemId: item.id, providerId: provider.id, userId: admin.id, quantity: 1, unitCost: item.unitCost ?? '0' });
   }
 
   async inyectarProveedorEfimero(): Promise<string> {

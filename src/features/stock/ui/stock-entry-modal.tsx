@@ -8,26 +8,27 @@ import { StockEntryFields } from './stock-entry-fields';
 import { type EntryValues, type FormErrors, parseEntry } from './stock-forms';
 import type { StockPanelModel } from './use-stock-panel';
 
-const blank = (menuItemId: string): EntryValues => ({ menuItemId, quantity: '', unitCost: '', providerId: '' });
+const blank = (group: string, menuItemId: string): EntryValues => ({ group, menuItemId, quantity: '', unitCost: '', providerId: '', price1: '', price3: '', price6: '', price12: '' });
 
 export function StockEntryModal({ model }: { model: StockPanelModel }): JSX.Element {
   const isOpen = model.dialog?.kind === 'entry';
   const preselected = model.dialog?.item?.id ?? '';
-  const [values, setValues] = useState<EntryValues>(blank(''));
+  const preselectedGroup = model.dialog?.item?.group ?? '';
+  const [values, setValues] = useState<EntryValues>(blank('', ''));
   const [errors, setErrors] = useState<FormErrors>({});
   const [serverError, setServerError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 
   useEffect(() => {
     if (!isOpen) return;
-    setValues(blank(preselected));
+    setValues(blank(preselectedGroup, preselected));
     setErrors({});
     setServerError(null);
-  }, [isOpen, preselected]);
+  }, [isOpen, preselected, preselectedGroup]);
 
   const submit = async (event: FormEvent): Promise<void> => {
     event.preventDefault();
-    const parsed = parseEntry(values, model.isAdmin);
+    const parsed = parseEntry(values);
     setErrors(parsed.ok ? {} : parsed.errors);
     if (!parsed.ok) return;
     setPending(true);
@@ -38,7 +39,7 @@ export function StockEntryModal({ model }: { model: StockPanelModel }): JSX.Elem
   return (
     <ResponsiveModal isOpen={isOpen} onClose={() => model.setDialog(null)} title='Ingresar stock' icon={<PackagePlus className='w-5 h-5 text-brand-500' />} width='md' onSubmit={submit} submitLabel='Ingresar' isPending={pending}>
       <ErrorAlert error={serverError} />
-      <StockEntryFields values={values} errors={errors} items={model.activeItems} providers={model.providers} isAdmin={model.isAdmin} onChange={setValues} />
+      <StockEntryFields values={values} errors={errors} items={model.activeItems} providers={model.providers} onChange={setValues} />
     </ResponsiveModal>
   );
 }

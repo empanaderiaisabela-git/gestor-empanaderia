@@ -13,8 +13,8 @@ export async function deleteProviderAction(input: ProviderDeleteInput): Promise<
     const parsed = providerDeleteSchema.safeParse(input);
     if (!parsed.success) return fail('VALIDATION');
     await providerService.remove(caller, parsed.data);
-    return { success: true, message: MESSAGES.SUCCESS.DELETED('Proveedor') };
+    return { success: true, message: MESSAGES.SUCCESS.DELETED('el proveedor') };
   } catch (error) {
-    return toActionFailure(error, 'Proveedor');
+    return toActionFailure(error, 'el proveedor');
   }
 }

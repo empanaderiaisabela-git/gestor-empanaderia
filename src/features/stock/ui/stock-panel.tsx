@@ -40,7 +40,7 @@ const renderCard = (actions: StockRowActions) =>
 export function StockPanel(): JSX.Element {
   const model = useStockPanel();
   if (model.loading) return <TableSkeleton />;
-  const actions: StockRowActions = { isAdmin: model.isAdmin, open: model.setDialog };
+  const actions: StockRowActions = { open: model.setDialog };
   const addButton = (
     <Button variant='primary' onClick={() => model.setDialog({ kind: 'entry', item: null })} leftIcon={<PackagePlus className='w-5 h-5' />} className='h-11 w-full sm:w-auto shrink-0' data-testid={TEST_IDS.general.btnAgregar}>
       Ingresar stock
@@ -50,7 +50,7 @@ export function StockPanel(): JSX.Element {
     <div className='flex flex-col flex-1 h-full overflow-hidden'>
       <PanelToolbar search={model.search} onSearchChange={model.setSearch} searchPlaceholder='Buscar gusto o bebida...' searchPlaceholderMobile='Buscar...' data-testid={TEST_IDS.general.inputBusquedaTabla} filters={<GroupFilter model={model} />} actions={addButton} />
       <GlobalMessage message={model.message} />
-      <ResponsivePanelView columns={getStockColumns(actions)} data={model.items} emptyMessage='No hay gustos ni bebidas activos en este grupo.' renderCard={renderCard(actions)} />
+      <ResponsivePanelView columns={getStockColumns(actions, model.groupPrices)} data={model.items} emptyMessage='No hay gustos ni bebidas activos en este grupo.' renderCard={renderCard(actions)} />
       <StockEntryModal model={model} />
       <StockLossModal model={model} />
       <StockHistoryModal model={model} />

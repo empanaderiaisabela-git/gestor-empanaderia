@@ -40,14 +40,13 @@ describe('subdivisión de cada grupo en el tablero (US-5 CA-1)', () => {
   });
 
   it.each([
-    { group: 'empanadas' as const, emoji: '🥟', fill: 'bg-group-empanadas' },
-    { group: 'pizzas' as const, emoji: '🍕', fill: 'bg-group-pizzas' },
-    { group: 'coca_cola' as const, emoji: '🥤', fill: 'bg-group-coca' },
-  ])('$group se rellena con su color y lleva su emoji Unicode (US-15)', ({ group, emoji, fill }) => {
+    { group: 'empanadas' as const, icon: 'empanada', fill: 'bg-group-empanadas' },
+    { group: 'pizzas' as const, icon: 'pizza', fill: 'bg-group-pizzas' },
+    { group: 'coca_cola' as const, icon: 'can-soda', fill: 'bg-group-coca' },
+  ])('$group se rellena con su color y lleva su ícono de lucide (US-20)', ({ group, icon, fill }) => {
     render(<GroupCard group={group} board={board} />);
     const card = screen.getAllByRole('region')[0];
     expect(card.className).toContain(fill);
-    expect(within(card).getByText(emoji)).toBeDefined();
-    expect(card.querySelector('svg')).toBeNull();
+    expect(card.querySelector('svg')?.getAttribute('class')).toContain(`lucide-${icon}`);
   });
 });

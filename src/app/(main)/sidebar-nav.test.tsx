@@ -5,9 +5,9 @@ import { SidebarNav } from './sidebar-nav';
 const linkNames = (): string[] => screen.getAllByRole('link').map((link) => link.textContent ?? '');
 
 describe('SidebarNav (US-2 CA-1)', () => {
-  it('el vendedor ve sólo Ventas/Pedidos, Stock y Clientes', () => {
+  it('el vendedor ve sólo Ventas/Pedidos y Clientes (US-16)', () => {
     render(<SidebarNav role='vendedor' pathname='/ventas' onNavigate={vi.fn()} />);
-    expect(linkNames()).toEqual(['Ventas/Pedidos', 'Stock', 'Clientes']);
+    expect(linkNames()).toEqual(['Ventas/Pedidos', 'Clientes']);
     expect(screen.queryByText('Auditoría')).toBeNull();
   });
 

@@ -1,4 +1,5 @@
 export const AA_NORMAL_TEXT = 4.5;
+export const AA_NON_TEXT = 3;
 
 function channel(hex: string, offset: number): number {
   const value = Number.parseInt(hex.slice(offset, offset + 2), 16) / 255;

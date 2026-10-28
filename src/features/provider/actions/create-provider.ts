@@ -13,9 +13,9 @@ export async function createProviderAction(input: ProviderInput): Promise<Action
     const parsed = providerCreateSchema.safeParse(input);
     if (!parsed.success) return fail('VALIDATION');
     const { provider, reactivated } = await providerService.create(caller, parsed.data);
-    const message = reactivated ? MESSAGES.SUCCESS.REACTIVATED('Proveedor') : MESSAGES.SUCCESS.CREATED('Proveedor');
+    const message = reactivated ? MESSAGES.SUCCESS.REACTIVATED('el proveedor') : MESSAGES.SUCCESS.CREATED('el proveedor');
     return { success: true, message, data: providerRowSchema.parse(provider) };
   } catch (error) {
-    return toActionFailure(error, 'Proveedor');
+    return toActionFailure(error, 'el proveedor');
   }
 }

@@ -13,8 +13,8 @@ export async function createExpenseAction(input: ExpenseInput): Promise<ActionRe
     const parsed = expenseCreateSchema.safeParse(input);
     if (!parsed.success) return fail('VALIDATION');
     const expense = await expenseService.create(caller, parsed.data);
-    return { success: true, message: MESSAGES.SUCCESS.CREATED('Gasto'), data: expenseRowSchema.parse(expense) };
+    return { success: true, message: MESSAGES.SUCCESS.CREATED('el gasto'), data: expenseRowSchema.parse(expense) };
   } catch (error) {
-    return toActionFailure(error, 'Gasto');
+    return toActionFailure(error, 'el gasto');
   }
 }

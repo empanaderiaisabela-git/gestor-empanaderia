@@ -1,6 +1,6 @@
 ---
 name: finish-task
-description: Use when a task in the gestor-empanaderia repo seems done, BEFORE claiming completion, committing the final changes. Walks the Definition of Done, runs the full verification suite, updates docs and the backlog, and prepares the push.
+description: Use when a task in the gestor-empanaderia repo seems done, BEFORE claiming completion, committing the final changes. Walks the Definition of Done, runs the tests its test level requires (the full verify suite for deep changes and sprint closes), updates docs and the backlog, and prepares the push.
 ---
 
 # finish-task — cerrar una tarea en gestor-empanaderia
@@ -26,16 +26,27 @@ comandos), no con suposiciones.
 
 ## 3. Tests y gates
 
-Corré y mostrá la salida de:
+Corré lo que pide el **nivel de tests** del ítem (está en su plan; detalle en `docs/testing.md` § Nivel de tests).
+Mandá la salida a un log y mostrá sólo el resumen o los fallos.
 
 ```bash
-docker compose up -d db-test
+# Nivel 1 · texto o estilo
+npm run lint && npm run typecheck
+npx vitest related --run --project unit --project component <archivos tocados>
+npm run test:e2e -- <specs que miran ese texto>
+
+# Nivel 2 · lógica acotada: lo del nivel 1 más
+npm run test:coverage
+npm run test:int          # si tocó un repositorio (docker compose up -d --wait db-test)
+
+# Nivel 3 · profundo, y siempre en el cierre del sprint
+docker compose up -d --wait db-test
 npm run verify
 ```
 
-- [ ] Unit, contrato, fuzz, integración (si tocó repositorio/schema) en verde.
-- [ ] Cobertura ≥ 90% líneas/funciones/statements y ≥ 85% branches.
-- [ ] Mutación ≥ 70%.
+- [ ] Los tests del nivel en verde.
+- [ ] Nivel 2 o 3: cobertura ≥ 90% líneas/funciones/statements y ≥ 85% branches.
+- [ ] Nivel 3: integración en verde y mutación ≥ 70%.
 - [ ] Si se arregló un bug: test `regression BUG-N: …` que fallaba antes del fix.
 
 ## 4. Documentación

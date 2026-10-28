@@ -31,6 +31,15 @@ describe('catálogo público con el modelo nuevo (T-12 CA-4)', () => {
     expect(items[0].prices.map((price) => price.value)).toEqual([1200, 3400, 6500, 12000]);
   });
 
+  it('no muestra un gusto sin precio: ni propio ni del grupo', async () => {
+    const pizza = await fake.read.items.insert({ group: 'pizzas', name: 'Muzza' });
+    await fake.read.items.update({ id: pizza.id, version: 1 }, { isVisible: true });
+    expect((await service.list()).map((item) => item.name)).toEqual(['Carne']);
+    expect(await service.item(pizza.id)).toBeNull();
+    await fake.read.items.update({ id: pizza.id, version: 2 }, { prices: { price1: 11000 } });
+    expect((await service.list()).map((item) => item.name)).toEqual(['Carne', 'Muzza']);
+  });
+
   it('la ficha de un gusto oculto o inexistente no existe para el público', async () => {
     expect(await service.item(visible)).toMatchObject({ name: 'Carne' });
     expect(await service.item(hidden)).toBeNull();

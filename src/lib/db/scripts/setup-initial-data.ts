@@ -1,5 +1,6 @@
 import * as bcrypt from 'bcrypt';
 import { db } from '..';
+import { expenses } from '../expense-schema';
 import { auditLogs, customers, providers, salePayments, sales, users } from '../schema';
 import { assertSafeToWipe } from './assert-safe-to-wipe';
 import { clearMenu, seedMenu } from './seed-menu';
@@ -22,6 +23,7 @@ async function wipe(): Promise<void> {
   await db.delete(sales);
   await db.delete(providers);
   await db.delete(customers);
+  await db.delete(expenses);
   await db.delete(users);
 }
 

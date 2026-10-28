@@ -20,7 +20,7 @@ type Section = keyof typeof SECTIONS;
 
 const MENU: Readonly<Record<Role, readonly Section[]>> = {
   admin: ['estadisticas', 'gastos', 'stock', 'ventas', 'promociones', 'clientes', 'proveedores', 'altaProductos', 'tarjetas', 'usuarios', 'auditoria'],
-  vendedor: ['ventas', 'stock', 'clientes'],
+  vendedor: ['ventas', 'clientes'],
 };
 
 const HOME: Readonly<Record<Role, string>> = { admin: '/', vendedor: '/ventas' };

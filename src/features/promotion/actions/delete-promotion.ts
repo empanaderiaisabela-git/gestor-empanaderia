@@ -13,8 +13,8 @@ export async function deletePromotionAction(input: PromotionDeleteInput): Promis
     const parsed = promotionDeleteSchema.safeParse(input);
     if (!parsed.success) return fail('VALIDATION');
     await promotionService.remove(caller, parsed.data);
-    return { success: true, message: MESSAGES.SUCCESS.DELETED('Promoción') };
+    return { success: true, message: MESSAGES.SUCCESS.DELETED('la promoción') };
   } catch (error) {
-    return toActionFailure(error, 'Promoción');
+    return toActionFailure(error, 'la promoción');
   }
 }

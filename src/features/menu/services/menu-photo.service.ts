@@ -21,7 +21,7 @@ type Deps = { unitOfWork: MenuUnitOfWork; store: ImageStore };
 
 async function upload({ unitOfWork, store }: Deps, caller: Caller, input: UploadMenuPhotoInput): Promise<MenuPhoto> {
   const item = await unitOfWork.read.items.findById(input.menuItemId);
-  if (!item) throw new AppError('NOT_FOUND', { entity: 'producto' });
+  if (!item) throw new AppError('NOT_FOUND', { entity: 'el producto' });
   const uploaded = await store.uploadImage(input.image, item.id);
   try {
     return await unitOfWork.run(async ({ photos, audit }) => {
@@ -38,7 +38,7 @@ async function upload({ unitOfWork, store }: Deps, caller: Caller, input: Upload
 async function remove({ unitOfWork, store }: Deps, caller: Caller, { publicId }: DeleteMenuPhotoInput): Promise<void> {
   await unitOfWork.run(async ({ photos, items, audit }) => {
     const photo = await photos.find(publicId);
-    if (!photo || !(await photos.remove(publicId))) throw new AppError('NOT_FOUND', { entity: 'foto' });
+    if (!photo || !(await photos.remove(publicId))) throw new AppError('NOT_FOUND', { entity: 'la foto' });
     const item = await items.findById(photo.menuItemId);
     await audit({ userId: caller.id, action: 'ACTUALIZAR', entity: 'MENU_ITEM', entityId: photo.menuItemId, detail: { name: item?.name ?? '', photo: 'Foto eliminada' } });
   });

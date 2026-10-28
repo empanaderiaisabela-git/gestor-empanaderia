@@ -11,7 +11,7 @@ async function crearPromo(page: Page, nombre: string): Promise<void> {
   await page.getByLabel('Grupo del producto 2').selectOption({ label: 'Coca-Cola' });
   await page.getByLabel('Precio de venta de la promo').fill('9000');
   await page.getByRole('button', { name: 'Crear promoción' }).click();
-  await expect(page.getByText('Promoción registrado/a exitosamente')).toBeVisible();
+  await expect(page.getByText('Se registró la promoción')).toBeVisible();
 }
 
 test.describe('vender una promo desde el tablero (US-9)', () => {
@@ -24,6 +24,7 @@ test.describe('vender una promo desde el tablero (US-9)', () => {
     await gustoEnPromo(page, 'Muzza y cebolla').getByRole('button', { name: 'Completar' }).click();
     await gustoEnPromo(page, 'Sprite 1,5 L').getByRole('button', { name: 'Agregar' }).click();
 
+    await page.getByRole('button', { name: /^Ver pedido/ }).click();
     const pedido = page.getByRole('region', { name: 'Pedido actual' });
     await expect(pedido.getByText(`Promo · ${nombre}`)).toBeVisible();
     await pedido.getByLabel('Comprador (opcional)').fill('Comprador promo');

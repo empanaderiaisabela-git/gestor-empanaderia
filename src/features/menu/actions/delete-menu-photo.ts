@@ -15,6 +15,6 @@ export async function deleteMenuPhotoAction(input: DeleteMenuPhotoInput): Promis
     await menuPhotoService.remove(caller, parsed.data);
     return afterCatalogChange({ success: true, message: 'Foto eliminada' });
   } catch (error) {
-    return toActionFailure(error, 'foto');
+    return toActionFailure(error, 'la foto');
   }
 }
