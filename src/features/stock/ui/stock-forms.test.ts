@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { parseEntry, parseLoss } from './stock-forms';
+import type { MenuItemDef } from '@/features/menu/domain/menu-item.schema';
+import { parseEntry, parseLoss, parsePricing, pricingValuesOf } from './stock-forms';
 
 const ITEM = '11111111-1111-4111-8111-111111111111';
 const PROVIDER = '22222222-2222-4222-8222-222222222222';
@@ -19,9 +20,9 @@ describe('formularios de Stock', () => {
     expect(parseEntry(values)).toEqual({ ok: true, input: { menuItemId: ITEM, quantity: 6, providerId: null, prices: { price1: 11000, price3: 30.5 } } });
   });
 
-  it('en Empanadas y Ciabattas no manda precios: se cargan en Alta (US-23)', () => {
-    const values = { menuItemId: ITEM, quantity: '6', unitCost: '', providerId: '', ...NO_PRICES, group: 'empanadas', price1: '11000' };
-    expect(parseEntry(values)).toEqual({ ok: true, input: { menuItemId: ITEM, quantity: 6, providerId: null } });
+  it('en Empanadas también manda los precios del gusto (US-28)', () => {
+    const values = { menuItemId: ITEM, quantity: '6', unitCost: '', providerId: '', ...NO_PRICES, group: 'empanadas', price1: '1300', price12: '13000' };
+    expect(parseEntry(values)).toEqual({ ok: true, input: { menuItemId: ITEM, quantity: 6, providerId: null, prices: { price1: 1300, price12: 13000 } } });
   });
 
   it('marca el error en el campo del precio', () => {
@@ -31,6 +32,14 @@ describe('formularios de Stock', () => {
 
   it('marca los errores por campo', () => {
     expect(parseEntry({ menuItemId: '', quantity: '0', unitCost: '', providerId: '', ...NO_PRICES })).toEqual({ ok: false, errors: { menuItemId: 'Elegí un gusto o bebida', quantity: 'La cantidad debe ser mayor a 0' } });
+  });
+
+  it('Costo y precio manda sólo los precios del grupo, con la versión y la casilla (US-28)', () => {
+    const pizza: MenuItemDef = { id: ITEM, group: 'pizzas', name: 'Muzza', unitCost: 3000, stock: 1, price1: 11000, price3: null, price6: null, price12: null, isActive: true, isVisible: true, version: 2, createdAt: '', updatedAt: '' };
+    const values = { ...pricingValuesOf(pizza), price1: '12000,5', price6: '99', applyToGroup: true };
+    expect(parsePricing(pizza, values)).toEqual({ ok: true, input: { menuItemId: ITEM, version: 2, unitCost: 3000, prices: { price1: 12000.5 }, applyToGroup: true } });
+    expect(parsePricing(pizza, { ...values, unitCost: '' })).toEqual({ ok: false, errors: { unitCost: 'Ingresá un costo válido' } });
+    expect(pricingValuesOf(null)).toEqual({ unitCost: '', price1: '', price3: '', price6: '', price12: '', applyToGroup: false });
   });
 
   it('la merma convierte la cantidad (media pizza) y exige motivo', () => {

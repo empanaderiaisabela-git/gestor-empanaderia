@@ -59,16 +59,19 @@ describe('stock.service: costo y precio al ingresar (US-17)', () => {
     await expect(service.registerEntry(CALLER, { menuItemId: sanguche.id, quantity: 1, prices: { price1: 1 } })).rejects.toMatchObject({ code: 'VALIDATION' });
   });
 
-  it('empanadas: el ingreso guarda costo y cantidad, sin pedir precio aunque el grupo no lo tenga (US-23, R-3)', async () => {
+  it('empanadas: el primer ingreso pide los cuatro precios del gusto, como los sanguches (US-28)', async () => {
     const item = stockItem({ unitCost: '400.00' });
     fake.state.items.push(item);
-    await expect(service.registerEntry(CALLER, { menuItemId: item.id, quantity: 1, unitCost: 450 })).resolves.toMatchObject({ item: { stock: '11.0', unitCost: '450.00', price1: null } });
+    await expect(service.registerEntry(CALLER, { menuItemId: item.id, quantity: 1, unitCost: 450 })).rejects.toMatchObject({ code: 'MISSING_PRICE' });
+    await expect(service.registerEntry(CALLER, { menuItemId: item.id, quantity: 1, prices: { price1: 1300 } })).rejects.toMatchObject({ code: 'VALIDATION' });
+    const prices = { price1: 1300, price3: 3600, price6: 7000, price12: 13000 };
+    await expect(service.registerEntry(CALLER, { menuItemId: item.id, quantity: 1, prices })).resolves.toMatchObject({ item: { stock: '11.0', price1: '1300.00', price12: '13000.00' } });
   });
 
-  it('empanadas: VALIDATION si llega un precio, que se carga en Alta (US-23)', async () => {
-    const item = stockItem({ unitCost: '400.00' });
+  it('ciabattas: el primer ingreso pide costo y el precio de la unidad del gusto (US-28)', async () => {
+    const item = bare({ group: 'ciabattas', name: 'Capresse' });
     fake.state.items.push(item);
-    await expect(service.registerEntry(CALLER, { menuItemId: item.id, quantity: 1, prices: { price1: 1300, price3: 3600, price6: 7000, price12: 13000 } })).rejects.toMatchObject({ code: 'VALIDATION' });
-    expect(fake.state.entries).toEqual([]);
+    await expect(service.registerEntry(CALLER, { menuItemId: item.id, quantity: 4, unitCost: 2500 })).rejects.toMatchObject({ code: 'MISSING_PRICE' });
+    await expect(service.registerEntry(CALLER, { menuItemId: item.id, quantity: 4, unitCost: 2500, prices: { price1: 6000 } })).resolves.toMatchObject({ item: { stock: '4.0', price1: '6000.00' } });
   });
 });

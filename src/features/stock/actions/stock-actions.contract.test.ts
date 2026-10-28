@@ -13,7 +13,7 @@ vi.mock('@/features/stock/repository/stock-unit-of-work', async () => {
   return { drizzleStockUnitOfWork: fake };
 });
 
-const ITEM = stockItem({ id: '11111111-1111-4111-8111-111111111111' });
+const ITEM = stockItem({ id: '11111111-1111-4111-8111-111111111111', price1: '1200.00', price3: '3400.00', price6: '6500.00', price12: '12000.00' });
 const PROVIDER = '22222222-2222-4222-8222-222222222222';
 
 describe('acciones de Stock (US-4)', () => {

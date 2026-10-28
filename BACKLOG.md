@@ -3117,7 +3117,7 @@ las decisiones provisorias D-1 a D-11, el orden y la trazabilidad de cada punto 
 | 1   | [US-26](#us-26--clientes-sólo-el-nombre-es-obligatorio)                         | Clientes: sólo el nombre es obligatorio                 | En revisión | T-21       | 1 h             |
 | 2   | [US-30](#us-30--títulos-más-grandes-y-letras-con-más-contraste)                 | Títulos más grandes y letras con más contraste          | En revisión | T-21       | 1 h 30 min      |
 | 3   | [US-27](#us-27--gastos-el-proveedor-de-la-factura)                              | Gastos: el proveedor de la factura                      | En revisión | T-21       | 1 h 30 min      |
-| 4   | [US-28](#us-28--todos-los-precios-en-stock)                                     | Todos los precios en Stock                              | Pendiente   | T-21       | 3 h             |
+| 4   | [US-28](#us-28--todos-los-precios-en-stock)                                     | Todos los precios en Stock                              | En revisión | T-21       | 3 h             |
 | 5   | [US-29](#us-29--prepizzas-y-panes-de-ciabatta)                                  | Prepizzas y panes de ciabatta                           | Pendiente   | US-28      | 5 h 30 min      |
 | 6   | [US-31](#us-31--el-vendedor-ve-el-stock-sin-costos)                             | El vendedor ve el stock, sin costos                     | Pendiente   | US-29      | 1 h 30 min      |
 | 7   | [T-22](#t-22--cierre-del-sprint-4)                                              | Cierre del Sprint 4                                     | Pendiente   | todos      | 1 h             |
@@ -3265,12 +3265,12 @@ quién corresponde cada gasto.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
-| Dueño        | —         |
-| Inicio       | —         |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-28 |
 | Tamaño       | M         |
 | Depende de   | T-21      |
-| Plan         | —         |
+| Plan         | [`docs/plans/sprint-4.md`](docs/plans/sprint-4.md#4--us-28-todos-los-precios-en-stock-m-3-h) |
 | Merge        | —         |
 | Horas reales | —         |
 
@@ -3279,15 +3279,15 @@ y las ciabattas, de forma que el día que un gusto se venda a otro precio el sis
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · Alta de productos ya no tiene las tarjetas de precios de grupo; salen la acción, el servicio y el schema de `menu_group_prices`, y la tabla se borra con una migración que antes copia sus precios a cada gusto de Empanadas y Ciabattas · Estimación: 40 min · Completado: —
+- [x] **CA-1** · Alta de productos ya no tiene las tarjetas de precios de grupo; salen la acción, el servicio y el schema de `menu_group_prices`, y la tabla se borra con una migración que antes copia sus precios a cada gusto de Empanadas y Ciabattas · Estimación: 40 min · Completado: 2026-10-28 16:06
 
-- [ ] **CA-2** · "Ingresar stock" de una empanada pide costo y precios de 1, 3, 6 y 12 del gusto, como Sanguches; el de una ciabatta, costo y precio de unidad, como Pizzas · Estimación: 35 min · Completado: —
+- [x] **CA-2** · "Ingresar stock" de una empanada pide costo y precios de 1, 3, 6 y 12 del gusto, como Sanguches; el de una ciabatta, costo y precio de unidad, como Pizzas · Estimación: 35 min · Completado: 2026-10-28 16:06
 
-- [ ] **CA-3** · Ventas, el cobro y el catálogo usan el precio de cada gusto: una docena surtida de empanadas se cobra con la regla de Sanguches (Σ unidades del gusto ÷ 12 × precio de la docena del gusto), y con todos los gustos al mismo precio da exactamente el precio de la docena; con tests de dominio, contrato e integración · Estimación: 35 min · Completado: —
+- [x] **CA-3** · Ventas, el cobro y el catálogo usan el precio de cada gusto: una docena surtida de empanadas se cobra con la regla de Sanguches (Σ unidades del gusto ÷ 12 × precio de la docena del gusto), y con todos los gustos al mismo precio da exactamente el precio de la docena; con tests de dominio, contrato e integración · Estimación: 35 min · Completado: 2026-10-28 16:06
 
-- [ ] **CA-4** · La columna "Precio de venta" de Stock muestra los precios del gusto, uno por renglón (como dejó BUG-22) · Estimación: 10 min · Completado: —
+- [x] **CA-4** · La columna "Precio de venta" de Stock muestra los precios del gusto, uno por renglón (como dejó BUG-22) · Estimación: 10 min · Completado: 2026-10-28 16:06
 
-- [ ] **CA-5** · Cada gusto tiene en Stock "Costo y precio", sin cantidad ("Ingresar stock" sigue aceptando precios opcionales), con una casilla que copia el precio a todos los gustos del grupo en la misma transacción; tests de servicio, contrato e integración y un E2E del aumento de la docena · Estimación: 1 h · Completado: —
+- [x] **CA-5** · Cada gusto tiene en Stock "Costo y precio", sin cantidad ("Ingresar stock" sigue aceptando precios opcionales), con una casilla que copia el precio a todos los gustos del grupo en la misma transacción; tests de servicio, contrato e integración y un E2E del aumento de la docena · Estimación: 1 h · Completado: 2026-10-28 16:06
 
 **Notas**
 
@@ -3295,6 +3295,23 @@ y las ciabattas, de forma que el día que un gusto se venda a otro precio el sis
   `git revert` de `e78bd12` porque la columna de BUG-22 se queda.
 - Nivel 3: cambia el schema y la regla de precios del cobro.
 - Las ciabattas cargan su precio con la cantidad sólo hasta US-29, que lo pasa al formulario sin cantidad.
+
+- Migración `0020_precios-por-gusto`: cambia el check de precios, copia a cada gusto el precio de grupo que hubiera
+  (en la base real, Empanadas y Ciabattas conservan sus precios) y borra `menu_group_prices`. La prueba un test de
+  integración que recrea la tabla dentro de una transacción con ROLLBACK y corre el SQL de la migración con el cliente
+  `pg`: es la única forma de ejecutar el archivo, y es una excepción a "sin SQL plano" limitada a ese test.
+- "Costo y precio" (`set-stock-pricing.ts` y `stock-pricing.ts`): el costo es obligatorio y viene precargado; la
+  casilla copia sólo los precios a todos los gustos del grupo, también a los desactivados, en la misma transacción.
+  Auditoría `ACTUALIZAR` · `MENU_ITEM` con `appliedTo`. Botón con el ícono `Tags` en cada fila de Stock.
+- Ventas: si todos los gustos de una presentación valen lo mismo, el botón muestra ese precio; si no, "desde $X". Sale
+  el aviso "Falta cargar el precio del grupo".
+- `tests/historial-ventas.spec.ts` pasó a vender ½ docena: el E2E nuevo del aumento cambia la docena de todas las
+  empanadas, y los E2E corren en paralelo.
+- Lo implementó un subagente Opus y se revisó. `npm run verify` en verde: 928 tests, cobertura 95,95/89,32, 102 de
+  integración, mutación 90,25 y build; 67 E2E en verde.
+- Docs que nombran el precio de grupo y se actualizan en T-22: `docs/architecture.md`, `docs/initial_prompt.md` y el
+  ADR 0005 (queda reemplazado en parte por US-28).
+- La base local de desarrollo necesita `npm run db:migrate` (0018 a 0020) antes de levantar la app.
 
 **Preguntas abiertas**
 

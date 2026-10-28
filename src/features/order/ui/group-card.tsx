@@ -2,25 +2,21 @@
 
 import type { JSX } from 'react';
 import { GROUP_THEME } from '@/config/group-theme';
-import { GROUPS, isPricedByGroup, type MenuGroup, type Presentation } from '@/features/menu/domain/menu-groups';
+import { GROUPS, type MenuGroup, type Presentation } from '@/features/menu/domain/menu-groups';
 import { unitsIn } from '@/features/order/domain/order-line';
 import { useOrderStore } from '@/features/order/store/order.store';
 import { formatMoney } from '@/lib/format-money';
 import type { OrderBoardModel } from './use-order-board';
 
 function priceHint(group: MenuGroup, presentation: Presentation, board: OrderBoardModel): string {
-  if (isPricedByGroup(group)) {
-    const price = board.book.group(group)?.[presentation.priceField];
-    return price === null || price === undefined ? 'Sin precio' : formatMoney(price);
-  }
   const prices = board.itemsOf(group).flatMap((item) => (item[presentation.priceField] === null ? [] : [item[presentation.priceField] ?? 0]));
-  return prices.length === 0 ? '' : `desde ${formatMoney(Math.min(...prices))}`;
+  if (prices.length === 0) return '';
+  const lowest = Math.min(...prices);
+  return prices.every((price) => price === lowest) ? formatMoney(lowest) : `desde ${formatMoney(lowest)}`;
 }
 
 function notice(group: MenuGroup, board: OrderBoardModel): string | null {
-  if (board.itemsOf(group).length === 0) return 'Todavía no hay gustos cargados';
-  if (isPricedByGroup(group) && !board.hasGroupPrice(group)) return 'Falta cargar el precio del grupo';
-  return null;
+  return board.itemsOf(group).length === 0 ? 'Todavía no hay gustos cargados' : null;
 }
 
 export function GroupCard({ group, board }: { group: MenuGroup; board: OrderBoardModel }): JSX.Element {

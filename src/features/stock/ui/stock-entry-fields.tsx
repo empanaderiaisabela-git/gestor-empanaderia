@@ -1,6 +1,6 @@
 import type { JSX } from 'react';
 import { FormField, inputClass } from '@/components/ui/form-field';
-import { GROUPS, isPricedByGroup, MENU_GROUPS } from '@/features/menu/domain/menu-groups';
+import { GROUPS, MENU_GROUPS } from '@/features/menu/domain/menu-groups';
 import type { MenuItemDef } from '@/features/menu/domain/menu-item.schema';
 import { costLabelOf } from '@/features/menu/domain/menu-terms';
 import { formatMoney } from '@/lib/format-money';
@@ -46,7 +46,7 @@ function CostFields({ values, errors, items, providers, onChange }: StockEntryFi
       <FormField label={costLabelOf(item?.group ?? null)} error={errors.unitCost}>
         <input inputMode='decimal' value={values.unitCost} onChange={(event) => onChange({ ...values, unitCost: event.target.value })} placeholder={item?.unitCost == null ? '' : formatMoney(item.unitCost)} className={inputClass(Boolean(errors.unitCost))} />
       </FormField>
-      {item && !isPricedByGroup(item.group) && <StockPriceFields item={item} values={values} errors={errors} onChange={onChange} />}
+      {item && <StockPriceFields item={item} values={values} errors={errors} onChange={onChange} />}
       <FormField label='Proveedor (opcional)' error={errors.providerId}>
         <select value={values.providerId} onChange={(event) => onChange({ ...values, providerId: event.target.value })} className={inputClass(Boolean(errors.providerId))}>
           <option value=''>Sin proveedor</option>

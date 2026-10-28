@@ -1,6 +1,5 @@
 import { catalogItemOf, type CatalogItemDef } from '@/features/menu/domain/catalog';
 import type { PriceValues } from '@/features/menu/domain/menu-price-list';
-import type { MenuGroupPrice } from '@/features/menu/repository/menu-group-price.repository';
 import type { MenuItem } from '@/features/menu/repository/menu-item.repository';
 import type { MenuPhoto } from '@/features/menu/repository/menu-photo.repository';
 import { drizzleMenuUnitOfWork, type MenuRepositories, type MenuUnitOfWork } from '@/features/menu/repository/menu-unit-of-work';
@@ -18,11 +17,9 @@ const isOnCatalog = (item: MenuItem): boolean => item.isActive && item.isVisible
 
 async function catalogOf(read: MenuRepositories, items: MenuItem[]): Promise<CatalogItemDef[]> {
   const photos: MenuPhoto[] = await read.photos.ofItems(items.map((item) => item.id));
-  const groupPrices: MenuGroupPrice[] = await read.groupPrices.findAll();
   const defs = items.map((item) => {
     const images = photos.filter((photo) => photo.menuItemId === item.id).map(({ publicId, url }) => ({ publicId, url }));
-    const group = groupPrices.find((row) => row.group === item.group);
-    return catalogItemOf({ id: item.id, group: item.group, name: item.name, stock: Number(item.stock), prices: pricesOf(item), images }, group && pricesOf(group));
+    return catalogItemOf({ id: item.id, group: item.group, name: item.name, stock: Number(item.stock), prices: pricesOf(item), images });
   });
   return defs.filter((item) => item.prices.length > 0);
 }

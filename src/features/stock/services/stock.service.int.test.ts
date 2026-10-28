@@ -1,7 +1,7 @@
 import { eq } from 'drizzle-orm';
 import { afterAll, beforeEach, describe, expect, it } from 'vitest';
 import { db } from '@/lib/db';
-import { menuGroupPrices, menuItems } from '@/lib/db/menu-schema';
+import { menuItems } from '@/lib/db/menu-schema';
 import { stockEntries } from '@/lib/db/stock-schema';
 import { TEST_USER_IDS } from '@/test/as-user';
 import { seedTestUser } from '@/test/seed-test-user';
@@ -9,6 +9,7 @@ import { truncateAll } from '@/test/truncate-all';
 import { stockService } from './stock.service';
 
 const CALLER = { id: TEST_USER_IDS.admin };
+const DOZEN = { price1: '1200.00', price3: '3400.00', price6: '6500.00', price12: '12000.00' };
 
 async function stockOf(id: string): Promise<number> {
   const [row] = await db.select({ stock: menuItems.stock }).from(menuItems).where(eq(menuItems.id, id));
@@ -21,9 +22,8 @@ describe('ingresos y mermas simultáneos sobre el mismo gusto (US-4 CA-2)', () =
   beforeEach(async () => {
     await truncateAll();
     await seedTestUser('admin');
-    const [item] = await db.insert(menuItems).values({ group: 'empanadas', name: 'Carne', unitCost: '400.00', stock: '10' }).returning({ id: menuItems.id });
+    const [item] = await db.insert(menuItems).values({ group: 'empanadas', name: 'Carne', unitCost: '400.00', stock: '10', ...DOZEN }).returning({ id: menuItems.id });
     itemId = item.id;
-    await db.insert(menuGroupPrices).values({ group: 'empanadas', price1: '1200.00', price3: '3400.00', price6: '6500.00', price12: '12000.00' });
   });
 
   afterAll(async () => {
@@ -46,12 +46,13 @@ describe('ingresos y mermas simultáneos sobre el mismo gusto (US-4 CA-2)', () =
     expect(row).toMatchObject({ stock: '6.0', unitCost: '3000.00', price1: '11000.00', version: 2 });
   });
 
-  it('Stock no toca el precio del grupo de las empanadas: se carga en Alta (US-23)', async () => {
+  it('Costo y precio con "aplicar a todos" copia los precios al grupo en la misma transacción (US-28 CA-5)', async () => {
+    const [pollo] = await db.insert(menuItems).values({ group: 'empanadas', name: 'Pollo', unitCost: '350.00', ...DOZEN }).returning({ id: menuItems.id });
     const prices = { price1: 1300, price3: 3600, price6: 7000, price12: 13000 };
-    await expect(stockService.registerEntry(CALLER, { menuItemId: itemId, quantity: 1, prices })).rejects.toMatchObject({ code: 'VALIDATION' });
-    const [row] = await db.select().from(menuGroupPrices).where(eq(menuGroupPrices.group, 'empanadas'));
-    expect(row).toMatchObject({ price1: '1200.00', version: 1 });
-    expect(await stockOf(itemId)).toBe(10);
+    await stockService.setPricing(CALLER, { menuItemId: itemId, version: 1, unitCost: 420, prices, applyToGroup: true });
+    const rows = await db.select({ name: menuItems.name, unitCost: menuItems.unitCost, price12: menuItems.price12, version: menuItems.version }).from(menuItems).orderBy(menuItems.name);
+    expect(rows).toEqual([{ name: 'Carne', unitCost: '420.00', price12: '13000.00', version: 2 }, { name: 'Pollo', unitCost: '350.00', price12: '13000.00', version: 2 }]);
+    await expect(stockService.setPricing(CALLER, { menuItemId: pollo.id, version: 1, unitCost: 1, prices, applyToGroup: false })).rejects.toMatchObject({ code: 'STALE_VERSION' });
   });
 
   it('si la merma no alcanza, no se registra nada', async () => {

@@ -16,7 +16,7 @@ describe('el cobro rechaza lo que no cierra y no registra nada (US-6 CA-2 y CA-4
     { caso: '½ docena incompleta', lines: [line('empanadas', 'u6', [{ menuItemId: CARNE.id, units: 5 }])], paid: 8000 },
     { caso: 'un gusto de otro grupo', lines: [line('empanadas', 'u1', [{ menuItemId: MUZZA.id, units: 1 }])], paid: 1500 },
     { caso: 'un gusto dado de baja', lines: [line('empanadas', 'u1', [{ menuItemId: HUMITA.id, units: 1 }])], paid: 1500 },
-    { caso: 'un grupo sin precio cargado', lines: [line('ciabattas', 'u1', [{ menuItemId: JYQ.id, units: 1 }])], paid: 3000 },
+    { caso: 'un gusto sin precio cargado', lines: [line('ciabattas', 'u1', [{ menuItemId: JYQ.id, units: 1 }])], paid: 3000 },
     { caso: 'pagos que no suman el total', lines: [cokes(2)], paid: 4999 },
     { caso: 'un total adulterado a la baja', lines: [halfDozen], paid: 1 },
   ])('VALIDATION: $caso', async ({ lines, paid }) => {

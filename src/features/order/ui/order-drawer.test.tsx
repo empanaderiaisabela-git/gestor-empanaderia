@@ -2,11 +2,11 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { PromotionDef } from '@/features/promotion/domain/promotion.schema';
 import { useOrderStore } from '@/features/order/store/order.store';
-import { GROUP_PRICES, ITEMS } from '../testing/board-fixtures';
+import { ITEMS } from '../testing/board-fixtures';
 import { OrderDrawer } from './order-drawer';
 import { boardModelOf } from './use-order-board';
 
-const board = boardModelOf(ITEMS, GROUP_PRICES);
+const board = boardModelOf(ITEMS);
 const store = () => useOrderStore.getState();
 const PROMO: PromotionDef = { id: 'p1', name: 'Media + Coca', price: 9000, isActive: true, version: 1, components: [{ group: 'coca_cola', presentationKey: 'u1', quantity: 1 }], createdAt: '', updatedAt: '' };
 

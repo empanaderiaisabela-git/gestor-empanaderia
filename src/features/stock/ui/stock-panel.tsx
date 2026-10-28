@@ -15,6 +15,7 @@ import { getStockColumns, StockBadge, StockButtons, type StockRowActions } from 
 import { StockEntryModal } from './stock-entry-modal';
 import { StockHistoryModal } from './stock-history-modal';
 import { StockLossModal } from './stock-loss-modal';
+import { StockPricingModal } from './stock-pricing-modal';
 import { type StockPanelModel, useStockPanel } from './use-stock-panel';
 
 const isGroup = (value: string): value is MenuGroup => MENU_GROUPS.some((group) => group === value);
@@ -50,9 +51,10 @@ export function StockPanel(): JSX.Element {
     <div className='flex flex-col flex-1 h-full overflow-hidden'>
       <PanelToolbar search={model.search} onSearchChange={model.setSearch} searchPlaceholder='Buscar gusto o bebida...' searchPlaceholderMobile='Buscar...' data-testid={TEST_IDS.general.inputBusquedaTabla} filters={<GroupFilter model={model} />} actions={addButton} />
       <GlobalMessage message={model.message} />
-      <ResponsivePanelView columns={getStockColumns(actions, model.groupPrices)} data={model.items} emptyMessage='No hay gustos ni bebidas activos en este grupo.' renderCard={renderCard(actions)} />
+      <ResponsivePanelView columns={getStockColumns(actions)} data={model.items} emptyMessage='No hay gustos ni bebidas activos en este grupo.' renderCard={renderCard(actions)} />
       <StockEntryModal model={model} />
       <StockLossModal model={model} />
+      <StockPricingModal model={model} />
       <StockHistoryModal model={model} />
     </div>
   );

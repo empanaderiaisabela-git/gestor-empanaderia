@@ -2,15 +2,14 @@ import { fireEvent, render, screen, within } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useMenuStore } from '@/features/menu/store/menu.store';
 import { useOrderStore } from '@/features/order/store/order.store';
-import { GROUP_PRICES, ITEMS } from '../testing/board-fixtures';
+import { ITEMS } from '../testing/board-fixtures';
 import { OrderBoard } from './order-board';
 
 vi.mock('@/features/menu/actions/fetch-menu-items', () => ({ fetchMenuItems: vi.fn(async () => ITEMS) }));
-vi.mock('@/features/menu/actions/fetch-menu-group-prices', () => ({ fetchMenuGroupPrices: vi.fn(async () => GROUP_PRICES) }));
 
 describe('tablero de ventas (US-5 CA-1)', () => {
   beforeEach(() => {
-    useMenuStore.setState({ items: [], groupPrices: [], isLoaded: false });
+    useMenuStore.setState({ items: [], isLoaded: false });
     useOrderStore.getState().clear();
   });
 

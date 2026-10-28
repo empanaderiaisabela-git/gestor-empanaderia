@@ -10,7 +10,7 @@ const PROVIDER = '22222222-2222-4222-8222-222222222222';
 describe('stock.service (US-4)', () => {
   let fake: FakeStockUnitOfWork;
   let service: StockService;
-  const empanada = stockItem({ id: '11111111-1111-4111-8111-111111111111' });
+  const empanada = stockItem({ id: '11111111-1111-4111-8111-111111111111', price1: '1200.00', price3: '3400.00', price6: '6500.00', price12: '12000.00' });
   const pizza = stockItem({ id: '33333333-3333-4333-8333-333333333333', group: 'pizzas', name: 'Muzza', stock: '2.5', unitCost: '3000.00', price1: '11000.00' });
 
   beforeEach(() => {

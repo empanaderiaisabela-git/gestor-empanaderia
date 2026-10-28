@@ -3,8 +3,7 @@
 - **US relacionadas**: US-5 (tablero y pedido actual), US-6 (cobro) y US-7 (historial, comprobante y anulación).
 - **Código**: `src/features/order/` (domain, store, actions, services, repository, ui, testing). Pantallas en
   `src/app/(main)/ventas/` (Ventas/Pedidos) y `src/app/(main)/ventas/nueva/` (tablero).
-- **Datos que usa**: gustos, bebidas, precios del grupo y stock del feature `menu` (`fetchMenuItems`,
-  `fetchMenuGroupPrices`). Al cobrar escribe en `sales`, `sale_lines`, `sale_line_items`, `sale_payments` y
+- **Datos que usa**: gustos, bebidas, sus precios y stock del feature `menu` (`fetchMenuItems`). Al cobrar escribe en `sales`, `sale_lines`, `sale_line_items`, `sale_payments` y
   `audit_logs`, y descuenta `menu_items.stock` (tablas en `src/lib/db/order-schema.ts` y `schema.ts`).
 
 ## Qué hace
@@ -27,8 +26,9 @@ unidades e importe, el total y el comprador (opcional; vacío = "Sin nombre"). U
 |---|---|
 | En una presentación de más de 1 unidad, un gusto con "Completar" se carga para toda la cantidad que falta | `specs.md` (EMPANADAS, SANDWICH y AGREGADO) |
 | Surtidas con "Agregar uno" y "Completar" dentro de la misma presentación | `specs.md` (AGREGADO) |
-| Precio de Empanadas y Ciabattas: el del grupo para esa presentación, sea cual sea el gusto | `specs.md` (Aclaración de precios) |
-| Precio de una surtida de Sanguches: Σ (unidades del gusto ÷ unidades de la presentación × precio de esa presentación del gusto), redondeado a 2 decimales | dev, 2026-10-25 |
+| Precio por gusto en todos los grupos (US-28). Una surtida de Empanadas o de Sanguches: Σ (unidades del gusto ÷ unidades de la presentación × precio de esa presentación del gusto), redondeado a 2 decimales. Con todos los gustos al mismo precio da exactamente el precio de la presentación (7 + 5 a $32.000 la docena = $32.000) | dev, 2026-10-25; D-4 de `sprint-4.md` |
+| Cómo se cobra una docena surtida cuando los gustos tengan precios distintos: **pregunta abierta** de US-28 (lo pacta el cliente ese día). Hoy rige la regla proporcional; cambiarla toca sólo `unitLinePrice` | D-4 de `sprint-4.md` |
+| Ciabatta: el precio de unidad de su gusto, como una pizza de 1 sabor | US-28 |
 | Pizza de 2 sabores: el precio del sabor más caro; consume ½ de cada gusto | `specs.md` y dev |
 | Costo de una mitad y mitad: ½ del costo de cada gusto | dev, 2026-10-25 |
 | No se ofrece un gusto si no alcanza el stock, contando lo que ya está en el pedido | US-5 CA-5 |
@@ -142,7 +142,7 @@ borre.
 |---|---|---|---|
 | Sin sesión | `UNAUTHENTICATED` | No autorizado (Token faltante) | `checkout.contract.test.ts` |
 | Entrada mal formada o con precios, costos o total | `VALIDATION` | Los datos proporcionados no son válidos. | `checkout.contract.test.ts` |
-| Línea incompleta, gusto de otro grupo o dado de baja, grupo sin precio, descuento mayor al total o pagos que no suman | `VALIDATION` | idem | `checkout-errors.test.ts` |
+| Línea incompleta, gusto de otro grupo o dado de baja, gusto sin precio, descuento mayor al total o pagos que no suman | `VALIDATION` | idem | `checkout-errors.test.ts` |
 | Un gusto que ya no existe | `NOT_FOUND` | El producto ya no existe. | `checkout-errors.test.ts` |
 | Un gusto no alcanza | `INSUFFICIENT_STOCK` | No hay stock suficiente de {gusto}. | `checkout-errors.test.ts` y `checkout.service.int.test.ts` |
 | Crédito sin tarjeta o sin cuotas, o tarjeta en otro medio (US-11) | `VALIDATION` | Los datos proporcionados no son válidos. | `checkout.schema.test.ts` |
@@ -178,9 +178,10 @@ que sumar el total".
 
 - `GroupCard` por grupo, rellena con el color de su grupo y con su ícono de lucide (US-20; Empanadas y Ciabattas usan íconos propios de `src/components/icons/`; `src/config/group-theme.ts`
   y `src/app/group-colors.css`, que también usa el KPI de dinero por comida), "N en pedido" y botones de presentación
-  con el precio (del grupo) o "desde $X".
-  Avisa si el grupo no tiene gustos o si falta el precio del grupo, y deshabilita los botones.
-- `FlavorPicker` / `FlavorRow`: gustos con precio y stock disponible, y los botones según la presentación.
+  con el precio: si todos los gustos valen lo mismo, ese precio; si no, "desde $X" (el más bajo).
+  Avisa si el grupo no tiene gustos y deshabilita los botones.
+- `FlavorPicker` / `FlavorRow`: gustos con su precio ("Sin precio" no se puede agregar) y stock disponible, y los
+  botones según la presentación.
 - `OrderDrawer` (US-24): un botón flotante abajo a la derecha, con el ícono `Ticket` y un número que cuenta los
   productos (una docena suma 1, una promo suma 1), abre desde la derecha el panel con `CurrentOrder`. Se cierra con
   la X, con Escape o tocando afuera; Cobrar lo cierra y abre el cobro.

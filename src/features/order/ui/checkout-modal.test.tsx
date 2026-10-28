@@ -3,11 +3,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useMenuStore } from '@/features/menu/store/menu.store';
 import { checkoutAction } from '@/features/order/actions/checkout';
 import { useOrderStore } from '@/features/order/store/order.store';
-import { GROUP_PRICES, ITEMS } from '../testing/board-fixtures';
+import { ITEMS } from '../testing/board-fixtures';
 import { OrderBoard } from './order-board';
 
 vi.mock('@/features/menu/actions/fetch-menu-items', () => ({ fetchMenuItems: vi.fn(async () => ITEMS) }));
-vi.mock('@/features/menu/actions/fetch-menu-group-prices', () => ({ fetchMenuGroupPrices: vi.fn(async () => GROUP_PRICES) }));
 vi.mock('@/features/order/actions/checkout', () => ({ checkoutAction: vi.fn() }));
 vi.mock('@/features/card/actions/fetch-cards', () => ({
   fetchCards: vi.fn(async () => [{ id: 'v1', name: 'Visa', isActive: true, version: 1, plans: [{ installments: 3, surchargePct: 10 }], createdAt: '', updatedAt: '' }]),
@@ -33,7 +32,7 @@ async function openCheckout(): Promise<void> {
 
 describe('cobrar desde el tablero (US-6 CA-1 y CA-5)', () => {
   beforeEach(() => {
-    useMenuStore.setState({ items: [], groupPrices: [], isLoaded: false });
+    useMenuStore.setState({ items: [], isLoaded: false });
     store().clear();
     vi.mocked(checkoutAction).mockReset();
   });

@@ -33,36 +33,10 @@ export const menuItems = pgTable(
     check(
       'menu_items_prices_check',
       sql`case
-        when ${table.group} in ('empanadas', 'ciabattas')
-          then ${table.price1} is null and ${table.price3} is null and ${table.price6} is null and ${table.price12} is null
-        when ${table.group} = 'sanguches'
+        when ${table.group} in ('empanadas', 'sanguches')
           then (${table.price1} is null and ${table.price3} is null and ${table.price6} is null and ${table.price12} is null)
             or (coalesce(${table.price1}, 0) > 0 and coalesce(${table.price3}, 0) > 0 and coalesce(${table.price6}, 0) > 0 and coalesce(${table.price12}, 0) > 0)
         else (${table.price1} is null or ${table.price1} > 0) and ${table.price3} is null and ${table.price6} is null and ${table.price12} is null end`
-    ),
-  ]
-);
-
-export const menuGroupPrices = pgTable(
-  'menu_group_prices',
-  {
-    group: menuGroupEnum('menu_group').primaryKey(),
-    price1: money('price_1').notNull(),
-    price3: money('price_3'),
-    price6: money('price_6'),
-    price12: money('price_12'),
-    version: integer('version').default(1).notNull(),
-    updatedAt: timestamp('updated_at').defaultNow().notNull(),
-  },
-  (table) => [
-    check(
-      'menu_group_prices_check',
-      sql`case
-        when ${table.group} = 'empanadas'
-          then ${table.price1} > 0 and coalesce(${table.price3}, 0) > 0 and coalesce(${table.price6}, 0) > 0 and coalesce(${table.price12}, 0) > 0
-        when ${table.group} = 'ciabattas'
-          then ${table.price1} > 0 and ${table.price3} is null and ${table.price6} is null and ${table.price12} is null
-        else false end`
     ),
   ]
 );

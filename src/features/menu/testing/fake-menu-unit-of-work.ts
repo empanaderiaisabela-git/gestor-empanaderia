@@ -1,9 +1,8 @@
 import { type MenuItem, type MenuItemData, type MenuItemRepository, priceColumns } from '@/features/menu/repository/menu-item.repository';
 import type { MenuAuditEntry, MenuUnitOfWork } from '@/features/menu/repository/menu-unit-of-work';
-import { fakeMenuGroupPriceRepository, type FakeGroupPriceState } from './fake-menu-group-prices';
 import { fakeMenuPhotoRepository, type FakePhotoState } from './fake-menu-photos';
 
-type FakeState = FakeGroupPriceState & FakePhotoState & { rows: MenuItem[]; withMovements: Set<string>; audits: MenuAuditEntry[]; clock: number };
+type FakeState = FakePhotoState & { rows: MenuItem[]; withMovements: Set<string>; audits: MenuAuditEntry[]; clock: number };
 
 const pgError = (code: string, detail: string): Error => Object.assign(new Error(`Failed query (${code})`), { cause: { code, detail } });
 const GROUP_ORDER = ['empanadas', 'pizzas', 'sanguches', 'ciabattas', 'coca_cola', 'pepsi'];
@@ -50,9 +49,9 @@ export function fakeMenuItemRepository(state: FakeState): MenuItemRepository {
 export type FakeMenuUnitOfWork = MenuUnitOfWork & { state: FakeState; reset(): void };
 
 export function createFakeMenuUnitOfWork(): FakeMenuUnitOfWork {
-  const empty = (): FakeState => ({ rows: [], groupPrices: [], photos: [], withMovements: new Set(), audits: [], clock: 0 });
+  const empty = (): FakeState => ({ rows: [], photos: [], withMovements: new Set(), audits: [], clock: 0 });
   const state = empty();
-  const repositories = { items: fakeMenuItemRepository(state), groupPrices: fakeMenuGroupPriceRepository(state), photos: fakeMenuPhotoRepository(state) };
+  const repositories = { items: fakeMenuItemRepository(state), photos: fakeMenuPhotoRepository(state) };
   return {
     state,
     read: repositories,

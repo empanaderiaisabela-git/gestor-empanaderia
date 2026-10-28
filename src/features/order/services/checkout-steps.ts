@@ -1,5 +1,4 @@
 import { AppError } from '@/lib/errors';
-import type { MenuGroupPrice } from '@/features/menu/repository/menu-group-price.repository';
 import { describeFlavors } from '@/features/order/domain/order-describe';
 import type { OrderLine } from '@/features/order/domain/order-line';
 import { linePrice, type PriceBook, type Prices, unitLinePrice } from '@/features/order/domain/order-pricing';
@@ -40,14 +39,10 @@ export function assertSellable(lines: OrderLine[], items: LockedItems): void {
   if (!lines.every((line) => isValidLine(line) && line.flavors.every(({ menuItemId }) => ofGroup(line, menuItemId)))) throw new AppError('VALIDATION');
 }
 
-export function priceBookOf(items: LockedItems, groupPrices: MenuGroupPrice[]): PriceBook {
+export function priceBookOf(items: LockedItems): PriceBook {
   return {
     item: (id) => {
       const row = items.get(id);
-      return row && pricesOf(row);
-    },
-    group: (group) => {
-      const row = groupPrices.find((price) => price.group === group);
       return row && pricesOf(row);
     },
   };

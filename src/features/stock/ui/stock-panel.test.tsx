@@ -7,10 +7,10 @@ import { StockPanel } from './stock-panel';
 const actions = vi.hoisted(() => ({ fetchItems: vi.fn(), entry: vi.fn() }));
 
 vi.mock('@/features/menu/actions/fetch-menu-items', () => ({ fetchMenuItems: actions.fetchItems }));
-vi.mock('@/features/menu/actions/fetch-menu-group-prices', () => ({ fetchMenuGroupPrices: vi.fn(async () => []) }));
 vi.mock('@/features/provider/actions/fetch-providers', () => ({ fetchProviders: vi.fn(async () => []) }));
 vi.mock('@/features/stock/actions/register-stock-entry', () => ({ registerStockEntryAction: actions.entry }));
 vi.mock('@/features/stock/actions/register-stock-loss', () => ({ registerStockLossAction: vi.fn() }));
+vi.mock('@/features/stock/actions/set-stock-pricing', () => ({ setStockPricingAction: vi.fn() }));
 vi.mock('@/features/stock/actions/fetch-stock-entries', () => ({ fetchStockEntries: vi.fn(async () => []) }));
 
 const ITEM: MenuItemDef = { id: '11111111-1111-4111-8111-111111111111', group: 'empanadas', name: 'Humita', unitCost: null, stock: 5, price1: null, price3: null, price6: null, price12: null, isActive: true, isVisible: false, version: 1, createdAt: '', updatedAt: '' };
@@ -18,7 +18,7 @@ const PIZZA: MenuItemDef = { ...ITEM, id: '22222222-2222-4222-8222-222222222222'
 
 describe('pantalla de Stock (US-4)', () => {
   beforeEach(() => {
-    useMenuStore.setState({ items: [ITEM], groupPrices: [], isLoaded: false });
+    useMenuStore.setState({ items: [ITEM], isLoaded: false });
     actions.fetchItems.mockResolvedValue([ITEM]);
     actions.entry.mockResolvedValue({ success: true, message: 'Stock ingresado: Humita queda con 29', data: { menuItemId: ITEM.id, stock: 29, version: 2 } });
   });

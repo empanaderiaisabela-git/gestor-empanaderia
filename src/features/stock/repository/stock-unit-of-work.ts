@@ -5,8 +5,8 @@ import { drizzleStockRepository, type StockRepository } from './stock.repository
 
 export type StockAuditEntry = {
   userId: string;
-  action: 'CREAR' | 'PÉRDIDA';
-  entity: 'STOCK_ENTRY' | 'STOCK_LOSS';
+  action: 'CREAR' | 'PÉRDIDA' | 'ACTUALIZAR';
+  entity: 'STOCK_ENTRY' | 'STOCK_LOSS' | 'MENU_ITEM';
   entityId: string;
   detail: Record<string, unknown>;
 };

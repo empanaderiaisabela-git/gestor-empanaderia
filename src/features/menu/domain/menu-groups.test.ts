@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { allowsHalfStock, GROUPS, isPricedByGroup, itemPriceFieldsOf, MENU_GROUPS, priceFieldsOf, priceLabelOf } from './menu-groups';
+import { allowsHalfStock, GROUPS, MENU_GROUPS, priceFieldsOf, priceLabelOf } from './menu-groups';
 
 describe('grupos y presentaciones fijos (US-3)', () => {
   it('son los seis grupos del local, en el orden del tablero', () => {
@@ -24,10 +24,11 @@ describe('grupos y presentaciones fijos (US-3)', () => {
     ]);
   });
 
-  it('cada grupo pide los precios de sus presentaciones', () => {
+  it('cada gusto, de cualquier grupo, pide los precios de sus presentaciones (US-28)', () => {
     expect(priceFieldsOf('empanadas')).toEqual(['price1', 'price3', 'price6', 'price12']);
     expect(priceFieldsOf('sanguches')).toEqual(['price1', 'price3', 'price6', 'price12']);
     expect(priceFieldsOf('pizzas')).toEqual(['price1']);
+    expect(priceFieldsOf('ciabattas')).toEqual(['price1']);
     expect(priceFieldsOf('pepsi')).toEqual(['price1']);
   });
 
@@ -40,18 +41,6 @@ describe('grupos y presentaciones fijos (US-3)', () => {
 
   it('sólo las pizzas admiten medias en el stock', () => {
     expect(MENU_GROUPS.filter(allowsHalfStock)).toEqual(['pizzas']);
-  });
-
-  it('empanadas y ciabattas cobran el precio del grupo; sanguches, pizzas y bebidas, el de cada gusto', () => {
-    expect(MENU_GROUPS.filter(isPricedByGroup)).toEqual(['empanadas', 'ciabattas']);
-    expect(MENU_GROUPS.map((group) => [group, itemPriceFieldsOf(group).length])).toEqual([
-      ['empanadas', 0],
-      ['pizzas', 1],
-      ['sanguches', 4],
-      ['ciabattas', 0],
-      ['coca_cola', 1],
-      ['pepsi', 1],
-    ]);
   });
 
   it('las bebidas son de Coca-Cola y de Pepsi; el resto es comida', () => {

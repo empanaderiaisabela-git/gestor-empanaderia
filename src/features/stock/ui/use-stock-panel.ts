@@ -1,18 +1,17 @@
 import { useEffect, useMemo, useState } from 'react';
-import { fetchMenuGroupPrices } from '@/features/menu/actions/fetch-menu-group-prices';
 import { fetchMenuItems } from '@/features/menu/actions/fetch-menu-items';
 import type { MenuGroup } from '@/features/menu/domain/menu-groups';
-import type { MenuGroupPriceDef } from '@/features/menu/domain/menu-group-price.schema';
 import type { MenuItemDef } from '@/features/menu/domain/menu-item.schema';
 import { useMenuStore } from '@/features/menu/store/menu.store';
 import { fetchProviders } from '@/features/provider/actions/fetch-providers';
 import type { ProviderDef } from '@/features/provider/domain/provider.schema';
 import { registerStockEntryAction } from '@/features/stock/actions/register-stock-entry';
 import { registerStockLossAction } from '@/features/stock/actions/register-stock-loss';
-import type { StockEntryInput, StockLossInput } from '@/features/stock/domain/stock.schema';
+import { setStockPricingAction } from '@/features/stock/actions/set-stock-pricing';
+import type { StockEntryInput, StockLossInput, StockPricingInput } from '@/features/stock/domain/stock.schema';
 import { normalizeForSearch } from '@/lib/utils';
 
-export type StockDialog = { kind: 'entry' | 'loss' | 'history'; item: MenuItemDef | null } | null;
+export type StockDialog = { kind: 'entry' | 'loss' | 'pricing' | 'history'; item: MenuItemDef | null } | null;
 type Message = { type: 'success' | 'error'; text: string } | null;
 
 export type StockPanelModel = {
@@ -20,7 +19,6 @@ export type StockPanelModel = {
   items: MenuItemDef[];
   activeItems: MenuItemDef[];
   providers: ProviderDef[];
-  groupPrices: MenuGroupPriceDef[];
   search: string;
   setSearch: (value: string) => void;
   groupFilter: MenuGroup | 'todos';
@@ -30,31 +28,26 @@ export type StockPanelModel = {
   message: Message;
   submitEntry: (input: StockEntryInput) => Promise<string | null>;
   submitLoss: (input: StockLossInput) => Promise<string | null>;
+  submitPricing: (input: StockPricingInput) => Promise<string | null>;
 };
 
 function useStockData(): { loading: boolean; providers: ProviderDef[]; reload: () => Promise<void> } {
-  const { isLoaded, setItems, setGroupPrices } = useMenuStore();
+  const { isLoaded, setItems } = useMenuStore();
   const [loading, setLoading] = useState(!isLoaded);
   const [providers, setProviders] = useState<ProviderDef[]>([]);
-  const reload = async (): Promise<void> => {
-    const [prices, rows] = await Promise.all([fetchMenuGroupPrices(), fetchMenuItems()]);
-    setGroupPrices(prices);
-    setItems(rows);
-  };
+  const reload = async (): Promise<void> => setItems(await fetchMenuItems());
   useEffect(() => {
     fetchProviders().then(setProviders);
     if (isLoaded) return setLoading(false);
-    fetchMenuGroupPrices().then(setGroupPrices);
     fetchMenuItems()
       .then(setItems)
       .finally(() => setLoading(false));
-  }, [isLoaded, setItems, setGroupPrices]);
+  }, [isLoaded, setItems]);
   return { loading, providers, reload };
 }
 
 export function useStockPanel(): StockPanelModel {
   const allItems = useMenuStore((state) => state.items);
-  const groupPrices = useMenuStore((state) => state.groupPrices);
   const { loading, providers, reload } = useStockData();
   const [search, setSearch] = useState('');
   const [groupFilter, setGroupFilter] = useState<MenuGroup | 'todos'>('todos');
@@ -75,5 +68,6 @@ export function useStockPanel(): StockPanelModel {
   };
   const submitEntry = (input: StockEntryInput): Promise<string | null> => submit(registerStockEntryAction(input));
   const submitLoss = (input: StockLossInput): Promise<string | null> => submit(registerStockLossAction(input));
-  return { loading, items, activeItems, providers, groupPrices, search, setSearch, groupFilter, setGroupFilter, dialog, setDialog, message, submitEntry, submitLoss };
+  const submitPricing = (input: StockPricingInput): Promise<string | null> => submit(setStockPricingAction(input));
+  return { loading, items, activeItems, providers, search, setSearch, groupFilter, setGroupFilter, dialog, setDialog, message, submitEntry, submitLoss, submitPricing };
 }

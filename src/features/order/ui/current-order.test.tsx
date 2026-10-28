@@ -1,11 +1,11 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useOrderStore } from '@/features/order/store/order.store';
-import { GROUP_PRICES, ITEMS } from '../testing/board-fixtures';
+import { ITEMS } from '../testing/board-fixtures';
 import { CurrentOrder } from './current-order';
 import { boardModelOf } from './use-order-board';
 
-const board = boardModelOf(ITEMS, GROUP_PRICES);
+const board = boardModelOf(ITEMS);
 const store = () => useOrderStore.getState();
 
 function build(group: 'empanadas' | 'pizzas', key: string, picks: [string, 'one' | 'rest'][]): void {

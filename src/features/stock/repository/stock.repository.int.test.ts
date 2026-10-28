@@ -17,5 +17,6 @@ describeStockRepository('Drizzle contra db-test', async () => {
   await seedTestUser('admin');
   const [provider] = await db.insert(providers).values({ name: 'Molino del Sur' }).returning({ id: providers.id });
   const [item] = await db.insert(menuItems).values({ group: 'pizzas', name: 'Muzza', unitCost: '3000.00', stock: '2.5', price1: '11000.00' }).returning({ id: menuItems.id });
-  return { repository: drizzleStockRepository(db), itemId: item.id, userId: TEST_USER_IDS.admin, providerId: provider.id };
+  const [sibling] = await db.insert(menuItems).values({ group: 'pizzas', name: 'Napolitana' }).returning({ id: menuItems.id });
+  return { repository: drizzleStockRepository(db), itemId: item.id, siblingId: sibling.id, userId: TEST_USER_IDS.admin, providerId: provider.id };
 });

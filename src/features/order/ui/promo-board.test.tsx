@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { PromotionDef } from '@/features/promotion/domain/promotion.schema';
 import { usePromotionStore } from '@/features/promotion/store/promotion.store';
 import { useOrderStore } from '@/features/order/store/order.store';
-import { GROUP_PRICES, ITEMS } from '../testing/board-fixtures';
+import { ITEMS } from '../testing/board-fixtures';
 import { CurrentOrder } from './current-order';
 import { FlavorPicker } from './flavor-picker';
 import { PromoCard } from './promo-card';
@@ -12,7 +12,7 @@ import { boardModelOf } from './use-order-board';
 const promotions = vi.hoisted(() => ({ fetch: vi.fn() }));
 vi.mock('@/features/promotion/actions/fetch-promotions', () => ({ fetchPromotions: promotions.fetch }));
 
-const board = boardModelOf(ITEMS, GROUP_PRICES);
+const board = boardModelOf(ITEMS);
 const store = () => useOrderStore.getState();
 const promo = (overrides: Partial<PromotionDef>): PromotionDef => ({ id: 'p1', name: 'Media + Coca', price: 9000, isActive: true, version: 1, components: [], createdAt: '', updatedAt: '', ...overrides });
 const MEDIA_Y_COCA = promo({ components: [{ group: 'empanadas', presentationKey: 'u6', quantity: 1 }, { group: 'coca_cola', presentationKey: 'u1', quantity: 1 }] });

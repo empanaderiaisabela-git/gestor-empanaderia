@@ -35,10 +35,4 @@ describe('cachés de los stores', () => {
     invalidateAllCaches();
     expect(STORES.map((store) => store.getState().isLoaded)).toEqual(STORES.map(() => false));
   });
-
-  it('el store del menú guarda los precios del grupo sin cambiar si está cargado', () => {
-    useMenuStore.setState({ isLoaded: false });
-    useMenuStore.getState().setGroupPrices([]);
-    expect(useMenuStore.getState()).toMatchObject({ groupPrices: [], isLoaded: false });
-  });
 });

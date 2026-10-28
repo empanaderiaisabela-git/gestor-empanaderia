@@ -8,15 +8,15 @@ const PNG = 'data:image/png;base64,iVBORw0KGgo=';
 const source = { id: ITEM, name: 'Carne', stock: 12, images: [{ publicId: 'p', url: 'https://x/p.png' }] };
 
 describe('ficha de catálogo de un gusto (T-12 CA-4)', () => {
-  it('empanadas y ciabattas muestran los precios del grupo', () => {
-    const item = catalogItemOf({ ...source, group: 'empanadas', prices: {} }, { price1: 1200, price3: 3400, price6: 6500, price12: 12000 });
+  it('cada gusto de empanadas muestra sus propios precios (US-28)', () => {
+    const item = catalogItemOf({ ...source, group: 'empanadas', prices: { price1: 1200, price3: 3400, price6: 6500, price12: 12000 } });
     expect(item.prices.map(({ label, value }) => [label, value])).toEqual([['1 unidad', 1200], ['3 unidades', 3400], ['½ docena', 6500], ['1 docena', 12000]]);
     expect(item).toMatchObject({ inStock: true, images: source.images });
     expect(fromPrice(item)).toBe(1200);
   });
 
   it('pizzas y bebidas muestran su propio precio; sin stock se marca', () => {
-    const pizza = catalogItemOf({ ...source, group: 'pizzas', stock: 0, prices: { price1: 11000 } }, undefined);
+    const pizza = catalogItemOf({ ...source, group: 'pizzas', stock: 0, prices: { price1: 11000 } });
     expect(pizza).toMatchObject({ inStock: false, prices: [{ field: 'price1', label: 'pizza entera', value: 11000 }] });
   });
 
@@ -27,8 +27,8 @@ describe('ficha de catálogo de un gusto (T-12 CA-4)', () => {
     expect(catalogPriceSummary({ prices })).toBe('1 unidad: $1.200 · ½ docena: $6.500');
   });
 
-  it('un grupo sin precios cargados no tiene precio "desde"', () => {
-    const item = catalogItemOf({ ...source, group: 'ciabattas', prices: {} }, undefined);
+  it('un gusto sin precios cargados no tiene precio "desde"', () => {
+    const item = catalogItemOf({ ...source, group: 'ciabattas', prices: {} });
     expect([item.prices, fromPrice(item)]).toEqual([[], null]);
   });
 });

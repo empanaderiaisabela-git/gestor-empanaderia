@@ -1,17 +1,17 @@
 import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { useOrderStore } from '@/features/order/store/order.store';
-import { GROUP_PRICES, ITEMS } from '../testing/board-fixtures';
+import { ITEMS } from '../testing/board-fixtures';
 import { FlavorPicker } from './flavor-picker';
 import { boardModelOf } from './use-order-board';
 
-const board = boardModelOf(ITEMS, GROUP_PRICES);
+const board = boardModelOf(ITEMS);
 const rowOf = (name: string): HTMLElement => screen.getByText(name).closest('li') ?? document.body;
 
 describe('el tablero ofrece sólo gustos con stock (US-19)', () => {
   it('un gusto con stock 0, recién dado de alta o agotado, no aparece', () => {
     const items = [...ITEMS, { ...ITEMS[0], id: 'nuevo', name: 'Sin ingresar', stock: 0 }];
-    expect(boardModelOf(items, GROUP_PRICES).itemsOf('empanadas').map((item) => item.name)).toEqual(['Carne', 'Pollo']);
+    expect(boardModelOf(items).itemsOf('empanadas').map((item) => item.name)).toEqual(['Carne', 'Pollo']);
   });
 });
 

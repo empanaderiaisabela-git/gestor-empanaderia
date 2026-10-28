@@ -25,6 +25,15 @@ export const stockLossSchema = z.strictObject({
 });
 export type StockLossInput = z.infer<typeof stockLossSchema>;
 
+export const stockPricingSchema = z.strictObject({
+  menuItemId,
+  version: z.number().int().min(1),
+  unitCost: unitCostSchema,
+  prices: menuPricesSchema,
+  applyToGroup: z.boolean(),
+});
+export type StockPricingInput = z.infer<typeof stockPricingSchema>;
+
 const amount = z.union([z.string(), z.number()]).transform(Number);
 
 export const stockEntryRowSchema = z.object({
