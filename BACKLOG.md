@@ -3103,10 +3103,11 @@ que se lea de un vistazo cuánto sale la unidad, 3, 6 y 12.
 
 **Objetivo**: lo que pidió el cliente después de ver la demo del Sprint 3. Todos los precios en Stock; el stock de
 pizzas y ciabattas pasa a ser de prepizzas y panes; gastos con su proveedor; clientes con sólo el nombre obligatorio;
-y títulos y letras más fáciles de leer.
+títulos y letras más fáciles de leer; y, por pedido del dev, que el vendedor
+vea el stock sin costos.
 
 **Plan del sprint**: [`docs/plans/sprint-4.md`](docs/plans/sprint-4.md). Tiene las decisiones del dev (2026-10-28),
-las decisiones provisorias D-1 a D-7, el orden y la trazabilidad de cada punto del pedido en `specs.md` a su ítem.
+las decisiones provisorias D-1 a D-11, el orden y la trazabilidad de cada punto del pedido en `specs.md` a su ítem.
 
 ### Resumen del Sprint 4
 
@@ -3116,10 +3117,11 @@ las decisiones provisorias D-1 a D-7, el orden y la trazabilidad de cada punto d
 | 1   | [US-26](#us-26--clientes-sólo-el-nombre-es-obligatorio)                         | Clientes: sólo el nombre es obligatorio                 | Pendiente   | T-21       | 1 h             |
 | 2   | [US-30](#us-30--títulos-más-grandes-y-letras-con-más-contraste)                 | Títulos más grandes y letras con más contraste          | Pendiente   | T-21       | 1 h 30 min      |
 | 3   | [US-27](#us-27--gastos-el-proveedor-de-la-factura)                              | Gastos: el proveedor de la factura                      | Pendiente   | T-21       | 1 h 30 min      |
-| 4   | [US-28](#us-28--todos-los-precios-en-stock)                                     | Todos los precios en Stock                              | Pendiente   | T-21       | 2 h             |
-| 5   | [US-29](#us-29--prepizzas-y-panes-de-ciabatta)                                  | Prepizzas y panes de ciabatta                           | Pendiente   | US-28      | 6 h             |
-| 6   | [T-22](#t-22--cierre-del-sprint-4)                                              | Cierre del Sprint 4                                     | Pendiente   | todos      | 1 h             |
-|     |                                                                                 | **Total del sprint**                                    |             |            | **13 h 30 min** |
+| 4   | [US-28](#us-28--todos-los-precios-en-stock)                                     | Todos los precios en Stock                              | Pendiente   | T-21       | 3 h             |
+| 5   | [US-29](#us-29--prepizzas-y-panes-de-ciabatta)                                  | Prepizzas y panes de ciabatta                           | Pendiente   | US-28      | 5 h 30 min      |
+| 6   | [US-31](#us-31--el-vendedor-ve-el-stock-sin-costos)                             | El vendedor ve el stock, sin costos                     | Pendiente   | US-29      | 1 h 30 min      |
+| 7   | [T-22](#t-22--cierre-del-sprint-4)                                              | Cierre del Sprint 4                                     | Pendiente   | todos      | 1 h             |
+|     |                                                                                 | **Total del sprint**                                    |             |            | **15 h 30 min** |
 
 ### T-21 · Backlog del Sprint 4 desde el pedido del cliente
 
@@ -3192,9 +3194,9 @@ información principal sin esfuerzo, con el tema claro o con el oscuro.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · El título de cada página (`PageHeader`) pasa de `text-3xl` a `text-4xl` · Estimación: 10 min · Completado: —
+- [ ] **CA-1** · El título de cada página (`PageHeader`) pasa de `text-3xl` a `text-4xl` y los títulos de sección suben un escalón · Estimación: 10 min · Completado: —
 
-- [ ] **CA-2** · Los grises del texto suben un escalón de contraste en todos los componentes: en modo claro, más oscuros; en modo oscuro, más claros. El texto secundario queda en ≥ 7:1 sobre su fondo en los dos temas · Estimación: 1 h · Completado: —
+- [ ] **CA-2** · En el panel de gestión, los grises del texto (también los encabezados de tabla) suben un escalón de contraste: en modo claro, más oscuros; en modo oscuro, más claros. El texto secundario queda en ≥ 7:1 sobre su fondo en los dos temas. El catálogo público no cambia · Estimación: 1 h · Completado: —
 
 - [ ] **CA-3** · Capturas de Ventas, Stock y Estadísticas en los dos temas; los E2E siguen en verde · Estimación: 20 min · Completado: —
 
@@ -3232,7 +3234,7 @@ quién corresponde cada gasto.
 
 - Nivel 3: cambia el schema. La columna queda opcional en la base por los gastos viejos, y Zod la exige al crear y al
   editar (D-5 del plan del sprint).
-- Qué pasa al borrar un proveedor que tiene gastos se define en el plan del ítem.
+- Un proveedor con gastos no se puede borrar (`HAS_RELATIONS`), igual que uno con ingresos de stock (D-10).
 
 ### US-28 · Todos los precios en Stock
 
@@ -3259,6 +3261,8 @@ y las ciabattas, de forma que el día que un gusto se venda a otro precio el sis
 - [ ] **CA-3** · Ventas, el cobro y el catálogo usan el precio de cada gusto: una docena surtida de empanadas se cobra con la regla de Sanguches (Σ unidades del gusto ÷ 12 × precio de la docena del gusto), y con todos los gustos al mismo precio da exactamente el precio de la docena; con tests de dominio, contrato e integración · Estimación: 35 min · Completado: —
 
 - [ ] **CA-4** · La columna "Precio de venta" de Stock muestra los precios del gusto, uno por renglón (como dejó BUG-22) · Estimación: 10 min · Completado: —
+
+- [ ] **CA-5** · Cada gusto tiene en Stock "Costo y precio", sin cantidad ("Ingresar stock" sigue aceptando precios opcionales), con una casilla que copia el precio a todos los gustos del grupo en la misma transacción; tests de servicio, contrato e integración y un E2E del aumento de la docena · Estimación: 1 h · Completado: —
 
 **Notas**
 
@@ -3293,7 +3297,7 @@ ciabatta vendida descuente uno, de forma que el stock muestre lo que el local gu
 
 - [ ] **CA-1** · El sistema trae dos bases fijas, "Prepizza" y "Pan de ciabatta", con stock entero ≥ 0, `version` y sin costo; no se pueden borrar, renombrar ni vender solas. La migración las crea en 0 y deja en 0 el stock de los gustos de pizza y de ciabatta · Estimación: 1 h 30 min · Completado: —
 
-- [ ] **CA-2** · En Stock, "Ingresar stock" de una base pide sólo la cantidad (y el proveedor, opcional); cada gusto de pizza o ciabatta tiene un formulario de costo y precio, sin cantidad; la grilla muestra el contador de cada base y los gustos sin stock propio · Estimación: 1 h 30 min · Completado: —
+- [ ] **CA-2** · En Stock, la base es la primera fila de su grupo, con su contador, "Ingresar stock" (sólo cantidad y proveedor opcional) y "Registrar pérdida"; los gustos de pizza y ciabatta muestran costo y precio, sin stock, y usan "Costo y precio" de US-28 · Estimación: 1 h · Completado: —
 
 - [ ] **CA-3** · Cobrar una pizza de 1 o 2 sabores descuenta 1 prepizza, y una ciabatta, 1 pan; el costo congelado es el del gusto (½ + ½ en la mitad y mitad); sin bases suficientes, el cobro da `INSUFFICIENT_STOCK` con un mensaje que nombra la base · Estimación: 1 h 30 min · Completado: —
 
@@ -3304,7 +3308,38 @@ ciabatta vendida descuente uno, de forma que el stock muestre lo que el local gu
 **Notas**
 
 - Plan propio y nivel 3: cambia el modelo de stock, el cobro, la anulación y las pérdidas.
-- Decisiones del dev y provisorias D-1 a D-3 en el plan del sprint.
+- Decisiones del dev y provisorias D-1 a D-3, D-8, D-9 y D-11 en el plan del sprint.
+
+### US-31 · El vendedor ve el stock, sin costos
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Pendiente |
+| Dueño        | —         |
+| Inicio       | —         |
+| Tamaño       | M         |
+| Depende de   | US-29     |
+| Plan         | —         |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como vendedor quiero ver cuánto queda de cada gusto en Stock, de forma que sepa qué hay sin preguntarle
+al administrador y sin ver lo que le cuesta al local.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · "Stock" aparece en el menú del vendedor y `/stock` lo deja entrar (`src/config/navigation.ts` y `src/proxy.ts`), con el test de navegación actualizado · Estimación: 15 min · Completado: —
+
+- [ ] **CA-2** · Para el vendedor, el servidor devuelve sólo categoría, gusto y cantidad, validados con un `RowSchema` propio sin costo ni precios; un test de contrato prueba que la respuesta no trae `unitCost` ni precios · Estimación: 40 min · Completado: —
+
+- [ ] **CA-3** · El vendedor ve la grilla con Categoría, Gusto y Cantidad (las bases con su contador) y sin botones; "Ingresar stock", "Registrar pérdida", "Costo y precio" y el historial de ingresos le siguen dando `FORBIDDEN`; E2E con el vendedor · Estimación: 35 min · Completado: —
+
+**Notas**
+
+- Pedido del dev en el chat (2026-10-28). Revierte en parte US-16 ("Stock sólo para el administrador"): el vendedor
+  entra, pero sólo para mirar.
+- Nivel 3 (seguridad): el costo no se esconde en la tabla, no sale del servidor.
+- Va después de US-29 porque la grilla cambia con las bases.
 
 ### T-22 · Cierre del Sprint 4
 
