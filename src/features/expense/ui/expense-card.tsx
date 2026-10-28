@@ -11,7 +11,7 @@ export function renderExpenseCard(actions: ExpenseRowActions): (expense: Expense
     const badge = <span className='px-2.5 py-0.5 rounded-full text-xs font-medium bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-100'>{formatInvoiceDate(expense.invoiceDate)}</span>;
     const details = (
       <span className='mt-1 text-sm text-zinc-700 dark:text-zinc-200'>
-        Factura {expense.invoiceNumber} · {formatMoney(expense.amount)}
+        Factura {expense.invoiceNumber} · {expense.providerName ?? '—'} · {formatMoney(expense.amount)}
       </span>
     );
     const buttons = (

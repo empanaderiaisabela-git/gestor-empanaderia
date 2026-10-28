@@ -1,30 +1,42 @@
 import type { Expense, ExpenseRepository } from '@/features/expense/repository/expense.repository';
 import type { ExpenseAuditEntry, ExpenseUnitOfWork } from '@/features/expense/repository/expense-unit-of-work';
+import { EXPENSE_PROVIDER } from './expense-provider';
 
-type FakeState = { rows: Expense[]; audits: ExpenseAuditEntry[]; clock: number };
+type StoredExpense = Omit<Expense, 'providerName'>;
+type FakeState = { rows: StoredExpense[]; providers: Map<string, string>; audits: ExpenseAuditEntry[]; clock: number };
 
 const pgError = (code: string, detail: string): Error => Object.assign(new Error(`Failed query (${code})`), { cause: { code, detail } });
-const newest = (a: Expense, b: Expense): number => b.invoiceDate.localeCompare(a.invoiceDate) || b.createdAt.getTime() - a.createdAt.getTime();
+const newest = (a: StoredExpense, b: StoredExpense): number => b.invoiceDate.localeCompare(a.invoiceDate) || b.createdAt.getTime() - a.createdAt.getTime();
+const initialProviders = (): Map<string, string> => new Map([[EXPENSE_PROVIDER.id, EXPENSE_PROVIDER.name]]);
 
 export function fakeExpenseRepository(state: FakeState): ExpenseRepository {
-  const byRef = (id: string, version: number): Expense | undefined => state.rows.find((row) => row.id === id && row.version === version);
+  const byRef = (id: string, version: number): StoredExpense | undefined => state.rows.find((row) => row.id === id && row.version === version);
+  const named = (row: StoredExpense): Expense => ({ ...row, providerName: state.providers.get(row.providerId ?? '') ?? null });
+  const assertProvider = (providerId: string): void => {
+    if (!state.providers.has(providerId)) throw pgError('23503', `Key (provider_id)=(${providerId}) is not present in table "providers".`);
+  };
   return {
-    findAll: async () => [...state.rows].sort(newest).map((row) => ({ ...row })),
-    findById: async (id) => state.rows.find((row) => row.id === id) ?? null,
+    findAll: async () => [...state.rows].sort(newest).map(named),
+    findById: async (id) => {
+      const row = state.rows.find((candidate) => candidate.id === id);
+      return row ? named(row) : null;
+    },
     findByNumber: async (invoiceNumber) => state.rows.find((row) => row.invoiceNumber.toLowerCase() === invoiceNumber.toLowerCase()) ?? null,
     insert: async ({ amount, ...input }) => {
       if (state.rows.some((row) => row.invoiceNumber === input.invoiceNumber)) throw pgError('23505', 'Key (invoice_number) already exists.');
+      assertProvider(input.providerId);
       state.clock += 1;
       const at = new Date(state.clock * 1000);
-      const row: Expense = { id: crypto.randomUUID(), ...input, amount: amount.toFixed(2), version: 1, createdAt: at, updatedAt: at };
+      const row: StoredExpense = { id: crypto.randomUUID(), ...input, amount: amount.toFixed(2), version: 1, createdAt: at, updatedAt: at };
       state.rows.push(row);
-      return { ...row };
+      return named(row);
     },
     update: async ({ id, version }, { amount, ...changes }) => {
       const row = byRef(id, version);
       if (!row) return null;
+      assertProvider(changes.providerId);
       Object.assign(row, changes, { amount: amount.toFixed(2), version: version + 1, updatedAt: new Date() });
-      return { ...row };
+      return named(row);
     },
     remove: async ({ id, version }) => {
       const before = state.rows.length;
@@ -37,13 +49,13 @@ export function fakeExpenseRepository(state: FakeState): ExpenseRepository {
 export type FakeExpenseUnitOfWork = ExpenseUnitOfWork & { state: FakeState; reset(): void };
 
 export function createFakeExpenseUnitOfWork(): FakeExpenseUnitOfWork {
-  const state: FakeState = { rows: [], audits: [], clock: 0 };
+  const state: FakeState = { rows: [], providers: initialProviders(), audits: [], clock: 0 };
   const repository = fakeExpenseRepository(state);
   return {
     state,
     read: repository,
     run: (work) => work({ expenses: repository, audit: async (entry) => void state.audits.push(entry) }),
-    reset: () => Object.assign(state, { rows: [], audits: [], clock: 0 }),
+    reset: () => Object.assign(state, { rows: [], providers: initialProviders(), audits: [], clock: 0 }),
   };
 }
 

@@ -1,6 +1,6 @@
 import { type ExpenseDef, type ExpenseInput, expenseCreateSchema, expenseUpdateSchema, type ExpenseUpdateInput } from '@/features/expense/domain/expense.schema';
 
-const FIELDS = ['invoiceNumber', 'title', 'amount', 'invoiceDate'] as const;
+const FIELDS = ['invoiceNumber', 'title', 'amount', 'invoiceDate', 'providerId'] as const;
 type Field = (typeof FIELDS)[number];
 
 export type ExpenseFormValues = Record<Field, string>;
@@ -12,8 +12,8 @@ const toNumber = (text: string): number => (text.trim() === '' ? Number.NaN : Nu
 const isField = (key: PropertyKey | undefined): key is Field => FIELDS.some((field) => field === key);
 
 export function initialValues(expense: ExpenseDef | null, today: string): ExpenseFormValues {
-  if (!expense) return { invoiceNumber: '', title: '', amount: '', invoiceDate: today };
-  return { invoiceNumber: expense.invoiceNumber, title: expense.title, amount: String(expense.amount), invoiceDate: expense.invoiceDate };
+  if (!expense) return { invoiceNumber: '', title: '', amount: '', invoiceDate: today, providerId: '' };
+  return { invoiceNumber: expense.invoiceNumber, title: expense.title, amount: String(expense.amount), invoiceDate: expense.invoiceDate, providerId: expense.providerId ?? '' };
 }
 
 export function formatInvoiceDate(invoiceDate: string): string {

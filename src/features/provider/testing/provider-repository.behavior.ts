@@ -5,6 +5,7 @@ import type { ProviderRepository } from '@/features/provider/repository/provider
 export type ProviderRepositoryHarness = {
   repository: ProviderRepository;
   linkStockEntry(providerId: string): Promise<void>;
+  linkExpense(providerId: string): Promise<void>;
 };
 
 const INPUT = { name: 'Molino del Sur', phone: '1155550000', email: 'ventas@molino.com' };
@@ -65,6 +66,14 @@ export function describeProviderRepository(label: string, setup: () => Promise<P
       expect(await harness.repository.hasStockEntries(created.id)).toBe(false);
       await harness.linkStockEntry(created.id);
       expect(await harness.repository.hasStockEntries(created.id)).toBe(true);
+      expect(await failureCode(harness.repository.remove({ id: created.id, version: 1 }))).toBe('HAS_RELATIONS');
+    });
+
+    it('sabe si tiene gastos y no deja borrarlo', async () => {
+      const created = await harness.repository.insert(INPUT);
+      expect(await harness.repository.hasExpenses(created.id)).toBe(false);
+      await harness.linkExpense(created.id);
+      expect(await harness.repository.hasExpenses(created.id)).toBe(true);
       expect(await failureCode(harness.repository.remove({ id: created.id, version: 1 }))).toBe('HAS_RELATIONS');
     });
 

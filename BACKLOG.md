@@ -3116,7 +3116,7 @@ las decisiones provisorias D-1 a D-11, el orden y la trazabilidad de cada punto 
 | 0   | [T-21](#t-21--backlog-del-sprint-4-desde-el-pedido-del-cliente)                 | Backlog del Sprint 4 desde el pedido del cliente        | En revisión | T-18       | 30 min          |
 | 1   | [US-26](#us-26--clientes-sólo-el-nombre-es-obligatorio)                         | Clientes: sólo el nombre es obligatorio                 | En revisión | T-21       | 1 h             |
 | 2   | [US-30](#us-30--títulos-más-grandes-y-letras-con-más-contraste)                 | Títulos más grandes y letras con más contraste          | En revisión | T-21       | 1 h 30 min      |
-| 3   | [US-27](#us-27--gastos-el-proveedor-de-la-factura)                              | Gastos: el proveedor de la factura                      | Pendiente   | T-21       | 1 h 30 min      |
+| 3   | [US-27](#us-27--gastos-el-proveedor-de-la-factura)                              | Gastos: el proveedor de la factura                      | En revisión | T-21       | 1 h 30 min      |
 | 4   | [US-28](#us-28--todos-los-precios-en-stock)                                     | Todos los precios en Stock                              | Pendiente   | T-21       | 3 h             |
 | 5   | [US-29](#us-29--prepizzas-y-panes-de-ciabatta)                                  | Prepizzas y panes de ciabatta                           | Pendiente   | US-28      | 5 h 30 min      |
 | 6   | [US-31](#us-31--el-vendedor-ve-el-stock-sin-costos)                             | El vendedor ve el stock, sin costos                     | Pendiente   | US-29      | 1 h 30 min      |
@@ -3228,12 +3228,12 @@ información principal sin esfuerzo, con el tema claro o con el oscuro.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
-| Dueño        | —         |
-| Inicio       | —         |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-28 |
 | Tamaño       | M         |
 | Depende de   | T-21      |
-| Plan         | —         |
+| Plan         | [`docs/plans/sprint-4.md`](docs/plans/sprint-4.md#3--us-27-gastos-con-proveedor-m-1-h-30-min) |
 | Merge        | —         |
 | Horas reales | —         |
 
@@ -3242,17 +3242,24 @@ quién corresponde cada gasto.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · `expenses.provider_id` con FK a `providers` (migración: los gastos ya cargados quedan sin proveedor) y el `RowSchema` del gasto trae el proveedor con su nombre · Estimación: 30 min · Completado: —
+- [x] **CA-1** · `expenses.provider_id` con FK a `providers` (migración: los gastos ya cargados quedan sin proveedor) y el `RowSchema` del gasto trae el proveedor con su nombre · Estimación: 30 min · Completado: 2026-10-28 15:27
 
-- [ ] **CA-2** · El formulario de gastos pide "Proveedor", obligatorio, con todos los proveedores activos y, al editar, también el del gasto si fue dado de baja; sin proveedor, el alta y la edición dan `VALIDATION` con un mensaje claro · Estimación: 40 min · Completado: —
+- [x] **CA-2** · El formulario de gastos pide "Proveedor", obligatorio, con todos los proveedores activos y, al editar, también el del gasto si fue dado de baja; sin proveedor, el alta y la edición dan `VALIDATION` con un mensaje claro · Estimación: 40 min · Completado: 2026-10-28 15:27
 
-- [ ] **CA-3** · La grilla de Gastos muestra el proveedor ("—" en los gastos viejos); E2E del alta con proveedor · Estimación: 20 min · Completado: —
+- [x] **CA-3** · La grilla de Gastos muestra el proveedor ("—" en los gastos viejos); E2E del alta con proveedor · Estimación: 20 min · Completado: 2026-10-28 15:27
 
 **Notas**
 
 - Nivel 3: cambia el schema. La columna queda opcional en la base por los gastos viejos, y Zod la exige al crear y al
   editar (D-5 del plan del sprint).
 - Un proveedor con gastos no se puede borrar (`HAS_RELATIONS`), igual que uno con ingresos de stock (D-10).
+- Migración `0019_gasto-con-proveedor`: `provider_id` con FK a `providers` (sin `onDelete`) y su índice. Las lecturas
+  hacen `leftJoin` y traen `providerName`; alta y edición releen la fila con el nombre.
+- El selector "Proveedor" sale de `fetchProviders` y filtra activos más el del gasto. La búsqueda del panel incluye el
+  nombre del proveedor y la auditoría lo guarda en el detalle (`provider`).
+- Lo implementó un subagente Sonnet y se revisó. `npm run verify` en verde: 933 tests, cobertura 96,09/89,08, 102 de
+  integración, mutación 90,09 y build; E2E de Gastos y Proveedores, 17 de 17.
+- Sin E2E: editar un gasto viejo sin proveedor (el selector arranca vacío y pide uno). Lo cubren los tests unitarios.
 
 ### US-28 · Todos los precios en Stock
 

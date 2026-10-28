@@ -25,6 +25,7 @@ export function getExpenseColumns(actions: ExpenseRowActions): ColumnDef<Expense
     { header: 'Fecha de la factura', cellClassName: 'text-zinc-700 dark:text-zinc-200', cell: (expense) => formatInvoiceDate(expense.invoiceDate) },
     { header: 'Número', cellClassName: 'font-mono text-sm', cell: (expense) => expense.invoiceNumber },
     { header: 'Título', cellClassName: 'font-bold text-zinc-900 dark:text-zinc-50 max-w-[260px] truncate', cell: (expense) => expense.title },
+    { header: 'Proveedor', cell: (expense) => expense.providerName ?? '—' },
     { header: 'Monto', cellClassName: 'font-semibold', cell: (expense) => formatMoney(expense.amount) },
     { header: 'Acciones', headerClassName: 'text-right', cellClassName: 'flex gap-1 justify-end', cell: (expense) => <ExpenseRowButtons expense={expense} actions={actions} /> },
   ];

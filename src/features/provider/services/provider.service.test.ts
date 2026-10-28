@@ -73,6 +73,12 @@ describe('provider.service', () => {
     await expect(service.remove(CALLER, { id: provider.id, version: 1 })).rejects.toMatchObject({ code: 'HAS_RELATIONS' });
   });
 
+  it('HAS_RELATIONS: no borra un proveedor con gastos', async () => {
+    const { provider } = await service.create(CALLER, INPUT);
+    fake.state.withExpenses.add(provider.id);
+    await expect(service.remove(CALLER, { id: provider.id, version: 1 })).rejects.toMatchObject({ code: 'HAS_RELATIONS' });
+  });
+
   it('borra y audita la eliminación permanente', async () => {
     const { provider } = await service.create(CALLER, INPUT);
     await service.remove(CALLER, { id: provider.id, version: 1 });

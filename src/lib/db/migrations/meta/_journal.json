@@ -134,6 +134,13 @@
       "when": 1793208764804,
       "tag": "0018_cliente-dni-opcional",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1793210891403,
+      "tag": "0019_gasto-con-proveedor",
+      "breakpoints": true
     }
   ]
 }

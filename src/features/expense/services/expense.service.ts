@@ -17,7 +17,7 @@ const orStale = (expense: Expense | null): Expense => {
   return expense;
 };
 
-const summary = ({ invoiceNumber, title, amount, invoiceDate }: Expense): Record<string, unknown> => ({ name: title, invoiceNumber, amount: Number(amount), invoiceDate });
+const summary = ({ invoiceNumber, title, amount, invoiceDate, providerName }: Expense): Record<string, unknown> => ({ name: title, invoiceNumber, amount: Number(amount), invoiceDate, provider: providerName });
 
 async function assertFreeNumber({ expenses }: ExpenseScope, invoiceNumber: string, ownId: string | null): Promise<void> {
   const same = await expenses.findByNumber(invoiceNumber);
