@@ -2468,7 +2468,7 @@ El 18 es un arreglo rápido que pidió después.
 | 8   | [US-22](#us-22--ventas-quitar-de-a-uno-en-el-pedido)                   | Ventas: quitar de a uno en el pedido                       | En revisión | T-17       | 40 min           |
 | 9   | [US-20](#us-20--íconos-de-lucide-por-grupo-en-ventas-y-estadísticas)   | Íconos de lucide por grupo en Ventas y Estadísticas        | En revisión | T-17       | 2 h              |
 | 10  | [US-21](#us-21--estadísticas-como-el-panel-de-referencia)              | Estadísticas como el panel de referencia                   | En revisión | US-20      | 2 h              |
-| 11  | [T-18](#t-18--cierre-del-sprint-3)                                     | Cierre del Sprint 3                                        | En progreso | todos      | 1 h              |
+| 11  | [T-18](#t-18--cierre-del-sprint-3)                                     | Cierre del Sprint 3                                        | En revisión | todos      | 1 h              |
 | 12  | [BUG-21](#bug-21--la-carga-inicial-de-datos-falla-si-quedaron-gastos)   | La carga inicial de datos falla si quedaron gastos         | En revisión | US-14      | 15 min           |
 | 13  | [BUG-20](#bug-20--el-recargo-de-cuotas-se-cuenta-como-plata-del-local)   | El recargo de cuotas se cuenta como plata del local        | En revisión | US-11      | 1 h 30 min       |
 | 14  | [T-20](#t-20--textos-y-estilos-de-la-revisión-del-sprint-3)              | Textos y estilos de la revisión del Sprint 3               | En revisión | T-18       | 30 min           |
@@ -2830,13 +2830,13 @@ un vistazo (`referencia-de-otro-sistema.png`).
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | En progreso |
+| Estado       | En revisión |
 | Dueño        | Agente    |
 | Inicio       | 2026-10-27 |
 | Tamaño       | S         |
 | Depende de   | todos     |
 | Plan         | [`docs/plans/sprint-3.md`](docs/plans/sprint-3.md#11--t-18-cierre-del-sprint-3-s-1-h) |
-| Merge        | —         |
+| Merge        | `chore(release): sprint 3` en `main`, tag `sprint-3` |
 | Horas reales | —         |
 
 **Historia**: Como dev quiero el Sprint 3 verificado completo y en `main`, de forma que la demo muestre lo que se
@@ -2846,7 +2846,7 @@ probó.
 
 - [x] **CA-1** · `npm run verify` completo y todos los E2E en verde sobre `develop` · Estimación: 30 min · Completado: 2026-10-27 04:29
 
-- [ ] **CA-2** · README, `docs/architecture.md` y `docs/initial_prompt.md` al día; merge local `develop → main` con el tag `sprint-3` · Estimación: 30 min · Completado: —
+- [x] **CA-2** · README, `docs/architecture.md` y `docs/initial_prompt.md` al día; merge local `develop → main` con el tag `sprint-3` · Estimación: 30 min · Completado: 2026-10-28 10:55
 
 **Notas**
 
@@ -2860,6 +2860,9 @@ probó.
 - Cierre de nuevo tras los ajustes de la revisión (T-20, US-25, US-24 y US-23, 2026-10-27): `npm run verify` en verde
   sobre el código final (mutación 89,88 y build) y 65 E2E en verde. Uno de Clientes falló una vez y pasó al
   repetirlo (BUG-16). El cambio 5 de la revisión ("2 de 4" en la promo) se descartó: el dev vio que no es un bug.
+- Antes del merge a `main` (2026-10-28) se repitió todo, porque BUG-22 entró después del último verify: `npm run
+  verify` en verde (908 tests, cobertura 96,1/89,18, 96 de integración, mutación 90,08 y build) y los 65 E2E en verde.
+- El dev dio el OK al cierre el 2026-10-28, al decidir que el pedido del cliente tras la demo va en un Sprint 4.
 
 ### BUG-21 · La carga inicial de datos falla si quedaron gastos
 
