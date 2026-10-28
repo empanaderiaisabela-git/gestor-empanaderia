@@ -1,6 +1,6 @@
 # 0005 — Grupos y presentaciones fijos; precio del grupo o por gusto
 
-- **Estado**: Aceptado (2026-10-25)
+- **Estado**: Aceptado (2026-10-25); reemplazado en parte por US-28 (2026-10-28): el precio es por gusto en todos los grupos y `menu_group_prices` ya no existe
 
 ## Contexto
 
@@ -18,6 +18,10 @@ El cliente aclaró los precios (`specs.md`):
 - los sanguches y las pizzas tienen precio por gusto.
 
 El modelo heredado (`devices` + `products`) no tiene ni grupos, ni gustos, ni presentaciones.
+
+> **Reemplazado en parte (US-28, 2026-10-28).** Los grupos y presentaciones fijos siguen vigentes. Dejó de valer "dos fuentes de
+> precio": Empanadas y Ciabattas también guardan sus precios en el gusto, y la migración `0020_precios-por-gusto` copió
+> el precio de cada grupo a sus gustos y borró `menu_group_prices`. El texto de abajo es el histórico.
 
 ## Decisión
 

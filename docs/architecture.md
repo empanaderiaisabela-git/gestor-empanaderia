@@ -128,7 +128,7 @@ Con el tope de 100 líneas, cuando un archivo crece se parte por operación (`cr
 
 | Ruta | Contenido |
 |---|---|
-| `src/proxy.ts` | Next 16 renombró `middleware.ts` a `proxy.ts`. Corre en cada request: valida la cookie `session`, redirige a `/home` si no hay sesión y aplica RBAC por ruta con **la misma lista que el menú** (`src/config/navigation.ts`, US-2): el `vendedor` sólo entra a Ventas/Pedidos y Clientes, y si pide otra sección va a `/ventas`. Con sesión, `/login` lleva al inicio de cada rol (admin: Estadísticas; vendedor: Ventas/Pedidos). Las rutas públicas están en `PUBLIC_PATHS`. |
+| `src/proxy.ts` | Next 16 renombró `middleware.ts` a `proxy.ts`. Corre en cada request: valida la cookie `session`, redirige a `/home` si no hay sesión y aplica RBAC por ruta con **la misma lista que el menú** (`src/config/navigation.ts`, US-2): el `vendedor` sólo entra a Ventas/Pedidos, Clientes y Stock (US-31), y si pide otra sección va a `/ventas`. Con sesión, `/login` lleva al inicio de cada rol (admin: Estadísticas; vendedor: Ventas/Pedidos). Las rutas públicas están en `PUBLIC_PATHS`. |
 | `src/features/<f>/actions/` | Server Actions. Única puerta del cliente al servidor: sesión y rol, validación Zod, service y `ActionResult`. |
 | `src/features/<f>/services/` | Reglas de negocio y orquestación. Abren la transacción y la pasan a los repositorios. Existe en `provider` (T-5, el molde), `menu`, `stock`, `order`, `promotion`, `card` y `expense`, con unidad de trabajo: el service nunca ve `tx`. `stats` lee la jornada en una sola transacción de sólo lectura y calcula con funciones puras. En `customer`, `user` y `audit` la lógica sigue repartida entre actions y repositorios, y se migra copiando `provider`. |
 | `src/features/<f>/repository/` | Acceso a datos con Drizzle. Reciben `tx` opcional para participar de una transacción y traducen "0 filas afectadas" a error de concurrencia. |
@@ -232,7 +232,7 @@ que se pagina y busca en el servidor con `unaccent`.
 carrito ni pedidos online: el cliente consulta por WhatsApp o Instagram.
 
 - `/home` se prerenderiza en el build y **no vence por tiempo**. Toda mutación que cambia lo que muestra (gustos,
-  visibilidad, fotos, precios del grupo, ingresos y mermas de stock, cobros y anulaciones) llama a `revalidateCatalog()`
+  visibilidad, fotos, precios por gusto, ingresos y mermas de stock, cobros y anulaciones) llama a `revalidateCatalog()`
   (`src/lib/catalog-cache.ts`), y la página se regenera en la próxima visita (T-11,
   [ADR 0004](adr/0004-revalidacion-a-demanda-del-catalogo.md)).
 - `/product/[id]` se renderiza en cada pedido.
@@ -244,7 +244,7 @@ Problema que resuelve: dos personas editan lo mismo y la segunda pisa los cambio
 
 | Pieza | Cómo funciona |
 |---|---|
-| Columna | `version integer not null default 1` en toda tabla que recibe `UPDATE`: `users`, `providers`, `customers`, `menu_items`, `menu_group_prices`, `promotions`, `cards`, `expenses`. |
+| Columna | `version integer not null default 1` en toda tabla que recibe `UPDATE`: `users`, `providers`, `customers`, `menu_items`, `promotions`, `cards`, `expenses`. |
 | Lectura | El `*RowSchema` incluye `version` y el cliente la guarda con la fila. |
 | Escritura | El `*UpdateSchema` exige `version`. El repositorio filtra `WHERE id = :id AND version = :version` y suma 1 a `version`. |
 | Conflicto | 0 filas afectadas ⇒ `ConcurrencyError` (objetivo: `AppError('STALE_VERSION')`) ⇒ "Los datos en el servidor han cambiado. Por favor, sincroniza la lista e intenta nuevamente." |
@@ -261,8 +261,18 @@ Casos especiales:
   misma transacción que el historial y la auditoría. No usa `sql` plano. Dos operaciones simultáneas sobre el mismo
   gusto se hacen una después de la otra (test de integración `stock.service.int.test.ts`).
 - **Anulación de una venta** (US-7). Bloquea la venta con `SELECT … FOR UPDATE`, repone el stock de cada gusto con
-  lo que guardó el cobro (`sale_line_items`, también las medias pizzas) y la borra. La segunda de dos anulaciones
+  lo que guardó el cobro (`sale_line_items`, también las medias pizzas) y la borra. En una venta con pizzas o ciabattas devuelve además las bases (ver *Bases*, abajo). La segunda de dos anulaciones
   simultáneas recibe `NOT_FOUND` (`sale-history.service.int.test.ts`).
+- **Bases** (US-29). Pizzas y Ciabattas no llevan stock por gusto: lo llevan las filas `menu_items.is_base`
+  ("Prepizza" y "Pan de ciabatta"), que viven sólo en Stock. Cobrar una pizza descuenta 1 prepizza, y una ciabatta, 1
+  pan; una mitad y mitad suma ½ + ½ = 1. El cobro bloquea primero los gustos y después las bases, y sin bases
+  suficientes da `INSUFFICIENT_STOCK` con el nombre de la base. La anulación las devuelve en el mismo orden, sumando
+  lo guardado en `sale_line_items`. La pérdida de una base baja el contador y no resta de la ganancia, porque no
+  tiene costo. El costo congelado de la venta es el del gusto.
+- **Precios por gusto** (US-28). Todos los grupos guardan sus precios en el gusto (`price_1`, `price_3`, `price_6` y
+  `price_12`), cargados en Stock con "Costo y precio" (con una casilla para copiarlos a todo el grupo, en la misma
+  transacción) o en "Ingresar stock". La docena surtida de empanadas se cobra como la de Sanguches: Σ (unidades del
+  gusto ÷ 12 × precio de la docena del gusto).
 - **Tablas append-only** (`sales`, `sale_lines`, `sale_line_items`, `sale_payments`, `stock_entries`,
   `stock_losses`, `menu_item_images`, `audit_logs`). No llevan `version`: se insertan y, a lo sumo, se borran enteras.
 - **Componentes de una promo y planes de una tarjeta** (`promotion_components`, `card_plans`). No llevan `version`:
@@ -276,7 +286,7 @@ Casos especiales:
 |---|---|
 | Autenticación | Usuario y contraseña (`bcrypt`). Token JWT HS256 de 24 h en la cookie `session` (`httpOnly`, `secure`, `sameSite=lax`). |
 | Fuerza bruta | 5 intentos fallidos por usuario ⇒ bloqueo de 15 minutos. El contador vive en la memoria del proceso: se pierde al reiniciar y no se comparte entre instancias. |
-| Roles | `admin` (todo) y `vendedor` (Ventas/Pedidos y Clientes; Stock es sólo admin, también en sus actions). Se aplican dos veces: por ruta en `proxy.ts` y por operación en cada Server Action. |
+| Roles | `admin` (todo) y `vendedor` (Ventas/Pedidos, Clientes y Stock sólo para mirar, sin costos; las actions de Stock son sólo del admin). Se aplican dos veces: por ruta en `proxy.ts` y por operación en cada Server Action. |
 | Sesiones viejas | `verifyAuthOrAdmin` vuelve a leer al usuario: si lo desactivaron, la sesión deja de servir aunque el JWT siga vigente. |
 | Entrada | Toda action valida con Zod antes de tocar datos. Objetivo: `z.strictObject`, que rechaza campos de más. |
 | Salida | Las lecturas se parsean con `*RowSchema`. `password_hash` nunca sale del servidor. |
@@ -288,19 +298,18 @@ Casos especiales:
 | Tabla | Qué guarda | `version` | Baja |
 |---|---|---|---|
 | `users` | Personal con rol `admin` o `vendedor` | Sí | Lógica (`is_active`) |
-| `providers` | Proveedores | Sí | Lógica; física si no tiene ingresos de stock |
-| `customers` | Clientes; DNI único, comparado sin puntos ni guiones | Sí | Lógica |
+| `providers` | Proveedores | Sí | Lógica; física si no tiene ingresos de stock ni gastos |
+| `customers` | Clientes; sólo el nombre es obligatorio (US-26). El DNI es opcional (`null`, migración 0018) y, si se carga, único y comparado sin puntos ni guiones | Sí | Lógica |
 | `sales`, `sale_payments` | Venta: vendedor, comprador opcional, descuentos y total; pagos en `efectivo`, `transferencia`, `debito` o `credito` (hasta 2 por venta). El crédito guarda tarjeta, cuotas, % y monto del recargo (US-11), y el recargo es de la tarjeta, no del local (BUG-20): el total de la venta y los pagos quedan al precio original y el recargo sólo se guarda como dato | No | Anulación (borrado y reposición de stock) |
 | `sale_lines`, `sale_line_items` (`order-schema.ts`) | Cada línea del pedido con lo cobrado, su orden y la descripción de sus gustos; lo que consumió de cada gusto con el costo congelado (US-6). Una línea de promo lleva `promotion_id` en vez de grupo y presentación (US-9) | No | En cascada con la venta |
 | `audit_logs` | Bitácora de operaciones | No | — |
-| `menu_items` (`src/lib/db/menu-schema.ts`) | Gustos y bebidas (US-3): grupo, nombre, costo y precios (se cargan en el primer ingreso de stock: `MISSING_COST` y `MISSING_PRICE`, US-17), stock con medias para pizzas, precios por gusto según el grupo y visibilidad en el catálogo ([ADR 0005](adr/0005-grupos-fijos-y-precio-del-grupo-o-por-gusto.md)) | Sí | Lógica; física si no tiene movimientos |
-| `menu_group_prices` | Precio único por presentación de Empanadas y Ciabattas; se fija desde Ingresar stock (US-17, migración 0017) | Sí | — |
+| `menu_items` (`src/lib/db/menu-schema.ts`) | Gustos y bebidas (US-3): grupo, nombre, costo y precios (se cargan en el primer ingreso de stock: `MISSING_COST` y `MISSING_PRICE`, US-17), precios por gusto en todos los grupos (US-28: `menu_group_prices` se borró en la migración 0020) y visibilidad en el catálogo ([ADR 0005](adr/0005-grupos-fijos-y-precio-del-grupo-o-por-gusto.md)). El stock de los gustos de Pizzas y Ciabattas no se cuenta: lo llevan sus bases (US-29). `is_base` marca las dos bases fijas, "Prepizza" y "Pan de ciabatta": una por grupo, sin costo ni precios, con stock entero y sin vender solas (migración 0021) | Sí | Lógica; física si no tiene movimientos; las bases no se borran |
 | `menu_item_images` | Fotos de cada gusto en Cloudinary (T-12) | No | Física; en cascada con el gusto |
 | `stock_entries` (`src/lib/db/stock-schema.ts`) | Ingresos de stock (US-4): gusto, cantidad entera, costo unitario, proveedor opcional y usuario | No | — |
-| `stock_losses` | Mermas: cantidad (media pizza incluida), costo unitario del momento, motivo y usuario | No | — |
+| `stock_losses` | Mermas: cantidad (entera desde US-29; las anteriores pueden traer media pizza), costo unitario del momento, motivo y usuario | No | — |
 | `promotions`, `promotion_components` (`promotion-schema.ts`) | Promociones con su precio de venta y las presentaciones que llevan (US-8) | Sí (la promo) | Lógica; física si nunca se vendió (D-1) |
 | `cards`, `card_plans` (`card-schema.ts`) | Tarjetas aceptadas y sus planes de 1, 3, 6 o 12 cuotas con el % de recargo (US-10) | Sí (la tarjeta) | Lógica; física si nunca se usó en un cobro |
-| `expenses` (`expense-schema.ts`) | Gastos: número de factura único, título, monto, fecha de la factura y usuario (US-14) | Sí | Física |
+| `expenses` (`expense-schema.ts`) | Gastos: número de factura único, título, monto, fecha de la factura, proveedor (`provider_id`, FK a `providers`; opcional en la base por los gastos viejos y obligatorio en Zod, US-27, migración 0019) y usuario (US-14) | Sí | Física |
 
 Convenciones:
 

@@ -16,19 +16,19 @@ proveedores, usuarios y auditoría para la empanadería de un cliente. Next.js 1
 | `/login` | Acceso con bcrypt y JWT en cookie HttpOnly |
 | `/home`, `/product/[id]` | Catálogo público: gustos y bebidas visibles y con precio, por grupo, con fotos (sin login) |
 | `/` | Estadísticas de la jornada, de 7:00 a 6:59 (sólo admin): ganancia en limpio, ventas, dinero por comida (con ícono por grupo) y por promos, lo cobrado por medio de pago y los cuadros de vendedores por turno y de ventas |
-| `/gastos` | Anotador de gastos con número de factura único (sólo admin); no cambia las Estadísticas |
+| `/gastos` | Anotador de gastos con número de factura único y proveedor (sólo admin); no cambia las Estadísticas |
 | `/ventas` | Ventas/Pedidos: historial con comprobante y anulación (sólo admin); "Nuevo pedido" abre el tablero |
 | `/ventas/nueva` | Tablero de pedidos por grupo, con colores e íconos de lucide, sólo los gustos con stock, surtidas, mitad y mitad y promos; "Quitar uno" en cada línea; cobro en 4 medios de pago, con crédito en cuotas (el recargo es de la tarjeta: la venta y los pagos quedan al precio original) |
 | `/promociones` | Promociones: presentaciones con un precio de venta propio, que aparecen en el tablero (sólo admin) |
-| `/stock` | Stock por gusto, sólo admin: ingresos (se elige la categoría y después el gusto) con costo, precio de venta (salvo Empanadas y Ciabattas) y proveedor, pérdidas e historial |
-| `/alta-de-productos` | Gustos y bebidas (sólo grupo y nombre; el costo y el precio se cargan en Ingresar stock), el precio único de Empanadas y Ciabattas, fotos y visibilidad en el catálogo (sólo admin) |
+| `/stock` | Stock: el admin ingresa (se elige la categoría y después el gusto) con costo, precio de venta por gusto y proveedor, carga "Costo y precio" de cada gusto y registra pérdidas e historial; Pizzas y Ciabattas se cuentan por Prepizza y Pan de ciabatta. El vendedor lo ve sólo para mirar, sin costos |
+| `/alta-de-productos` | Gustos y bebidas (sólo grupo y nombre; el costo y el precio se cargan en Stock), fotos y visibilidad en el catálogo (sólo admin) |
 | `/tarjetas` | Tarjetas de crédito aceptadas y sus planes de 1, 3, 6 o 12 cuotas con recargo (sólo admin) |
-| `/clientes` | Directorio de clientes |
+| `/clientes` | Directorio de clientes; sólo el nombre es obligatorio |
 | `/proveedores` | Proveedores, sólo admin (feature molde de la arquitectura: [`docs/features/provider/`](docs/features/provider/README.md)) |
 | `/usuarios` | Usuarios internos (sólo admin) |
 | `/logs` | Auditoría de todas las escrituras (sólo admin) |
 
-Roles: `admin` (todo) y `vendedor` (Ventas/Pedidos y Clientes). Cada Server Action verifica sesión y rol en el
+Roles: `admin` (todo) y `vendedor` (Ventas/Pedidos, Clientes y Stock sólo para mirar). Cada Server Action verifica sesión y rol en el
 servidor; las únicas lecturas públicas son las del catálogo.
 
 ## Puesta en marcha local

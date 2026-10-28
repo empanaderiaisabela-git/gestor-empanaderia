@@ -3120,7 +3120,7 @@ las decisiones provisorias D-1 a D-11, el orden y la trazabilidad de cada punto 
 | 4   | [US-28](#us-28--todos-los-precios-en-stock)                                     | Todos los precios en Stock                              | En revisión | T-21       | 3 h             |
 | 5   | [US-29](#us-29--prepizzas-y-panes-de-ciabatta)                                  | Prepizzas y panes de ciabatta                           | En revisión | US-28      | 5 h 30 min      |
 | 6   | [US-31](#us-31--el-vendedor-ve-el-stock-sin-costos)                             | El vendedor ve el stock, sin costos                     | En revisión | US-29      | 1 h 30 min      |
-| 7   | [T-22](#t-22--cierre-del-sprint-4)                                              | Cierre del Sprint 4                                     | Pendiente   | todos      | 1 h             |
+| 7   | [T-22](#t-22--cierre-del-sprint-4)                                              | Cierre del Sprint 4                                     | En progreso | todos      | 1 h             |
 |     |                                                                                 | **Total del sprint**                                    |             |            | **15 h 30 min** |
 
 ### T-21 · Backlog del Sprint 4 desde el pedido del cliente
@@ -3415,9 +3415,9 @@ al administrador y sin ver lo que le cuesta al local.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
-| Dueño        | —         |
-| Inicio       | —         |
+| Estado       | En progreso |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-28 |
 | Tamaño       | S         |
 | Depende de   | todos     |
 | Plan         | [`docs/plans/sprint-4.md`](docs/plans/sprint-4.md) |
@@ -3429,6 +3429,16 @@ se probó.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · `npm run verify` completo y todos los E2E en verde sobre `develop` · Estimación: 30 min · Completado: —
+- [x] **CA-1** · `npm run verify` completo y todos los E2E en verde sobre `develop` · Estimación: 30 min · Completado: 2026-10-28 17:23
 
 - [ ] **CA-2** · README, `docs/architecture.md` y `docs/initial_prompt.md` al día; con el OK del dev, merge local `develop → main` con el tag `sprint-4` · Estimación: 30 min · Completado: —
+
+**Notas**
+
+- CA-1: el verify de US-31 corrió sobre el mismo código que quedó en `develop` (`a7745c6`): 961 tests, cobertura
+  96,12/89,95, 107 de integración, mutación 90,40 y build. E2E: 68 en verde y el timeout conocido de BUG-16, que pasó
+  2 de 2 al repetirlo.
+- CA-2: README, `docs/architecture.md`, `docs/initial_prompt.md` y el ADR 0005 (reemplazado en parte por US-28) al
+  día; el resumen en lenguaje simple está al final de `docs/plans/sprint-4.md`. Falta el merge local
+  `develop → main` con el tag `sprint-4`, que espera el OK del dev.
+- Antes de usar `main` contra Supabase, el dev corre las migraciones 0018 a 0021 (quedan 22 en total).

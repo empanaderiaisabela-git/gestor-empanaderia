@@ -238,3 +238,98 @@ Stock, y US-29 parte de los precios por gusto.
 | 239 | Las prepizzas y los panes vienen dados de alta con el sistema | US-29 |
 | 241 | Títulos más grandes y letras más claras de leer | US-30 |
 | — (pedido del dev en el chat) | El vendedor ve el stock, sin costos | US-31 |
+
+---
+
+## Resumen del Sprint 4 (para el dev)
+
+<details>
+<summary>Qué se hizo, en lenguaje simple</summary>
+
+El agente hizo el sprint solo el 2026-10-28, con permiso para commitear, integrar a `develop` y hacer push de cada
+ítem sin esperar tu OK. Los ítems más grandes (US-27, US-28 y US-29) los escribió un subagente (Sonnet u Opus) y el
+agente los revisó. Todo está en `develop`; **no** se pasó nada a `main` ni se puso la etiqueta `sprint-4`: eso espera
+tu OK.
+
+| Ítem | Commit | Qué cambió |
+|---|---|---|
+| T-21 | `416a2f2`, `5b173f6`, `f828314` | El Sprint 4 cargado en el backlog, con este plan y tus respuestas |
+| US-26 | `a6f2f57` | Un cliente se guarda con sólo el nombre; teléfono, correo y DNI son opcionales |
+| US-30 | `cc1f593` | Títulos más grandes y letras con más contraste, en modo claro y oscuro |
+| US-27 | `11052e6` | Cada gasto lleva el proveedor que emitió la factura |
+| US-28 | `bb5f3f3` | Todos los precios se cargan en Stock, por gusto; se van las tarjetas de precios de Alta |
+| US-29 | `91c21ee` | Pizzas y ciabattas se cuentan en prepizzas y panes; cada venta descuenta uno |
+| US-31 | `a7745c6` | El vendedor ve el stock, sin costos |
+
+#### T-21 · 416a2f2
+- Tu pedido del cliente quedó guardado tal cual en `specs.md` y pasó a la lista de tareas, con este plan.
+
+#### US-26 · a6f2f57
+- Para dar de alta un cliente alcanza con el nombre. Teléfono, correo y DNI se pueden dejar vacíos y, si se cargan,
+  se controlan como antes.
+- Dos clientes sin DNI no chocan; un DNI repetido sigue dando error.
+
+#### US-30 · cc1f593
+- El título de cada página es más grande, y los de las secciones subieron un escalón.
+- Los grises del texto del panel se ven más oscuros en modo claro y más claros en modo oscuro; el texto chico se
+  lee bien en los dos. El catálogo público y el comprobante no cambian.
+
+#### US-27 · 11052e6
+- Al cargar o editar un gasto hay que elegir el proveedor (los activos). La grilla de Gastos muestra una columna
+  Proveedor; los gastos viejos dicen "—" hasta que se editen.
+- Un proveedor que tiene gastos no se puede borrar; se puede desactivar.
+
+#### US-28 · bb5f3f3
+- Alta de productos ya no tiene precios. En Stock, cada gusto (también de Empanadas y Ciabattas) tiene un botón
+  "Costo y precio", con una casilla para copiar el precio a todos los gustos del grupo.
+- Los precios que ya había se copiaron a cada gusto, así que nada cambia hoy. Si los gustos de una presentación
+  valen distinto, Ventas muestra "desde $X".
+- La docena surtida de empanadas se cobra como la de sanguches (proporcional). Con todos los gustos al mismo precio
+  da el precio de la docena.
+
+#### US-29 · 91c21ee
+- En Stock hay dos filas fijas: "Prepizza" (arriba de Pizzas) y "Pan de ciabatta" (arriba de Ciabattas), con su
+  contador, "Ingresar stock" (sólo cantidad) y "Registrar pérdida". Los gustos de pizza y ciabatta ya no tienen
+  stock, sólo costo y precio.
+- Cobrar una pizza (también mitad y mitad) descuenta 1 prepizza; una ciabatta, 1 pan. Sin bases, el cobro avisa cuál
+  falta. Anular la venta las devuelve.
+- Ventas muestra los gustos de pizza y ciabatta sólo si queda al menos una base.
+- Los contadores arrancan en 0: hay que cargar lo que hay.
+
+#### US-31 · a7745c6
+- "Stock" aparece en el menú del vendedor. Ve Grupo, Gusto y Cantidad (las bases con su contador), sin botones y sin
+  costos: el costo no sale del servidor.
+- De paso se arregló la carga de datos de prueba, que se trababa con gastos que ya tienen proveedor.
+
+### Decisiones provisorias del agente (resumen)
+
+Detalle, ejemplo y qué cambia si respondés otra cosa: [arriba](#decisiones-provisorias-del-agente).
+
+| # | Decisión |
+|---|---|
+| D-1 | Una mitad y mitad descuenta 1 prepizza; el costo sigue siendo ½ + ½ y el precio, el del gusto más caro |
+| D-2 | Las bases viven sólo en Stock; no se borran, no se renombran ni se venden solas |
+| D-3 | Un gusto de pizza o ciabatta aparece en Ventas si queda al menos una base y tiene precio |
+| D-4 | Empanadas y Ciabattas pasan a precio por gusto; la docena surtida se cobra proporcional (pregunta abierta para el cliente) |
+| D-5 | Los gastos viejos quedan sin proveedor y se les pide uno al editarlos |
+| D-6 | El correo del cliente también es opcional; un DNI vacío se guarda como "sin DNI" |
+| D-7 | El contraste sube con un reemplazo de clases de texto, sin tokens nuevos |
+| D-8 | Anular una venta devuelve tantas bases como pizzas o ciabattas tenía, también en las ventas anteriores |
+| D-9 | En el catálogo, un gusto de pizza o ciabatta figura con stock si queda una base |
+| D-10 | Un proveedor con gastos no se puede borrar |
+| D-11 | Una promo con pizza o ciabatta descuenta lo mismo que la venta suelta |
+
+### Para revisar
+
+- **Migraciones 0018 a 0021** (DNI opcional, proveedor del gasto, precios por gusto, prepizzas y panes). Corrélas en
+  la base local con `npm run db:migrate` y en Supabase con el procedimiento de PowerShell. La 0021 deja en 0 el
+  stock de los gustos de pizza y ciabatta, y las bases arrancan en 0.
+- **Excepción de SQL plano**: los dos tests de migración (`precios-por-gusto.migration.int.test.ts` de la 0020 y
+  `prepizzas-y-panes.migration.int.test.ts` de la 0021) corren el archivo `.sql` con el cliente `pg`, porque es la
+  única forma de ejecutarlo. Está limitada a esos tests.
+- **Archivo de más**: `docs/wireframes-ventas-gestor/mensaje-raro.png` entró por error en el commit de US-28
+  (`bb5f3f3`). Decidí si se borra.
+- **`.gitignore`**: tiene un cambio sin commitear que el agente no hizo.
+- Pregunta abierta para el cliente: cómo se cobra una docena surtida cuando los gustos tengan precios distintos (D-4).
+
+</details>
