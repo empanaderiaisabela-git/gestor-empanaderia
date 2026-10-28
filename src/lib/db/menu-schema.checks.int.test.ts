@@ -44,4 +44,14 @@ describe('checks de menu_items con costo y precios cargados después (US-17)', (
     expect(await outcome({ group: 'empanadas', name: 'En cero', ...ALL_PRICES, price12: '0.00' })).toBe('VALIDATION');
     expect(await outcome({ group: 'pizzas', name: 'Costo negativo', unitCost: '-1.00' })).toBe('VALIDATION');
   });
+
+  it('una base sólo existe en Pizzas y Ciabattas, una por grupo, sin costo ni precios y con stock entero (US-29)', async () => {
+    const base = { name: 'Prepizza', isBase: true } as const;
+    expect(await outcome({ group: 'pizzas', ...base, stock: '3' })).toBe('ok');
+    expect(await outcome({ group: 'pizzas', ...base, name: 'Otra prepizza' })).toBe('DUPLICATE');
+    expect(await outcome({ group: 'ciabattas', ...base, name: 'Pan', unitCost: '100.00' })).toBe('VALIDATION');
+    expect(await outcome({ group: 'ciabattas', ...base, name: 'Pan', price1: '100.00' })).toBe('VALIDATION');
+    expect(await outcome({ group: 'ciabattas', ...base, name: 'Pan', stock: '0.5' })).toBe('VALIDATION');
+    expect(await outcome({ group: 'empanadas', ...base, name: 'Tapa' })).toBe('VALIDATION');
+  });
 });

@@ -8,11 +8,13 @@ const EMPANADA_PRICES = { price1: '1500.00', price3: '4200.00', price6: '8000.00
 
 export const CARNE = stockItem({ id: '10000000-0000-4000-8000-000000000001', name: 'Carne', unitCost: '400.00', stock: '10.0', ...EMPANADA_PRICES });
 export const POLLO = stockItem({ id: '10000000-0000-4000-8000-000000000002', name: 'Pollo', unitCost: '350.00', stock: '10.0', ...EMPANADA_PRICES });
-export const MUZZA = stockItem({ id: '10000000-0000-4000-8000-000000000003', group: 'pizzas', name: 'Muzza', unitCost: '2000.00', stock: '2.5', price1: '9000.00' });
-export const NAPO = stockItem({ id: '10000000-0000-4000-8000-000000000004', group: 'pizzas', name: 'Napolitana', unitCost: '1500.00', stock: '2.0', price1: '10000.00' });
+export const MUZZA = stockItem({ id: '10000000-0000-4000-8000-000000000003', group: 'pizzas', name: 'Muzza', unitCost: '2000.00', stock: '0.0', price1: '9000.00' });
+export const NAPO = stockItem({ id: '10000000-0000-4000-8000-000000000004', group: 'pizzas', name: 'Napolitana', unitCost: '1500.00', stock: '0.0', price1: '10000.00' });
 export const COCA = stockItem({ id: '10000000-0000-4000-8000-000000000005', group: 'coca_cola', name: 'Coca 500', unitCost: '1200.00', stock: '5.0', price1: '2500.00' });
 export const HUMITA = stockItem({ id: '10000000-0000-4000-8000-000000000006', name: 'Humita', isActive: false });
-export const JYQ = stockItem({ id: '10000000-0000-4000-8000-000000000007', group: 'ciabattas', name: 'Jamón y queso', unitCost: '900.00' });
+export const JYQ = stockItem({ id: '10000000-0000-4000-8000-000000000007', group: 'ciabattas', name: 'Jamón y queso', unitCost: '900.00', stock: '0.0' });
+export const PREPIZZA = stockItem({ id: '10000000-0000-4000-8000-000000000008', group: 'pizzas', name: 'Prepizza', unitCost: null, stock: '2.0', isBase: true });
+export const PAN = stockItem({ id: '10000000-0000-4000-8000-000000000009', group: 'ciabattas', name: 'Pan de ciabatta', unitCost: null, stock: '1.0', isBase: true });
 
 export const halfDozen: CheckoutLine = { group: 'empanadas', presentationKey: 'u6', flavors: [{ menuItemId: CARNE.id, units: 2 }, { menuItemId: POLLO.id, units: 4 }], quantity: 1 };
 export const halfAndHalf: CheckoutLine = { group: 'pizzas', presentationKey: 'pizza_2', flavors: [{ menuItemId: MUZZA.id, units: 0.5 }, { menuItemId: NAPO.id, units: 0.5 }], quantity: 1 };
@@ -31,7 +33,7 @@ export function checkoutOf(lines: CheckoutLine[], overrides: Partial<CheckoutDat
 
 export function loadMenu(fake: FakeCheckoutUnitOfWork): void {
   fake.reset();
-  fake.stock.state.items.push(...[CARNE, POLLO, MUZZA, NAPO, COCA, HUMITA, JYQ].map((item) => ({ ...item })));
+  fake.stock.state.items.push(...[CARNE, POLLO, MUZZA, NAPO, COCA, HUMITA, JYQ, PREPIZZA, PAN].map((item) => ({ ...item })));
 }
 
 export function stockOf(fake: FakeCheckoutUnitOfWork, id: string): string | undefined {

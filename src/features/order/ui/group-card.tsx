@@ -16,6 +16,8 @@ function priceHint(group: MenuGroup, presentation: Presentation, board: OrderBoa
 }
 
 function notice(group: MenuGroup, board: OrderBoardModel): string | null {
+  const base = board.baseOf(group);
+  if (base && base.stock < 1) return `Sin stock de ${base.name}`;
   return board.itemsOf(group).length === 0 ? 'Todavía no hay gustos cargados' : null;
 }
 

@@ -17,7 +17,8 @@ function viewOf(state: FakeState, entry: StockEntry): EntryView {
 export function fakeStockRepository(state: FakeState): StockRepository {
   return {
     lockItem: async (id) => state.items.find((item) => item.id === id) ?? null,
-    lockGroup: async (group) => state.items.filter((item) => item.group === group).sort((a, b) => (a.id < b.id ? -1 : 1)),
+    lockGroup: async (group) => state.items.filter((item) => item.group === group && !item.isBase).sort((a, b) => (a.id < b.id ? -1 : 1)),
+    lockBase: async (group) => state.items.find((item) => item.group === group && item.isBase) ?? null,
     saveItem: async ({ id, version }, { stock, unitCost, prices }) => {
       const item = state.items.find((row) => row.id === id && row.version === version);
       if (!item) return null;

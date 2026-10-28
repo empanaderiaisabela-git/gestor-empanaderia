@@ -1,5 +1,7 @@
 import { AppError } from '@/lib/errors';
+import { BASE_GROUPS, hasBase, type MenuGroup } from '@/features/menu/domain/menu-groups';
 import type { SaleView, SoldItem } from '@/features/order/repository/sale-history.repository';
+import type { StockItem, StockRepository } from '@/features/stock/repository/stock.repository';
 import { drizzleSaleHistoryUnitOfWork, type SaleHistoryScope, type SaleHistoryUnitOfWork } from '@/features/order/repository/sale-history-unit-of-work';
 
 type Caller = { id: string };
@@ -15,12 +17,24 @@ function soldTotals(items: SoldItem[]): [string, number][] {
   return [...totals].sort(([a], [b]) => a.localeCompare(b));
 }
 
+const found = (item: StockItem | null): StockItem => {
+  if (!item) throw new AppError('NOT_FOUND', { entity: 'el producto' });
+  return item;
+};
+
+async function giveBack(stock: StockRepository, item: StockItem, units: number): Promise<void> {
+  if (!(await stock.saveItem(item, { stock: Number(item.stock) + units }))) throw new AppError('STALE_VERSION');
+}
+
 async function restock({ stock }: SaleHistoryScope, sold: [string, number][]): Promise<void> {
+  const toBases = new Map<MenuGroup, number>();
   for (const [id, units] of sold) {
-    const item = await stock.lockItem(id);
-    if (!item) throw new AppError('NOT_FOUND', { entity: 'el producto' });
-    const saved = await stock.saveItem(item, { stock: Number(item.stock) + units });
-    if (!saved) throw new AppError('STALE_VERSION');
+    const item = found(await stock.lockItem(id));
+    if (hasBase(item.group)) toBases.set(item.group, (toBases.get(item.group) ?? 0) + units);
+    else await giveBack(stock, item, units);
+  }
+  for (const group of BASE_GROUPS.filter((baseGroup) => toBases.has(baseGroup))) {
+    await giveBack(stock, found(await stock.lockBase(group)), toBases.get(group) ?? 0);
   }
 }
 

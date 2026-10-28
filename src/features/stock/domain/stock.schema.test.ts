@@ -35,13 +35,13 @@ describe('ingresar stock (US-4 CA-2)', () => {
 });
 
 describe('registrar una merma (US-4 CA-4)', () => {
-  it('acepta unidades enteras o media pizza, con motivo', () => {
-    expect(stockLossSchema.parse({ menuItemId: ITEM, quantity: 0.5, reason: '  Se quemó  ' })).toEqual({ menuItemId: ITEM, quantity: 0.5, reason: 'Se quemó' });
+  it('acepta unidades enteras con motivo; ya no hay medias (US-29)', () => {
+    expect(stockLossSchema.parse({ menuItemId: ITEM, quantity: 2, reason: '  Se quemó  ' })).toEqual({ menuItemId: ITEM, quantity: 2, reason: 'Se quemó' });
   });
 
   it.each([
     { caso: 'cantidad 0', input: { menuItemId: ITEM, quantity: 0, reason: 'x' }, message: 'La cantidad debe ser mayor a 0' },
-    { caso: 'un tercio', input: { menuItemId: ITEM, quantity: 0.3, reason: 'x' }, message: 'La cantidad va de a una unidad (o media pizza)' },
+    { caso: 'media unidad', input: { menuItemId: ITEM, quantity: 0.5, reason: 'x' }, message: 'La cantidad tiene que ser un número entero' },
     { caso: 'sin motivo', input: { menuItemId: ITEM, quantity: 1, reason: '   ' }, message: 'Debe especificar un motivo' },
     { caso: 'motivo de 256', input: { menuItemId: ITEM, quantity: 1, reason: 'a'.repeat(256) }, message: 'El motivo es demasiado largo' },
   ])('rechaza $caso', ({ input, message }) => {

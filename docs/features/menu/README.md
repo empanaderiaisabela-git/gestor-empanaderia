@@ -1,7 +1,7 @@
 # Feature: menú (gustos, bebidas y precios)
 
-- **US relacionadas**: US-3 (Alta de productos) y T-12 (fotos, "visible en el catálogo" y catálogo público). Lo usan
-  después US-4 (Stock) y US-5 a US-7 (Ventas).
+- **US relacionadas**: US-3 (Alta de productos), T-12 (fotos, "visible en el catálogo" y catálogo público) y US-29
+  (prepizzas y panes de ciabatta). Lo usan después US-4 (Stock) y US-5 a US-7 (Ventas).
 - **Código**: `src/features/menu/` (domain, repository, services, actions, store, ui, testing). Las tablas están en
   `src/lib/db/menu-schema.ts` y la pantalla en `src/app/(main)/alta-de-productos/`.
 - **Decisión**: [ADR 0005](../../adr/0005-grupos-fijos-y-precio-del-grupo-o-por-gusto.md). Desde US-28 (Sprint 4, D-4 de
@@ -15,7 +15,9 @@ ingresar stock (US-17) o con "Costo y precio" (US-28), los dos en [Stock](../sto
 los gustos tienen su propio precio**, también los de Empanadas y Ciabattas: Alta ya no tiene tarjetas de precio por
 grupo.
 
-Un gusto nace sin stock, sin costo y sin precio. El stock entra por "Ingresar stock" (US-4).
+Un gusto nace sin stock, sin costo y sin precio. El stock entra por "Ingresar stock" (US-4). Los gustos de Pizzas y
+Ciabattas no tienen stock propio desde US-29: descuentan de su base, "Prepizza" o "Pan de ciabatta", que viene con
+el sistema y vive sólo en Stock.
 
 Desde la grilla, el admin también decide qué gustos se **muestran en el catálogo público** (`/home`) y les carga
 **fotos** (T-12). El catálogo muestra los gustos activos y visibles, por grupo, con sus precios ("desde $X" si tiene
@@ -29,8 +31,8 @@ varias presentaciones), sus fotos y si hay stock.
   |---|---|---|---|
   | Empanadas | 1, 3, 6 (½ docena) y 12 (1 docena) u | Por gusto (US-28) | Unidades |
   | Sanguches (de miga) | 1, 3, 6 y 12 u | Por gusto | Unidades |
-  | Pizzas | Entera, de 1 o 2 sabores | Por gusto (la entera) | Pizzas; admite medias |
-  | Ciabattas | Unidad | Por gusto (US-28) | Unidades |
+  | Pizzas | Entera, de 1 o 2 sabores | Por gusto (la entera) | De la Prepizza (US-29): 1 por pizza |
+  | Ciabattas | Unidad | Por gusto (US-28) | Del Pan de ciabatta (US-29): 1 por ciabatta |
   | Coca-Cola, Pepsi | Unidad | Por bebida | Unidades |
 
 - El precio de cada gusto lleva todas las presentaciones de su grupo; ninguna de más. Fuente: "Aclaración de
@@ -39,6 +41,11 @@ varias presentaciones), sus fotos y si hay stock.
   (una Capresse de empanada y otra de ciabatta).
 - Un gusto sin precio cargado no se puede vender ni aparece en el catálogo.
 - Un gusto con ventas o movimientos no se borra: se desactiva. La base rechaza el borrado (`HAS_RELATIONS`).
+- **Bases (US-29, D-2 de `sprint-4.md`)**: "Prepizza" (Pizzas) y "Pan de ciabatta" (Ciabattas) son filas de
+  `menu_items` con `is_base`. No se listan en Alta de productos, no se venden solas ni aparecen en el catálogo, y
+  editarlas, activarlas o desactivarlas, mostrarlas en el catálogo o borrarlas da `VALIDATION`. Son la primera fila
+  de su grupo en las listas (`findAll` las ordena primero).
+- **Catálogo (US-29, D-9)**: un gusto de Pizzas o Ciabattas figura con stock si su base tiene al menos 1.
 
 ## Roles y permisos
 
@@ -74,11 +81,14 @@ T-11).
 
 - `menu_items`: grupo (enum `menu_group`), nombre (`varchar(60)`), costo unitario, stock (`numeric(10,1)`), precios
   `price_1`, `price_3`, `price_6` y `price_12` (nulos según el grupo), `is_active`, `is_visible` (catálogo, por defecto
-  `false`), `version`.
+  `false`), `is_base` (US-29, por defecto `false`), `version`.
   - `unique(menu_group, name)`.
   - `CHECK`: costo ≥ 0; stock ≥ 0 y en medias; sólo Pizzas admite medias. Precios (`menu_items_prices_check`,
     US-28): Empanadas y Sanguches, los cuatro nulos o los cuatro > 0; Pizzas, Ciabattas y bebidas, `price_1` nulo o
     > 0 y los demás nulos.
+  - Bases (US-29, migración `0021_prepizzas-y-panes`): índice único parcial `menu_items_one_base_per_group` (una
+    por grupo) y `menu_items_base_check` (sin costo ni precios, sólo en Pizzas o Ciabattas y con stock entero). La
+    migración crea las dos bases en 0 y deja en 0 el stock de los gustos de Pizzas y Ciabattas.
   - Concurrencia optimista: editar filtra por `version`.
 - `menu_group_prices` ya no existe: la migración `0020_precios-por-gusto` copió el precio de cada grupo a sus gustos y
   después la borró (US-28).
@@ -88,7 +98,8 @@ T-11).
   también se audita. Los registros viejos de `MENU_GROUP_PRICES` se siguen mostrando como "PRECIOS".
 - Seed (`db:seed`, `src/lib/db/scripts/menu-seed-data.ts`): los gustos de `specs.md`, cada uno con su costo y sus
   precios de demo (todas las empanadas al mismo precio, igual que las ciabattas), y bebidas de demo, todos visibles en
-  el catálogo.
+  el catálogo. Los gustos de Pizzas y Ciabattas van sin stock, y la Prepizza y el Pan de ciabatta en 0 (US-29); los
+  tests de integración los siembran con `src/test/seed-bases.ts`, porque `truncateAll` los borra.
 
 ## Errores
 
@@ -101,6 +112,7 @@ T-11).
 | Editar, activar o borrar con una versión vieja | `STALE_VERSION` | Los datos en el servidor han cambiado. Por favor, sincroniza la lista e intenta nuevamente. | `menu-errors.contract.test.ts` |
 | Editar un producto que ya no existe | `NOT_FOUND` | El producto ya no existe. | `menu-errors.contract.test.ts` |
 | Borrar un producto con movimientos | `HAS_RELATIONS` | No se puede completar la operación porque existen registros relacionados. | `menu-errors.contract.test.ts` |
+| Editar, activar, desactivar, mostrar en el catálogo o borrar una base (US-29) | `VALIDATION` | Los datos proporcionados no son válidos. | `services/menu-bases.test.ts` |
 | Un vendedor muestra u oculta un gusto o maneja fotos | `FORBIDDEN` | Solo los administradores pueden realizar esta acción | `menu-catalog.contract.test.ts` |
 | Foto que no es JPG, PNG o WEBP, o una URL (no se llama a Cloudinary) | `VALIDATION` | La imagen tiene que ser JPG, PNG o WEBP | `upload-menu-photo.contract.test.ts`, `menu-catalog.contract.test.ts`, `domain/catalog.test.ts` |
 | Foto de más de 5 MB (no se llama a Cloudinary) | `VALIDATION` | La imagen no puede superar los 5 MB | `upload-menu-photo.contract.test.ts`, `domain/catalog.test.ts` |
@@ -117,7 +129,7 @@ Si Cloudinary sube la foto pero falla el guardado en la base, la imagen se borra
 - La barra con búsqueda, filtro por grupo y "Ver inactivos", y la grilla: tabla en escritorio y tarjetas en
   mobile.
 - El formulario (`MenuItemFormModal`) pide sólo "Grupo" y "Nombre del gusto o bebida". El grupo no se cambia al editar.
-- La grilla muestra Grupo, Gusto / bebida, Stock y Acciones.
+- La grilla muestra Grupo, Gusto / bebida, Stock y Acciones. No lista las bases (US-29).
 - Cada fila tiene "Mostrar en el catálogo" / "Ocultar del catálogo" y "Fotos" (`MenuPhotosModal`, `use-menu-photos.ts`).
   Los visibles llevan la marca "En catálogo".
 - Estados: esqueleto mientras carga, mensaje cuando el grupo no tiene gustos, y errores del servidor en el
@@ -128,7 +140,8 @@ fotos y precios), con `fetchCatalog` y `fetchCatalogItem`.
 
 ## Tests
 
-- Unit: `domain/*.test.ts` (grupos, precios, schemas, con fuzz) y `services/*.test.ts` con el fake.
+- Unit: `domain/*.test.ts` (grupos, precios, schemas, con fuzz) y `services/*.test.ts` con el fake (las bases en Alta y
+  en el catálogo: `services/menu-bases.test.ts`).
 - Contrato y fuzz: `actions/*.contract.test.ts`.
 - Comportamiento del repositorio: `testing/*.behavior.ts`, contra el fake y contra Drizzle (`repository/*.int.test.ts`).
 - Componente: `ui/*.test.tsx` (también fotos y visibilidad).

@@ -20,6 +20,7 @@ export type StockChange = { stock?: number; unitCost?: number; prices?: MenuPric
 export type StockRepository = {
   lockItem(id: string): Promise<StockItem | null>;
   lockGroup(group: MenuGroup): Promise<StockItem[]>;
+  lockBase(group: MenuGroup): Promise<StockItem | null>;
   saveItem(ref: ItemRef, change: StockChange): Promise<StockItem | null>;
   insertEntry(entry: NewEntry): Promise<StockEntry>;
   insertLoss(loss: NewLoss): Promise<StockLoss>;
@@ -33,7 +34,8 @@ const HISTORY_LIMIT = 50;
 export function drizzleStockRepository(executor: Executor = db): StockRepository {
   return {
     lockItem: async (id) => (await executor.select().from(menuItems).where(eq(menuItems.id, id)).for('update'))[0] ?? null,
-    lockGroup: (group) => executor.select().from(menuItems).where(eq(menuItems.group, group)).orderBy(asc(menuItems.id)).for('update'),
+    lockGroup: (group) => executor.select().from(menuItems).where(and(eq(menuItems.group, group), eq(menuItems.isBase, false))).orderBy(asc(menuItems.id)).for('update'),
+    lockBase: async (group) => (await executor.select().from(menuItems).where(and(eq(menuItems.group, group), eq(menuItems.isBase, true))).for('update'))[0] ?? null,
     saveItem: async ({ id, version }, { stock, unitCost, prices }) => {
       const cost = unitCost === undefined ? {} : { unitCost: unitCost.toFixed(2) };
       const amount = stock === undefined ? {} : { stock: stock.toFixed(1) };

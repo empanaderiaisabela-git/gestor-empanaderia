@@ -35,7 +35,7 @@ export function StockLossModal({ model }: { model: StockPanelModel }): JSX.Eleme
       <div className='space-y-4'>
         <p className='text-sm text-zinc-700 dark:text-zinc-200'>Stock actual: {item?.stock.toLocaleString('es-AR')}</p>
         <FormField label='Cantidad perdida' error={errors.quantity}>
-          <input inputMode='decimal' value={values.quantity} onChange={(event) => setValues({ ...values, quantity: event.target.value })} placeholder='Ej: 1' className={inputClass(Boolean(errors.quantity))} />
+          <input inputMode='numeric' value={values.quantity} onChange={(event) => setValues({ ...values, quantity: event.target.value })} placeholder='Ej: 1' className={inputClass(Boolean(errors.quantity))} />
         </FormField>
         <FormField label='Motivo' error={errors.reason}>
           <input value={values.reason} onChange={(event) => setValues({ ...values, reason: event.target.value })} placeholder='Ej: Se quemó en el horno' className={inputClass(Boolean(errors.reason))} />

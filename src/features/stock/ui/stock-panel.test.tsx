@@ -13,8 +13,10 @@ vi.mock('@/features/stock/actions/register-stock-loss', () => ({ registerStockLo
 vi.mock('@/features/stock/actions/set-stock-pricing', () => ({ setStockPricingAction: vi.fn() }));
 vi.mock('@/features/stock/actions/fetch-stock-entries', () => ({ fetchStockEntries: vi.fn(async () => []) }));
 
-const ITEM: MenuItemDef = { id: '11111111-1111-4111-8111-111111111111', group: 'empanadas', name: 'Humita', unitCost: null, stock: 5, price1: null, price3: null, price6: null, price12: null, isActive: true, isVisible: false, version: 1, createdAt: '', updatedAt: '' };
-const PIZZA: MenuItemDef = { ...ITEM, id: '22222222-2222-4222-8222-222222222222', group: 'pizzas', name: 'Muzza', price1: 11000 };
+const ITEM: MenuItemDef = { id: '11111111-1111-4111-8111-111111111111', group: 'empanadas', name: 'Humita', unitCost: null, stock: 5, price1: null, price3: null, price6: null, price12: null, isActive: true, isVisible: false, isBase: false, version: 1, createdAt: '', updatedAt: '' };
+const COCA: MenuItemDef = { ...ITEM, id: '22222222-2222-4222-8222-222222222222', group: 'coca_cola', name: 'Coca 500', price1: 3500 };
+const MUZZA: MenuItemDef = { ...ITEM, id: '33333333-3333-4333-8333-333333333333', group: 'pizzas', name: 'Muzza', stock: 0, price1: 11000 };
+const PREPIZZA: MenuItemDef = { ...ITEM, id: '44444444-4444-4444-8444-444444444444', group: 'pizzas', name: 'Prepizza', stock: 0, isBase: true };
 
 describe('pantalla de Stock (US-4)', () => {
   beforeEach(() => {
@@ -35,29 +37,32 @@ describe('pantalla de Stock (US-4)', () => {
     await waitFor(() => expect(actions.entry).toHaveBeenCalledWith({ menuItemId: ITEM.id, quantity: 12, unitCost: 460, providerId: null }), { timeout: 5000 });
   });
 
-  it('al ingresar una pizza, el costo es el de la pizza entera (BUG-13)', async () => {
-    useMenuStore.setState({ items: [ITEM, PIZZA] });
-    actions.fetchItems.mockResolvedValue([ITEM, PIZZA]);
+  it('en Pizzas, Ingresar stock ofrece sólo la Prepizza y pide la cantidad, sin costo ni precio (US-29 CA-2)', async () => {
+    useMenuStore.setState({ items: [ITEM, PREPIZZA, MUZZA] });
+    actions.fetchItems.mockResolvedValue([ITEM, PREPIZZA, MUZZA]);
     render(<StockPanel />);
     fireEvent.click(await screen.findByRole('button', { name: 'Ingresar stock' }));
-    fireEvent.change(screen.getByLabelText('Categoría'), { target: { value: PIZZA.group } });
-    fireEvent.change(screen.getByLabelText('Gusto o bebida'), { target: { value: PIZZA.id } });
-    expect(screen.getByLabelText('Costo para el local, por pizza entera')).toBeDefined();
-    expect(screen.getByPlaceholderText('$11.000')).toBeDefined();
+    fireEvent.change(screen.getByLabelText('Categoría'), { target: { value: 'pizzas' } });
+    expect(screen.queryByRole('option', { name: /Muzza/ })).toBeNull();
+    fireEvent.change(screen.getByLabelText('Gusto o bebida'), { target: { value: PREPIZZA.id } });
+    expect(screen.queryByLabelText(/Costo para el local/)).toBeNull();
+    fireEvent.change(screen.getByLabelText('Cantidad que entra'), { target: { value: '2' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Ingresar' }));
+    await waitFor(() => expect(actions.entry).toHaveBeenCalledWith({ menuItemId: PREPIZZA.id, quantity: 2, providerId: null }));
   });
 
   it('el admin carga el precio de venta y el servidor puede rechazar el ingreso', async () => {
-    useMenuStore.setState({ items: [PIZZA] });
-    actions.fetchItems.mockResolvedValue([PIZZA]);
+    useMenuStore.setState({ items: [COCA] });
+    actions.fetchItems.mockResolvedValue([COCA]);
     actions.entry.mockResolvedValue({ success: false, error: 'Falta el costo para el local.' });
     render(<StockPanel />);
     fireEvent.click(await screen.findByRole('button', { name: 'Ingresar stock' }));
-    fireEvent.change(screen.getByLabelText('Categoría'), { target: { value: PIZZA.group } });
-    fireEvent.change(screen.getByLabelText('Gusto o bebida'), { target: { value: PIZZA.id } });
+    fireEvent.change(screen.getByLabelText('Categoría'), { target: { value: COCA.group } });
+    fireEvent.change(screen.getByLabelText('Gusto o bebida'), { target: { value: COCA.id } });
     fireEvent.change(screen.getByLabelText('Cantidad que entra'), { target: { value: '5' } });
-    fireEvent.change(screen.getByLabelText('Precio de venta, pizza entera'), { target: { value: '12000' } });
+    fireEvent.change(screen.getByLabelText('Precio de venta, 1 unidad'), { target: { value: '4000' } });
     fireEvent.click(screen.getByRole('button', { name: 'Ingresar' }));
-    await waitFor(() => expect(actions.entry).toHaveBeenCalledWith({ menuItemId: PIZZA.id, quantity: 5, providerId: null, prices: { price1: 12000 } }));
+    await waitFor(() => expect(actions.entry).toHaveBeenCalledWith({ menuItemId: COCA.id, quantity: 5, providerId: null, prices: { price1: 4000 } }));
     expect(await screen.findByText('Falta el costo para el local.')).toBeDefined();
   });
 

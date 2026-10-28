@@ -35,15 +35,16 @@ describe('formularios de Stock', () => {
   });
 
   it('Costo y precio manda sólo los precios del grupo, con la versión y la casilla (US-28)', () => {
-    const pizza: MenuItemDef = { id: ITEM, group: 'pizzas', name: 'Muzza', unitCost: 3000, stock: 1, price1: 11000, price3: null, price6: null, price12: null, isActive: true, isVisible: true, version: 2, createdAt: '', updatedAt: '' };
+    const pizza: MenuItemDef = { id: ITEM, group: 'pizzas', name: 'Muzza', unitCost: 3000, stock: 1, price1: 11000, price3: null, price6: null, price12: null, isActive: true, isVisible: true, isBase: false, version: 2, createdAt: '', updatedAt: '' };
     const values = { ...pricingValuesOf(pizza), price1: '12000,5', price6: '99', applyToGroup: true };
     expect(parsePricing(pizza, values)).toEqual({ ok: true, input: { menuItemId: ITEM, version: 2, unitCost: 3000, prices: { price1: 12000.5 }, applyToGroup: true } });
     expect(parsePricing(pizza, { ...values, unitCost: '' })).toEqual({ ok: false, errors: { unitCost: 'Ingresá un costo válido' } });
     expect(pricingValuesOf(null)).toEqual({ unitCost: '', price1: '', price3: '', price6: '', price12: '', applyToGroup: false });
   });
 
-  it('la merma convierte la cantidad (media pizza) y exige motivo', () => {
-    expect(parseLoss(ITEM, { quantity: '0,5', reason: 'Se quemó' })).toEqual({ ok: true, input: { menuItemId: ITEM, quantity: 0.5, reason: 'Se quemó' } });
+  it('la merma convierte la cantidad entera y exige motivo', () => {
+    expect(parseLoss(ITEM, { quantity: '2', reason: 'Se quemó' })).toEqual({ ok: true, input: { menuItemId: ITEM, quantity: 2, reason: 'Se quemó' } });
+    expect(parseLoss(ITEM, { quantity: '0,5', reason: 'Se quemó' })).toEqual({ ok: false, errors: { quantity: 'La cantidad tiene que ser un número entero' } });
     expect(parseLoss(ITEM, { quantity: '', reason: '' })).toEqual({ ok: false, errors: { quantity: 'Ingresá una cantidad', reason: 'Debe especificar un motivo' } });
   });
 });

@@ -35,6 +35,8 @@ export function priceLabelOf(group: MenuGroup, field: PriceField): string {
   return GROUPS[group].presentations.find((presentation) => presentation.priceField === field)?.label ?? field;
 }
 
-export function allowsHalfStock(group: MenuGroup): boolean {
-  return group === 'pizzas';
+export const BASE_GROUPS = ['pizzas', 'ciabattas'] as const satisfies readonly MenuGroup[];
+
+export function hasBase(group: MenuGroup): boolean {
+  return BASE_GROUPS.some((baseGroup) => baseGroup === group);
 }

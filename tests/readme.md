@@ -51,7 +51,8 @@ npx playwright show-report            # reporte HTML de la última corrida
 | `clientes.spec.ts`, `proveedores.spec.ts`, `usuarios.spec.ts` | ABM, validaciones, activar/desactivar y borrar (un proveedor con ingresos de stock no se borra) |
 | `navegacion.spec.ts` | Menú y permisos de ruta por rol |
 | `stock.spec.ts` | Ingresar stock y ver el historial de ingresos |
-| `tablero-ventas.spec.ts` | Armar surtidas y pizzas mitad y mitad en el tablero; una línea incompleta no deja cobrar |
+| `tablero-ventas.spec.ts` | Armar surtidas en el tablero; una línea incompleta no deja cobrar |
+| `prepizzas.spec.ts` | Ingresar prepizzas, vender una pizza mitad y mitad y una de un sabor, y que los gustos de pizza desaparezcan de Ventas sin prepizzas (US-29). Es el único spec que usa el contador de prepizzas |
 | `cobro.spec.ts` | Cobrar con efectivo y débito y ver el stock descontado |
 | `historial-ventas.spec.ts` | "Nuevo pedido", la venta en Ventas/Pedidos, el comprobante y la anulación que repone el stock |
 | `concurrencia.spec.ts` | Dos sesiones a la vez: edición perdida, y un proveedor que se borra mientras otro carga un ingreso de stock con él |

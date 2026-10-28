@@ -148,6 +148,13 @@
       "when": 1793213315845,
       "tag": "0020_precios-por-gusto",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1793214951378,
+      "tag": "0021_prepizzas-y-panes",
+      "breakpoints": true
     }
   ]
 }

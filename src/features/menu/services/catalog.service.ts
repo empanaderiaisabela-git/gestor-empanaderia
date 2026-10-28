@@ -13,13 +13,14 @@ type PriceColumns = Pick<MenuItem, 'price1' | 'price3' | 'price6' | 'price12'>;
 
 const amount = (value: string | null): number | null => (value === null ? null : Number(value));
 const pricesOf = (row: PriceColumns): PriceValues => ({ price1: amount(row.price1), price3: amount(row.price3), price6: amount(row.price6), price12: amount(row.price12) });
-const isOnCatalog = (item: MenuItem): boolean => item.isActive && item.isVisible;
+const isOnCatalog = (item: MenuItem): boolean => item.isActive && item.isVisible && !item.isBase;
 
-async function catalogOf(read: MenuRepositories, items: MenuItem[]): Promise<CatalogItemDef[]> {
+async function catalogOf(read: MenuRepositories, items: MenuItem[], all: MenuItem[]): Promise<CatalogItemDef[]> {
   const photos: MenuPhoto[] = await read.photos.ofItems(items.map((item) => item.id));
+  const stockOf = (item: MenuItem): number => Number((all.find((base) => base.isBase && base.group === item.group) ?? item).stock);
   const defs = items.map((item) => {
     const images = photos.filter((photo) => photo.menuItemId === item.id).map(({ publicId, url }) => ({ publicId, url }));
-    return catalogItemOf({ id: item.id, group: item.group, name: item.name, stock: Number(item.stock), prices: pricesOf(item), images });
+    return catalogItemOf({ id: item.id, group: item.group, name: item.name, stock: stockOf(item), prices: pricesOf(item), images });
   });
   return defs.filter((item) => item.prices.length > 0);
 }
@@ -27,10 +28,14 @@ async function catalogOf(read: MenuRepositories, items: MenuItem[]): Promise<Cat
 export function createCatalogService({ unitOfWork }: { unitOfWork: MenuUnitOfWork }): CatalogService {
   const { read } = unitOfWork;
   return {
-    list: async () => catalogOf(read, (await read.items.findAll()).filter(isOnCatalog)),
+    list: async () => {
+      const all = await read.items.findAll();
+      return catalogOf(read, all.filter(isOnCatalog), all);
+    },
     item: async (id) => {
-      const item = await read.items.findById(id);
-      return item && isOnCatalog(item) ? ((await catalogOf(read, [item]))[0] ?? null) : null;
+      const all = await read.items.findAll();
+      const item = all.find((candidate) => candidate.id === id);
+      return item && isOnCatalog(item) ? ((await catalogOf(read, [item], all))[0] ?? null) : null;
     },
   };
 }

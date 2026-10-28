@@ -1,7 +1,7 @@
 import { Camera, Edit, Eye, EyeOff, Plus, Trash2 } from 'lucide-react';
 import type { JSX } from 'react';
 import type { ColumnDef } from '@/components/ui/virtualized-data-table';
-import { GROUPS } from '@/features/menu/domain/menu-groups';
+import { GROUPS, hasBase } from '@/features/menu/domain/menu-groups';
 import type { MenuItemDef } from '@/features/menu/domain/menu-item.schema';
 
 export type MenuItemRowActions = {
@@ -50,7 +50,7 @@ export function getMenuItemColumns(actions: MenuItemRowActions): ColumnDef<MenuI
   return [
     { header: 'Grupo', headerClassName: 'w-32', cellClassName: 'text-zinc-700 dark:text-zinc-200', cell: (item) => GROUPS[item.group].label },
     { header: 'Gusto / bebida', cell: (item) => <NameCell item={item} /> },
-    { header: 'Stock', cellClassName: 'text-zinc-700 dark:text-zinc-200', cell: (item) => item.stock.toLocaleString('es-AR') },
+    { header: 'Stock', cellClassName: 'text-zinc-700 dark:text-zinc-200', cell: (item) => (hasBase(item.group) ? '—' : item.stock.toLocaleString('es-AR')) },
     { header: 'Acciones', headerClassName: 'w-44 text-right', cellClassName: 'flex gap-1 justify-end', cell: (item) => <MenuItemRowButtons item={item} actions={actions} /> },
   ];
 }

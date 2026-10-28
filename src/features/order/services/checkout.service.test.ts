@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { createFakeCheckoutUnitOfWork } from '../testing/fake-checkout-unit-of-work';
-import { CALLER, CARNE, checkoutOf, COCA, cokes, halfAndHalf, halfDozen, loadMenu, MUZZA, NAPO, POLLO, stockOf } from '../testing/checkout-fixtures';
+import { CALLER, CARNE, checkoutOf, COCA, cokes, halfAndHalf, halfDozen, loadMenu, MUZZA, NAPO, POLLO, PREPIZZA, stockOf } from '../testing/checkout-fixtures';
 import { createCheckoutService } from './checkout.service';
 
 const fake = createFakeCheckoutUnitOfWork();
@@ -34,9 +34,9 @@ describe('cobrar el pedido (US-6)', () => {
     expect(fake.audits).toEqual([{ userId: CALLER.id, action: 'CREAR', entity: 'SALE', entityId: result.saleId, detail: { total: 18000, buyerName: 'Marta', lines: 2, payments: saved } }]);
   });
 
-  it('descuenta el stock de cada gusto, también media pizza (CA-4)', async () => {
+  it('descuenta el stock de cada gusto y, por la pizza mitad y mitad, 1 prepizza (CA-4; US-29 CA-3)', async () => {
     await service.checkout(CALLER, checkoutOf([halfDozen, halfAndHalf], { payments: cash(18000) }));
-    expect([CARNE, POLLO, MUZZA, NAPO].map((item) => stockOf(fake, item.id))).toEqual(['8.0', '6.0', '2.0', '1.5']);
+    expect([CARNE, POLLO, MUZZA, NAPO, PREPIZZA].map((item) => stockOf(fake, item.id))).toEqual(['8.0', '6.0', '0.0', '0.0', '1.0']);
   });
 
   it('una línea con cantidad 3 consume y cobra por 3', async () => {

@@ -20,7 +20,7 @@ function priceLabel(price: number | null, inPromo: boolean): string {
 
 export function FlavorRow({ line, lines, item, board, inPromo = false, onAdd }: FlavorRowProps): JSX.Element {
   const presentation = presentationOf(line);
-  const available = availableStock({ id: item.id, stock: item.stock }, lines);
+  const available = availableStock(item, lines, board.baseOf);
   const free = remaining(line);
   const half = presentation ? isHalfAndHalf(presentation) : false;
   const isPack = (presentation?.units ?? 1) > 1;

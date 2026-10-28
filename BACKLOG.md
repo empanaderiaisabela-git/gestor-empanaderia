@@ -3118,7 +3118,7 @@ las decisiones provisorias D-1 a D-11, el orden y la trazabilidad de cada punto 
 | 2   | [US-30](#us-30--títulos-más-grandes-y-letras-con-más-contraste)                 | Títulos más grandes y letras con más contraste          | En revisión | T-21       | 1 h 30 min      |
 | 3   | [US-27](#us-27--gastos-el-proveedor-de-la-factura)                              | Gastos: el proveedor de la factura                      | En revisión | T-21       | 1 h 30 min      |
 | 4   | [US-28](#us-28--todos-los-precios-en-stock)                                     | Todos los precios en Stock                              | En revisión | T-21       | 3 h             |
-| 5   | [US-29](#us-29--prepizzas-y-panes-de-ciabatta)                                  | Prepizzas y panes de ciabatta                           | Pendiente   | US-28      | 5 h 30 min      |
+| 5   | [US-29](#us-29--prepizzas-y-panes-de-ciabatta)                                  | Prepizzas y panes de ciabatta                           | En revisión | US-28      | 5 h 30 min      |
 | 6   | [US-31](#us-31--el-vendedor-ve-el-stock-sin-costos)                             | El vendedor ve el stock, sin costos                     | Pendiente   | US-29      | 1 h 30 min      |
 | 7   | [T-22](#t-22--cierre-del-sprint-4)                                              | Cierre del Sprint 4                                     | Pendiente   | todos      | 1 h             |
 |     |                                                                                 | **Total del sprint**                                    |             |            | **15 h 30 min** |
@@ -3323,12 +3323,12 @@ y las ciabattas, de forma que el día que un gusto se venda a otro precio el sis
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
-| Dueño        | —         |
-| Inicio       | —         |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-28 |
 | Tamaño       | L         |
 | Depende de   | US-28     |
-| Plan         | —         |
+| Plan         | [`docs/plans/US-29-prepizzas-y-panes.md`](docs/plans/US-29-prepizzas-y-panes.md) |
 | Merge        | —         |
 | Horas reales | —         |
 
@@ -3337,20 +3337,38 @@ ciabatta vendida descuente uno, de forma que el stock muestre lo que el local gu
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · El sistema trae dos bases fijas, "Prepizza" y "Pan de ciabatta", con stock entero ≥ 0, `version` y sin costo; no se pueden borrar, renombrar ni vender solas. La migración las crea en 0 y deja en 0 el stock de los gustos de pizza y de ciabatta · Estimación: 1 h 30 min · Completado: —
+- [x] **CA-1** · El sistema trae dos bases fijas, "Prepizza" y "Pan de ciabatta", con stock entero ≥ 0, `version` y sin costo; no se pueden borrar, renombrar ni vender solas. La migración las crea en 0 y deja en 0 el stock de los gustos de pizza y de ciabatta · Estimación: 1 h 30 min · Completado: 2026-10-28 17:02
 
-- [ ] **CA-2** · En Stock, la base es la primera fila de su grupo, con su contador, "Ingresar stock" (sólo cantidad y proveedor opcional) y "Registrar pérdida"; los gustos de pizza y ciabatta muestran costo y precio, sin stock, y usan "Costo y precio" de US-28 · Estimación: 1 h · Completado: —
+- [x] **CA-2** · En Stock, la base es la primera fila de su grupo, con su contador, "Ingresar stock" (sólo cantidad y proveedor opcional) y "Registrar pérdida"; los gustos de pizza y ciabatta muestran costo y precio, sin stock, y usan "Costo y precio" de US-28 · Estimación: 1 h · Completado: 2026-10-28 17:02
 
-- [ ] **CA-3** · Cobrar una pizza de 1 o 2 sabores descuenta 1 prepizza, y una ciabatta, 1 pan; el costo congelado es el del gusto (½ + ½ en la mitad y mitad); sin bases suficientes, el cobro da `INSUFFICIENT_STOCK` con un mensaje que nombra la base · Estimación: 1 h 30 min · Completado: —
+- [x] **CA-3** · Cobrar una pizza de 1 o 2 sabores descuenta 1 prepizza, y una ciabatta, 1 pan; el costo congelado es el del gusto (½ + ½ en la mitad y mitad); sin bases suficientes, el cobro da `INSUFFICIENT_STOCK` con un mensaje que nombra la base · Estimación: 1 h 30 min · Completado: 2026-10-28 17:02
 
-- [ ] **CA-4** · Anular una venta devuelve las bases que consumió; la pérdida de una base baja el contador y no resta de la ganancia · Estimación: 45 min · Completado: —
+- [x] **CA-4** · Anular una venta devuelve las bases que consumió; la pérdida de una base baja el contador y no resta de la ganancia · Estimación: 45 min · Completado: 2026-10-28 17:02
 
-- [ ] **CA-5** · Ventas muestra los gustos de pizza (o de ciabatta) con precio sólo si queda al menos una base; E2E de punta a punta: se ingresan 2 prepizzas, se vende una mitad y mitad y una muzzarella, el contador queda en 0 y los gustos de pizza desaparecen de Ventas · Estimación: 45 min · Completado: —
+- [x] **CA-5** · Ventas muestra los gustos de pizza (o de ciabatta) con precio sólo si queda al menos una base; E2E de punta a punta: se ingresan 2 prepizzas, se vende una mitad y mitad y una muzzarella, el contador queda en 0 y los gustos de pizza desaparecen de Ventas · Estimación: 45 min · Completado: 2026-10-28 17:02
 
 **Notas**
 
 - Plan propio y nivel 3: cambia el modelo de stock, el cobro, la anulación y las pérdidas.
 - Decisiones del dev y provisorias D-1 a D-3, D-8, D-9 y D-11 en el plan del sprint.
+- Modelo: las bases son filas de `menu_items` con `is_base` (índice único parcial "una base por grupo" y check: sin
+  costo, sin precios, stock entero y sólo en Pizzas y Ciabattas). La migración `0021_prepizzas-y-panes` las crea en 0
+  y pone en 0 el stock de los gustos de esos grupos.
+- Una línea de pizza consume la suma de las unidades de sus gustos (mitad y mitad: ½ + ½ = 1 prepizza); así, con una
+  sola prepizza se puede cargar la segunda mitad. El cobro bloquea primero los gustos y después las bases, y la
+  anulación en el mismo orden.
+- Otras decisiones del subagente, revisadas:
+  - La base no se vende ni suelta ni en promo (`VALIDATION`), y tampoco se puede mostrar en el catálogo.
+  - Las pérdidas pasan a ser enteras, porque ya no queda stock con medias unidades.
+  - En la grilla, la base tiene sólo "Ingresar stock" y "Registrar pérdida", y los gustos de Pizzas y Ciabattas sólo
+    "Costo y precio" (ninguno tiene historial).
+  - Sin prepizzas, la tarjeta de Pizzas en Ventas dice "Sin stock de Prepizza".
+- En Alta de productos, los gustos de Pizzas y Ciabattas muestran "—" en Stock (grilla y tarjeta mobile).
+- E2E: `prepizzas.spec.ts` es el único que vende pizzas, para que nadie más toque el contador; `cobro`,
+  `historial-ventas`, `tablero-ventas` y `stock-precios` dejaron de vender pizzas o de ingresar stock de sus gustos.
+- Lo implementó un subagente Opus, con el plan propio, y se revisó. `npm run verify` en verde: 961 tests, cobertura
+  96,16/90,04, 107 de integración, mutación 90,40 y build; 68 E2E en verde.
+- La base local de desarrollo y la de Supabase necesitan las migraciones 0018 a 0021.
 
 ### US-31 · El vendedor ve el stock, sin costos
 

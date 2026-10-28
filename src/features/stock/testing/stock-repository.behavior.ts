@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import type { StockRepository } from '@/features/stock/repository/stock.repository';
 
-export type StockRepositoryHarness = { repository: StockRepository; itemId: string; siblingId: string; userId: string; providerId: string };
+export type StockRepositoryHarness = { repository: StockRepository; itemId: string; siblingId: string; baseId: string; userId: string; providerId: string };
 
 export function describeStockRepository(label: string, setup: () => Promise<StockRepositoryHarness>): void {
   describe(`StockRepository (${label}) — US-4`, () => {
@@ -27,10 +27,15 @@ export function describeStockRepository(label: string, setup: () => Promise<Stoc
       expect(await repository.saveItem({ id: itemId, version: 2 }, { stock: 4 })).toMatchObject({ price1: '12000.00', version: 3 });
     });
 
-    it('bloquea todos los gustos de un grupo, ordenados por id (US-28)', async () => {
+    it('bloquea todos los gustos de un grupo, ordenados por id y sin la base (US-28, US-29)', async () => {
       const { repository, itemId, siblingId } = harness;
       expect((await repository.lockGroup('pizzas')).map((item) => item.id)).toEqual([itemId, siblingId].sort());
       expect(await repository.lockGroup('pepsi')).toEqual([]);
+    });
+
+    it('bloquea la base de un grupo; un grupo sin base da null (US-29)', async () => {
+      expect(await harness.repository.lockBase('pizzas')).toMatchObject({ id: harness.baseId, name: 'Prepizza', isBase: true });
+      expect(await harness.repository.lockBase('empanadas')).toBeNull();
     });
 
     it('guarda sólo costo y precios, sin tocar el stock (US-28 CA-5)', async () => {

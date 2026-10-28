@@ -80,7 +80,7 @@ describe('consumo de stock y costo (US-5 CA-5; US-6 CA-3)', () => {
 
   it('el stock disponible descuenta lo que ya está en el pedido', () => {
     const lines = [times(line('empanadas', 'u6', [{ menuItemId: 'carne', units: 6 }]), 2), line('empanadas', 'u1', [{ menuItemId: 'carne', units: 1 }])];
-    expect(availableStock({ id: 'carne', stock: 20 }, lines)).toBe(7);
-    expect(availableStock({ id: 'pollo', stock: 20 }, lines)).toBe(20);
+    expect(availableStock({ id: 'carne', group: 'empanadas', stock: 20 }, lines)).toBe(7);
+    expect(availableStock({ id: 'pollo', group: 'empanadas', stock: 20 }, lines)).toBe(20);
   });
 });

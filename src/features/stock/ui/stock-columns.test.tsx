@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import type { MenuItemDef } from '@/features/menu/domain/menu-item.schema';
 import { getStockColumns, StockBadge, StockButtons } from './stock-columns';
 
-const ITEM: MenuItemDef = { id: 'a', group: 'sanguches', name: 'Primavera', unitCost: 650, stock: 24, price1: 1600, price3: 4500, price6: 8600, price12: 16500, isActive: true, isVisible: false, version: 1, createdAt: '', updatedAt: '' };
+const ITEM: MenuItemDef = { id: 'a', group: 'sanguches', name: 'Primavera', unitCost: 650, stock: 24, price1: 1600, price3: 4500, price6: 8600, price12: 16500, isActive: true, isVisible: false, isBase: false, version: 1, createdAt: '', updatedAt: '' };
 
 describe('grilla de Stock (US-4 CA-1)', () => {
   it('muestra el costo para el local (US-16)', () => {
@@ -52,5 +52,22 @@ describe('grilla de Stock (US-4 CA-1)', () => {
     fireEvent.click(screen.getByTitle('Costo y precio'));
     fireEvent.click(screen.getByTitle('Historial de ingresos'));
     expect(open.mock.calls).toEqual([[{ kind: 'entry', item: ITEM }], [{ kind: 'loss', item: ITEM }], [{ kind: 'pricing', item: ITEM }], [{ kind: 'history', item: ITEM }]]);
+  });
+
+  it('la base muestra su contador y sólo Ingresar stock y Registrar pérdida, sin precio ni costo (US-29 CA-2)', () => {
+    const base: MenuItemDef = { ...ITEM, id: 'p', group: 'pizzas', name: 'Prepizza', unitCost: null, stock: 3, price1: null, price3: null, price6: null, price12: null, isBase: true };
+    render(<div>{getStockColumns({ open: vi.fn() }).map((column, index) => <span key={index}>{column.cell(base)}</span>)}</div>);
+    expect(screen.getByText('3')).toBeDefined();
+    expect(screen.getAllByText('—')).toHaveLength(2);
+    expect(screen.getAllByRole('button').map((button) => button.title)).toEqual(['Ingresar stock', 'Registrar pérdida']);
+  });
+
+  it('un gusto de pizza o ciabatta muestra "—" en Stock y sólo "Costo y precio" (US-29 CA-2)', () => {
+    const open = vi.fn();
+    const muzza: MenuItemDef = { ...ITEM, group: 'pizzas', name: 'Muzza', stock: 0, price1: 11000, price3: null, price6: null, price12: null };
+    render(<div><StockBadge item={muzza} /><StockButtons item={muzza} actions={{ open }} /></div>);
+    expect(screen.getByText('—')).toBeDefined();
+    fireEvent.click(screen.getByRole('button'));
+    expect(open).toHaveBeenCalledWith({ kind: 'pricing', item: muzza });
   });
 });

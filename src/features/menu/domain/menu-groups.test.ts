@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { allowsHalfStock, GROUPS, MENU_GROUPS, priceFieldsOf, priceLabelOf } from './menu-groups';
+import { GROUPS, hasBase, MENU_GROUPS, priceFieldsOf, priceLabelOf } from './menu-groups';
 
 describe('grupos y presentaciones fijos (US-3)', () => {
   it('son los seis grupos del local, en el orden del tablero', () => {
@@ -39,8 +39,8 @@ describe('grupos y presentaciones fijos (US-3)', () => {
     expect(priceLabelOf('ciabattas', 'price3')).toBe('price3');
   });
 
-  it('sólo las pizzas admiten medias en el stock', () => {
-    expect(MENU_GROUPS.filter(allowsHalfStock)).toEqual(['pizzas']);
+  it('sólo Pizzas y Ciabattas descuentan de una base: la prepizza y el pan (US-29)', () => {
+    expect(MENU_GROUPS.filter(hasBase)).toEqual(['pizzas', 'ciabattas']);
   });
 
   it('las bebidas son de Coca-Cola y de Pepsi; el resto es comida', () => {

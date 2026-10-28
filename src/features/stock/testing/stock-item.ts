@@ -13,6 +13,7 @@ export function stockItem(overrides: Partial<StockItem> = {}): StockItem {
     price12: null,
     isActive: true,
     isVisible: false,
+    isBase: false,
     version: 1,
     createdAt: new Date(0),
     updatedAt: new Date(0),

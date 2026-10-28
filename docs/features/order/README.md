@@ -1,6 +1,7 @@
 # Feature: pedido (tablero, cobro e historial de ventas)
 
-- **US relacionadas**: US-5 (tablero y pedido actual), US-6 (cobro) y US-7 (historial, comprobante y anulación).
+- **US relacionadas**: US-5 (tablero y pedido actual), US-6 (cobro), US-7 (historial, comprobante y anulación) y
+  US-29 (las pizzas y las ciabattas descuentan prepizzas y panes).
 - **Código**: `src/features/order/` (domain, store, actions, services, repository, ui, testing). Pantallas en
   `src/app/(main)/ventas/` (Ventas/Pedidos) y `src/app/(main)/ventas/nueva/` (tablero).
 - **Datos que usa**: gustos, bebidas, sus precios y stock del feature `menu` (`fetchMenuItems`). Al cobrar escribe en `sales`, `sale_lines`, `sale_line_items`, `sale_payments` y
@@ -29,9 +30,11 @@ unidades e importe, el total y el comprador (opcional; vacío = "Sin nombre"). U
 | Precio por gusto en todos los grupos (US-28). Una surtida de Empanadas o de Sanguches: Σ (unidades del gusto ÷ unidades de la presentación × precio de esa presentación del gusto), redondeado a 2 decimales. Con todos los gustos al mismo precio da exactamente el precio de la presentación (7 + 5 a $32.000 la docena = $32.000) | dev, 2026-10-25; D-4 de `sprint-4.md` |
 | Cómo se cobra una docena surtida cuando los gustos tengan precios distintos: **pregunta abierta** de US-28 (lo pacta el cliente ese día). Hoy rige la regla proporcional; cambiarla toca sólo `unitLinePrice` | D-4 de `sprint-4.md` |
 | Ciabatta: el precio de unidad de su gusto, como una pizza de 1 sabor | US-28 |
-| Pizza de 2 sabores: el precio del sabor más caro; consume ½ de cada gusto | `specs.md` y dev |
-| Costo de una mitad y mitad: ½ del costo de cada gusto | dev, 2026-10-25 |
+| Pizza de 2 sabores: el precio del sabor más caro | `specs.md` y dev |
+| Costo de una mitad y mitad: ½ del costo de cada gusto | dev, 2026-10-25; D-1 de `sprint-4.md` |
+| Cada pizza (de 1 o 2 sabores) descuenta 1 prepizza y cada ciabatta, 1 pan de ciabatta; también dentro de una promo. El resto de los grupos descuenta de cada gusto | US-29; D-1 y D-11 de `sprint-4.md` |
 | No se ofrece un gusto si no alcanza el stock, contando lo que ya está en el pedido | US-5 CA-5 |
+| Un gusto de Pizzas o Ciabattas aparece si tiene precio y queda al menos 1 de su base; su stock disponible es el de la base menos lo que ya está en el pedido. Sin bases, la tarjeta del grupo dice "Sin stock de <base>" | US-29 CA-5; D-3 de `sprint-4.md` |
 | Una línea incompleta bloquea el cobro, en la pantalla y en el servidor | dev, 2026-10-25 |
 | Dos líneas iguales y completas se juntan con cantidad 2 | US-5 |
 | Medios de pago: Efectivo, Transferencia, Débito y Crédito; hasta 2 por venta y distintos | `specs.md` y US-6 |
@@ -42,7 +45,8 @@ Las reglas son funciones puras de `domain/`:
 
 - `order-line.ts`: `addFlavor`, `isComplete`, `remaining` y `mergeLine`.
 - `order-pricing.ts`: `unitLinePrice`, `linePrice` y `orderTotal`.
-- `order-usage.ts`: consumo de stock, stock disponible y `lineCost`.
+- `order-usage.ts`: consumo de stock (`stockUsage`, que lleva a la base lo de Pizzas y Ciabattas; `lineUsage` sigue
+  siendo por gusto, para el costo y `sale_line_items`), stock disponible (`availableStock`, con la base) y `lineCost`.
 - `order-describe.ts`: textos del pedido.
 - `order-validation.ts`: `isValidLine`, `applyDiscount`, `paymentsCover` y los medios de pago.
 
@@ -58,9 +62,11 @@ costos ni total: `checkoutSchema` es `strictObject` y rechaza cualquier campo de
 `checkout.service` hace todo en una transacción:
 
 1. Bloquea los gustos con `SELECT … FOR UPDATE`, de a uno y ordenados por id, para que dos cobros no se traben.
-2. Valida cada línea (`isValidLine`) y que cada gusto esté activo y sea de su grupo.
+   Después bloquea la base de cada grupo con base que use el pedido (Pizzas y después Ciabattas, `lockBase`).
+2. Valida cada línea (`isValidLine`) y que cada gusto esté activo, sea de su grupo y no sea una base.
 3. Recalcula los precios con la base, aplica el descuento y controla que los pagos sumen el total.
-4. Controla el stock de todos los gustos y recién después lo descuenta, filtrando por `id` y `version`.
+4. Controla el stock de todos los gustos y recién después lo descuenta, filtrando por `id` y `version`. En Pizzas
+   y Ciabattas controla y descuenta la base: una unidad por pizza o ciabatta (`stockUsage`).
 5. Guarda la venta (vendedor = quien cobra; comprador o `null`), cada línea con lo cobrado y la descripción de sus
    gustos, lo que consume de cada gusto con el **costo congelado** (mitad y mitad: 0,5 de cada uno) y los pagos.
 6. Audita `CREAR` / `SALE`.
@@ -129,8 +135,9 @@ POS viejo ("Consideraciones del primer sprint" de `specs.md`).
   mitad), el subtotal, los descuentos, el total y cada pago. Se imprime con el navegador.
 - **Anular** (sólo admin), en `sale-history.service` y en una transacción:
   1. Bloquea la venta con `SELECT … FOR UPDATE`. Si ya no está, `NOT_FOUND`: una venta no se anula dos veces.
-  2. Repone el stock de cada gusto con lo que guardó el cobro (`sale_line_items`): la mitad y mitad devuelve ½ de
-     cada uno. Los gustos se bloquean ordenados por id, como en el cobro.
+  2. Repone el stock de cada gusto con lo que guardó el cobro (`sale_line_items`). Los gustos se bloquean ordenados
+     por id, como en el cobro. Lo de Pizzas y Ciabattas se suma por grupo y vuelve a la base: ½ + ½ = 1 prepizza
+     (US-29, D-8). Así anda igual con las ventas cobradas antes del cambio, que guardaron ½ de cada gusto.
   3. Borra los pagos y la venta (las líneas se borran en cascada) y audita `ELIMINAR` / `SALE` con lo que tenía.
 
 El historial muestra sólo las ventas del modelo nuevo (con líneas). Las del POS viejo quedan hasta que T-12 las
@@ -145,6 +152,9 @@ borre.
 | Línea incompleta, gusto de otro grupo o dado de baja, gusto sin precio, descuento mayor al total o pagos que no suman | `VALIDATION` | idem | `checkout-errors.test.ts` |
 | Un gusto que ya no existe | `NOT_FOUND` | El producto ya no existe. | `checkout-errors.test.ts` |
 | Un gusto no alcanza | `INSUFFICIENT_STOCK` | No hay stock suficiente de {gusto}. | `checkout-errors.test.ts` y `checkout.service.int.test.ts` |
+| No alcanzan las prepizzas o los panes (US-29) | `INSUFFICIENT_STOCK` | No hay stock suficiente de Prepizza. (o de Pan de ciabatta) | `checkout-bases.test.ts`, `checkout.contract.test.ts` y `sale-history.service.int.test.ts` |
+| Vender una base como gusto (US-29, D-2) | `VALIDATION` | Los datos proporcionados no son válidos. | `checkout-bases.test.ts` |
+| Falta la base del grupo, al cobrar o al anular (US-29) | `NOT_FOUND` | El producto ya no existe. | `checkout-bases.test.ts` y `sale-history-bases.test.ts` |
 | Crédito sin tarjeta o sin cuotas, o tarjeta en otro medio (US-11) | `VALIDATION` | Los datos proporcionados no son válidos. | `checkout.schema.test.ts` |
 | Tarjeta inexistente o desactivada (US-11) | `NOT_FOUND` | La tarjeta ya no existe. | `checkout-payments.test.ts` |
 | Plan de cuotas que la tarjeta no tiene (US-11) | `NOT_FOUND` | El plan de cuotas ya no existe. | `checkout-payments.test.ts` |
@@ -195,16 +205,22 @@ Al tablero se entra con "Nuevo pedido", desde Ventas/Pedidos.
 - Unit y fuzz: `domain/*.test.ts` (la suma de unidades nunca supera la presentación; con precios iguales, la surtida
   cuesta lo mismo que la entera; el schema del cobro nunca lanza), `store/order.store.test.ts` y
   `ui/checkout-form.test.ts` y `ui/sale-history-filter.test.ts`.
-- Servicio con el fake: `services/checkout.service.test.ts`, `services/checkout-errors.test.ts` y
-  `services/sale-history.service.test.ts` (el fake del historial lee el mismo estado que el del cobro).
+- Servicio con el fake: `services/checkout.service.test.ts`, `services/checkout-errors.test.ts`,
+  `services/checkout-bases.test.ts` y `services/sale-history-bases.test.ts` (US-29: bases, costo congelado de los
+  gustos, promos y ventas viejas) y `services/sale-history.service.test.ts` (el fake del historial lee el mismo
+  estado que el del cobro).
+- Fuzz de `stockUsage` (nunca da negativo y suma una base por cada pizza o ciabatta): `domain/order-usage.test.ts`.
 - Contrato: `actions/checkout.contract.test.ts` (un valor adulterado no cambia lo que se guarda; fuzz) y
   `actions/sale-history.contract.test.ts` (roles, errores y fuzz de la anulación).
 - Integración: `services/checkout.service.int.test.ts` (lo guardado en Postgres; dos cobros simultáneos de la última
   unidad; un gusto que no alcanza no deja nada a medias) y `services/sale-history.service.int.test.ts` (líneas en
-  orden, reposición exacta, dos anulaciones simultáneas, ventas viejas fuera del historial).
+  orden, la prepizza descontada y devuelta, sin prepizzas `INSUFFICIENT_STOCK`, dos anulaciones simultáneas, ventas
+  viejas fuera del historial).
 - Componente: `ui/*.test.tsx` (tarjeta de grupo, lista de gustos, pedido actual, tablero, cobro, grilla de ventas,
   comprobante y panel).
 - Contraste WCAG AA de los textos sobre el color de cada grupo, en claro y oscuro: `src/test/group-colors-contrast.test.ts`.
 - E2E: `tests/tablero-ventas.spec.ts` (también el color real de cada grupo) y `tests/cobro.spec.ts` (armar, cobrar con efectivo y débito, y ver el stock
   descontado en `/stock`) y `tests/historial-ventas.spec.ts` ("Nuevo pedido", la venta en la grilla, el comprobante y
-  la anulación que repone el stock).
+  la anulación que repone el stock) y `tests/prepizzas.spec.ts` (US-29: 2 prepizzas, una mitad y mitad y una Muzza, y
+  los gustos de pizza desaparecen de Ventas). Es el único E2E que vende pizzas, porque el contador de prepizzas es
+  uno solo y los E2E corren en paralelo.

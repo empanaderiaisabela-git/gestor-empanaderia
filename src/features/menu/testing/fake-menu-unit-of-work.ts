@@ -10,12 +10,12 @@ const GROUP_ORDER = ['empanadas', 'pizzas', 'sanguches', 'ciabattas', 'coca_cola
 function newRow(state: FakeState, { group, name, unitCost, prices }: MenuItemData): MenuItem {
   state.clock += 1;
   const at = new Date(state.clock * 1000);
-  const base = { id: crypto.randomUUID(), group, name, unitCost: unitCost === undefined ? null : unitCost.toFixed(2), stock: '0.0', isActive: true, isVisible: false, version: 1 };
+  const base = { id: crypto.randomUUID(), group, name, unitCost: unitCost === undefined ? null : unitCost.toFixed(2), stock: '0.0', isActive: true, isVisible: false, isBase: false, version: 1 };
   return { ...base, ...priceColumns(prices), createdAt: at, updatedAt: at };
 }
 
 function sorted(rows: MenuItem[]): MenuItem[] {
-  return [...rows].sort((a, b) => GROUP_ORDER.indexOf(a.group) - GROUP_ORDER.indexOf(b.group) || a.name.localeCompare(b.name));
+  return [...rows].sort((a, b) => GROUP_ORDER.indexOf(a.group) - GROUP_ORDER.indexOf(b.group) || Number(b.isBase) - Number(a.isBase) || a.name.localeCompare(b.name));
 }
 
 export function fakeMenuItemRepository(state: FakeState): MenuItemRepository {

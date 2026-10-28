@@ -1,6 +1,6 @@
 import type { JSX } from 'react';
 import { FormField, inputClass } from '@/components/ui/form-field';
-import { GROUPS, MENU_GROUPS } from '@/features/menu/domain/menu-groups';
+import { GROUPS, hasBase, MENU_GROUPS } from '@/features/menu/domain/menu-groups';
 import type { MenuItemDef } from '@/features/menu/domain/menu-item.schema';
 import { costLabelOf } from '@/features/menu/domain/menu-terms';
 import { formatMoney } from '@/lib/format-money';
@@ -28,7 +28,7 @@ function ItemSelects({ values, errors, items, onChange }: Pick<StockEntryFieldsP
       <FormField label='Gusto o bebida' error={errors.menuItemId}>
         <select value={values.menuItemId} disabled={values.group === ''} onChange={(event) => onChange({ ...values, menuItemId: event.target.value })} className={inputClass(Boolean(errors.menuItemId))}>
           <option value=''>Elegí un gusto o bebida</option>
-          {items.filter((item) => item.group === values.group).map((item) => (
+          {items.filter((item) => item.group === values.group && (item.isBase || !hasBase(item.group))).map((item) => (
             <option key={item.id} value={item.id}>
               {item.name} (stock {item.stock.toLocaleString('es-AR')})
             </option>
@@ -43,10 +43,12 @@ function CostFields({ values, errors, items, providers, onChange }: StockEntryFi
   const item = items.find((candidate) => candidate.id === values.menuItemId) ?? null;
   return (
     <>
-      <FormField label={costLabelOf(item?.group ?? null)} error={errors.unitCost}>
-        <input inputMode='decimal' value={values.unitCost} onChange={(event) => onChange({ ...values, unitCost: event.target.value })} placeholder={item?.unitCost == null ? '' : formatMoney(item.unitCost)} className={inputClass(Boolean(errors.unitCost))} />
-      </FormField>
-      {item && <StockPriceFields item={item} values={values} errors={errors} onChange={onChange} />}
+      {!item?.isBase && (
+        <FormField label={costLabelOf(item?.group ?? null)} error={errors.unitCost}>
+          <input inputMode='decimal' value={values.unitCost} onChange={(event) => onChange({ ...values, unitCost: event.target.value })} placeholder={item?.unitCost == null ? '' : formatMoney(item.unitCost)} className={inputClass(Boolean(errors.unitCost))} />
+        </FormField>
+      )}
+      {item && !item.isBase && <StockPriceFields item={item} values={values} errors={errors} onChange={onChange} />}
       <FormField label='Proveedor (opcional)' error={errors.providerId}>
         <select value={values.providerId} onChange={(event) => onChange({ ...values, providerId: event.target.value })} className={inputClass(Boolean(errors.providerId))}>
           <option value=''>Sin proveedor</option>

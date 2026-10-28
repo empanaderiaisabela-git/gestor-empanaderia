@@ -27,7 +27,7 @@ export type MenuPanelModel = {
 
 function visible(items: MenuItemDef[], { search, showInactive, groupFilter }: { search: string; showInactive: boolean; groupFilter: GroupFilter }): MenuItemDef[] {
   const terms = normalizeForSearch(search).split(/\s+/);
-  return items.filter((item) => terms.every((term) => normalizeForSearch(item.name).includes(term)) && (showInactive || item.isActive) && (groupFilter === 'todos' || item.group === groupFilter));
+  return items.filter((item) => !item.isBase && terms.every((term) => normalizeForSearch(item.name).includes(term)) && (showInactive || item.isActive) && (groupFilter === 'todos' || item.group === groupFilter));
 }
 
 function useInitialLoad(isLoaded: boolean): boolean {

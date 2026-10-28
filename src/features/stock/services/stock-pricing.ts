@@ -19,7 +19,7 @@ async function copyToGroup({ stock }: StockScope, item: StockItem, input: StockP
 export async function setPricing(scope: StockScope, caller: Caller, input: StockPricingInput): Promise<PricingResult> {
   const current = await scope.stock.lockItem(input.menuItemId);
   if (!current) throw new AppError('NOT_FOUND', { entity: 'el producto' });
-  if (priceIssues(current.group, input.prices).length > 0) throw new AppError('VALIDATION');
+  if (current.isBase || priceIssues(current.group, input.prices).length > 0) throw new AppError('VALIDATION');
   const item = await scope.stock.saveItem({ id: current.id, version: input.version }, { unitCost: input.unitCost, prices: input.prices });
   if (!item) throw new AppError('STALE_VERSION');
   const applied = await copyToGroup(scope, item, input);

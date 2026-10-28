@@ -2,8 +2,9 @@ import { eq } from 'drizzle-orm';
 import { afterAll, beforeEach, describe, expect, it } from 'vitest';
 import { db } from '@/lib/db';
 import { menuItems } from '@/lib/db/menu-schema';
-import { stockEntries } from '@/lib/db/stock-schema';
+import { stockEntries, stockLosses } from '@/lib/db/stock-schema';
 import { TEST_USER_IDS } from '@/test/as-user';
+import { seedBases } from '@/test/seed-bases';
 import { seedTestUser } from '@/test/seed-test-user';
 import { truncateAll } from '@/test/truncate-all';
 import { stockService } from './stock.service';
@@ -39,11 +40,19 @@ describe('ingresos y mermas simultáneos sobre el mismo gusto (US-4 CA-2)', () =
   });
 
   it('el primer ingreso de un gusto sin costo ni precio los guarda en la base (US-17)', async () => {
-    const [pizza] = await db.insert(menuItems).values({ group: 'pizzas', name: 'Muzza' }).returning({ id: menuItems.id });
-    await expect(stockService.registerEntry(CALLER, { menuItemId: pizza.id, quantity: 6 })).rejects.toMatchObject({ code: 'MISSING_COST' });
-    await stockService.registerEntry(CALLER, { menuItemId: pizza.id, quantity: 6, unitCost: 3000, prices: { price1: 11000 } });
-    const [row] = await db.select().from(menuItems).where(eq(menuItems.id, pizza.id));
-    expect(row).toMatchObject({ stock: '6.0', unitCost: '3000.00', price1: '11000.00', version: 2 });
+    const [coca] = await db.insert(menuItems).values({ group: 'coca_cola', name: 'Coca 500' }).returning({ id: menuItems.id });
+    await expect(stockService.registerEntry(CALLER, { menuItemId: coca.id, quantity: 6 })).rejects.toMatchObject({ code: 'MISSING_COST' });
+    await stockService.registerEntry(CALLER, { menuItemId: coca.id, quantity: 6, unitCost: 1200, prices: { price1: 2500 } });
+    const [row] = await db.select().from(menuItems).where(eq(menuItems.id, coca.id));
+    expect(row).toMatchObject({ stock: '6.0', unitCost: '1200.00', price1: '2500.00', version: 2 });
+  });
+
+  it('el ingreso y la pérdida de una prepizza guardan costo 0 y la prepizza sigue sin costo (US-29)', async () => {
+    const { pizzas } = await seedBases();
+    await stockService.registerEntry(CALLER, { menuItemId: pizzas, quantity: 2 });
+    await stockService.registerLoss(CALLER, { menuItemId: pizzas, quantity: 1, reason: 'Se rompió' });
+    expect(await db.select({ stock: menuItems.stock, unitCost: menuItems.unitCost }).from(menuItems).where(eq(menuItems.id, pizzas))).toEqual([{ stock: '1.0', unitCost: null }]);
+    expect([(await db.select().from(stockEntries))[0].unitCost, (await db.select().from(stockLosses))[0].unitCost]).toEqual(['0.00', '0.00']);
   });
 
   it('Costo y precio con "aplicar a todos" copia los precios al grupo en la misma transacción (US-28 CA-5)', async () => {

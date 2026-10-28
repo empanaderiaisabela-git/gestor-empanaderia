@@ -36,9 +36,14 @@ const DRINKS: [Group, string, number][] = [
 
 export const SEED_MENU_ITEMS: SeedMenuItem[] = [
   ...flavors('empanadas', EMPANADAS, { unitCost: '450.00', stock: '48', prices: packs([1200, 3400, 6500, 12000]) }),
-  ...PIZZAS.map(([name, price]): SeedMenuItem => ({ group: 'pizzas', name, unitCost: (price * 0.4).toFixed(2), stock: '4', prices: unitOnly(price) })),
+  ...PIZZAS.map(([name, price]): SeedMenuItem => ({ group: 'pizzas', name, unitCost: (price * 0.4).toFixed(2), stock: '0', prices: unitOnly(price) })),
   { group: 'sanguches', name: 'Primavera', unitCost: '650.00', stock: '24', prices: packs([1600, 4500, 8600, 16500]) },
   { group: 'sanguches', name: 'Jamón y queso', unitCost: '550.00', stock: '24', prices: packs([1400, 4000, 7600, 14500]) },
-  ...flavors('ciabattas', CIABATTAS, { unitCost: '2500.00', stock: '10', prices: unitOnly(6000) }),
+  ...flavors('ciabattas', CIABATTAS, { unitCost: '2500.00', stock: '0', prices: unitOnly(6000) }),
   ...DRINKS.map(([group, name, price]): SeedMenuItem => ({ group, name, unitCost: (price * 0.6).toFixed(2), stock: '12', prices: unitOnly(price) })),
 ];
+
+export const SEED_BASES = [
+  { group: 'pizzas', name: 'Prepizza', isBase: true },
+  { group: 'ciabattas', name: 'Pan de ciabatta', isBase: true },
+] as const;
