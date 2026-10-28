@@ -11,6 +11,7 @@
 - [Sprint 1 · Vender con el modelo de la empanadería](#sprint-1--vender-con-el-modelo-de-la-empanadería)
 - [Sprint 2 · Promociones, tarjetas, estadísticas y gastos](#sprint-2--promociones-tarjetas-estadísticas-y-gastos)
 - [Sprint 3 · Aclaraciones del dev](#sprint-3--aclaraciones-del-dev)
+- [Sprint 4 · Pedido del cliente tras la demo](#sprint-4--pedido-del-cliente-tras-la-demo)
 
 ## Convenciones
 
@@ -3094,3 +3095,229 @@ que se lea de un vistazo cuánto sale la unidad, 3, 6 y 12.
   usaba nadie.
 - Nivel 1: lint, typecheck, `vitest related` (40 tests) y E2E de Stock y precios (4 casos) en verde, y mirado en el
   navegador a 1440 px.
+
+
+## Sprint 4 · Pedido del cliente tras la demo
+
+------------------------------------------------------------------------------------------------------------------------
+
+**Objetivo**: lo que pidió el cliente después de ver la demo del Sprint 3. Todos los precios en Stock; el stock de
+pizzas y ciabattas pasa a ser de prepizzas y panes; gastos con su proveedor; clientes con sólo el nombre obligatorio;
+y títulos y letras más fáciles de leer.
+
+**Plan del sprint**: [`docs/plans/sprint-4.md`](docs/plans/sprint-4.md). Tiene las decisiones del dev (2026-10-28),
+las decisiones provisorias D-1 a D-7, el orden y la trazabilidad de cada punto del pedido en `specs.md` a su ítem.
+
+### Resumen del Sprint 4
+
+| #   | ID                                                                              | Título                                                  | Estado      | Depende de | Estimación      |
+| --- | ------------------------------------------------------------------------------- | ------------------------------------------------------- | ----------- | ---------- | --------------- |
+| 0   | [T-21](#t-21--backlog-del-sprint-4-desde-el-pedido-del-cliente)                 | Backlog del Sprint 4 desde el pedido del cliente        | En revisión | T-18       | 30 min          |
+| 1   | [US-26](#us-26--clientes-sólo-el-nombre-es-obligatorio)                         | Clientes: sólo el nombre es obligatorio                 | Pendiente   | T-21       | 1 h             |
+| 2   | [US-30](#us-30--títulos-más-grandes-y-letras-con-más-contraste)                 | Títulos más grandes y letras con más contraste          | Pendiente   | T-21       | 1 h 30 min      |
+| 3   | [US-27](#us-27--gastos-el-proveedor-de-la-factura)                              | Gastos: el proveedor de la factura                      | Pendiente   | T-21       | 1 h 30 min      |
+| 4   | [US-28](#us-28--todos-los-precios-en-stock)                                     | Todos los precios en Stock                              | Pendiente   | T-21       | 2 h             |
+| 5   | [US-29](#us-29--prepizzas-y-panes-de-ciabatta)                                  | Prepizzas y panes de ciabatta                           | Pendiente   | US-28      | 6 h             |
+| 6   | [T-22](#t-22--cierre-del-sprint-4)                                              | Cierre del Sprint 4                                     | Pendiente   | todos      | 1 h             |
+|     |                                                                                 | **Total del sprint**                                    |             |            | **13 h 30 min** |
+
+### T-21 · Backlog del Sprint 4 desde el pedido del cliente
+
+| Campo        | Valor                                              |
+| ------------ | -------------------------------------------------- |
+| Estado       | En revisión                                        |
+| Dueño        | Agente                                             |
+| Inicio       | 2026-10-28                                         |
+| Tamaño       | S                                                  |
+| Depende de   | T-18                                               |
+| Plan         | [`docs/plans/sprint-4.md`](docs/plans/sprint-4.md) |
+| Merge        | —                                                  |
+| Horas reales | —                                                  |
+
+**Historia**: Como dev quiero el pedido del cliente tras la demo cargado como ítems, de forma que cada cambio tenga
+su criterio, su estimación y su rama.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · `BACKLOG.md` con el Sprint 4: cada ítem con historia, CA medibles con estimación, dependencias y nivel de tests; `docs/plans/sprint-4.md` con las decisiones del dev, las provisorias, el orden y la trazabilidad de `specs.md` · Estimación: 25 min · Completado: 2026-10-28 11:00
+
+- [ ] **CA-2** · `specs.md` con el pedido del cliente, textual, tal como lo pasó el dev · Estimación: 5 min · Completado: 2026-10-28 11:00
+
+### US-26 · Clientes: sólo el nombre es obligatorio
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Pendiente |
+| Dueño        | —         |
+| Inicio       | —         |
+| Tamaño       | S         |
+| Depende de   | T-21      |
+| Plan         | —         |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como vendedor quiero dar de alta un cliente con sólo su nombre, de forma que no tenga que pedirle
+teléfono, correo ni DNI.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · El alta y la edición de Clientes guardan un cliente con sólo el nombre (2 a 100 caracteres); teléfono, correo y DNI son opcionales y, si se cargan, se validan como hoy · Estimación: 20 min · Completado: —
+
+- [ ] **CA-2** · `customers.document_number` admite `null` (migración de `''` a `null`): dos clientes sin DNI se guardan y un DNI repetido sigue dando `DUPLICATE`, con test de integración · Estimación: 30 min · Completado: —
+
+- [ ] **CA-3** · El formulario marca como obligatorio sólo el nombre; E2E del alta con sólo el nombre · Estimación: 10 min · Completado: —
+
+**Notas**
+
+- Nivel 3: cambia el schema. Hoy el DNI vacío se guarda como `''` y es único, así que dos clientes sin DNI chocarían
+  (D-6 del plan del sprint).
+- `customer.repository.ts` está en `eslint-legacy.json` y busca el DNI con `sql`. Si el ítem lo toca, sale de la
+  lista y pasa al query builder (ADR 0003).
+
+### US-30 · Títulos más grandes y letras con más contraste
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Pendiente |
+| Dueño        | —         |
+| Inicio       | —         |
+| Tamaño       | M         |
+| Depende de   | T-21      |
+| Plan         | —         |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como administrador quiero títulos más grandes y letras con más contraste, de forma que lea la
+información principal sin esfuerzo, con el tema claro o con el oscuro.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · El título de cada página (`PageHeader`) pasa de `text-3xl` a `text-4xl` · Estimación: 10 min · Completado: —
+
+- [ ] **CA-2** · Los grises del texto suben un escalón de contraste en todos los componentes: en modo claro, más oscuros; en modo oscuro, más claros. El texto secundario queda en ≥ 7:1 sobre su fondo en los dos temas · Estimación: 1 h · Completado: —
+
+- [ ] **CA-3** · Capturas de Ventas, Stock y Estadísticas en los dos temas; los E2E siguen en verde · Estimación: 20 min · Completado: —
+
+**Notas**
+
+- Nivel 1 (estilo), aunque toca unos 50 componentes: los colores del texto son clases `text-zinc-*` sueltas, no un
+  token (D-7 del plan del sprint).
+- El cliente vio la demo en modo claro. El pedido es más contraste en los dos temas, no letras oscuras siempre.
+
+### US-27 · Gastos: el proveedor de la factura
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Pendiente |
+| Dueño        | —         |
+| Inicio       | —         |
+| Tamaño       | M         |
+| Depende de   | T-21      |
+| Plan         | —         |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como administrador quiero anotar en cada gasto el proveedor que emitió la factura, de forma que sepa a
+quién corresponde cada gasto.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · `expenses.provider_id` con FK a `providers` (migración: los gastos ya cargados quedan sin proveedor) y el `RowSchema` del gasto trae el proveedor con su nombre · Estimación: 30 min · Completado: —
+
+- [ ] **CA-2** · El formulario de gastos pide "Proveedor", obligatorio, con todos los proveedores activos y, al editar, también el del gasto si fue dado de baja; sin proveedor, el alta y la edición dan `VALIDATION` con un mensaje claro · Estimación: 40 min · Completado: —
+
+- [ ] **CA-3** · La grilla de Gastos muestra el proveedor ("—" en los gastos viejos); E2E del alta con proveedor · Estimación: 20 min · Completado: —
+
+**Notas**
+
+- Nivel 3: cambia el schema. La columna queda opcional en la base por los gastos viejos, y Zod la exige al crear y al
+  editar (D-5 del plan del sprint).
+- Qué pasa al borrar un proveedor que tiene gastos se define en el plan del ítem.
+
+### US-28 · Todos los precios en Stock
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Pendiente |
+| Dueño        | —         |
+| Inicio       | —         |
+| Tamaño       | M         |
+| Depende de   | T-21      |
+| Plan         | —         |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como administrador quiero cargar en Stock el precio de venta de cada gusto, también el de las empanadas
+y las ciabattas, de forma que el día que un gusto se venda a otro precio el sistema ya lo permita.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · Alta de productos ya no tiene las tarjetas de precios de grupo; salen la acción, el servicio y el schema de `menu_group_prices`, y la tabla se borra con una migración que antes copia sus precios a cada gusto de Empanadas y Ciabattas · Estimación: 40 min · Completado: —
+
+- [ ] **CA-2** · "Ingresar stock" de una empanada pide costo y precios de 1, 3, 6 y 12 del gusto, como Sanguches; el de una ciabatta, costo y precio de unidad, como Pizzas · Estimación: 35 min · Completado: —
+
+- [ ] **CA-3** · Ventas, el cobro y el catálogo usan el precio de cada gusto: una docena surtida de empanadas se cobra con la regla de Sanguches (Σ unidades del gusto ÷ 12 × precio de la docena del gusto), con tests de dominio, contrato e integración · Estimación: 35 min · Completado: —
+
+- [ ] **CA-4** · La columna "Precio de venta" de Stock muestra los precios del gusto, uno por renglón (como dejó BUG-22) · Estimación: 10 min · Completado: —
+
+**Notas**
+
+- Revierte US-23 y además pasa Empanadas y Ciabattas a precio por gusto (D-4 del plan del sprint). No se usa
+  `git revert` de `e78bd12` porque la columna de BUG-22 se queda.
+- Nivel 3: cambia el schema y la regla de precios del cobro.
+- Las ciabattas cargan su precio con la cantidad sólo hasta US-29, que lo pasa al formulario sin cantidad.
+
+### US-29 · Prepizzas y panes de ciabatta
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Pendiente |
+| Dueño        | —         |
+| Inicio       | —         |
+| Tamaño       | L         |
+| Depende de   | US-28     |
+| Plan         | —         |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como administrador quiero contar sólo las prepizzas y los panes de ciabatta, y que cada pizza o
+ciabatta vendida descuente uno, de forma que el stock muestre lo que el local guarda de verdad.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · El sistema trae dos bases fijas, "Prepizza" y "Pan de ciabatta", con stock entero ≥ 0, `version` y sin costo; no se pueden borrar, renombrar ni vender solas. La migración las crea en 0 y deja en 0 el stock de los gustos de pizza y de ciabatta · Estimación: 1 h 30 min · Completado: —
+
+- [ ] **CA-2** · En Stock, "Ingresar stock" de una base pide sólo la cantidad (y el proveedor, opcional); cada gusto de pizza o ciabatta tiene un formulario de costo y precio, sin cantidad; la grilla muestra el contador de cada base y los gustos sin stock propio · Estimación: 1 h 30 min · Completado: —
+
+- [ ] **CA-3** · Cobrar una pizza de 1 o 2 sabores descuenta 1 prepizza, y una ciabatta, 1 pan; el costo congelado es el del gusto (½ + ½ en la mitad y mitad); sin bases suficientes, el cobro da `INSUFFICIENT_STOCK` con un mensaje que nombra la base · Estimación: 1 h 30 min · Completado: —
+
+- [ ] **CA-4** · Anular una venta devuelve las bases que consumió; la pérdida de una base baja el contador y no resta de la ganancia · Estimación: 45 min · Completado: —
+
+- [ ] **CA-5** · Ventas muestra los gustos de pizza (o de ciabatta) con precio sólo si queda al menos una base; E2E de punta a punta: se ingresan 2 prepizzas, se vende una mitad y mitad y una muzzarella, el contador queda en 0 y los gustos de pizza desaparecen de Ventas · Estimación: 45 min · Completado: —
+
+**Notas**
+
+- Plan propio y nivel 3: cambia el modelo de stock, el cobro, la anulación y las pérdidas.
+- Decisiones del dev y provisorias D-1 a D-3 en el plan del sprint.
+
+### T-22 · Cierre del Sprint 4
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Pendiente |
+| Dueño        | —         |
+| Inicio       | —         |
+| Tamaño       | S         |
+| Depende de   | todos     |
+| Plan         | [`docs/plans/sprint-4.md`](docs/plans/sprint-4.md) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como dev quiero el Sprint 4 verificado completo y en `main`, de forma que la próxima demo muestre lo que
+se probó.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · `npm run verify` completo y todos los E2E en verde sobre `develop` · Estimación: 30 min · Completado: —
+
+- [ ] **CA-2** · README, `docs/architecture.md` y `docs/initial_prompt.md` al día; con el OK del dev, merge local `develop → main` con el tag `sprint-4` · Estimación: 30 min · Completado: —
