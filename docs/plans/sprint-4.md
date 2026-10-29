@@ -147,6 +147,39 @@ cambio de modelo.
 - **Elegido**: lo mismo que la venta suelta: 2 prepizzas y 1 Coca-Cola. El costo congelado es el de cada gusto.
 - **Si el dev responde otra cosa**: no hay alternativa razonable; se pregunta de nuevo si aparece un caso.
 
+### D-12 · Los gustos de pizza y ciabatta en la grilla de Stock
+
+- **Pregunta**: si Prepizza y Pan de ciabatta pasan a ser categorías y Pizzas y Ciabattas salen de "Ingresar stock",
+  ¿dónde se cargan el costo y el precio de cada gusto?
+- **Situación**: sube la harina y el administrador quiere cambiar el precio de la Napolitana.
+- **Elegido**: los gustos siguen en la grilla, con su categoría (Pizzas o Ciabattas) y el stock en "—", sólo con
+  "Costo y precio". Así se respeta el pedido del cliente de tener todos los precios en Stock. El vendedor no ve esas
+  filas: no tienen stock y él no ve precios.
+- **Si el dev responde otra cosa**: los precios de esos gustos vuelven a Alta de productos. Nivel 2.
+
+### D-13 · Rango de Gastos por defecto
+
+- **Pregunta**: "con la fecha del mes", ¿del 1 a hoy o del 1 al último día?
+- **Situación**: el 28 de octubre se carga una factura con fecha del 30.
+- **Elegido**: del 1 al último día del mes en curso, en hora de Argentina; la factura del 30 se ve. La X limpia el
+  filtro y muestra todos los gastos.
+- **Si el dev responde otra cosa**: "Hasta" arranca en hoy. Nivel 1.
+
+### D-14 · Rango de Estadísticas
+
+- **Pregunta**: ¿cómo se cuentan los días del rango y hasta dónde puede llegar?
+- **Situación**: el administrador elige del 1 al 31 de octubre.
+- **Elegido**: se cuentan jornadas, de 7 a 7 como hoy: desde las 7:00 del 1 hasta las 6:59 del 1 de noviembre.
+  "Hasta" no puede ser anterior a "Desde", y el rango máximo es de 366 días (`VALIDATION`).
+- **Si el dev responde otra cosa**: el tope cambia o se saca. Nivel 2.
+
+### D-15 · Dónde van los arreglos de la revisión
+
+- **Pregunta**: ¿los arreglos de la revisión entran al Sprint 4 o van a un Sprint 5?
+- **Situación**: el Sprint 4 todavía no está en `main`, y uno de los arreglos corrige US-29.
+- **Elegido**: entran al Sprint 4, antes del merge a `main`, en el mismo modo autónomo.
+- **Si el dev responde otra cosa**: se cierra el Sprint 4 sin ellos y pasan al Sprint 5. Nivel 1 (sólo docs).
+
 ## Orden de ejecución
 
 | # | Ítem | Depende de | Rama |
@@ -158,7 +191,11 @@ cambio de modelo.
 | 4 | US-28 Todos los precios en Stock | T-21 | `feat/us-28-precios-por-gusto` |
 | 5 | US-29 Prepizzas y panes de ciabatta | US-28 | `feat/us-29-prepizzas-y-panes` |
 | 6 | US-31 El vendedor ve el stock, sin costos | US-29 | `feat/us-31-stock-para-vendedor` |
-| 7 | T-22 Cierre del Sprint 4 | todos | `docs/t-22-cierre-sprint-4` |
+| 7 | BUG-23 Stock: Prepizza y Pan de ciabatta como categorías | US-31 | `fix/bug-23-bases-como-categorias` |
+| 8 | BUG-24 La grilla tiembla al arrastrar el scroll hasta el fondo | BUG-23 | `fix/bug-24-scroll-de-la-grilla` |
+| 9 | US-33 Gastos: filtro desde y hasta | US-27 | `feat/us-33-gastos-por-fecha` |
+| 10 | US-32 Estadísticas: desde y hasta | US-21 | `feat/us-32-estadisticas-por-rango` |
+| 11 | T-22 Cierre del Sprint 4 | todos | `docs/t-22-cierre-sprint-4` |
 
 Primero van los dos ítems chicos que no tocan el stock. US-28 va antes de US-29 porque los dos tocan los precios de
 Stock, y US-29 parte de los precios por gusto.
@@ -227,6 +264,24 @@ Stock, y US-29 parte de los precios por gusto.
 - README, `docs/architecture.md` y `docs/initial_prompt.md` al día.
 - Con el OK del dev, merge local `develop → main` con el tag `sprint-4`.
 
+## Revisión del dev (2026-10-28)
+
+El dev revisó el Sprint 4 antes del merge a `main` y pidió cuatro arreglos. No hay migraciones nuevas.
+
+- **BUG-23** (S, nivel 2): sólo UI.
+  - `src/features/stock/domain/stock-categories.ts` define las categorías de Stock. Prepizza y Pan de ciabatta son
+    categorías, y Pizzas y Ciabattas quedan sólo para "Costo y precio" (D-12).
+  - En "Ingresar stock", elegir Prepizza o Pan de ciabatta toma la base y oculta "Gusto o bebida".
+  - El servidor ya rechaza ingresos y pérdidas de gustos de pizza y ciabatta.
+- **BUG-24** (XS, nivel 2): `virtualized-data-table.tsx`.
+  - Se reproduce en el navegador arrastrando la barra y midiendo `scrollTop`.
+  - Causa probable: `scroll-smooth` en el Scroller y el alto fijo de 64 px, cuando las filas de Stock son más altas.
+- **US-33** (S, nivel 2): "Desde" y "Hasta" en Gastos, del lado del cliente, como el historial de ventas. Arranca
+  con el mes en curso (D-13).
+- **US-32** (M, nivel 3): "Desde" y "Hasta" en Estadísticas.
+  - La acción recibe `{ from, to }`, con jornadas de 7 a 7 y un tope de 366 días (D-14).
+  - El repositorio ya filtra por rango.
+
 ## Trazabilidad: `specs.md` → ítems
 
 | Línea de `specs.md` | Pedido | Ítem |
@@ -238,6 +293,10 @@ Stock, y US-29 parte de los precios por gusto.
 | 239 | Las prepizzas y los panes vienen dados de alta con el sistema | US-29 |
 | 241 | Títulos más grandes y letras más claras de leer | US-30 |
 | — (pedido del dev en el chat) | El vendedor ve el stock, sin costos | US-31 |
+| — (revisión del dev) | Prepizza y Pan de ciabatta como categorías, sin elegir gusto | BUG-23 |
+| — (revisión del dev) | La grilla de Stock tiembla al arrastrar el scroll al fondo | BUG-24 |
+| — (revisión del dev) | Gastos con desde y hasta, el mes por defecto | US-33 |
+| — (revisión del dev) | Estadísticas con desde y hasta, hoy por defecto | US-32 |
 
 ---
 

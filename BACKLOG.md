@@ -3104,7 +3104,7 @@ que se lea de un vistazo cuánto sale la unidad, 3, 6 y 12.
 **Objetivo**: lo que pidió el cliente después de ver la demo del Sprint 3. Todos los precios en Stock; el stock de
 pizzas y ciabattas pasa a ser de prepizzas y panes; gastos con su proveedor; clientes con sólo el nombre obligatorio;
 títulos y letras más fáciles de leer; y, por pedido del dev, que el vendedor
-vea el stock sin costos.
+vea el stock sin costos. Al revisarlo, el dev sumó cuatro arreglos (BUG-23, BUG-24, US-32 y US-33) antes del cierre.
 
 **Plan del sprint**: [`docs/plans/sprint-4.md`](docs/plans/sprint-4.md). Tiene las decisiones del dev (2026-10-28),
 las decisiones provisorias D-1 a D-11, el orden y la trazabilidad de cada punto del pedido en `specs.md` a su ítem.
@@ -3120,8 +3120,12 @@ las decisiones provisorias D-1 a D-11, el orden y la trazabilidad de cada punto 
 | 4   | [US-28](#us-28--todos-los-precios-en-stock)                                     | Todos los precios en Stock                              | En revisión | T-21       | 3 h             |
 | 5   | [US-29](#us-29--prepizzas-y-panes-de-ciabatta)                                  | Prepizzas y panes de ciabatta                           | En revisión | US-28      | 5 h 30 min      |
 | 6   | [US-31](#us-31--el-vendedor-ve-el-stock-sin-costos)                             | El vendedor ve el stock, sin costos                     | En revisión | US-29      | 1 h 30 min      |
-| 7   | [T-22](#t-22--cierre-del-sprint-4)                                              | Cierre del Sprint 4                                     | En progreso | todos      | 1 h             |
-|     |                                                                                 | **Total del sprint**                                    |             |            | **15 h 30 min** |
+| 7   | [BUG-23](#bug-23--stock-prepizza-y-pan-de-ciabatta-como-categorías)             | Stock: Prepizza y Pan de ciabatta como categorías       | Por hacer   | US-31      | 1 h 30 min      |
+| 8   | [BUG-24](#bug-24--la-grilla-tiembla-al-arrastrar-el-scroll-hasta-el-fondo)      | La grilla tiembla al arrastrar el scroll hasta el fondo | Por hacer   | BUG-23     | 45 min          |
+| 9   | [US-33](#us-33--gastos-filtro-desde-y-hasta-con-el-mes-por-defecto)             | Gastos: filtro desde y hasta, con el mes por defecto    | Por hacer   | US-27      | 1 h             |
+| 10  | [US-32](#us-32--estadísticas-desde-y-hasta)                                     | Estadísticas: desde y hasta                             | Por hacer   | US-21      | 2 h             |
+| 11  | [T-22](#t-22--cierre-del-sprint-4)                                              | Cierre del Sprint 4                                     | En progreso | todos      | 1 h             |
+|     |                                                                                 | **Total del sprint**                                    |             |            | **20 h 45 min** |
 
 ### T-21 · Backlog del Sprint 4 desde el pedido del cliente
 
@@ -3411,6 +3415,118 @@ al administrador y sin ver lo que le cuesta al local.
 - `npm run verify` en verde: 961 tests, cobertura 96,12/89,95, 107 de integración, mutación 90,40 y build. E2E: 68
   en verde y uno de Clientes con el timeout de BUG-16, que pasó 2 de 2 al repetirlo.
 
+### BUG-23 · Stock: Prepizza y Pan de ciabatta como categorías
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Por hacer |
+| Dueño        | Agente    |
+| Inicio       | —         |
+| Tamaño       | S         |
+| Depende de   | US-31     |
+| Plan         | [`docs/plans/sprint-4.md`](docs/plans/sprint-4.md#revisión-del-dev-2026-10-28) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como administrador quiero elegir "Prepizza" o "Pan de ciabatta" como categoría al ingresar stock, de
+forma que cargue la cantidad sin elegir además un gusto que siempre es el mismo.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · En "Ingresar stock", la Categoría ofrece Prepizza y Pan de ciabatta en lugar de Pizzas y Ciabattas; al elegirlas no aparece "Gusto o bebida", y el resto del formulario (cantidad y proveedor) queda igual · Estimación: 45 min · Completado: —
+
+- [ ] **CA-2** · En la grilla, la columna "Categoría" muestra Prepizza y Pan de ciabatta, y "Gusto / bebida" muestra "—" en esas filas; el filtro las ofrece como categorías. Los gustos de pizza y ciabatta siguen sólo para "Costo y precio" (D-12) · Estimación: 30 min · Completado: —
+
+- [ ] **CA-3** · El vendedor ve las prepizzas y los panes como categorías y no ve las filas de gustos de pizza y ciabatta, que no tienen stock (D-12); E2E del ingreso de prepizzas y de la grilla del vendedor · Estimación: 15 min · Completado: —
+
+**Notas**
+
+- Pedido del dev al revisar el Sprint 4 (2026-10-28): US-29 dejaba la base como un gusto más dentro de su grupo.
+- Sólo UI: el servidor ya rechaza ingresos y pérdidas de gustos de pizza y ciabatta. Sin migración.
+- Nivel 2.
+
+### BUG-24 · La grilla tiembla al arrastrar el scroll hasta el fondo
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Por hacer |
+| Dueño        | Agente    |
+| Inicio       | —         |
+| Tamaño       | XS        |
+| Depende de   | BUG-23    |
+| Plan         | [`docs/plans/sprint-4.md`](docs/plans/sprint-4.md#revisión-del-dev-2026-10-28) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como administrador quiero arrastrar la barra de scroll de una grilla hasta el fondo sin que tiemble,
+de forma que pueda ver las últimas filas.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · Al arrastrar la barra de la grilla de Stock contra el fondo, la grilla no tiembla y la barra no se traba; medido en el navegador antes y después (`scrollTop` estable), también en Logs y Clientes · Estimación: 45 min · Completado: —
+
+**Notas**
+
+- Pedido del dev al revisar el Sprint 4 (2026-10-28).
+- La grilla es `src/components/ui/virtualized-data-table.tsx` (react-virtuoso), que usan 10 paneles.
+- Nivel 2.
+
+### US-33 · Gastos: filtro desde y hasta, con el mes por defecto
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Por hacer |
+| Dueño        | Agente    |
+| Inicio       | —         |
+| Tamaño       | S         |
+| Depende de   | US-27     |
+| Plan         | [`docs/plans/sprint-4.md`](docs/plans/sprint-4.md#revisión-del-dev-2026-10-28) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como administrador quiero filtrar los gastos entre dos fechas, de forma que vea lo que se gastó en un
+mes o en varios.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · Gastos tiene "Desde" y "Hasta", que arrancan en el 1 y el último día del mes en curso (hora de Argentina, D-13); la grilla muestra sólo los gastos con fecha de factura entre las dos, ambas incluidas · Estimación: 45 min · Completado: —
+
+- [ ] **CA-2** · La X limpia el filtro y muestra todos los gastos; tests del mes (febrero bisiesto, diciembre, último día a las 23:30) y E2E de Gastos con la fecha de hoy · Estimación: 15 min · Completado: —
+
+**Notas**
+
+- Pedido del dev al revisar el Sprint 4 (2026-10-28).
+- El filtro es del lado del cliente, como el historial de ventas: `fetchExpenses` ya trae todos los gastos.
+- Nivel 2.
+
+### US-32 · Estadísticas: desde y hasta
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Por hacer |
+| Dueño        | Agente    |
+| Inicio       | —         |
+| Tamaño       | M         |
+| Depende de   | US-21     |
+| Plan         | [`docs/plans/sprint-4.md`](docs/plans/sprint-4.md#revisión-del-dev-2026-10-28) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como administrador quiero ver las estadísticas entre dos fechas, de forma que pueda mirar un mes entero
+o varios.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · Estadísticas tiene "Desde" y "Hasta", las dos con la jornada de hoy por defecto; los números suman las ventas y pérdidas desde el inicio de la jornada "Desde" hasta el fin de la jornada "Hasta" (de 7 a 7, D-14) · Estimación: 1 h 15 min · Completado: —
+
+- [ ] **CA-2** · "Hasta" anterior a "Desde" o un rango de más de 366 días da `VALIDATION`; el vendedor sigue con `FORBIDDEN`; tests de contrato y fuzz del rango, y E2E con las dos fechas · Estimación: 45 min · Completado: —
+
+**Notas**
+
+- Pedido del dev al revisar el Sprint 4 (2026-10-28).
+- El repositorio ya filtra por un rango: cambian el schema de la acción, el servicio, el cálculo y la UI.
+- Nivel 3: cambia la entrada de una Server Action.
+
 ### T-22 · Cierre del Sprint 4
 
 | Campo        | Valor     |
@@ -3429,7 +3545,7 @@ se probó.
 
 **Criterios de aceptación**
 
-- [x] **CA-1** · `npm run verify` completo y todos los E2E en verde sobre `develop` · Estimación: 30 min · Completado: 2026-10-28 17:23
+- [ ] **CA-1** · `npm run verify` completo y todos los E2E en verde sobre `develop` · Estimación: 30 min · Completado: — (se corrió el 2026-10-28 17:23; se repite después de la revisión del dev)
 
 - [ ] **CA-2** · README, `docs/architecture.md` y `docs/initial_prompt.md` al día; con el OK del dev, merge local `develop → main` con el tag `sprint-4` · Estimación: 30 min · Completado: —
 
