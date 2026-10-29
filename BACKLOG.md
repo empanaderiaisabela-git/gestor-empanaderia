@@ -3638,7 +3638,7 @@ nombre, de forma que arme el pedido rápido y sin dudas.
 
 - [x] **CA-3** · La lista tiene un buscador "Buscar gusto" que no distingue mayúsculas, minúsculas ni acentos, y avisa "Ningún gusto coincide."; tests de dominio con fuzz, de componente y E2E · Estimación: 15 min · Completado: 2026-10-29 17:09
 
-- [x] **CA-4** · El aviso baja suave desde arriba, queda quieto y se desvanece; dura 3 segundos y cada agregado lo vuelve a animar (sin animación si el sistema pide menos movimiento) · Estimación: 20 min · Completado: 2026-10-29 19:15
+- [x] **CA-4** · El aviso baja suave desde arriba, queda quieto y se desvanece; dura 3 segundos y cada agregado lo vuelve a animar, también con Windows en "menos movimiento" · Estimación: 20 min · Completado: 2026-10-29 19:15
 
 **Notas**
 
@@ -3651,6 +3651,8 @@ nombre, de forma que arme el pedido rápido y sin dudas.
 - CA-4, pedido del dev en la tercera revisión: keyframe `toast-drop` en `src/app/motion.css` (Tailwind v4 genera
   `animate-toast-drop`). El aviso lleva `key` por agregado para que la animación arranque de nuevo. El E2E de
   tablero comprueba `animation-name` en Chromium.
+- El Windows del dev tiene apagadas las animaciones (`prefers-reduced-motion: reduce`), y con
+  `motion-reduce:animate-none` el aviso no se animaba. Se sacó, porque el dev pidió la animación.
 - Nivel 2.
 
 ### T-22 · Cierre del Sprint 4

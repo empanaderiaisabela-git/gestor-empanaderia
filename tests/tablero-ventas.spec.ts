@@ -44,6 +44,17 @@ test.describe('tablero de ventas (US-5)', () => {
     await expect(pedido.getByRole('button', { name: /Cobrar/ })).toBeDisabled();
   });
 
+  test.describe('con "menos movimiento" en el sistema', () => {
+    test.use({ contextOptions: { reducedMotion: 'reduce' } });
+
+    test('el aviso igual baja desde arriba y se desvanece (US-35)', async ({ page }) => {
+      await page.goto('/ventas/nueva');
+      await grupo(page, 'Empanadas').getByRole('button', { name: /½ docena/ }).click();
+      await gusto(page, 'Humita').getByRole('button', { name: 'Agregar uno' }).click();
+      await expect(page.getByRole('status').filter({ hasText: 'Se agregó Humita' })).toHaveCSS('animation-name', 'toast-drop');
+    });
+  });
+
   test('cada grupo se pinta con su color y lleva su ícono (US-20)', async ({ page }) => {
     await page.goto('/ventas/nueva');
     const colores = { Empanadas: 'rgb(255, 237, 213)', Pizzas: 'rgb(253, 244, 200)', Sanguches: 'rgb(226, 241, 223)', Ciabattas: 'rgb(242, 230, 215)', 'Coca-Cola': 'rgb(253, 227, 227)', Pepsi: 'rgb(223, 233, 251)' };
