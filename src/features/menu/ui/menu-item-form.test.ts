@@ -23,7 +23,7 @@ describe('formulario de Alta de productos', () => {
   });
 
   it('carga los valores de un gusto existente', () => {
-    const pizza: MenuItemDef = { id: 'x', group: 'pizzas', name: 'Muzza', unitCost: 3000, stock: 2.5, price1: 11000, price3: null, price6: null, price12: null, isActive: true, isVisible: false, version: 3, createdAt: '', updatedAt: '' };
+    const pizza: MenuItemDef = { id: 'x', group: 'pizzas', name: 'Muzza', unitCost: 3000, stock: 2.5, price1: 11000, price3: null, price6: null, price12: null, isActive: true, isVisible: false, isBase: false, version: 3, createdAt: '', updatedAt: '' };
     expect(initialValues(pizza)).toEqual({ group: 'pizzas', name: 'Muzza' });
   });
 });

@@ -102,7 +102,7 @@ export function CustomerModal({ isOpen, onClose, onSuccess, editingItem }: Custo
       <ErrorAlert error={serverError} />
       <div className='max-h-[60vh] overflow-y-auto px-1 space-y-4'>
         <div>
-          <label className='block text-md font-bold text-zinc-700 dark:text-zinc-300 mb-2'>Nombre Completo / Razón Social</label>
+          <label className='block text-md font-bold text-zinc-900 dark:text-zinc-100 mb-2'>Nombre Completo / Razón Social</label>
           <input
             type='text'
             {...register('name')}
@@ -114,7 +114,7 @@ export function CustomerModal({ isOpen, onClose, onSuccess, editingItem }: Custo
         </div>
 
         <div>
-          <label className='block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5'>DNI / CUIT</label>
+          <label className='block text-sm font-medium text-zinc-900 dark:text-zinc-100 mb-1.5'>DNI / CUIT</label>
           <input
             type='text'
             {...register('documentNumber')}
@@ -132,7 +132,7 @@ export function CustomerModal({ isOpen, onClose, onSuccess, editingItem }: Custo
 
         <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
           <div>
-            <label className='block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5'>Teléfono</label>
+            <label className='block text-sm font-medium text-zinc-900 dark:text-zinc-100 mb-1.5'>Teléfono</label>
             <input
               type='text'
               {...register('phone')}
@@ -142,7 +142,7 @@ export function CustomerModal({ isOpen, onClose, onSuccess, editingItem }: Custo
             {errors.phone && <p className='text-red-500 text-xs mt-1.5'>{errors.phone.message}</p>}
           </div>
           <div>
-            <label className='block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5'>Email</label>
+            <label className='block text-sm font-medium text-zinc-900 dark:text-zinc-100 mb-1.5'>Email</label>
             <input
               type='email'
               {...register('email')}

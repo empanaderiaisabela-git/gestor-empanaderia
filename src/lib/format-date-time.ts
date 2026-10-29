@@ -33,3 +33,9 @@ export function argentinaTime(value: Date | string): string {
 export function argentinaHour(value: Date): number {
   return Number(argentinaTime(value).slice(0, 2));
 }
+
+export function argentinaMonth(value: Date): { start: string; end: string } {
+  const month = argentinaDay(value).slice(0, 8);
+  const lastDay = new Date(Date.UTC(Number(month.slice(0, 4)), Number(month.slice(5, 7)), 0)).getUTCDate();
+  return { start: `${month}01`, end: `${month}${lastDay}` };
+}

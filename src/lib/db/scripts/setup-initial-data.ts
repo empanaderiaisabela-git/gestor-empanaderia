@@ -21,9 +21,9 @@ async function wipe(): Promise<void> {
   await db.delete(auditLogs);
   await db.delete(salePayments);
   await db.delete(sales);
+  await db.delete(expenses);
   await db.delete(providers);
   await db.delete(customers);
-  await db.delete(expenses);
   await db.delete(users);
 }
 

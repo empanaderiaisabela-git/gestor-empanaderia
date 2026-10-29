@@ -6,7 +6,7 @@ import type { CardDef } from '@/features/card/domain/card.schema';
 import type { CardRowActions } from './card-columns';
 
 function StatusBadge({ isActive }: { isActive: boolean }): JSX.Element {
-  const tone = isActive ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' : 'bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400';
+  const tone = isActive ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' : 'bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-200';
   return <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${tone}`}>{isActive ? 'Activa' : 'Inactiva'}</span>;
 }
 
@@ -23,7 +23,7 @@ function CardButtons({ card, actions }: { card: CardDef; actions: CardRowActions
 
 export function renderCardCard(actions: CardRowActions): (card: CardDef) => JSX.Element {
   return function CardCard(card: CardDef): JSX.Element {
-    const details = <span className='mt-1 text-sm text-zinc-500'>{describePlans(card.plans)}</span>;
+    const details = <span className='mt-1 text-sm text-zinc-700 dark:text-zinc-200'>{describePlans(card.plans)}</span>;
     return <EntityCard key={card.id} title={card.name} badges={<StatusBadge isActive={card.isActive} />} details={details} actions={<CardButtons card={card} actions={actions} />} />;
   };
 }

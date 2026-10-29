@@ -127,6 +127,34 @@
       "when": 1793073450983,
       "tag": "0017_precios-en-stock",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1793208764804,
+      "tag": "0018_cliente-dni-opcional",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1793210891403,
+      "tag": "0019_gasto-con-proveedor",
+      "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1793213315845,
+      "tag": "0020_precios-por-gusto",
+      "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1793214951378,
+      "tag": "0021_prepizzas-y-panes",
+      "breakpoints": true
     }
   ]
 }

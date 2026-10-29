@@ -1,6 +1,7 @@
 import { and, desc, eq, ilike } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { providers } from '@/lib/db/schema';
+import { expenses } from '@/lib/db/expense-schema';
 import { stockEntries } from '@/lib/db/stock-schema';
 import type { DbTransaction } from '@/lib/db/transaction';
 import type { ProviderInput } from '@/features/provider/domain/provider.schema';
@@ -17,6 +18,7 @@ export type ProviderRepository = {
   update(ref: VersionedRef, changes: ProviderChanges): Promise<Provider | null>;
   remove(ref: VersionedRef): Promise<boolean>;
   hasStockEntries(id: string): Promise<boolean>;
+  hasExpenses(id: string): Promise<boolean>;
 };
 
 type Executor = typeof db | DbTransaction;
@@ -36,5 +38,6 @@ export function drizzleProviderRepository(executor: Executor = db): ProviderRepo
     },
     remove: async (ref) => (await executor.delete(providers).where(sameVersion(ref)).returning({ id: providers.id })).length > 0,
     hasStockEntries: async (id) => (await executor.select({ id: stockEntries.id }).from(stockEntries).where(eq(stockEntries.providerId, id)).limit(1)).length > 0,
+    hasExpenses: async (id) => (await executor.select({ id: expenses.id }).from(expenses).where(eq(expenses.providerId, id)).limit(1)).length > 0,
   };
 }

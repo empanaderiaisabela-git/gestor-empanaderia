@@ -20,7 +20,7 @@ async function checkout(scope: CheckoutScope, caller: Caller, input: CheckoutDat
   const sold = [...lines, ...promos.flatMap((promo) => promo.parts)];
   const items = await lockFlavors(scope, sold);
   assertSellable(sold, items);
-  const book = priceBookOf(items, await scope.groupPrices.findAll());
+  const book = priceBookOf(items);
   const priced = lines.map((line) => priceLine(line, book));
   const { discountAmount, discountPercentage, buyerName, payments } = input;
   const subtotal = round2([...priced.map((line) => line.subtotal), ...promos.map(promoSubtotal)].reduce((sum, value) => sum + value, 0));

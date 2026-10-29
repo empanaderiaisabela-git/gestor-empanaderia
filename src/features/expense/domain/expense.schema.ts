@@ -16,12 +16,13 @@ const amount = z
   .max(MAX_MONEY, 'El monto es demasiado alto')
   .refine((value) => isValidDecimal(value, 2), 'Máximo 2 decimales');
 const invoiceDate = z.string('Elegí una fecha válida').regex(DATE_PATTERN, 'Elegí una fecha válida').refine(isRealDate, 'Elegí una fecha válida');
+const providerId = z.uuid('Elegí un proveedor');
 const version = z.number().int().min(1);
 
-export const expenseCreateSchema = z.strictObject({ invoiceNumber, title, amount, invoiceDate });
+export const expenseCreateSchema = z.strictObject({ invoiceNumber, title, amount, invoiceDate, providerId });
 export type ExpenseInput = z.infer<typeof expenseCreateSchema>;
 
-export const expenseUpdateSchema = z.strictObject({ invoiceNumber, title, amount, invoiceDate, version });
+export const expenseUpdateSchema = z.strictObject({ invoiceNumber, title, amount, invoiceDate, providerId, version });
 export type ExpenseUpdateInput = z.infer<typeof expenseUpdateSchema>;
 
 export const expenseDeleteSchema = z.strictObject({ id: z.uuid(), version });
@@ -33,6 +34,8 @@ export const expenseRowSchema = z.object({
   title: z.string(),
   amount: amountSchema,
   invoiceDate: z.string(),
+  providerId: z.uuid().nullable(),
+  providerName: z.string().nullable(),
   version: z.number(),
   createdAt: timestampSchema,
   updatedAt: timestampSchema,

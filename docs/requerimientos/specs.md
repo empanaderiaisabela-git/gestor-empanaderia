@@ -219,3 +219,23 @@ Aclaraciones para la sprint 3:
 - En estadisticas, se va la frase "Dinero generado por comida".
 
 - En ventas, el carrito que se va generando no me deja quitar de a un item, por ejemplo, si queria vender 3 pizzas y por accidente puse 4, tengo que eliminar las 4 de una y volver a poner 3 en vez de poner una sola, me gustaria poder quitar de a una.
+
+---------------------------------------------------------------------------
+
+Pedido del cliente después de la demo de la sprint 3 (2026-10-28):
+
+1: Todos los precios van en stock; ya no se da mas precio de ciabatta ni empanada ni nada en alta de productos, esto con el fin de que si el dia de mañana las empanadas se venden con precios diferentes por gusto, el software ya esté listo.
+
+2: en gastos, mi cliente quiere tambien poner un form para anotar el proveedor que le genero esa factura, asi que de todos los proveedores dados de alta, tienen que aparecer todos disponibles para colocar en la anotadora de gastos.
+
+3: Que el tab de cliente solo pida de manera obligatoria el nombre, tanto el telefono commo el dni ni ningun otro dato será necesario.
+
+4: ATENCION: mi cliente me acaba de aclarar un cambio de regla de negocio importante: ellos no stockean ni gusto de pizza particular, ni ciabatta en particular, PARA ESAS DOS COMIDAS, SOLO SE GUARDA EL PAN DE CIABATTA Y LAS PREPIZZAS. ¿se eliminan los gustos de pizza y ciabatta?: NO, NO SE ELIMINAN, pero ya no se stockean, que quiere decir esto? que aun asi se siguen registrando para mantener su precio de venta, pero no se les añade un valor de compra a cada gusto en particular pues solo se contempla su prepizza (o su pan de ciabatta si es ciabatta). Entonces como quedaría ahora:
+Cuando das alta de producto, se sigue dando alta de producto común y corriente con todo lo que ya existe, pero para stockear, solo se stockean las prepizzas y los panes de ciabatta, entonces, cuando ocurre una venta de pizza por ejemplo, si es una pizza de jamon y queso por ejemplo, entonces la venta se hace de la siguiente manera:
+
+voy a nueva venta, elijo la pizza de jamon y queso, le doy a vender, alli se descuenta lo que se puso como costo de armar ese gusto y se suma a la ganancia la diferencia con lo que salio venderlo, pero aca viene la parte clave: NO SE DESCUENTA STOCK DE ESE GUSTO EN PARTICULAR, SE DESCUENTA STOCK DE LA PREPIZZA la cual tiene que tener un numero de stock previamente asignado como siempre, y no tendrá un valor, pues se contempla todo en cada gusto creado al ponerle costo que le salio al local crearla.
+Para resumir, contador de stock de prepizzas sin precio, cada venta de cualquier gusto de pizza descuenta una prepizza, y suma a la ganancia usando lo registrado al meter al sistema ese gusto en particular, el stock del gusto en particular no se descuenta pues ya no existe ese stock, es decir, no se cuenta cantidad de "pizzas de X gusto" SOLO PREPIZZAS (a las cuales no se le ingresa costo pues ya se contempla en cada gusto). Exactamente lo mismo aplica para panes de ciabatta.
+
+Lo que si... necesito ayuda para vincular esta información, creo que lo mejor es tomar la decision que las prepizzas ya vienen dadas de alta con el sistema, y que directamente se seleccione el stock de ellas. Mismo panes de ciabatta.
+
+5: mi cliente me pide: titulos mas grandes, caracteres con fuentes oscuras es decir colores oscuros a las letras, en si un poco mas de claridad para la lectura de la información principal.

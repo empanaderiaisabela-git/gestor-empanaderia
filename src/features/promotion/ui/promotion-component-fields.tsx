@@ -41,7 +41,7 @@ export function PromotionComponentFields({ components, error, onChange }: Props)
   const replace = (index: number, component: ComponentValues): void => onChange(components.map((current, position) => (position === index ? component : current)));
   return (
     <fieldset className='space-y-2'>
-      <legend className='text-sm font-medium text-zinc-700 dark:text-zinc-300'>Productos de la promo (los gustos se eligen al vender)</legend>
+      <legend className='text-sm font-medium text-zinc-900 dark:text-zinc-100'>Productos de la promo (los gustos se eligen al vender)</legend>
       <ul className='space-y-2'>
         {components.map((component, index) => (
           <ComponentRow key={index} component={component} index={index} onChange={(next) => replace(index, next)} onRemove={() => onChange(components.filter((_, position) => position !== index))} />

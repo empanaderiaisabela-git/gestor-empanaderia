@@ -7,7 +7,7 @@ type FormFieldProps = { label: string; error?: string; children: ReactNode };
 
 export function FormField({ label, error, children }: FormFieldProps): JSX.Element {
   return (
-    <label className='block text-sm font-medium text-zinc-700 dark:text-zinc-300'>
+    <label className='block text-sm font-medium text-zinc-900 dark:text-zinc-100'>
       {label}
       {children}
       {error && <span className='block text-red-500 text-xs mt-1.5'>{error}</span>}

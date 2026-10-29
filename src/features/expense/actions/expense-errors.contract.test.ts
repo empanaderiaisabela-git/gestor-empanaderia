@@ -41,10 +41,16 @@ describe('tabla de errores de Gastos (US-14 CA-3)', () => {
   it.each([
     { caso: 'monto 0', input: { ...EXPENSE_INPUT, amount: 0 } },
     { caso: 'sin número', input: { ...EXPENSE_INPUT, invoiceNumber: '' } },
+    { caso: 'sin proveedor', input: { ...EXPENSE_INPUT, providerId: '' } },
     { caso: 'fecha inválida', input: { ...EXPENSE_INPUT, invoiceDate: '2026-13-01' } },
   ])('VALIDATION: $caso', async ({ input }) => {
     await asUser({ role: 'admin' });
     expect(await createExpenseAction(input)).toEqual({ success: false, code: 'VALIDATION', error: VALIDATION.INVALID_DATA });
+  });
+
+  it('RELATION_NOT_FOUND: avisa que el proveedor no existe', async () => {
+    await asUser({ role: 'admin' });
+    expect(await createExpenseAction({ ...EXPENSE_INPUT, providerId: crypto.randomUUID() })).toEqual({ success: false, code: 'RELATION_NOT_FOUND', error: DATABASE.RELATION_NOT_FOUND });
   });
 
   it('DUPLICATE: avisa que ya existe una factura con ese número', async () => {

@@ -8,10 +8,10 @@ import { formatInvoiceDate } from './expense-form';
 
 export function renderExpenseCard(actions: ExpenseRowActions): (expense: ExpenseDef) => JSX.Element {
   return function ExpenseCard(expense: ExpenseDef): JSX.Element {
-    const badge = <span className='px-2.5 py-0.5 rounded-full text-xs font-medium bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300'>{formatInvoiceDate(expense.invoiceDate)}</span>;
+    const badge = <span className='px-2.5 py-0.5 rounded-full text-xs font-medium bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-100'>{formatInvoiceDate(expense.invoiceDate)}</span>;
     const details = (
-      <span className='mt-1 text-sm text-zinc-500'>
-        Factura {expense.invoiceNumber} · {formatMoney(expense.amount)}
+      <span className='mt-1 text-sm text-zinc-700 dark:text-zinc-200'>
+        Factura {expense.invoiceNumber} · {expense.providerName ?? '—'} · {formatMoney(expense.amount)}
       </span>
     );
     const buttons = (

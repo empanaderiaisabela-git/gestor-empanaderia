@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { argentinaDay, argentinaHour, argentinaTime, formatDateTime } from './format-date-time';
+import { argentinaDay, argentinaHour, argentinaMonth, argentinaTime, formatDateTime } from './format-date-time';
 
 describe('argentinaTime y argentinaHour (US-13)', () => {
   it('da la hora de Buenos Aires', () => {
@@ -30,5 +30,16 @@ describe('argentinaDay (US-7 CA-1)', () => {
     expect(argentinaDay('2026-10-25T02:30:00Z')).toBe('2026-10-24');
     expect(argentinaDay(new Date('2026-10-25T03:00:00Z'))).toBe('2026-10-25');
     expect(argentinaDay('no-es-una-fecha')).toBe('');
+  });
+});
+
+describe('argentinaMonth (US-33)', () => {
+  it.each([
+    { utc: '2028-02-10T12:00:00Z', start: '2028-02-01', end: '2028-02-29' },
+    { utc: '2026-12-15T12:00:00Z', start: '2026-12-01', end: '2026-12-31' },
+    { utc: '2026-11-01T02:30:00Z', start: '2026-10-01', end: '2026-10-31' },
+    { utc: '2026-04-01T03:00:00Z', start: '2026-04-01', end: '2026-04-30' },
+  ])('el mes de $utc en Buenos Aires va del $start al $end', ({ utc, start, end }) => {
+    expect(argentinaMonth(new Date(utc))).toEqual({ start, end });
   });
 });

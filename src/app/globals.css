@@ -1,6 +1,7 @@
 @import 'tailwindcss';
 @import './group-colors.css';
 @import './stat-colors.css';
+@import './motion.css';
 
 @theme {
   --color-background: var(--background);

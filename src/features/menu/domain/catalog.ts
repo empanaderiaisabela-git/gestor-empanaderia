@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { formatMoney } from '@/lib/format-money';
-import { GROUPS, isPricedByGroup, MENU_GROUPS, type MenuGroup, PRICE_FIELDS } from './menu-groups';
+import { GROUPS, MENU_GROUPS, type MenuGroup, PRICE_FIELDS } from './menu-groups';
 import { priceList, type PriceValues } from './menu-price-list';
 
 export type CatalogPhoto = { publicId: string; url: string };
@@ -16,8 +16,8 @@ export const catalogItemRowSchema = z.object({
 });
 export type CatalogItemDef = z.output<typeof catalogItemRowSchema>;
 
-export function catalogItemOf(item: CatalogSource, groupPrices: PriceValues | undefined): CatalogItemDef {
-  const prices = priceList(item.group, isPricedByGroup(item.group) ? (groupPrices ?? {}) : item.prices);
+export function catalogItemOf(item: CatalogSource): CatalogItemDef {
+  const prices = priceList(item.group, item.prices);
   return { id: item.id, group: item.group, name: item.name, inStock: item.stock > 0, prices, images: item.images };
 }
 

@@ -4,17 +4,19 @@ import type { OrderLine } from './order-line';
 import { linePrice, orderTotal, type PriceBook, type Prices, unitLinePrice } from './order-pricing';
 import { availableStock, lineCost, orderUsage } from './order-usage';
 
+const DOZEN: Prices = { price1: 3000, price3: 8500, price6: 16500, price12: 32000 };
 const ITEMS: Record<string, Prices> = {
   muzza: { price1: 10000 },
   jyq: { price1: 5000 },
   primavera: { price1: 1600, price3: 4500, price6: 8600, price12: 16500 },
   jamon: { price1: 1400, price3: 4000, price6: 7600, price12: 14500 },
   coca: { price1: 3500 },
+  carne: DOZEN,
+  pollo: DOZEN,
+  humita: { ...DOZEN, price12: 35000 },
+  capresse: { price1: 6000 },
 };
-const BOOK: PriceBook = {
-  item: (id) => ITEMS[id],
-  group: (group) => (group === 'empanadas' ? { price1: 1200, price3: 3400, price6: 6500, price12: 12000 } : undefined),
-};
+const BOOK: PriceBook = { item: (id) => ITEMS[id] };
 const line = (group: OrderLine['group'], presentationKey: string, flavors: OrderLine['flavors']): OrderLine => ({ id: 'l', group, presentationKey, flavors, quantity: 1 });
 const times = (base: OrderLine, quantity: number): OrderLine => ({ ...base, quantity });
 
@@ -23,8 +25,16 @@ describe('precio de cada línea (US-5 CA-2 a CA-4; specs.md)', () => {
     expect(unitLinePrice(line('pizzas', 'pizza_2', [{ menuItemId: 'muzza', units: 0.5 }, { menuItemId: 'jyq', units: 0.5 }]), BOOK)).toBe(10000);
   });
 
-  it('la ½ docena de empanadas vale el precio del grupo, surtida o no', () => {
-    expect(unitLinePrice(line('empanadas', 'u6', [{ menuItemId: 'carne', units: 2 }, { menuItemId: 'pollo', units: 4 }]), BOOK)).toBe(6500);
+  it('docena surtida con todos los gustos al mismo precio: 7 Carne + 5 Pollo a $32.000 dan $32.000 (US-28, D-4)', () => {
+    expect(unitLinePrice(line('empanadas', 'u12', [{ menuItemId: 'carne', units: 7 }, { menuItemId: 'pollo', units: 5 }]), BOOK)).toBe(32000);
+  });
+
+  it('docena surtida con precios distintos: proporcional al precio de cada gusto (US-28, D-4)', () => {
+    expect(unitLinePrice(line('empanadas', 'u12', [{ menuItemId: 'carne', units: 7 }, { menuItemId: 'humita', units: 5 }]), BOOK)).toBe(33250);
+  });
+
+  it('una ciabatta cobra el precio de unidad de su gusto, como una pizza de 1 sabor (US-28)', () => {
+    expect(unitLinePrice(line('ciabattas', 'u1', [{ menuItemId: 'capresse', units: 1 }]), BOOK)).toBe(6000);
   });
 
   it('sanguches surtidos: proporcional al precio de cada gusto', () => {
@@ -36,23 +46,25 @@ describe('precio de cada línea (US-5 CA-2 a CA-4; specs.md)', () => {
     expect(linePrice(times(line('coca_cola', 'u1', [{ menuItemId: 'coca', units: 1 }]), 2), BOOK)).toBe(7000);
   });
 
-  it('sin precio cargado (grupo o gusto) la línea no tiene precio y el total tampoco', () => {
-    const ciabatta = line('ciabattas', 'u1', [{ menuItemId: 'pollo', units: 1 }]);
+  it('sin precio cargado en un gusto, la línea no tiene precio y el total tampoco', () => {
+    const ciabatta = line('ciabattas', 'u1', [{ menuItemId: 'bondiola', units: 1 }]);
     expect(linePrice(ciabatta, BOOK)).toBeNull();
     expect(orderTotal([ciabatta], BOOK)).toBeNull();
+    expect(unitLinePrice(line('empanadas', 'u6', [{ menuItemId: 'carne', units: 3 }, { menuItemId: 'verdura', units: 3 }]), BOOK)).toBeNull();
     expect(unitLinePrice(line('pizzas', 'pizza_1', []), BOOK)).toBeNull();
   });
 
   it('suma el total del pedido', () => {
-    expect(orderTotal([line('empanadas', 'u12', [{ menuItemId: 'carne', units: 12 }]), line('coca_cola', 'u1', [{ menuItemId: 'coca', units: 1 }])], BOOK)).toBe(15500);
+    expect(orderTotal([line('empanadas', 'u12', [{ menuItemId: 'carne', units: 12 }]), line('coca_cola', 'u1', [{ menuItemId: 'coca', units: 1 }])], BOOK)).toBe(35500);
   });
 
-  it('fuzz: si todos los gustos valen lo mismo, la surtida cuesta lo mismo que la entera', () => {
-    const same: PriceBook = { item: () => ({ price1: 1000, price3: 2800, price6: 5400, price12: 10000 }), group: () => undefined };
+  it('fuzz: si todos los gustos valen lo mismo, la surtida cuesta exactamente lo mismo que la entera', () => {
     fc.assert(
-      fc.property(fc.integer({ min: 0, max: 6 }), (carne) => {
-        const flavors = [{ menuItemId: 'a', units: carne }, { menuItemId: 'b', units: 6 - carne }].filter((flavor) => flavor.units > 0);
-        return unitLinePrice(line('sanguches', 'u6', flavors), same) === 5400;
+      fc.property(fc.integer({ min: 0, max: 12 }), fc.integer({ min: 1, max: 999_999_999 }), (first, cents) => {
+        const price = cents / 100;
+        const same: PriceBook = { item: () => ({ price1: price, price3: price, price6: price, price12: price }) };
+        const flavors = [{ menuItemId: 'a', units: first }, { menuItemId: 'b', units: 12 - first }].filter((flavor) => flavor.units > 0);
+        return unitLinePrice(line('empanadas', 'u12', flavors), same) === price && unitLinePrice(line('sanguches', 'u12', flavors), same) === price;
       })
     );
   });
@@ -68,7 +80,7 @@ describe('consumo de stock y costo (US-5 CA-5; US-6 CA-3)', () => {
 
   it('el stock disponible descuenta lo que ya está en el pedido', () => {
     const lines = [times(line('empanadas', 'u6', [{ menuItemId: 'carne', units: 6 }]), 2), line('empanadas', 'u1', [{ menuItemId: 'carne', units: 1 }])];
-    expect(availableStock({ id: 'carne', stock: 20 }, lines)).toBe(7);
-    expect(availableStock({ id: 'pollo', stock: 20 }, lines)).toBe(20);
+    expect(availableStock({ id: 'carne', group: 'empanadas', stock: 20 }, lines)).toBe(7);
+    expect(availableStock({ id: 'pollo', group: 'empanadas', stock: 20 }, lines)).toBe(20);
   });
 });

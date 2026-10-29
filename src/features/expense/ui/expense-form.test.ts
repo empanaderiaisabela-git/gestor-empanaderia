@@ -1,12 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import { formatInvoiceDate, initialValues, parseCreate, parseUpdate } from './expense-form';
 
-const VALUES = { invoiceNumber: 'A-1', title: 'Harina', amount: '18500,50', invoiceDate: '2026-10-24' };
+const PROVIDER_ID = '00000000-0000-4000-8000-0000000000b1';
+const VALUES = { invoiceNumber: 'A-1', title: 'Harina', amount: '18500,50', invoiceDate: '2026-10-24', providerId: PROVIDER_ID };
 
 describe('formulario de Gastos (US-14 CA-1)', () => {
   it('un gasto nuevo arranca con la fecha de hoy; al editar trae lo guardado', () => {
-    expect(initialValues(null, '2026-10-26')).toEqual({ invoiceNumber: '', title: '', amount: '', invoiceDate: '2026-10-26' });
-    const expense = { id: 'e', invoiceNumber: 'A-1', title: 'Harina', amount: 18500.5, invoiceDate: '2026-10-24', version: 2, createdAt: '', updatedAt: '' };
+    expect(initialValues(null, '2026-10-26')).toEqual({ invoiceNumber: '', title: '', amount: '', invoiceDate: '2026-10-26', providerId: '' });
+    const expense = { id: 'e', invoiceNumber: 'A-1', title: 'Harina', amount: 18500.5, invoiceDate: '2026-10-24', providerId: PROVIDER_ID, providerName: 'Molino', version: 2, createdAt: '', updatedAt: '' };
     expect(initialValues(expense, '2026-10-26')).toEqual({ ...VALUES, amount: '18500.5' });
   });
 
@@ -16,9 +17,9 @@ describe('formulario de Gastos (US-14 CA-1)', () => {
   });
 
   it('marca el error de cada campo', () => {
-    expect(parseCreate({ invoiceNumber: '', title: '', amount: '', invoiceDate: '' })).toEqual({
+    expect(parseCreate({ invoiceNumber: '', title: '', amount: '', invoiceDate: '', providerId: '' })).toEqual({
       ok: false,
-      errors: { invoiceNumber: 'El número de factura es obligatorio', title: 'El título es obligatorio', amount: 'Ingresá un monto válido', invoiceDate: 'Elegí una fecha válida' },
+      errors: { invoiceNumber: 'El número de factura es obligatorio', title: 'El título es obligatorio', amount: 'Ingresá un monto válido', invoiceDate: 'Elegí una fecha válida', providerId: 'Elegí un proveedor' },
     });
   });
 

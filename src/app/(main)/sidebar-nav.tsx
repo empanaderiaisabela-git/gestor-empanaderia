@@ -20,7 +20,7 @@ const ICONS: Readonly<Record<string, LucideIcon>> = {
 type SidebarNavProps = { role: Role; pathname: string; onNavigate: () => void };
 
 const ACTIVE = 'bg-brand-50 text-brand-600 dark:bg-brand-500/10 dark:text-brand-400';
-const IDLE = 'text-zinc-600 hover:bg-zinc-50 dark:text-zinc-400 dark:hover:bg-zinc-800/50 dark:hover:text-zinc-200';
+const IDLE = 'text-zinc-800 hover:bg-zinc-50 dark:text-zinc-200 dark:hover:bg-zinc-800/50 dark:hover:text-zinc-200';
 
 export function SidebarNav({ role, pathname, onNavigate }: SidebarNavProps): JSX.Element {
   return (
@@ -39,7 +39,7 @@ export function SidebarNav({ role, pathname, onNavigate }: SidebarNavProps): JSX
             aria-current={isActive ? 'page' : undefined}
             className={`flex items-center px-3 py-2.5 text-md font-medium rounded-lg transition-all focus:outline-none ${isActive ? ACTIVE : IDLE}`}
           >
-            <Icon className={`shrink-0 w-5 h-5 mr-3 ${isActive ? 'text-brand-600 dark:text-brand-400' : 'text-zinc-400 dark:text-zinc-500'}`} />
+            <Icon className={`shrink-0 w-5 h-5 mr-3 ${isActive ? 'text-brand-600 dark:text-brand-400' : 'text-zinc-600 dark:text-zinc-300'}`} />
             {label}
           </Link>
         );

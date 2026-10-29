@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
+import { EXPENSE_PROVIDER } from '../testing/expense-provider';
 import { EXPENSE_INPUT } from '../testing/expense-repository.behavior';
 import { createFakeExpenseUnitOfWork, type FakeExpenseUnitOfWork } from '../testing/fake-expense-unit-of-work';
 import { createExpenseService, type ExpenseService } from './expense.service';
@@ -17,7 +18,7 @@ describe('expense.service (US-14)', () => {
   it('anota el gasto a nombre de quien lo carga y audita CREAR (CA-1 y CA-3)', async () => {
     const expense = await service.create(CALLER, EXPENSE_INPUT);
     expect(expense).toMatchObject({ userId: CALLER.id, amount: '18500.50', version: 1 });
-    expect(fake.state.audits).toEqual([{ userId: CALLER.id, action: 'CREAR', entityId: expense.id, detail: { name: 'Harina 25 kg', invoiceNumber: EXPENSE_INPUT.invoiceNumber, amount: 18500.5, invoiceDate: '2026-10-24' } }]);
+    expect(fake.state.audits).toEqual([{ userId: CALLER.id, action: 'CREAR', entityId: expense.id, detail: { name: 'Harina 25 kg', invoiceNumber: EXPENSE_INPUT.invoiceNumber, amount: 18500.5, invoiceDate: '2026-10-24', provider: EXPENSE_PROVIDER.name } }]);
   });
 
   it('DUPLICATE: un número de factura repetido, sin distinguir mayúsculas, al cargar o al editar', async () => {
@@ -33,6 +34,10 @@ describe('expense.service (US-14)', () => {
     await service.remove(CALLER, { id: expense.id, version: 2 });
     expect(await service.list()).toEqual([]);
     expect(fake.state.audits.map((entry) => entry.action)).toEqual(['CREAR', 'ACTUALIZAR', 'ELIMINAR']);
+  });
+
+  it('RELATION_NOT_FOUND: un proveedor que no existe', async () => {
+    await expect(service.create(CALLER, { ...EXPENSE_INPUT, providerId: crypto.randomUUID() })).rejects.toMatchObject({ cause: { code: '23503' } });
   });
 
   it.each([

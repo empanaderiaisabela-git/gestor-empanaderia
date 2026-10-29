@@ -23,11 +23,11 @@ function PromoButton({ promotion, board }: { promotion: PromotionDef; board: Ord
   const missing = promotion.components.some((component) => board.itemsOf(component.group).length === 0);
   return (
     <button disabled={missing} onClick={() => startPromo(promotion)} title={missing ? 'Falta cargar gustos de algún producto' : undefined} className='rounded-xl border border-black/10 dark:border-white/10 bg-white/70 dark:bg-zinc-950/40 px-3 py-2.5 text-left hover:border-brand-500 disabled:opacity-50 disabled:cursor-not-allowed'>
-      <span className='flex justify-between gap-2 font-bold text-zinc-900 dark:text-zinc-100'>
+      <span className='flex justify-between gap-2 font-bold text-zinc-900 dark:text-zinc-50'>
         <span>{promotion.name}</span>
         <span>{formatMoney(promotion.price)}</span>
       </span>
-      <span className='block text-xs text-zinc-600 dark:text-zinc-400'>{describeComponents(promotion.components)}</span>
+      <span className='block text-xs text-zinc-800 dark:text-zinc-200'>{describeComponents(promotion.components)}</span>
     </button>
   );
 }
@@ -42,8 +42,8 @@ export function PromoCard({ board }: { board: OrderBoardModel }): JSX.Element {
           <HandCoins className='w-6 h-6' aria-hidden='true' />
         </span>
         <div>
-          <p className='text-xs font-bold uppercase tracking-wider text-zinc-600 dark:text-zinc-400'>Promos</p>
-          <p className='text-lg font-black text-zinc-900 dark:text-zinc-100'>{count.toLocaleString('es-AR')} en pedido</p>
+          <p className='text-xs font-bold uppercase tracking-wider text-zinc-800 dark:text-zinc-200'>Promos</p>
+          <p className='text-lg font-black text-zinc-900 dark:text-zinc-50'>{count.toLocaleString('es-AR')} en pedido</p>
         </div>
       </header>
       {promotions.length === 0 && <p className='text-xs font-semibold text-amber-800 dark:text-amber-300'>Todavía no hay promos activas</p>}

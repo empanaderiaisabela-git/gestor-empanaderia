@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { MESSAGES } from '@/config/messages';
 import { asUser, TEST_USER_IDS } from '@/test/as-user';
 import { fakeCheckout } from '../testing/fake-checkout-unit-of-work';
-import { CARNE, checkoutOf, cokes, halfAndHalf, halfDozen, loadMenu, MEDIA_Y_COCA, promoOf } from '../testing/checkout-fixtures';
+import { CARNE, checkoutOf, cokes, halfAndHalf, halfDozen, loadMenu, MEDIA_Y_COCA, MUZZA, promoOf } from '../testing/checkout-fixtures';
 import { checkoutAction } from './checkout';
 
 vi.mock('@/features/order/repository/checkout-unit-of-work', async () => {
@@ -40,6 +40,7 @@ describe('acción de cobro (US-6)', () => {
     { caso: 'VALIDATION: línea incompleta', input: checkoutOf([{ ...halfDozen, flavors: [{ menuItemId: CARNE.id, units: 5 }] }], { payments: [{ type: 'efectivo', amount: 8000 }] }), code: 'VALIDATION', error: MESSAGES.ERROR.VALIDATION.INVALID_DATA },
     { caso: 'NOT_FOUND: gusto borrado', input: checkoutOf([{ ...cokes(1), flavors: [{ menuItemId: '10000000-0000-4000-8000-0000000000ff', units: 1 }] }], { payments: [{ type: 'efectivo', amount: 2500 }] }), code: 'NOT_FOUND', error: 'El producto ya no existe.' },
     { caso: 'INSUFFICIENT_STOCK: no alcanza', input: checkoutOf([cokes(6)], { payments: [{ type: 'transferencia', amount: 15000 }] }), code: 'INSUFFICIENT_STOCK', error: 'No hay stock suficiente de Coca 500.' },
+    { caso: 'INSUFFICIENT_STOCK: no alcanzan las prepizzas (US-29)', input: checkoutOf([{ group: 'pizzas', presentationKey: 'pizza_1', flavors: [{ menuItemId: MUZZA.id, units: 1 }], quantity: 3 }], { payments: [{ type: 'efectivo', amount: 27000 }] }), code: 'INSUFFICIENT_STOCK', error: 'No hay stock suficiente de Prepizza.' },
   ])('$caso', async ({ input, code, error }) => {
     await asUser({ role: 'vendedor' });
     expect(await checkoutAction(input)).toEqual({ success: false, code, error });

@@ -12,9 +12,9 @@ export type ProviderRowActions = {
 
 function NameCell({ provider }: { provider: ProviderDef }): JSX.Element {
   return (
-    <div className='flex items-center gap-2 font-bold text-zinc-900 dark:text-zinc-100 truncate min-w-0' title={provider.name}>
+    <div className='flex items-center gap-2 font-bold text-zinc-900 dark:text-zinc-50 truncate min-w-0' title={provider.name}>
       <span className='truncate'>{provider.name}</span>
-      {!provider.isActive && <span className='shrink-0 px-1.5 py-0.5 bg-zinc-100 text-zinc-500 dark:bg-zinc-800 text-[10px] font-bold rounded uppercase'>Inactivo</span>}
+      {!provider.isActive && <span className='shrink-0 px-1.5 py-0.5 bg-zinc-100 text-zinc-700 dark:text-zinc-200 dark:bg-zinc-800 text-[10px] font-bold rounded uppercase'>Inactivo</span>}
     </div>
   );
 }
@@ -39,8 +39,8 @@ function RowActions({ provider, actions }: { provider: ProviderDef; actions: Pro
 export function getProviderColumns(actions: ProviderRowActions): ColumnDef<ProviderDef>[] {
   const columns: ColumnDef<ProviderDef>[] = [
     { header: 'Empresa / Mayorista', cellClassName: 'max-w-[200px]', cell: (provider) => <NameCell provider={provider} /> },
-    { header: 'Teléfono', cellClassName: 'text-zinc-500', cell: (provider) => provider.phone || '---' },
-    { header: 'Correo', cellClassName: 'text-zinc-500 max-w-[150px] truncate', cell: (provider) => <span title={provider.email || '---'}>{provider.email || '---'}</span> },
+    { header: 'Teléfono', cellClassName: 'text-zinc-700 dark:text-zinc-200', cell: (provider) => provider.phone || '---' },
+    { header: 'Correo', cellClassName: 'text-zinc-700 dark:text-zinc-200 max-w-[150px] truncate', cell: (provider) => <span title={provider.email || '---'}>{provider.email || '---'}</span> },
   ];
   if (actions.role !== 'admin') return columns;
   return [...columns, { header: 'Acciones', headerClassName: 'text-right', cellClassName: 'flex gap-1 justify-end', cell: (provider) => <RowActions provider={provider} actions={actions} /> }];

@@ -13,8 +13,9 @@ vi.mock('@/features/stock/repository/stock-unit-of-work', async () => {
   return { drizzleStockUnitOfWork: fake };
 });
 
-const ITEM = stockItem({ id: '11111111-1111-4111-8111-111111111111' });
+const ITEM = stockItem({ id: '11111111-1111-4111-8111-111111111111', price1: '1200.00', price3: '3400.00', price6: '6500.00', price12: '12000.00' });
 const PROVIDER = '22222222-2222-4222-8222-222222222222';
+const [PIZZA_ID, BASE_ID] = ['66666666-6666-4666-8666-666666666666', '77777777-7777-4777-8777-777777777777'];
 
 describe('acciones de Stock (US-4)', () => {
   beforeEach(() => {
@@ -32,7 +33,7 @@ describe('acciones de Stock (US-4)', () => {
 
   it('MISSING_COST y MISSING_PRICE: un gusto nuevo sin costo ni precio no admite ingresos', async () => {
     await asUser({ role: 'admin' });
-    const bare = stockItem({ id: '55555555-5555-4555-8555-555555555555', group: 'pizzas', name: 'Napolitana', unitCost: null, stock: '0.0' });
+    const bare = stockItem({ id: '55555555-5555-4555-8555-555555555555', group: 'coca_cola', name: 'Coca 500', unitCost: null, stock: '0.0' });
     fakeStock.state.items.push(bare);
     expect(await registerStockEntryAction({ menuItemId: bare.id, quantity: 6 })).toEqual({ success: false, code: 'MISSING_COST', error: 'Falta el costo para el local.' });
     expect(await registerStockEntryAction({ menuItemId: bare.id, quantity: 6, unitCost: 3000 })).toEqual({ success: false, code: 'MISSING_PRICE', error: 'Falta el precio de venta.' });
@@ -59,6 +60,13 @@ describe('acciones de Stock (US-4)', () => {
     await asUser({ role: 'admin' });
     expect(await registerStockEntryAction({ menuItemId: ITEM.id, quantity: 0 })).toEqual({ success: false, code: 'VALIDATION', error: MESSAGES.ERROR.VALIDATION.INVALID_DATA });
     expect(await registerStockLossAction({ menuItemId: ITEM.id, quantity: 0.5, reason: 'x' })).toMatchObject({ code: 'VALIDATION' });
+  });
+
+  it('VALIDATION: un gusto de pizza no recibe stock; la prepizza sí (US-29)', async () => {
+    await asUser({ role: 'admin' });
+    fakeStock.state.items.push(stockItem({ id: PIZZA_ID, group: 'pizzas', name: 'Muzza', price1: '11000.00' }), stockItem({ id: BASE_ID, group: 'pizzas', name: 'Prepizza', unitCost: null, stock: '0.0', isBase: true }));
+    expect(await registerStockEntryAction({ menuItemId: PIZZA_ID, quantity: 2, unitCost: 3000 })).toEqual({ success: false, code: 'VALIDATION', error: MESSAGES.ERROR.VALIDATION.INVALID_DATA });
+    expect(await registerStockEntryAction({ menuItemId: BASE_ID, quantity: 2 })).toMatchObject({ success: true, message: 'Stock ingresado: Prepizza queda con 2' });
   });
 
   it('NOT_FOUND: el gusto ya no existe (CA-5)', async () => {

@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-test.describe('Stock (US-4)', () => {
+test.describe('Stock (US-4, US-34)', () => {
   test('el admin ingresa stock de un gusto y la grilla lo refleja', async ({ page }) => {
     await page.goto('/stock');
     await page.getByRole('button').filter({ hasText: 'Ingresar stock' }).click();
@@ -26,5 +26,15 @@ test.describe('Stock (US-4)', () => {
     await page.getByRole('row', { name: /Verdura/ }).getByTitle('Historial de ingresos').click();
     await expect(page.getByText('+6')).toBeVisible();
     await expect(page.getByText(/Costo para el local \$450 · Sin proveedor · admin/)).toBeVisible();
+  });
+
+  test('"Solo sin stock" muestra lo que falta y "Quitar sin stock" lo saca (US-34)', async ({ page }) => {
+    await page.goto('/stock');
+    const filas = page.getByRole('row').filter({ has: page.getByRole('cell') });
+    await page.getByLabel('Ordenar Stock').selectOption({ label: 'Solo sin stock' });
+    await expect(filas.filter({ hasText: 'Pan de ciabatta' })).toBeVisible();
+    await expect(filas.filter({ hasNotText: 'Sin stock' })).toHaveCount(0);
+    await page.getByLabel('Ordenar Stock').selectOption({ label: 'Quitar sin stock' });
+    await expect(filas.filter({ hasText: 'Sin stock' })).toHaveCount(0);
   });
 });

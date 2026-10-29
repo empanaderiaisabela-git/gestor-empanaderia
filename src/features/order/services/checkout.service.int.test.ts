@@ -1,7 +1,7 @@
 import { eq } from 'drizzle-orm';
 import { afterAll, beforeEach, describe, expect, it } from 'vitest';
 import { db } from '@/lib/db';
-import { menuGroupPrices, menuItems } from '@/lib/db/menu-schema';
+import { menuItems } from '@/lib/db/menu-schema';
 import { saleLineItems, saleLines } from '@/lib/db/order-schema';
 import { auditLogs, salePayments, sales } from '@/lib/db/schema';
 import { TEST_USER_IDS } from '@/test/as-user';
@@ -40,8 +40,7 @@ describe('cobro contra Postgres (US-6 CA-3 y CA-4)', () => {
   });
 
   it('guarda la venta, sus líneas con el costo congelado, los pagos y la auditoría', async () => {
-    await db.insert(menuGroupPrices).values({ group: 'empanadas', price1: '1500', price3: '4200', price6: '8000', price12: '15000' });
-    const carne = await insertItem({ group: 'empanadas', name: 'Carne', unitCost: '400.00', stock: '12' });
+    const carne = await insertItem({ group: 'empanadas', name: 'Carne', unitCost: '400.00', stock: '12', price1: '1500.00', price3: '4200.00', price6: '8000.00', price12: '15000.00' });
     const empanadas = { group: 'empanadas' as const, presentationKey: 'u3', flavors: [{ menuItemId: carne, units: 3 }], quantity: 2 };
     const { saleId, total } = await checkoutService.checkout(CALLER, { ...order([line(coca)], 10900), lines: [empanadas, line(coca)], buyerName: 'Marta' });
     expect(total).toBe(10900);

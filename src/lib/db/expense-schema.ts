@@ -1,6 +1,6 @@
 import { sql } from 'drizzle-orm';
 import { check, date, index, integer, numeric, pgTable, timestamp, uuid, varchar } from 'drizzle-orm/pg-core';
-import { users } from './schema';
+import { providers, users } from './schema';
 
 export const expenses = pgTable(
   'expenses',
@@ -15,9 +15,14 @@ export const expenses = pgTable(
     userId: uuid('user_id')
       .notNull()
       .references(() => users.id),
+    providerId: uuid('provider_id').references(() => providers.id),
     version: integer('version').default(1).notNull(),
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
   },
-  (table) => [index('expenses_invoice_date_idx').on(table.invoiceDate), check('expenses_amount_check', sql`${table.amount} > 0`)]
+  (table) => [
+    index('expenses_invoice_date_idx').on(table.invoiceDate),
+    index('expenses_provider_id_idx').on(table.providerId),
+    check('expenses_amount_check', sql`${table.amount} > 0`),
+  ]
 );

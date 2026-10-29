@@ -1,6 +1,7 @@
 import fc from 'fast-check';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { asUser } from '@/test/as-user';
+import { EXPENSE_PROVIDER } from '../testing/expense-provider';
 import { EXPENSE_INPUT } from '../testing/expense-repository.behavior';
 import { fakeExpenses } from '../testing/fake-expense-unit-of-work';
 import { createExpenseAction } from './create-expense';
@@ -21,7 +22,7 @@ describe('acciones de Gastos (camino feliz)', () => {
 
   it('carga, lista, edita y borra un gasto con sus mensajes (CA-1 y CA-2)', async () => {
     const created = await createExpenseAction(EXPENSE_INPUT);
-    expect(created).toMatchObject({ success: true, message: 'Se registró el gasto', data: { ...EXPENSE_INPUT, version: 1 } });
+    expect(created).toMatchObject({ success: true, message: 'Se registró el gasto', data: { ...EXPENSE_INPUT, providerName: EXPENSE_PROVIDER.name, version: 1 } });
     const id = created.success ? created.data.id : '';
     expect(await fetchExpenses()).toMatchObject([{ id, invoiceNumber: EXPENSE_INPUT.invoiceNumber, amount: 18500.5 }]);
     expect(await updateExpenseAction(id, { ...EXPENSE_INPUT, title: 'Harina 50 kg', version: 1 })).toMatchObject({ success: true, message: 'Se actualizó el gasto', data: { title: 'Harina 50 kg', version: 2 } });

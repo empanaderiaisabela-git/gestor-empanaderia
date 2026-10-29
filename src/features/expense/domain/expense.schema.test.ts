@@ -2,7 +2,7 @@ import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
 import { expenseCreateSchema, expenseDeleteSchema, expenseRowSchema, expenseUpdateSchema } from './expense.schema';
 
-const EXPENSE = { invoiceNumber: 'A-0001-00001234', title: 'Harina 25 kg', amount: 18500.5, invoiceDate: '2026-10-24' };
+const EXPENSE = { invoiceNumber: 'A-0001-00001234', title: 'Harina 25 kg', amount: 18500.5, invoiceDate: '2026-10-24', providerId: '22222222-2222-4222-8222-222222222222' };
 const ID = '11111111-1111-4111-8111-111111111111';
 
 function messages(input: unknown): string[] {
@@ -24,6 +24,8 @@ describe('expenseCreateSchema (US-14 CA-1)', () => {
     { caso: 'número de 31', input: { ...EXPENSE, invoiceNumber: '1'.repeat(31) }, message: 'El número de factura no puede superar los 30 caracteres' },
     { caso: 'título vacío', input: { ...EXPENSE, title: '' }, message: 'El título es obligatorio' },
     { caso: 'título de 101', input: { ...EXPENSE, title: 'T'.repeat(101) }, message: 'El título no puede superar los 100 caracteres' },
+    { caso: 'sin proveedor', input: { ...EXPENSE, providerId: undefined }, message: 'Elegí un proveedor' },
+    { caso: 'proveedor que no es un id', input: { ...EXPENSE, providerId: 'x' }, message: 'Elegí un proveedor' },
     { caso: 'monto 0', input: { ...EXPENSE, amount: 0 }, message: 'El monto debe ser mayor a 0' },
     { caso: 'monto con 3 decimales', input: { ...EXPENSE, amount: 1.555 }, message: 'Máximo 2 decimales' },
     { caso: 'fecha inexistente', input: { ...EXPENSE, invoiceDate: '2026-02-30' }, message: 'Elegí una fecha válida' },
@@ -47,7 +49,7 @@ describe('schemas de edición, borrado y fila', () => {
   });
 
   it('la fila convierte a número el monto que Postgres devuelve como texto', () => {
-    const row = { id: ID, ...EXPENSE, amount: '18500.50', version: 1, createdAt: new Date(0), updatedAt: new Date(0) };
-    expect(expenseRowSchema.parse(row)).toMatchObject({ amount: 18500.5, invoiceDate: '2026-10-24' });
+    const row = { id: ID, ...EXPENSE, amount: '18500.50', providerName: null, version: 1, createdAt: new Date(0), updatedAt: new Date(0) };
+    expect(expenseRowSchema.parse(row)).toMatchObject({ amount: 18500.5, invoiceDate: '2026-10-24', providerName: null });
   });
 });

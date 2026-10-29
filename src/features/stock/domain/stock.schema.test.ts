@@ -1,6 +1,6 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
-import { stockEntryRowSchema, stockEntrySchema, stockLossSchema } from './stock.schema';
+import { stockEntryRowSchema, stockEntrySchema, stockLossSchema, stockPricingSchema } from './stock.schema';
 
 const ITEM = '11111111-1111-4111-8111-111111111111';
 const first = (result: { success: boolean; error?: { issues: { message: string }[] } }): string | undefined => result.error?.issues[0]?.message;
@@ -35,13 +35,13 @@ describe('ingresar stock (US-4 CA-2)', () => {
 });
 
 describe('registrar una merma (US-4 CA-4)', () => {
-  it('acepta unidades enteras o media pizza, con motivo', () => {
-    expect(stockLossSchema.parse({ menuItemId: ITEM, quantity: 0.5, reason: '  Se quemó  ' })).toEqual({ menuItemId: ITEM, quantity: 0.5, reason: 'Se quemó' });
+  it('acepta unidades enteras con motivo; ya no hay medias (US-29)', () => {
+    expect(stockLossSchema.parse({ menuItemId: ITEM, quantity: 2, reason: '  Se quemó  ' })).toEqual({ menuItemId: ITEM, quantity: 2, reason: 'Se quemó' });
   });
 
   it.each([
     { caso: 'cantidad 0', input: { menuItemId: ITEM, quantity: 0, reason: 'x' }, message: 'La cantidad debe ser mayor a 0' },
-    { caso: 'un tercio', input: { menuItemId: ITEM, quantity: 0.3, reason: 'x' }, message: 'La cantidad va de a una unidad (o media pizza)' },
+    { caso: 'media unidad', input: { menuItemId: ITEM, quantity: 0.5, reason: 'x' }, message: 'La cantidad tiene que ser un número entero' },
     { caso: 'sin motivo', input: { menuItemId: ITEM, quantity: 1, reason: '   ' }, message: 'Debe especificar un motivo' },
     { caso: 'motivo de 256', input: { menuItemId: ITEM, quantity: 1, reason: 'a'.repeat(256) }, message: 'El motivo es demasiado largo' },
   ])('rechaza $caso', ({ input, message }) => {
@@ -50,6 +50,22 @@ describe('registrar una merma (US-4 CA-4)', () => {
 
   it('nunca lanza (fuzz)', () => {
     fc.assert(fc.property(fc.anything(), (input) => typeof stockLossSchema.safeParse(input).success === 'boolean'));
+  });
+});
+
+describe('costo y precio de un gusto (US-28 CA-5)', () => {
+  const input = { menuItemId: ITEM, version: 3, unitCost: 420, prices: { price1: 1300 }, applyToGroup: true };
+
+  it('pide versión, costo, precios y la casilla de aplicar a todos', () => {
+    expect(stockPricingSchema.parse(input)).toEqual(input);
+    expect(first(stockPricingSchema.safeParse({ ...input, unitCost: -1 }))).toBe('El costo no puede ser negativo');
+    expect(first(stockPricingSchema.safeParse({ ...input, prices: { price1: 0 } }))).toBe('El precio debe ser mayor a 0');
+    expect(stockPricingSchema.safeParse({ ...input, version: 0 }).success).toBe(false);
+    expect(stockPricingSchema.safeParse({ ...input, quantity: 1 }).success).toBe(false);
+  });
+
+  it('nunca lanza (fuzz)', () => {
+    fc.assert(fc.property(fc.anything(), (value) => typeof stockPricingSchema.safeParse(value).success === 'boolean'));
   });
 });
 

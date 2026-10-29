@@ -1,7 +1,7 @@
 # Prompt inicial: contexto completo de gestor-empanaderia
 
 > **Uso.** Al empezar una sesión nueva de Claude Code: `Leé @docs/initial_prompt.md y seguilo.`
-> Foto del proyecto al **2026-10-27**. Se adapta en cada avance significativo
+> Foto del proyecto al **2026-10-28**. Se adapta en cada avance significativo
 > ([criterios](how-to-document.md#mantener-al-día-docsinitial_promptmd)). Si algo de acá contradice a
 > [`AGENTS.md`](../AGENTS.md) o a los docs que enlaza, **ganan ellos**: avisale al dev que este archivo quedó
 > desactualizado.
@@ -27,13 +27,16 @@ Sistema de **gestión de stock y punto de venta + catálogo web** para la rotise
 | Cara | Rutas | Quién |
 |---|---|---|
 | Catálogo público | `/home`, `/product/[id]` | Clientes del local, sin login. Consultan por WhatsApp o Instagram; no hay pedidos online. **Por ahora no se publica**: sólo se despliega el gestor y el catálogo queda en el código. |
-| Panel de gestión | `/` (Estadísticas), `/gastos`, `/ventas` (Ventas/Pedidos: historial, comprobante y anulación), `/ventas/nueva` (tablero de pedidos y cobro), `/promociones`, `/stock`, `/alta-de-productos`, `/tarjetas`, `/clientes`, `/proveedores`, `/usuarios`, `/logs` (Auditoría) | `admin`: todo. `vendedor`: sólo Ventas/Pedidos y Clientes, y entra a Ventas/Pedidos. El menú y `proxy.ts` salen de `src/config/navigation.ts` (US-2). |
+| Panel de gestión | `/` (Estadísticas), `/gastos`, `/ventas` (Ventas/Pedidos: historial, comprobante y anulación), `/ventas/nueva` (tablero de pedidos y cobro), `/promociones`, `/stock`, `/alta-de-productos`, `/tarjetas`, `/clientes`, `/proveedores`, `/usuarios`, `/logs` (Auditoría) | `admin`: todo. `vendedor`: Ventas/Pedidos, Clientes y Stock sólo para mirar (sin costos), y entra a Ventas/Pedidos. El menú y `proxy.ts` salen de `src/config/navigation.ts` (US-2). |
 
-Funciones que ya existen (Sprints 1 a 3):
-- Alta de gustos y bebidas por grupo fijo: sólo grupo y nombre, con fotos y visibilidad en el catálogo (US-17), y
-  las tarjetas del precio único de Empanadas y Ciabattas (US-23).
-- Stock por gusto, sólo admin: ingresos (primero la categoría, después el gusto) con costo, precio de venta
-  (por gusto; Empanadas y Ciabattas sólo costo) y proveedor, pérdidas (mermas) e historial (US-16 a US-18, US-23).
+Funciones que ya existen (Sprints 1 a 4):
+- Alta de gustos y bebidas por grupo fijo: sólo grupo y nombre, con fotos y visibilidad en el catálogo (US-17). Ya
+  no hay precio de grupo: todos los precios son por gusto y se cargan en Stock (US-28).
+- Stock, con todo para el admin: ingresos (primero la categoría, después el gusto) con costo, precio de venta por
+  gusto y proveedor, "Costo y precio" de cada gusto con una casilla para copiarlo a todo el grupo, pérdidas (mermas)
+  e historial (US-16 a US-18, US-28). Pizzas y Ciabattas no se stockean por gusto: se cuentan las bases Prepizza y
+  Pan de ciabatta, y cada pizza o ciabatta vendida descuenta una (US-29). El vendedor ve Stock sólo para mirar,
+  sin costos (US-31).
 - Tablero de pedidos con colores e íconos de lucide por grupo (US-20), sólo con los gustos con stock (US-19), el pedido en un carrito desplegable (US-24), "Quitar uno" en cada línea (US-22), surtidas ("Agregar uno" / "Completar") y pizzas mitad y mitad.
 - Cobro con efectivo, transferencia, débito o crédito (hasta 2 medios) y descuentos, con precios recalculados en el
   servidor. Historial en Ventas/Pedidos, comprobante imprimible y anulación con reposición de stock.
@@ -41,10 +44,10 @@ Funciones que ya existen (Sprints 1 a 3):
   (US-8 y US-9).
 - Tarjetas con planes de 1, 3, 6 o 12 cuotas y su recargo; el recargo es de la tarjeta: la venta y los pagos
   quedan al precio original y el recargo sólo se guarda como dato (US-10, US-11 y BUG-20).
-- Estadísticas de la jornada (7:00 a 6:59): ganancia en limpio, ventas, dinero por comida y por promos, lo
+- Estadísticas de una o varias jornadas (7:00 a 6:59), entre "Desde" y "Hasta" (US-32): ganancia en limpio, ventas, dinero por comida y por promos, lo
   cobrado por medio de pago (sin "Total facturado") y los cuadros de vendedores por turno y de ventas (US-12, US-13 y US-21).
-- Anotador de gastos con número de factura único, que no cambia las Estadísticas (US-14).
-- ABM de clientes, proveedores y usuarios, y auditoría de toda operación.
+- Anotador de gastos con número de factura único y el proveedor que emitió la factura, filtrado entre dos fechas con el mes en curso por defecto, que no cambia las Estadísticas (US-14, US-27, US-33).
+- ABM de clientes (sólo el nombre es obligatorio, US-26), proveedores y usuarios, y auditoría de toda operación.
 - Catálogo público que se regenera a demanda.
 
 ## 3. Origen: código heredado en remodelación
@@ -67,7 +70,7 @@ en `eslint-legacy.json`.
 - Presentaciones fijas, con precio por gusto y presentación.
 - Pizza de 2 sabores al precio del más caro.
 - Surtidas dentro de la misma presentación ("Agregar uno" y "Completar"), con precio proporcional en Sanguches.
-- Stock por gusto.
+- Stock por gusto, salvo Pizzas y Ciabattas, que descuentan una prepizza o un pan (Sprint 4).
 - Promos con los gustos elegidos al vender.
 
 El Sprint 1 implementó las de vender, y el Sprint 2, las promos, las tarjetas en cuotas, las estadísticas de la
@@ -102,13 +105,38 @@ Hacer preguntas de más es mejor que inventar.
     ítem y trazabilidad con `specs.md` y con las respuestas del cliente.
 - **Sprint 3 implementado** ("Aclaraciones del dev": T-19, BUG-17 a BUG-21, US-16 a US-22 y T-18) en `develop`,
   a la espera de la revisión del dev y del merge a `main` con el tag `sprint-3`. La migración 0017 es del Sprint 3.
-  Ningún ítem nuevo se arranca sin el OK del dev.
+- **Sprint 4 implementado** ("Pedido del cliente tras la demo": T-21, US-26 a US-35, BUG-23 a BUG-25 y T-22) en `develop`, a la espera
+  de la revisión del dev y del merge a `main` con el tag `sprint-4`. Plan, decisiones y resumen para el dev en
+  [`sprint-4.md`](plans/sprint-4.md).
+  - Qué cambió: clientes con sólo el nombre obligatorio y DNI opcional (US-26); títulos más grandes y más contraste
+    en el panel (US-30); el proveedor de la factura en cada gasto (US-27); todos los precios por gusto, cargados en
+    Stock, sin `menu_group_prices` (US-28); prepizzas y panes de ciabatta como stock de Pizzas y Ciabattas (US-29);
+    el vendedor ve Stock sin costos (US-31). De la revisión del dev: Prepizza y Pan de ciabatta como categorías de
+    Stock, sin elegir gusto (BUG-23); la grilla ya no tiembla al llevar el scroll al fondo (BUG-24); Gastos con
+    "Desde" y "Hasta", el mes por defecto (US-33); Estadísticas con "Desde" y "Hasta", hoy por defecto (US-32). De la
+    segunda revisión: costo y precio de pizzas y ciabattas desde "Ingresar stock" (BUG-25); ordenar Stock por
+    cantidad (US-34); en Ventas, aviso verde al agregar, gustos por precio y buscador (US-35).
+  - Lo hizo el agente solo, de forma autónoma (2026-10-28), con subagentes Sonnet y Opus cuyo trabajo revisó. Las
+    **decisiones provisorias D-1 a D-17** esperan la confirmación del dev y están en
+    [`sprint-4.md`](plans/sprint-4.md#decisiones-provisorias-del-agente), con la pregunta, un ejemplo y qué cambia si
+    responde otra cosa:
+    - D-1 mitad y mitad descuenta 1 prepizza; D-2 las bases viven sólo en Stock; D-3 un gusto de pizza o ciabatta
+      aparece en Ventas si queda una base y tiene precio; D-4 precio por gusto en Empanadas y Ciabattas, docena
+      surtida proporcional; D-5 gastos viejos sin proveedor; D-6 correo y DNI opcionales, DNI vacío como `null`;
+      D-7 contraste con un reemplazo de clases; D-8 la anulación devuelve las bases; D-9 el catálogo marca stock
+      según la base; D-10 un proveedor con gastos no se borra; D-11 una promo descuenta lo mismo que la venta suelta;
+      D-12 los gustos de pizza y ciabatta quedan en Stock sólo para "Costo y precio"; D-13 Gastos arranca con el mes
+      en curso; D-14 Estadísticas cuenta jornadas, hasta 366; D-15 los arreglos de la revisión entran al Sprint 4;
+      D-16 al ordenar Stock, los gustos sin stock propio van al final; D-17 el precio de una pizza desde "Ingresar
+      stock" no trae la casilla "Aplicar a todos".
+  - Las migraciones 0018 a 0021 son del Sprint 4. La base de Supabase la migra el dev; la local, `npm run db:migrate`.
+  - Ningún ítem nuevo se arranca sin el OK del dev.
 - Git: `main` recibe un merge de `develop` al cierre de cada sprint. El trabajo nuevo sale de `develop`. El repo de GitHub
   es **público**: todo lo que se pushea queda publicado.
 - **No existe todavía**: `docs/conventions/`.
 - **Sí existen**:
-  - `BACKLOG.md`, con los Sprints 0 a 3 en orden de ejecución.
-  - Los planes de cada sprint en `docs/plans/sprint-0.md`, `sprint-1.md`, `sprint-2.md` y `sprint-3.md`: orden, decisiones del
+  - `BACKLOG.md`, con los Sprints 0 a 4 en orden de ejecución.
+  - Los planes de cada sprint en `docs/plans/sprint-0.md`, `sprint-1.md`, `sprint-2.md`, `sprint-3.md` y `sprint-4.md`: orden, decisiones del
     dev y enfoque de cada ítem.
   - Las plantillas en `docs/templates/` (`plan.md`, `feature.md`, `adr.md`), los planes en `docs/plans/` y los
     ADR en `docs/adr/`.

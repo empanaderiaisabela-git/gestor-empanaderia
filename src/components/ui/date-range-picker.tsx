@@ -16,22 +16,26 @@ export function DateRangePicker({ startDate, endDate, onStartChange, onEndChange
       <div className='flex items-center px-3 py-1.5 flex-1 sm:flex-none'>
         <input
           type='date'
+          aria-label='Desde'
           value={startDate}
+          max={endDate || undefined}
           onChange={(e) => onStartChange(e.target.value)}
-          className='bg-transparent text-sm font-bold outline-none border-none p-0 focus:ring-0 w-full sm:w-[125px] dark:text-zinc-100 cursor-pointer h-7'
+          className='bg-transparent text-sm font-bold outline-none border-none p-0 focus:ring-0 w-full sm:w-[125px] dark:text-zinc-50 cursor-pointer h-7'
         />
       </div>
       <div className='flex items-center px-3 py-1.5 flex-1 sm:flex-none'>
         <input
           type='date'
+          aria-label='Hasta'
           value={endDate}
+          min={startDate || undefined}
           onChange={(e) => onEndChange(e.target.value)}
-          className='bg-transparent text-sm font-bold outline-none border-none p-0 focus:ring-0 w-full sm:w-[125px] dark:text-zinc-100 cursor-pointer h-7'
+          className='bg-transparent text-sm font-bold outline-none border-none p-0 focus:ring-0 w-full sm:w-[125px] dark:text-zinc-50 cursor-pointer h-7'
         />
         {(startDate || endDate) && onClear && (
           <button
             onClick={onClear}
-            className='ml-2 p-1 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg text-zinc-400 hover:text-red-500 transition-all'
+            className='ml-2 p-1 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg text-zinc-600 dark:text-zinc-300 hover:text-red-500 transition-all'
             title='Limpiar Filtro'
           >
             <X className='w-4 h-4' />

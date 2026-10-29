@@ -5,6 +5,7 @@ import { menuItems } from '@/lib/db/menu-schema';
 import { saleLineItems, saleLines } from '@/lib/db/order-schema';
 import { auditLogs, salePayments, sales } from '@/lib/db/schema';
 import { TEST_USER_IDS } from '@/test/as-user';
+import { seedBases } from '@/test/seed-bases';
 import { seedTestUser } from '@/test/seed-test-user';
 import { truncateAll } from '@/test/truncate-all';
 import { checkoutService } from './checkout.service';
@@ -19,19 +20,21 @@ async function stockOf(id: string): Promise<number> {
 }
 
 async function insertPizza(name: string, price1: string): Promise<string> {
-  const [row] = await db.insert(menuItems).values({ group: 'pizzas', name, unitCost: '4000.00', stock: '3', price1 }).returning({ id: menuItems.id });
+  const [row] = await db.insert(menuItems).values({ group: 'pizzas', name, unitCost: '4000.00', stock: '0', price1 }).returning({ id: menuItems.id });
   return row.id;
 }
 
 describe('historial y anulación contra Postgres (US-7)', () => {
   let muzza: string;
   let napo: string;
+  let prepizza: string;
   let saleId: string;
 
   beforeEach(async () => {
     await truncateAll();
     await seedTestUser('vendedor');
     await seedTestUser('admin');
+    ({ pizzas: prepizza } = await seedBases(3));
     muzza = await insertPizza('Muzza', '11000.00');
     napo = await insertPizza('Napolitana', '12000.00');
     const half = { group: 'pizzas' as const, presentationKey: 'pizza_2', flavors: [{ menuItemId: muzza, units: 0.5 }, { menuItemId: napo, units: 0.5 }], quantity: 1 };
@@ -54,10 +57,16 @@ describe('historial y anulación contra Postgres (US-7)', () => {
     expect(sale.payments.map((payment) => payment.type).sort()).toEqual(['efectivo', 'transferencia']);
   });
 
-  it('anular repone ½ + 2 de Muzza y ½ de Napolitana, y borra líneas y pagos (CA-3)', async () => {
-    expect([await stockOf(muzza), await stockOf(napo)]).toEqual([0.5, 2.5]);
+  it('el cobro descontó 3 prepizzas, y otra pizza sin prepizzas da INSUFFICIENT_STOCK (US-29 CA-3)', async () => {
+    expect([await stockOf(prepizza), await stockOf(muzza), await stockOf(napo)]).toEqual([0, 0, 0]);
+    const one = { group: 'pizzas' as const, presentationKey: 'pizza_1', flavors: [{ menuItemId: napo, units: 1 }], quantity: 1 };
+    const input = { buyerName: null, lines: [one], discountPercentage: 0, discountAmount: 0, payments: [{ type: 'efectivo' as const, amount: 12000 }] };
+    await expect(checkoutService.checkout(VENDOR, input)).rejects.toMatchObject({ code: 'INSUFFICIENT_STOCK', message: 'No hay stock suficiente de Prepizza.' });
+  });
+
+  it('anular devuelve las 3 prepizzas (½ + ½ y 2 enteras), y borra líneas y pagos (CA-3; US-29 CA-4)', async () => {
     await saleHistoryService.voidSale(ADMIN, saleId);
-    expect([await stockOf(muzza), await stockOf(napo)]).toEqual([3, 3]);
+    expect([await stockOf(prepizza), await stockOf(muzza), await stockOf(napo)]).toEqual([3, 0, 0]);
     expect([await db.select().from(sales), await db.select().from(saleLines), await db.select().from(saleLineItems), await db.select().from(salePayments)]).toEqual([[], [], [], []]);
     expect(await db.select({ action: auditLogs.action }).from(auditLogs).where(eq(auditLogs.entityId, saleId))).toEqual(expect.arrayContaining([{ action: 'CREAR' }, { action: 'ELIMINAR' }]));
   });
@@ -66,7 +75,7 @@ describe('historial y anulación contra Postgres (US-7)', () => {
     const results = await Promise.allSettled([saleHistoryService.voidSale(ADMIN, saleId), saleHistoryService.voidSale(ADMIN, saleId)]);
     expect(results.map((result) => result.status).sort()).toEqual(['fulfilled', 'rejected']);
     expect(results.find((result) => result.status === 'rejected')).toMatchObject({ reason: { code: 'NOT_FOUND' } });
-    expect([await stockOf(muzza), await stockOf(napo)]).toEqual([3, 3]);
+    expect(await stockOf(prepizza)).toBe(3);
   });
 
   it('una venta del modelo viejo, sin líneas, no aparece ni se puede anular', async () => {

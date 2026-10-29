@@ -11,19 +11,18 @@ async function stockDe(page: Page, nombre: string): Promise<Locator> {
 async function cobrarPedidoDeRocio(page: Page): Promise<void> {
   await page.goto('/ventas');
   await page.getByRole('link', { name: 'Nuevo pedido' }).click();
-  await grupo(page, 'Empanadas').getByRole('button', { name: /1 docena/ }).click();
+  await grupo(page, 'Empanadas').getByRole('button', { name: /½ docena/ }).click();
   await gusto(page, 'Carne picante').getByRole('button', { name: 'Completar' }).click();
   await page.getByRole('button', { name: 'Listo' }).click();
-  await grupo(page, 'Pizzas').getByRole('button', { name: /2 sabores/ }).click();
-  await gusto(page, 'Muzza y jamón').getByRole('button', { name: 'Agregar' }).click();
-  await gusto(page, 'Pepperoni').getByRole('button', { name: 'Agregar' }).click();
+  await grupo(page, 'Sanguches').getByRole('button', { name: /3 unidades/ }).click();
+  await gusto(page, 'Jamón y queso').getByRole('button', { name: 'Completar' }).click();
   await page.getByRole('button', { name: 'Listo' }).click();
   await page.getByRole('button', { name: /^Ver pedido/ }).click();
   const pedido = page.getByRole('region', { name: 'Pedido actual' });
   await pedido.getByLabel('Comprador (opcional)').fill('Rocío');
-  await pedido.getByRole('button', { name: 'Cobrar $25.500' }).click();
-  await page.getByRole('button', { name: 'Confirmar $25.500' }).click();
-  await expect(page.getByText('Venta registrada por $25.500')).toBeVisible();
+  await pedido.getByRole('button', { name: 'Cobrar $10.500' }).click();
+  await page.getByRole('button', { name: 'Confirmar $10.500' }).click();
+  await expect(page.getByText('Venta registrada por $10.500')).toBeVisible();
 }
 
 test.describe('Ventas/Pedidos (US-7)', () => {
@@ -33,14 +32,14 @@ test.describe('Ventas/Pedidos (US-7)', () => {
     await page.goto('/ventas');
     await page.getByPlaceholder('Buscar por comprador o vendedor...').filter({ visible: true }).fill('Rocío');
     const fila = page.getByRole('row').filter({ hasText: 'Rocío' });
-    await expect(fila).toContainText('$25.500');
+    await expect(fila).toContainText('$10.500');
     await expect(fila).toContainText('Efectivo');
-    await expect(fila).toContainText('Pizzas · 2 sabores: Muzza y jamón / Pepperoni');
+    await expect(fila).toContainText('Sanguches · 3 unidades: Jamón y queso');
 
     await fila.getByTitle('Ver comprobante').click();
     const comprobante = page.getByRole('article', { name: 'Comprobante' });
     await expect(comprobante).toContainText('Empanadería Isabela');
-    await expect(comprobante.getByRole('row', { name: /Empanadas · 1 docena Carne picante \$12\.000/ })).toBeVisible();
+    await expect(comprobante.getByRole('row', { name: /Empanadas · ½ docena Carne picante \$6\.500/ })).toBeVisible();
     await page.getByRole('button', { name: 'Volver' }).click();
 
     await page.getByPlaceholder('Buscar por comprador o vendedor...').filter({ visible: true }).fill('Rocío');
@@ -51,6 +50,6 @@ test.describe('Ventas/Pedidos (US-7)', () => {
 
     await page.goto('/stock');
     await expect((await stockDe(page, 'Carne picante')).getByText('48', { exact: true })).toBeVisible();
-    await expect((await stockDe(page, 'Pepperoni')).getByText('4', { exact: true })).toBeVisible();
+    await expect((await stockDe(page, 'Jamón y queso')).getByText('24', { exact: true })).toBeVisible();
   });
 });

@@ -12,9 +12,9 @@ export type CardRowActions = {
 
 function NameCell({ card }: { card: CardDef }): JSX.Element {
   return (
-    <div className='flex items-center gap-2 font-bold text-zinc-900 dark:text-zinc-100 truncate min-w-0' title={card.name}>
+    <div className='flex items-center gap-2 font-bold text-zinc-900 dark:text-zinc-50 truncate min-w-0' title={card.name}>
       <span className='truncate'>{card.name}</span>
-      {!card.isActive && <span className='shrink-0 px-1.5 py-0.5 bg-zinc-100 text-zinc-500 dark:bg-zinc-800 text-[10px] font-bold rounded uppercase'>Inactiva</span>}
+      {!card.isActive && <span className='shrink-0 px-1.5 py-0.5 bg-zinc-100 text-zinc-700 dark:text-zinc-200 dark:bg-zinc-800 text-[10px] font-bold rounded uppercase'>Inactiva</span>}
     </div>
   );
 }
@@ -39,7 +39,7 @@ export function CardRowButtons({ card, actions }: { card: CardDef; actions: Card
 export function getCardColumns(actions: CardRowActions): ColumnDef<CardDef>[] {
   return [
     { header: 'Tarjeta', cellClassName: 'max-w-[220px]', cell: (card) => <NameCell card={card} /> },
-    { header: 'Planes de cuotas', cellClassName: 'text-zinc-600 dark:text-zinc-300 text-sm', cell: (card) => describePlans(card.plans) },
+    { header: 'Planes de cuotas', cellClassName: 'text-zinc-800 dark:text-zinc-100 text-sm', cell: (card) => describePlans(card.plans) },
     { header: 'Acciones', headerClassName: 'text-right', cellClassName: 'flex gap-1 justify-end', cell: (card) => <CardRowButtons card={card} actions={actions} /> },
   ];
 }

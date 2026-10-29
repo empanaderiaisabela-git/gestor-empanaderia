@@ -32,7 +32,7 @@ export function CardPlanFields({ plans, error, onChange }: Props): JSX.Element {
   const replace = (index: number, plan: PlanValues): void => onChange(plans.map((current, position) => (position === index ? plan : current)));
   return (
     <fieldset className='space-y-2'>
-      <legend className='text-sm font-medium text-zinc-700 dark:text-zinc-300'>Planes de cuotas y su recargo (%), que se suma al cobrar con crédito</legend>
+      <legend className='text-sm font-medium text-zinc-900 dark:text-zinc-100'>Planes de cuotas y su recargo (%), que se suma al cobrar con crédito</legend>
       <ul className='space-y-2'>
         {plans.map((plan, index) => (
           <PlanRow key={index} plan={plan} index={index} onChange={(next) => replace(index, next)} onRemove={() => onChange(plans.filter((_, position) => position !== index))} />

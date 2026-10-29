@@ -51,19 +51,19 @@ const pad = 'px-3!';
 
 export function getSaleHistoryColumns(actions: SaleRowActions): ColumnDef<SaleDef>[] {
   return [
-    { header: 'Fecha y hora', headerClassName: `${pad} w-44`, cellClassName: `${pad} whitespace-nowrap font-bold text-zinc-900 dark:text-zinc-100`, cell: (sale) => formatDateTime(sale.createdAt) },
+    { header: 'Fecha y hora', headerClassName: `${pad} w-44`, cellClassName: `${pad} whitespace-nowrap font-bold text-zinc-900 dark:text-zinc-50`, cell: (sale) => formatDateTime(sale.createdAt) },
     { header: 'Comprador', headerClassName: `${pad} w-28`, cellClassName: `${pad} truncate`, cell: (sale) => buyerLabel(sale.buyerName) },
-    { header: 'Vendedor', headerClassName: `${pad} w-24`, cellClassName: `${pad} text-zinc-500 truncate`, cell: (sale) => sale.vendorName },
-    { header: 'Pedido', headerClassName: pad, cellClassName: `${pad} text-zinc-500 break-words`, cell: (sale) => orderSummary(sale) },
+    { header: 'Vendedor', headerClassName: `${pad} w-24`, cellClassName: `${pad} text-zinc-700 dark:text-zinc-200 truncate`, cell: (sale) => sale.vendorName },
+    { header: 'Pedido', headerClassName: pad, cellClassName: `${pad} text-zinc-700 dark:text-zinc-200 break-words`, cell: (sale) => orderSummary(sale) },
     { header: 'Pago', headerClassName: `${pad} w-32`, cellClassName: pad, cell: (sale) => <PaymentChips sale={sale} /> },
     { header: 'Desc.', headerClassName: `${pad} w-20 text-right`, cellClassName: `${pad} text-right`, cell: (sale) => <DiscountCell sale={sale} /> },
-    { header: 'Total', headerClassName: `${pad} w-28 text-right`, cellClassName: `${pad} text-right font-black text-zinc-900 dark:text-zinc-100`, cell: (sale) => formatMoney(sale.total) },
+    { header: 'Total', headerClassName: `${pad} w-28 text-right`, cellClassName: `${pad} text-right font-black text-zinc-900 dark:text-zinc-50`, cell: (sale) => formatMoney(sale.total) },
     { header: 'Acciones', headerClassName: `${pad} w-28 text-right`, cellClassName: `${pad} flex gap-1 justify-end`, cell: (sale) => <SaleButtons sale={sale} actions={actions} /> },
   ];
 }
 
 export const renderSaleCard = (actions: SaleRowActions) =>
   function SaleCard(sale: SaleDef): JSX.Element {
-    const badges = <span className='font-black text-zinc-900 dark:text-zinc-100'>{formatMoney(sale.total)}</span>;
+    const badges = <span className='font-black text-zinc-900 dark:text-zinc-50'>{formatMoney(sale.total)}</span>;
     return <EntityCard key={sale.id} title={buyerLabel(sale.buyerName)} subtitle={`${formatDateTime(sale.createdAt)} · ${sale.vendorName}`} badges={badges} details={<PaymentChips sale={sale} />} actions={<SaleButtons sale={sale} actions={actions} />} />;
   };

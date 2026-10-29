@@ -1,7 +1,7 @@
 import { afterAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { db } from '@/lib/db';
 import { truncateAll } from '@/test/truncate-all';
-import { workdayRange } from '../domain/workday';
+import { periodRange, workdayRange } from '../domain/workday';
 import { getWorkdayStats } from '../services/workday-stats.service';
 import { SEEDED_WORKDAY, seedWorkday } from '../testing/seed-workday';
 import { getWorkdaySnapshot } from './stats.repository';
@@ -33,8 +33,9 @@ describe('estadísticas de la jornada contra db-test (US-12)', () => {
   });
 
   it('los KPI de la jornada sobre los datos sembrados (CA-2 a CA-5)', async () => {
-    expect(await getWorkdayStats(SEEDED_WORKDAY)).toEqual({
-      day: SEEDED_WORKDAY,
+    expect(await getWorkdayStats({ from: SEEDED_WORKDAY, to: SEEDED_WORKDAY })).toEqual({
+      from: SEEDED_WORKDAY,
+      to: SEEDED_WORKDAY,
       vendorTable: [
         { vendor: 'vendedora', shift: 'morning', count: 1, amount: 500 },
         { vendor: 'vendedora', shift: 'afternoon', count: 1, amount: 500 },
@@ -50,5 +51,10 @@ describe('estadísticas de la jornada contra db-test (US-12)', () => {
       salesCount: 2,
       byPayment: { efectivo: 600, transferencia: 400, debito: 0, credito: 0 },
     });
+  });
+
+  it('un rango de tres jornadas trae también la venta de las 6:30 y la de las 7:00 del día siguiente (US-32)', async () => {
+    const snapshot = await getWorkdaySnapshot(periodRange({ from: '2026-10-24', to: '2026-10-26' }));
+    expect(snapshot.sales).toHaveLength(4);
   });
 });

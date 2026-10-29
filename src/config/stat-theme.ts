@@ -3,7 +3,7 @@ import type { PaymentType } from '@/features/order/domain/order-validation';
 
 export type StatTheme = { icon: LucideIcon; card: string; chip: string };
 
-export const NEUTRAL_CARD = 'bg-white text-zinc-900 dark:bg-zinc-900 dark:text-zinc-100';
+export const NEUTRAL_CARD = 'bg-white text-zinc-900 dark:bg-zinc-900 dark:text-zinc-50';
 
 const PAYMENT_CHIP = 'bg-black/10 dark:bg-white/10';
 

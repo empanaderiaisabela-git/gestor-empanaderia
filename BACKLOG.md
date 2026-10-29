@@ -11,6 +11,7 @@
 - [Sprint 1 · Vender con el modelo de la empanadería](#sprint-1--vender-con-el-modelo-de-la-empanadería)
 - [Sprint 2 · Promociones, tarjetas, estadísticas y gastos](#sprint-2--promociones-tarjetas-estadísticas-y-gastos)
 - [Sprint 3 · Aclaraciones del dev](#sprint-3--aclaraciones-del-dev)
+- [Sprint 4 · Pedido del cliente tras la demo](#sprint-4--pedido-del-cliente-tras-la-demo)
 
 ## Convenciones
 
@@ -3094,3 +3095,604 @@ que se lea de un vistazo cuánto sale la unidad, 3, 6 y 12.
   usaba nadie.
 - Nivel 1: lint, typecheck, `vitest related` (40 tests) y E2E de Stock y precios (4 casos) en verde, y mirado en el
   navegador a 1440 px.
+
+
+## Sprint 4 · Pedido del cliente tras la demo
+
+------------------------------------------------------------------------------------------------------------------------
+
+**Objetivo**: lo que pidió el cliente después de ver la demo del Sprint 3. Todos los precios en Stock; el stock de
+pizzas y ciabattas pasa a ser de prepizzas y panes; gastos con su proveedor; clientes con sólo el nombre obligatorio;
+títulos y letras más fáciles de leer; y, por pedido del dev, que el vendedor
+vea el stock sin costos. Al revisarlo, el dev sumó arreglos (BUG-23, BUG-24, BUG-25, US-32 a US-35) antes del cierre.
+
+**Plan del sprint**: [`docs/plans/sprint-4.md`](docs/plans/sprint-4.md). Tiene las decisiones del dev (2026-10-28),
+las decisiones provisorias D-1 a D-11, el orden y la trazabilidad de cada punto del pedido en `specs.md` a su ítem.
+
+### Resumen del Sprint 4
+
+| #   | ID                                                                              | Título                                                  | Estado      | Depende de | Estimación      |
+| --- | ------------------------------------------------------------------------------- | ------------------------------------------------------- | ----------- | ---------- | --------------- |
+| 0   | [T-21](#t-21--backlog-del-sprint-4-desde-el-pedido-del-cliente)                 | Backlog del Sprint 4 desde el pedido del cliente        | En revisión | T-18       | 30 min          |
+| 1   | [US-26](#us-26--clientes-sólo-el-nombre-es-obligatorio)                         | Clientes: sólo el nombre es obligatorio                 | En revisión | T-21       | 1 h             |
+| 2   | [US-30](#us-30--títulos-más-grandes-y-letras-con-más-contraste)                 | Títulos más grandes y letras con más contraste          | En revisión | T-21       | 1 h 30 min      |
+| 3   | [US-27](#us-27--gastos-el-proveedor-de-la-factura)                              | Gastos: el proveedor de la factura                      | En revisión | T-21       | 1 h 30 min      |
+| 4   | [US-28](#us-28--todos-los-precios-en-stock)                                     | Todos los precios en Stock                              | En revisión | T-21       | 3 h             |
+| 5   | [US-29](#us-29--prepizzas-y-panes-de-ciabatta)                                  | Prepizzas y panes de ciabatta                           | En revisión | US-28      | 5 h 30 min      |
+| 6   | [US-31](#us-31--el-vendedor-ve-el-stock-sin-costos)                             | El vendedor ve el stock, sin costos                     | En revisión | US-29      | 1 h 30 min      |
+| 7   | [BUG-23](#bug-23--stock-prepizza-y-pan-de-ciabatta-como-categorías)             | Stock: Prepizza y Pan de ciabatta como categorías       | En revisión | US-31      | 1 h 30 min      |
+| 8   | [BUG-24](#bug-24--la-grilla-tiembla-al-arrastrar-el-scroll-hasta-el-fondo)      | La grilla tiembla al arrastrar el scroll hasta el fondo | En revisión | BUG-23     | 45 min          |
+| 9   | [US-33](#us-33--gastos-filtro-desde-y-hasta-con-el-mes-por-defecto)             | Gastos: filtro desde y hasta, con el mes por defecto    | En revisión | US-27      | 1 h             |
+| 10  | [US-32](#us-32--estadísticas-desde-y-hasta)                                     | Estadísticas: desde y hasta                             | En revisión | US-21      | 2 h             |
+| 11  | [BUG-25](#bug-25--stock-costo-y-precio-de-pizzas-y-ciabattas-desde-ingresar-stock) | Stock: costo y precio de pizzas y ciabattas desde "Ingresar stock" | En revisión | BUG-23 | 1 h |
+| 12  | [US-34](#us-34--stock-ordenar-por-cantidad)                                     | Stock: ordenar por cantidad                             | En revisión | BUG-23     | 45 min          |
+| 13  | [US-35](#us-35--ventas-aviso-al-agregar-gustos-por-precio-y-buscador)           | Ventas: aviso al agregar, gustos por precio y buscador  | En revisión | US-5       | 1 h 5 min       |
+| 14  | [T-22](#t-22--cierre-del-sprint-4)                                              | Cierre del Sprint 4                                     | En revisión | todos      | 1 h             |
+|     |                                                                                 | **Total del sprint**                                    |             |            | **23 h 35 min** |
+
+### T-21 · Backlog del Sprint 4 desde el pedido del cliente
+
+| Campo        | Valor                                              |
+| ------------ | -------------------------------------------------- |
+| Estado       | En revisión                                        |
+| Dueño        | Agente                                             |
+| Inicio       | 2026-10-28                                         |
+| Tamaño       | S                                                  |
+| Depende de   | T-18                                               |
+| Plan         | [`docs/plans/sprint-4.md`](docs/plans/sprint-4.md) |
+| Merge        | —                                                  |
+| Horas reales | —                                                  |
+
+**Historia**: Como dev quiero el pedido del cliente tras la demo cargado como ítems, de forma que cada cambio tenga
+su criterio, su estimación y su rama.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · `BACKLOG.md` con el Sprint 4: cada ítem con historia, CA medibles con estimación, dependencias y nivel de tests; `docs/plans/sprint-4.md` con las decisiones del dev, las provisorias, el orden y la trazabilidad de `specs.md` · Estimación: 25 min · Completado: 2026-10-28 11:00
+
+- [ ] **CA-2** · `specs.md` con el pedido del cliente, textual, tal como lo pasó el dev · Estimación: 5 min · Completado: 2026-10-28 11:00
+
+### US-26 · Clientes: sólo el nombre es obligatorio
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-28 |
+| Tamaño       | S         |
+| Depende de   | T-21      |
+| Plan         | [`docs/plans/sprint-4.md`](docs/plans/sprint-4.md#1--us-26-clientes-con-sólo-el-nombre-s-1-h) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como vendedor quiero dar de alta un cliente con sólo su nombre, de forma que no tenga que pedirle
+teléfono, correo ni DNI.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · El alta y la edición de Clientes guardan un cliente con sólo el nombre (2 a 100 caracteres); teléfono, correo y DNI son opcionales y, si se cargan, se validan como hoy · Estimación: 20 min · Completado: 2026-10-28 14:47
+
+- [x] **CA-2** · `customers.document_number` admite `null` (migración de `''` a `null`): dos clientes sin DNI se guardan y un DNI repetido sigue dando `DUPLICATE`, con test de integración · Estimación: 30 min · Completado: 2026-10-28 14:47
+
+- [x] **CA-3** · El formulario marca como obligatorio sólo el nombre; E2E del alta con sólo el nombre · Estimación: 10 min · Completado: 2026-10-28 14:47
+
+**Notas**
+
+- Nivel 3: cambia el schema. Hoy el DNI vacío se guarda como `''` y es único, así que dos clientes sin DNI chocarían
+  (D-6 del plan del sprint).
+- `customer.schema.ts` se reescribió con el molde de Proveedores (`strictObject`, sin `createInsertSchema`) y salió de
+  `eslint-legacy.json`. `customer.repository.ts` y `customer-card.tsx` sólo cambiaron un par de líneas y siguen en la
+  lista: pasarlos al molde nuevo (servicio, unidad de trabajo y DNI normalizado sin `sql`) es un ítem propio (ADR 0003
+  permite que no salgan si la lista no crece).
+- Migración `0018_cliente-dni-opcional`: el DNI admite `null` y los `''` que hubiera pasan a `null`. Postgres permite
+  varios `null` en una columna `unique`.
+- El formulario no marca ningún campo como obligatorio: el único que lo es, el nombre, avisa con su mensaje.
+- Tests: 13 unitarios del schema (con fuzz), 3 de integración del repositorio y E2E de Clientes (sólo el nombre, dos
+  clientes sin DNI). `npm run verify` en verde: 921 tests, cobertura 96,11/89,2, 99 de integración, mutación 90,08 y
+  build. `clientes.spec.ts` dio una vez el timeout de BUG-16 y pasó 2 de 2 al repetirlo.
+
+### US-30 · Títulos más grandes y letras con más contraste
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-28 |
+| Tamaño       | M         |
+| Depende de   | T-21      |
+| Plan         | [`docs/plans/sprint-4.md`](docs/plans/sprint-4.md#2--us-30-títulos-y-contraste-m-1-h-30-min) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como administrador quiero títulos más grandes y letras con más contraste, de forma que lea la
+información principal sin esfuerzo, con el tema claro o con el oscuro.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · El título de cada página (`PageHeader`) pasa de `text-3xl` a `text-4xl` y los títulos de sección suben un escalón · Estimación: 10 min · Completado: 2026-10-28 15:01
+
+- [x] **CA-2** · En el panel de gestión, los grises del texto (también los encabezados de tabla) suben un escalón de contraste: en modo claro, más oscuros; en modo oscuro, más claros. El texto secundario queda en ≥ 7:1 sobre su fondo en los dos temas. El catálogo público no cambia · Estimación: 1 h · Completado: 2026-10-28 15:01
+
+- [x] **CA-3** · Capturas de Ventas, Stock y Estadísticas en los dos temas; los E2E siguen en verde · Estimación: 20 min · Completado: 2026-10-28 15:01
+
+**Notas**
+
+- Nivel 1 (estilo), aunque toca unos 50 componentes: los colores del texto son clases `text-zinc-*` sueltas, no un
+  token (D-7 del plan del sprint).
+- El cliente vio la demo en modo claro. El pedido es más contraste en los dos temas, no letras oscuras siempre.
+- Reemplazo con un script sobre 60 archivos del panel: en claro, cada gris de texto sube dos tonos (`zinc-500` →
+  `zinc-700`); en oscuro, baja dos (`zinc-400` → `zinc-200`). Donde una clase tenía un solo gris para los dos temas,
+  se le agregó su par oscuro, porque si no el texto oscurecido quedaba ilegible en modo oscuro. Quedan fuera el
+  catálogo público (`src/app/home/`, `src/app/product/`, la barra de búsqueda y el selector de tema que comparte) y el
+  comprobante, que siempre es blanco porque se imprime.
+- Títulos: página `text-4xl`; secciones de Estadísticas `text-base`; "Pedido actual", Auditoría y los diálogos
+  `text-xl`. Encabezados de tabla `zinc-800` en claro y `zinc-100` en oscuro.
+- Medición en el navegador (sin las transiciones de color), en Stock, Estadísticas y Nueva venta: ningún texto del
+  panel queda por debajo de 7:1 en ninguno de los dos temas. El subtítulo de la página pasó de 4,8:1 a 10,4:1 en
+  claro. Tests relacionados (141) y los 66 E2E en verde.
+
+### US-27 · Gastos: el proveedor de la factura
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-28 |
+| Tamaño       | M         |
+| Depende de   | T-21      |
+| Plan         | [`docs/plans/sprint-4.md`](docs/plans/sprint-4.md#3--us-27-gastos-con-proveedor-m-1-h-30-min) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como administrador quiero anotar en cada gasto el proveedor que emitió la factura, de forma que sepa a
+quién corresponde cada gasto.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · `expenses.provider_id` con FK a `providers` (migración: los gastos ya cargados quedan sin proveedor) y el `RowSchema` del gasto trae el proveedor con su nombre · Estimación: 30 min · Completado: 2026-10-28 15:27
+
+- [x] **CA-2** · El formulario de gastos pide "Proveedor", obligatorio, con todos los proveedores activos y, al editar, también el del gasto si fue dado de baja; sin proveedor, el alta y la edición dan `VALIDATION` con un mensaje claro · Estimación: 40 min · Completado: 2026-10-28 15:27
+
+- [x] **CA-3** · La grilla de Gastos muestra el proveedor ("—" en los gastos viejos); E2E del alta con proveedor · Estimación: 20 min · Completado: 2026-10-28 15:27
+
+**Notas**
+
+- Nivel 3: cambia el schema. La columna queda opcional en la base por los gastos viejos, y Zod la exige al crear y al
+  editar (D-5 del plan del sprint).
+- Un proveedor con gastos no se puede borrar (`HAS_RELATIONS`), igual que uno con ingresos de stock (D-10).
+- Migración `0019_gasto-con-proveedor`: `provider_id` con FK a `providers` (sin `onDelete`) y su índice. Las lecturas
+  hacen `leftJoin` y traen `providerName`; alta y edición releen la fila con el nombre.
+- El selector "Proveedor" sale de `fetchProviders` y filtra activos más el del gasto. La búsqueda del panel incluye el
+  nombre del proveedor y la auditoría lo guarda en el detalle (`provider`).
+- Lo implementó un subagente Sonnet y se revisó. `npm run verify` en verde: 933 tests, cobertura 96,09/89,08, 102 de
+  integración, mutación 90,09 y build; E2E de Gastos y Proveedores, 17 de 17.
+- Sin E2E: editar un gasto viejo sin proveedor (el selector arranca vacío y pide uno). Lo cubren los tests unitarios.
+
+### US-28 · Todos los precios en Stock
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-28 |
+| Tamaño       | M         |
+| Depende de   | T-21      |
+| Plan         | [`docs/plans/sprint-4.md`](docs/plans/sprint-4.md#4--us-28-todos-los-precios-en-stock-m-3-h) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como administrador quiero cargar en Stock el precio de venta de cada gusto, también el de las empanadas
+y las ciabattas, de forma que el día que un gusto se venda a otro precio el sistema ya lo permita.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · Alta de productos ya no tiene las tarjetas de precios de grupo; salen la acción, el servicio y el schema de `menu_group_prices`, y la tabla se borra con una migración que antes copia sus precios a cada gusto de Empanadas y Ciabattas · Estimación: 40 min · Completado: 2026-10-28 16:06
+
+- [x] **CA-2** · "Ingresar stock" de una empanada pide costo y precios de 1, 3, 6 y 12 del gusto, como Sanguches; el de una ciabatta, costo y precio de unidad, como Pizzas · Estimación: 35 min · Completado: 2026-10-28 16:06
+
+- [x] **CA-3** · Ventas, el cobro y el catálogo usan el precio de cada gusto: una docena surtida de empanadas se cobra con la regla de Sanguches (Σ unidades del gusto ÷ 12 × precio de la docena del gusto), y con todos los gustos al mismo precio da exactamente el precio de la docena; con tests de dominio, contrato e integración · Estimación: 35 min · Completado: 2026-10-28 16:06
+
+- [x] **CA-4** · La columna "Precio de venta" de Stock muestra los precios del gusto, uno por renglón (como dejó BUG-22) · Estimación: 10 min · Completado: 2026-10-28 16:06
+
+- [x] **CA-5** · Cada gusto tiene en Stock "Costo y precio", sin cantidad ("Ingresar stock" sigue aceptando precios opcionales), con una casilla que copia el precio a todos los gustos del grupo en la misma transacción; tests de servicio, contrato e integración y un E2E del aumento de la docena · Estimación: 1 h · Completado: 2026-10-28 16:06
+
+**Notas**
+
+- Revierte US-23 y además pasa Empanadas y Ciabattas a precio por gusto (D-4 del plan del sprint). No se usa
+  `git revert` de `e78bd12` porque la columna de BUG-22 se queda.
+- Nivel 3: cambia el schema y la regla de precios del cobro.
+- Las ciabattas cargan su precio con la cantidad sólo hasta US-29, que lo pasa al formulario sin cantidad.
+
+- Migración `0020_precios-por-gusto`: cambia el check de precios, copia a cada gusto el precio de grupo que hubiera
+  (en la base real, Empanadas y Ciabattas conservan sus precios) y borra `menu_group_prices`. La prueba un test de
+  integración que recrea la tabla dentro de una transacción con ROLLBACK y corre el SQL de la migración con el cliente
+  `pg`: es la única forma de ejecutar el archivo, y es una excepción a "sin SQL plano" limitada a ese test.
+- "Costo y precio" (`set-stock-pricing.ts` y `stock-pricing.ts`): el costo es obligatorio y viene precargado; la
+  casilla copia sólo los precios a todos los gustos del grupo, también a los desactivados, en la misma transacción.
+  Auditoría `ACTUALIZAR` · `MENU_ITEM` con `appliedTo`. Botón con el ícono `Tags` en cada fila de Stock.
+- Ventas: si todos los gustos de una presentación valen lo mismo, el botón muestra ese precio; si no, "desde $X". Sale
+  el aviso "Falta cargar el precio del grupo".
+- `tests/historial-ventas.spec.ts` pasó a vender ½ docena: el E2E nuevo del aumento cambia la docena de todas las
+  empanadas, y los E2E corren en paralelo.
+- Lo implementó un subagente Opus y se revisó. `npm run verify` en verde: 928 tests, cobertura 95,95/89,32, 102 de
+  integración, mutación 90,25 y build; 67 E2E en verde.
+- Docs que nombran el precio de grupo y se actualizan en T-22: `docs/architecture.md`, `docs/initial_prompt.md` y el
+  ADR 0005 (queda reemplazado en parte por US-28).
+- La base local de desarrollo necesita `npm run db:migrate` (0018 a 0020) antes de levantar la app.
+
+**Preguntas abiertas**
+
+- Para el cliente, cuando los gustos de empanada tengan precios distintos: ¿cómo se cobra una docena surtida?
+  ¿Proporcional a cada gusto (la regla de hoy), al precio del gusto más caro u otra? Hasta que lo pacte, rige la
+  proporcional, que con precios iguales da el precio de la docena (D-4 del plan del sprint).
+
+### US-29 · Prepizzas y panes de ciabatta
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-28 |
+| Tamaño       | L         |
+| Depende de   | US-28     |
+| Plan         | [`docs/plans/US-29-prepizzas-y-panes.md`](docs/plans/US-29-prepizzas-y-panes.md) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como administrador quiero contar sólo las prepizzas y los panes de ciabatta, y que cada pizza o
+ciabatta vendida descuente uno, de forma que el stock muestre lo que el local guarda de verdad.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · El sistema trae dos bases fijas, "Prepizza" y "Pan de ciabatta", con stock entero ≥ 0, `version` y sin costo; no se pueden borrar, renombrar ni vender solas. La migración las crea en 0 y deja en 0 el stock de los gustos de pizza y de ciabatta · Estimación: 1 h 30 min · Completado: 2026-10-28 17:02
+
+- [x] **CA-2** · En Stock, la base es la primera fila de su grupo, con su contador, "Ingresar stock" (sólo cantidad y proveedor opcional) y "Registrar pérdida"; los gustos de pizza y ciabatta muestran costo y precio, sin stock, y usan "Costo y precio" de US-28 · Estimación: 1 h · Completado: 2026-10-28 17:02
+
+- [x] **CA-3** · Cobrar una pizza de 1 o 2 sabores descuenta 1 prepizza, y una ciabatta, 1 pan; el costo congelado es el del gusto (½ + ½ en la mitad y mitad); sin bases suficientes, el cobro da `INSUFFICIENT_STOCK` con un mensaje que nombra la base · Estimación: 1 h 30 min · Completado: 2026-10-28 17:02
+
+- [x] **CA-4** · Anular una venta devuelve las bases que consumió; la pérdida de una base baja el contador y no resta de la ganancia · Estimación: 45 min · Completado: 2026-10-28 17:02
+
+- [x] **CA-5** · Ventas muestra los gustos de pizza (o de ciabatta) con precio sólo si queda al menos una base; E2E de punta a punta: se ingresan 2 prepizzas, se vende una mitad y mitad y una muzzarella, el contador queda en 0 y los gustos de pizza desaparecen de Ventas · Estimación: 45 min · Completado: 2026-10-28 17:02
+
+**Notas**
+
+- Plan propio y nivel 3: cambia el modelo de stock, el cobro, la anulación y las pérdidas.
+- Decisiones del dev y provisorias D-1 a D-3, D-8, D-9 y D-11 en el plan del sprint.
+- Modelo: las bases son filas de `menu_items` con `is_base` (índice único parcial "una base por grupo" y check: sin
+  costo, sin precios, stock entero y sólo en Pizzas y Ciabattas). La migración `0021_prepizzas-y-panes` las crea en 0
+  y pone en 0 el stock de los gustos de esos grupos.
+- Una línea de pizza consume la suma de las unidades de sus gustos (mitad y mitad: ½ + ½ = 1 prepizza); así, con una
+  sola prepizza se puede cargar la segunda mitad. El cobro bloquea primero los gustos y después las bases, y la
+  anulación en el mismo orden.
+- Otras decisiones del subagente, revisadas:
+  - La base no se vende ni suelta ni en promo (`VALIDATION`), y tampoco se puede mostrar en el catálogo.
+  - Las pérdidas pasan a ser enteras, porque ya no queda stock con medias unidades.
+  - En la grilla, la base tiene sólo "Ingresar stock" y "Registrar pérdida", y los gustos de Pizzas y Ciabattas sólo
+    "Costo y precio" (ninguno tiene historial).
+  - Sin prepizzas, la tarjeta de Pizzas en Ventas dice "Sin stock de Prepizza".
+- En Alta de productos, los gustos de Pizzas y Ciabattas muestran "—" en Stock (grilla y tarjeta mobile).
+- E2E: `prepizzas.spec.ts` es el único que vende pizzas, para que nadie más toque el contador; `cobro`,
+  `historial-ventas`, `tablero-ventas` y `stock-precios` dejaron de vender pizzas o de ingresar stock de sus gustos.
+- Lo implementó un subagente Opus, con el plan propio, y se revisó. `npm run verify` en verde: 961 tests, cobertura
+  96,16/90,04, 107 de integración, mutación 90,40 y build; 68 E2E en verde.
+- La base local de desarrollo y la de Supabase necesitan las migraciones 0018 a 0021.
+
+### US-31 · El vendedor ve el stock, sin costos
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-28 |
+| Tamaño       | M         |
+| Depende de   | US-29     |
+| Plan         | [`docs/plans/sprint-4.md`](docs/plans/sprint-4.md#6--us-31-el-vendedor-ve-el-stock-sin-costos-m-1-h-30-min) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como vendedor quiero ver cuánto queda de cada gusto en Stock, de forma que sepa qué hay sin preguntarle
+al administrador y sin ver lo que le cuesta al local.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · "Stock" aparece en el menú del vendedor y `/stock` lo deja entrar (`src/config/navigation.ts` y `src/proxy.ts`), con el test de navegación actualizado · Estimación: 15 min · Completado: 2026-10-28 17:27
+
+- [x] **CA-2** · Para el vendedor, el servidor no devuelve el costo: Stock usa `fetchMenuItems`, que ya le manda `unitCost: null` (lo prueba `menu-actions.contract.test.ts`); los precios de venta no se muestran, pero viajan, porque el vendedor ya los ve en Ventas · Estimación: 40 min · Completado: 2026-10-28 17:27
+
+- [x] **CA-3** · El vendedor ve la grilla con Categoría, Gusto y Cantidad (las bases con su contador) y sin botones; "Ingresar stock", "Registrar pérdida", "Costo y precio" y el historial de ingresos le siguen dando `FORBIDDEN`; E2E con el vendedor · Estimación: 35 min · Completado: 2026-10-28 17:27
+
+**Notas**
+
+- Pedido del dev en el chat (2026-10-28). Revierte en parte US-16 ("Stock sólo para el administrador"): el vendedor
+  entra, pero sólo para mirar.
+- Nivel 3 (seguridad): el costo no se esconde en la tabla, no sale del servidor.
+- Va después de US-29 porque la grilla cambia con las bases.
+- CA-2 cambió al implementarlo: no hizo falta una lectura nueva. `fetchMenuItems` (la que usa Ventas) ya le saca el
+  costo al vendedor en el servidor. Ocultar también el precio en el servidor no protege nada: el vendedor lo ve al
+  vender.
+- El vendedor ve las columnas Grupo, Gusto / bebida y Stock, sin "Ingresar stock" ni botones por fila. La tarjeta
+  mobile (`EntityCard`) ya no muestra el menú "Acciones" cuando no hay acciones.
+- Arreglo de paso: la carga inicial de datos (`setup-initial-data.ts`) borraba los proveedores antes que los gastos.
+  Desde US-27 los gastos los referencian, así que fallaba si quedaban gastos con proveedor (como en BUG-21). Ahora
+  borra primero los gastos.
+- `npm run verify` en verde: 961 tests, cobertura 96,12/89,95, 107 de integración, mutación 90,40 y build. E2E: 68
+  en verde y uno de Clientes con el timeout de BUG-16, que pasó 2 de 2 al repetirlo.
+
+### BUG-23 · Stock: Prepizza y Pan de ciabatta como categorías
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-28 |
+| Tamaño       | S         |
+| Depende de   | US-31     |
+| Plan         | [`docs/plans/sprint-4.md`](docs/plans/sprint-4.md#revisión-del-dev-2026-10-28) |
+| Merge        | —         |
+| Horas reales | 1 h       |
+
+**Historia**: Como administrador quiero elegir "Prepizza" o "Pan de ciabatta" como categoría al ingresar stock, de
+forma que cargue la cantidad sin elegir además un gusto que siempre es el mismo.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · En "Ingresar stock", la Categoría ofrece Prepizza y Pan de ciabatta en lugar de Pizzas y Ciabattas; al elegirlas no aparece "Gusto o bebida", y el resto del formulario (cantidad y proveedor) queda igual · Estimación: 45 min · Completado: 2026-10-28 23:53
+
+- [x] **CA-2** · En la grilla, la columna "Categoría" muestra Prepizza y Pan de ciabatta, y "Gusto / bebida" muestra "—" en esas filas; el filtro las ofrece como categorías. Los gustos de pizza y ciabatta siguen sólo para "Costo y precio" (D-12) · Estimación: 30 min · Completado: 2026-10-28 23:53
+
+- [x] **CA-3** · El vendedor ve las prepizzas y los panes como categorías y no ve las filas de gustos de pizza y ciabatta, que no tienen stock (D-12); E2E del ingreso de prepizzas y de la grilla del vendedor · Estimación: 15 min · Completado: 2026-10-28 23:53
+
+**Notas**
+
+- Pedido del dev al revisar el Sprint 4 (2026-10-28): US-29 dejaba la base como un gusto más dentro de su grupo.
+- Sólo UI: el servidor ya rechaza ingresos y pérdidas de gustos de pizza y ciabatta. Sin migración.
+- Nivel 2.
+- `src/features/stock/domain/stock-categories.ts` define las categorías de Stock (`categoryOf`, `hasOwnStock`,
+  `STOCKED_CATEGORIES`). La columna "Grupo" pasó a "Categoría"; el filtro se llama "Filtrar Stock", porque "Filtrar
+  por categoría" chocaba en los E2E con la etiqueta "Categoría" del formulario.
+- Lint, typecheck, 110 tests de Stock y 13 E2E de Stock, prepizzas, navegación, precios y concurrencia en verde;
+  mirado en el navegador a 1440 px.
+
+### BUG-24 · La grilla tiembla al arrastrar el scroll hasta el fondo
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-29 |
+| Tamaño       | XS        |
+| Depende de   | BUG-23    |
+| Plan         | [`docs/plans/sprint-4.md`](docs/plans/sprint-4.md#revisión-del-dev-2026-10-28) |
+| Merge        | —         |
+| Horas reales | 30 min    |
+
+**Historia**: Como administrador quiero arrastrar la barra de scroll de una grilla hasta el fondo sin que tiemble,
+de forma que pueda ver las últimas filas.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · Al arrastrar la barra de la grilla de Stock contra el fondo, la grilla no tiembla y la barra no se traba; medido en el navegador antes y después (`scrollTop` estable), también en Logs y Clientes · Estimación: 45 min · Completado: 2026-10-29 00:03
+
+**Notas**
+
+- Pedido del dev al revisar el Sprint 4 (2026-10-28).
+- La grilla es `src/components/ui/virtualized-data-table.tsx` (react-virtuoso), que usan 10 paneles.
+- Nivel 2.
+- Causa: la grilla suponía filas de 64 px (`fixedItemHeight = 64` por defecto), y las de Stock miden 119 px por la
+  lista de precios. Al llegar al fondo, Virtuoso cambiaba las filas dibujadas y el alto total saltaba de 1109 a 944
+  px, así que la barra se movía sola. Ahora mide cada fila (sin alto fijo por defecto) y el Scroller ya no tiene
+  `scroll-smooth`, que animaba esas correcciones.
+- Medido en el navegador a 1440 px: con la barra pegada al fondo, el alto queda en 1109 px en Stock y en 3277 px en
+  Logs, y se ve la última fila. Lint, typecheck y 44 E2E de Clientes, Proveedores, Usuarios y Stock en verde.
+
+### US-33 · Gastos: filtro desde y hasta, con el mes por defecto
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-29 |
+| Tamaño       | S         |
+| Depende de   | US-27     |
+| Plan         | [`docs/plans/sprint-4.md`](docs/plans/sprint-4.md#revisión-del-dev-2026-10-28) |
+| Merge        | —         |
+| Horas reales | 30 min    |
+
+**Historia**: Como administrador quiero filtrar los gastos entre dos fechas, de forma que vea lo que se gastó en un
+mes o en varios.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · Gastos tiene "Desde" y "Hasta", que arrancan en el 1 y el último día del mes en curso (hora de Argentina, D-13); la grilla muestra sólo los gastos con fecha de factura entre las dos, ambas incluidas · Estimación: 45 min · Completado: 2026-10-29 00:07
+
+- [x] **CA-2** · La X limpia el filtro y muestra todos los gastos; tests del mes (febrero bisiesto, diciembre, último día a las 23:30) y E2E de Gastos con la fecha de hoy · Estimación: 15 min · Completado: 2026-10-29 00:07
+
+**Notas**
+
+- Pedido del dev al revisar el Sprint 4 (2026-10-28).
+- El filtro es del lado del cliente, como el historial de ventas: `fetchExpenses` ya trae todos los gastos.
+- Nivel 2.
+- `argentinaMonth` (`src/lib/format-date-time.ts`) da el primer y el último día del mes en Buenos Aires.
+  `DateRangePicker` ahora nombra sus campos "Desde" y "Hasta" y no deja elegir un "Hasta" anterior a "Desde"; eso
+  también vale en el historial de ventas y en Auditoría.
+- El E2E de Gastos carga la factura con la fecha de hoy, para que el filtro del mes no la esconda.
+- Lint, typecheck, 282 tests de Gastos, fechas y ventas, y 5 E2E de Gastos e historial en verde.
+
+### US-32 · Estadísticas: desde y hasta
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-29 |
+| Tamaño       | M         |
+| Depende de   | US-21     |
+| Plan         | [`docs/plans/sprint-4.md`](docs/plans/sprint-4.md#revisión-del-dev-2026-10-28) |
+| Merge        | —         |
+| Horas reales | 45 min    |
+
+**Historia**: Como administrador quiero ver las estadísticas entre dos fechas, de forma que pueda mirar un mes entero
+o varios.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · Estadísticas tiene "Desde" y "Hasta", las dos con la jornada de hoy por defecto; los números suman las ventas y pérdidas desde el inicio de la jornada "Desde" hasta el fin de la jornada "Hasta" (de 7 a 7, D-14) · Estimación: 1 h 15 min · Completado: 2026-10-29 00:13
+
+- [x] **CA-2** · "Hasta" anterior a "Desde" o un rango de más de 366 días da `VALIDATION`; el vendedor sigue con `FORBIDDEN`; tests de contrato y fuzz del rango, y E2E con las dos fechas · Estimación: 45 min · Completado: 2026-10-29 00:13
+
+**Notas**
+
+- Pedido del dev al revisar el Sprint 4 (2026-10-28).
+- El repositorio ya filtra por un rango: cambian el schema de la acción, el servicio, el cálculo y la UI.
+- Nivel 3: cambia la entrada de una Server Action.
+- `fetchWorkdayStats` recibe `{ from, to }` (`workdayPeriodSchema`, `strictObject`) y `periodRange` arma el rango
+  para el repositorio, que no cambió. `WorkdayStats.day` pasó a `from` y `to`.
+- En la pantalla, un "Desde" posterior a "Hasta" mueve los dos (y al revés). Con más de un día, el cuadro de ventas
+  muestra fecha y hora en lugar de sólo la hora, y los textos vacíos dicen "en estas fechas".
+- Lint, typecheck, 103 tests de Estadísticas y Gastos, 12 de integración (uno nuevo con un rango de tres jornadas)
+  y el E2E de Estadísticas en verde.
+
+### BUG-25 · Stock: costo y precio de pizzas y ciabattas desde "Ingresar stock"
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-29 |
+| Tamaño       | S         |
+| Depende de   | BUG-23    |
+| Plan         | [`docs/plans/sprint-4.md`](docs/plans/sprint-4.md#segunda-revisión-del-dev-2026-10-29) |
+| Merge        | —         |
+| Horas reales | 45 min    |
+
+**Historia**: Como administrador quiero cargar el costo y el precio de un gusto de pizza o de ciabatta desde
+"Ingresar stock", de forma que tenga precio aunque su stock dependa de las prepizzas o los panes.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · En "Ingresar stock", la Categoría vuelve a ofrecer Pizzas y Ciabattas. Al elegirlas se elige el gusto y se cargan "Costo para el local" y "Precio de venta" (precargados con los actuales), sin cantidad ni proveedor; se guarda con la misma acción que "Costo y precio" · Estimación: 45 min · Completado: 2026-10-29 16:55
+
+- [x] **CA-2** · Prepizza y Pan de ciabatta siguen pidiendo sólo cantidad y proveedor, y la grilla sigue mostrando las bases y los gustos; tests del formulario y E2E de cargar el precio de una pizza · Estimación: 15 min · Completado: 2026-10-29 16:55
+
+**Notas**
+
+- Pedido del dev (2026-10-29): al sacar Pizzas y Ciabattas de "Ingresar stock" (BUG-23) no quedaba a la vista cómo
+  ponerles precio. El botón "Costo y precio" de cada fila sigue.
+- Sólo UI: el servidor ya guarda costo y precio de un gusto con base (`setStockPricingAction`, US-28).
+- Nivel 2.
+- En Pizzas y Ciabattas, el selector de gusto no muestra el stock (no tienen) y el botón dice "Guardar". Sin la
+  casilla "Aplicar a todos", que sigue en "Costo y precio" de la fila (D-17).
+- Lint, typecheck, 113 tests de Stock y 8 E2E de Stock, precios y prepizzas en verde.
+
+### US-34 · Stock: ordenar por cantidad
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-29 |
+| Tamaño       | S         |
+| Depende de   | BUG-23    |
+| Plan         | [`docs/plans/sprint-4.md`](docs/plans/sprint-4.md#segunda-revisión-del-dev-2026-10-29) |
+| Merge        | —         |
+| Horas reales | 30 min    |
+
+**Historia**: Como administrador quiero ordenar la grilla de Stock por cantidad o ver sólo lo que falta, de forma que
+sepa rápido qué hay que reponer.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · A la izquierda de "Todas las categorías" hay un desplegable con "Orden por categoría" (el de siempre), "Stock creciente", "Stock decreciente", "Solo sin stock" y "Quitar sin stock"; se combina con la categoría y la búsqueda · Estimación: 30 min · Completado: 2026-10-29 17:01
+
+- [x] **CA-2** · Los gustos sin stock propio (pizzas y ciabattas) van al final al ordenar y no cuentan como "sin stock" (D-16); tests del orden y E2E · Estimación: 15 min · Completado: 2026-10-29 17:01
+
+**Notas**
+
+- Pedido del dev (2026-10-29). Lo ven el administrador y el vendedor.
+- Nivel 2.
+- `src/features/stock/domain/stock-order.ts` (`orderStock`, con test y fuzz) y `ui/stock-filters.tsx`, que junta el
+  desplegable "Ordenar Stock" y el filtro de categoría.
+- Lint, typecheck, 120 tests de Stock y 9 E2E de Stock, navegación y prepizzas en verde.
+
+### US-35 · Ventas: aviso al agregar, gustos por precio y buscador
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-29 |
+| Tamaño       | S         |
+| Depende de   | US-5      |
+| Plan         | [`docs/plans/sprint-4.md`](docs/plans/sprint-4.md#segunda-revisión-del-dev-2026-10-29) |
+| Merge        | —         |
+| Horas reales | 1 h 5 min |
+
+**Historia**: Como vendedor quiero ver claro que un gusto se sumó al pedido, y encontrar los gustos por precio o por
+nombre, de forma que arme el pedido rápido y sin dudas.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · Al tocar "Agregar", "Agregar uno" o "Completar" en la lista de gustos aparece arriba un aviso verde, por 2 segundos, que dice "Se agregó <gusto> al pedido" (wireframe `agregar-a-la-lista-de-compras`) · Estimación: 20 min · Completado: 2026-10-29 17:09
+
+- [x] **CA-2** · La lista de gustos va del más barato al más caro según el precio de la presentación (a igual precio, por nombre; sin precio, al final) · Estimación: 10 min · Completado: 2026-10-29 17:09
+
+- [x] **CA-3** · La lista tiene un buscador "Buscar gusto" que no distingue mayúsculas, minúsculas ni acentos, y avisa "Ningún gusto coincide."; tests de dominio con fuzz, de componente y E2E · Estimación: 15 min · Completado: 2026-10-29 17:09
+
+- [x] **CA-4** · El aviso baja suave desde arriba, queda quieto y se desvanece; dura 3 segundos y cada agregado lo vuelve a animar, también con Windows en "menos movimiento" · Estimación: 20 min · Completado: 2026-10-29 19:15
+
+**Notas**
+
+- Pedido del dev (2026-10-29), con el wireframe `docs/wireframes-ventas-gestor/agregar-a-la-lista-de-compras.png`.
+- `src/features/order/domain/flavor-list.ts` (`flavorPrice`, que ahora usa también `FlavorRow`, y `visibleFlavors`)
+  y `ui/added-toast.tsx` (el aviso va en un portal sobre el modal y no tapa clics).
+- No se miró en el navegador: el puerto 3000 lo ocupaba el `npm run dev` del dev. Lo cubren los tests de componente
+  y los E2E.
+- Lint, typecheck, 229 tests de pedidos y 9 E2E de tablero, cobro, promos y prepizzas en verde.
+- CA-4, pedido del dev en la tercera revisión: keyframe `toast-drop` en `src/app/motion.css` (Tailwind v4 genera
+  `animate-toast-drop`). El aviso lleva `key` por agregado para que la animación arranque de nuevo. El E2E de
+  tablero comprueba `animation-name` en Chromium.
+- El Windows del dev tiene apagadas las animaciones (`prefers-reduced-motion: reduce`), y con
+  `motion-reduce:animate-none` el aviso no se animaba. Se sacó, porque el dev pidió la animación.
+- Nivel 2.
+
+### T-22 · Cierre del Sprint 4
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-28 |
+| Tamaño       | S         |
+| Depende de   | todos     |
+| Plan         | [`docs/plans/sprint-4.md`](docs/plans/sprint-4.md) |
+| Merge        | `chore(release): sprint 4` en `main`, tag `sprint-4` |
+| Horas reales | —         |
+
+**Historia**: Como dev quiero el Sprint 4 verificado completo y en `main`, de forma que la próxima demo muestre lo que
+se probó.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · `npm run verify` completo y todos los E2E en verde sobre `develop` · Estimación: 30 min · Completado: 2026-10-29 17:19 (la primera corrida fue el 2026-10-28 17:23; se repitió después de cada revisión del dev)
+
+- [ ] **CA-2** · README, `docs/architecture.md` y `docs/initial_prompt.md` al día; con el OK del dev, merge local `develop → main` con el tag `sprint-4` · Estimación: 30 min · Completado: 2026-10-29 19:40
+
+**Notas**
+
+- CA-1: el verify de US-31 corrió sobre el mismo código que quedó en `develop` (`a7745c6`): 961 tests, cobertura
+  96,12/89,95, 107 de integración, mutación 90,40 y build. E2E: 68 en verde y el timeout conocido de BUG-16, que pasó
+  2 de 2 al repetirlo.
+- CA-2: README, `docs/architecture.md`, `docs/initial_prompt.md` y el ADR 0005 (reemplazado en parte por US-28) al
+  día; el resumen en lenguaje simple está al final de `docs/plans/sprint-4.md`. Falta el merge local
+  `develop → main` con el tag `sprint-4`, que espera el OK del dev.
+- Antes de usar `main` contra Supabase, el dev corre las migraciones 0018 a 0021 (quedan 22 en total).
+- Después de la revisión del dev (BUG-23, BUG-24, US-32 y US-33), sobre `develop` en `d672fa7`: `npm run verify` en
+  verde con 985 tests, cobertura 96,14/89,87, 108 de integración, mutación 90,29 y build; 69 E2E en verde. README,
+  `docs/architecture.md`, `docs/initial_prompt.md` y el resumen de `docs/plans/sprint-4.md` al día. Los arreglos de
+  la revisión no traen migraciones.
+- Después de la segunda revisión (BUG-25, US-34 y US-35), sobre `develop` en `b1023b5`: `npm run verify` en verde
+  con 1005 tests, cobertura 96,2/90,21, 108 de integración, mutación 89,79 y build; 71 E2E en verde. Sin migraciones.
+- Tercera revisión (US-35 CA-4, el aviso animado), sobre `develop` en `2916cf4`: `npm run verify` en verde con 1006
+  tests, cobertura 96,21/90,14, 108 de integración, mutación 89,79 y build; 72 E2E en verde.
+- El dev corrió las migraciones en Supabase el 2026-10-29: quedaron 22. Hoy el sistema corre sólo en local.
+- El dev dio el OK al merge a `main` el 2026-10-29.

@@ -88,7 +88,7 @@ export function Combobox({ options, value, onChange, placeholder = 'Seleccionar.
               </button>
             )}
 
-            {filteredOptions.length === 0 && !addNewLabel && <div className='py-6 text-center text-sm text-zinc-500'>{emptyMessage}</div>}
+            {filteredOptions.length === 0 && !addNewLabel && <div className='py-6 text-center text-sm text-zinc-700 dark:text-zinc-200'>{emptyMessage}</div>}
 
             {filteredOptions.map((opt) => (
               <button

@@ -7,8 +7,10 @@ describeStockRepository('fake en memoria', async () => {
   const item = stockItem({ group: 'pizzas', name: 'Muzza', stock: '2.5', unitCost: '3000.00' });
   const userId = '00000000-0000-4000-8000-00000000000a';
   const providerId = '22222222-2222-4222-8222-222222222222';
-  fake.state.items.push(item);
+  const sibling = stockItem({ group: 'pizzas', name: 'Napolitana' });
+  const base = stockItem({ group: 'pizzas', name: 'Prepizza', unitCost: null, stock: '0.0', isBase: true });
+  fake.state.items.push(item, sibling, base);
   fake.state.usernames.set(userId, 'admin');
   fake.state.providerNames.set(providerId, 'Molino del Sur');
-  return { repository: fake.read, itemId: item.id, userId, providerId };
+  return { repository: fake.read, itemId: item.id, siblingId: sibling.id, baseId: base.id, userId, providerId };
 });

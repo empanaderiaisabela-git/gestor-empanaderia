@@ -1,4 +1,4 @@
-import { and, asc, eq, ilike } from 'drizzle-orm';
+import { and, asc, desc, eq, ilike } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { menuItems } from '@/lib/db/menu-schema';
 import type { DbTransaction } from '@/lib/db/transaction';
@@ -35,7 +35,7 @@ function changeColumns({ prices, unitCost, ...rest }: MenuItemChanges): Partial<
 
 export function drizzleMenuItemRepository(executor: Executor = db): MenuItemRepository {
   return {
-    findAll: () => executor.select().from(menuItems).orderBy(asc(menuItems.group), asc(menuItems.name)),
+    findAll: () => executor.select().from(menuItems).orderBy(asc(menuItems.group), desc(menuItems.isBase), asc(menuItems.name)),
     findById: async (id) => (await executor.select().from(menuItems).where(eq(menuItems.id, id)))[0] ?? null,
     findByName: async (group, name) => {
       const rows = await executor.select().from(menuItems).where(and(eq(menuItems.group, group), ilike(menuItems.name, escapeLike(name)))).limit(1);

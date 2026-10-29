@@ -4,7 +4,7 @@ import { stockItem } from '../testing/stock-item';
 import { createStockService, type StockService } from './stock.service';
 
 const CALLER = { id: '00000000-0000-4000-8000-00000000000a' };
-const bare = (overrides = {}) => stockItem({ id: crypto.randomUUID(), group: 'pizzas', name: 'Napolitana', unitCost: null, stock: '0.0', ...overrides });
+const bare = (overrides = {}) => stockItem({ id: crypto.randomUUID(), group: 'coca_cola', name: 'Coca 500', unitCost: null, stock: '0.0', ...overrides });
 
 describe('stock.service: costo y precio al ingresar (US-17)', () => {
   let fake: FakeStockUnitOfWork;
@@ -52,23 +52,19 @@ describe('stock.service: costo y precio al ingresar (US-17)', () => {
   });
 
   it('VALIDATION: una presentación que el grupo no vende, o con faltantes', async () => {
-    const pizza = bare({ unitCost: '3000.00' });
+    const coca = bare({ unitCost: '3000.00' });
     const sanguche = bare({ group: 'sanguches', name: 'Primavera', unitCost: '500.00' });
-    fake.state.items.push(pizza, sanguche);
-    await expect(service.registerEntry(CALLER, { menuItemId: pizza.id, quantity: 1, prices: { price1: 1, price6: 6 } })).rejects.toMatchObject({ code: 'VALIDATION' });
+    fake.state.items.push(coca, sanguche);
+    await expect(service.registerEntry(CALLER, { menuItemId: coca.id, quantity: 1, prices: { price1: 1, price6: 6 } })).rejects.toMatchObject({ code: 'VALIDATION' });
     await expect(service.registerEntry(CALLER, { menuItemId: sanguche.id, quantity: 1, prices: { price1: 1 } })).rejects.toMatchObject({ code: 'VALIDATION' });
   });
 
-  it('empanadas: el ingreso guarda costo y cantidad, sin pedir precio aunque el grupo no lo tenga (US-23, R-3)', async () => {
+  it('empanadas: el primer ingreso pide los cuatro precios del gusto, como los sanguches (US-28)', async () => {
     const item = stockItem({ unitCost: '400.00' });
     fake.state.items.push(item);
-    await expect(service.registerEntry(CALLER, { menuItemId: item.id, quantity: 1, unitCost: 450 })).resolves.toMatchObject({ item: { stock: '11.0', unitCost: '450.00', price1: null } });
-  });
-
-  it('empanadas: VALIDATION si llega un precio, que se carga en Alta (US-23)', async () => {
-    const item = stockItem({ unitCost: '400.00' });
-    fake.state.items.push(item);
-    await expect(service.registerEntry(CALLER, { menuItemId: item.id, quantity: 1, prices: { price1: 1300, price3: 3600, price6: 7000, price12: 13000 } })).rejects.toMatchObject({ code: 'VALIDATION' });
-    expect(fake.state.entries).toEqual([]);
+    await expect(service.registerEntry(CALLER, { menuItemId: item.id, quantity: 1, unitCost: 450 })).rejects.toMatchObject({ code: 'MISSING_PRICE' });
+    await expect(service.registerEntry(CALLER, { menuItemId: item.id, quantity: 1, prices: { price1: 1300 } })).rejects.toMatchObject({ code: 'VALIDATION' });
+    const prices = { price1: 1300, price3: 3600, price6: 7000, price12: 13000 };
+    await expect(service.registerEntry(CALLER, { menuItemId: item.id, quantity: 1, prices })).resolves.toMatchObject({ item: { stock: '11.0', price1: '1300.00', price12: '13000.00' } });
   });
 });

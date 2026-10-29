@@ -1,5 +1,5 @@
 import { sql } from 'drizzle-orm';
-import { boolean, check, index, integer, numeric, pgEnum, pgTable, timestamp, unique, uuid, varchar } from 'drizzle-orm/pg-core';
+import { boolean, check, index, integer, numeric, pgEnum, pgTable, timestamp, unique, uniqueIndex, uuid, varchar } from 'drizzle-orm/pg-core';
 
 export const menuGroupEnum = pgEnum('menu_group', ['empanadas', 'pizzas', 'sanguches', 'ciabattas', 'coca_cola', 'pepsi']);
 
@@ -21,48 +21,29 @@ export const menuItems = pgTable(
     price12: money('price_12'),
     isActive: boolean('is_active').default(true).notNull(),
     isVisible: boolean('is_visible').default(false).notNull(),
+    isBase: boolean('is_base').default(false).notNull(),
     version: integer('version').default(1).notNull(),
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
   },
   (table) => [
     unique('menu_items_group_name_unique').on(table.group, table.name),
+    uniqueIndex('menu_items_one_base_per_group').on(table.group).where(sql`${table.isBase}`),
     check('menu_items_unit_cost_check', sql`${table.unitCost} is null or ${table.unitCost} >= 0`),
     check('menu_items_stock_check', sql`${table.stock} >= 0 and ${table.stock} * 2 = trunc(${table.stock} * 2)`),
     check('menu_items_whole_stock_check', sql`${table.group} = 'pizzas' or ${table.stock} = trunc(${table.stock})`),
     check(
       'menu_items_prices_check',
       sql`case
-        when ${table.group} in ('empanadas', 'ciabattas')
-          then ${table.price1} is null and ${table.price3} is null and ${table.price6} is null and ${table.price12} is null
-        when ${table.group} = 'sanguches'
+        when ${table.group} in ('empanadas', 'sanguches')
           then (${table.price1} is null and ${table.price3} is null and ${table.price6} is null and ${table.price12} is null)
             or (coalesce(${table.price1}, 0) > 0 and coalesce(${table.price3}, 0) > 0 and coalesce(${table.price6}, 0) > 0 and coalesce(${table.price12}, 0) > 0)
         else (${table.price1} is null or ${table.price1} > 0) and ${table.price3} is null and ${table.price6} is null and ${table.price12} is null end`
     ),
-  ]
-);
-
-export const menuGroupPrices = pgTable(
-  'menu_group_prices',
-  {
-    group: menuGroupEnum('menu_group').primaryKey(),
-    price1: money('price_1').notNull(),
-    price3: money('price_3'),
-    price6: money('price_6'),
-    price12: money('price_12'),
-    version: integer('version').default(1).notNull(),
-    updatedAt: timestamp('updated_at').defaultNow().notNull(),
-  },
-  (table) => [
     check(
-      'menu_group_prices_check',
-      sql`case
-        when ${table.group} = 'empanadas'
-          then ${table.price1} > 0 and coalesce(${table.price3}, 0) > 0 and coalesce(${table.price6}, 0) > 0 and coalesce(${table.price12}, 0) > 0
-        when ${table.group} = 'ciabattas'
-          then ${table.price1} > 0 and ${table.price3} is null and ${table.price6} is null and ${table.price12} is null
-        else false end`
+      'menu_items_base_check',
+      sql`not ${table.isBase} or (${table.unitCost} is null and ${table.price1} is null and ${table.price3} is null and ${table.price6} is null and ${table.price12} is null
+        and ${table.group} in ('pizzas', 'ciabattas') and ${table.stock} = trunc(${table.stock}))`
     ),
   ]
 );

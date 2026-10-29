@@ -18,13 +18,25 @@ test.describe('menú y navegación por rol (US-2)', () => {
     test('entra a Ventas/Pedidos, ve sólo su menú y no puede abrir secciones ajenas', async ({ page }) => {
       await loginComo(page, 'vendedor');
       await expect(page).toHaveURL(/\/ventas$/);
-      await expect(menu(page).getByRole('link')).toHaveText(['Ventas/Pedidos', 'Clientes']);
-      await page.goto('/stock');
-      await expect(page).toHaveURL(/\/ventas$/);
+      await expect(menu(page).getByRole('link')).toHaveText(['Ventas/Pedidos', 'Stock', 'Clientes']);
       await page.goto('/usuarios');
       await expect(page).toHaveURL(/\/ventas$/);
       await page.goto('/');
       await expect(page).toHaveURL(/\/ventas$/);
+    });
+
+    test('entra a Stock sólo para mirar: categoría, gusto y cantidad, sin costos, botones ni gustos sin stock (US-31, BUG-23)', async ({ page }) => {
+      await loginComo(page, 'vendedor');
+      await expect(page).toHaveURL(/\/ventas$/);
+      await page.goto('/stock');
+      await expect(page).toHaveURL(/\/stock$/);
+      await page.getByLabel('Filtrar Stock').selectOption('prepizzas');
+      await expect(page.getByRole('row').nth(1)).toContainText('Prepizza');
+      await expect(page.getByRole('columnheader')).toHaveText(['Categoría', 'Gusto / bebida', 'Stock']);
+      await expect(page.getByRole('button', { name: 'Ingresar stock' })).toHaveCount(0);
+      await page.getByLabel('Filtrar Stock').selectOption('todos');
+      await page.getByPlaceholder('Buscar gusto o bebida...').filter({ visible: true }).fill('Muzza');
+      await expect(page.getByRole('cell', { name: 'Muzza', exact: true })).toHaveCount(0);
     });
   });
 

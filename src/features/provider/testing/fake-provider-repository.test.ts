@@ -8,5 +8,8 @@ describeProviderRepository('fake en memoria', async () => {
     linkStockEntry: async (providerId) => {
       fake.state.withStockEntries.add(providerId);
     },
+    linkExpense: async (providerId) => {
+      fake.state.withExpenses.add(providerId);
+    },
   };
 });

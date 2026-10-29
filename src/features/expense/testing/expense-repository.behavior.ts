@@ -1,8 +1,9 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { databaseErrorCode } from '@/lib/db-errors';
 import type { ExpenseRepository } from '@/features/expense/repository/expense.repository';
+import { EXPENSE_PROVIDER } from './expense-provider';
 
-export const EXPENSE_INPUT = { invoiceNumber: 'A-0001-00001234', title: 'Harina 25 kg', amount: 18500.5, invoiceDate: '2026-10-24' };
+export const EXPENSE_INPUT = { invoiceNumber: 'A-0001-00001234', title: 'Harina 25 kg', amount: 18500.5, invoiceDate: '2026-10-24', providerId: EXPENSE_PROVIDER.id };
 export type ExpenseRepositoryHarness = { repository: ExpenseRepository; userId: string };
 
 async function failureCode(operation: Promise<unknown>): Promise<string | null> {
@@ -23,8 +24,8 @@ export function describeExpenseRepository(label: string, setup: () => Promise<Ex
 
     it('guarda el gasto con versión 1, su monto y su fecha de factura', async () => {
       const created = await insert();
-      expect(created).toMatchObject({ invoiceNumber: EXPENSE_INPUT.invoiceNumber, amount: '18500.50', invoiceDate: '2026-10-24', userId: harness.userId, version: 1 });
-      expect(await harness.repository.findById(created.id)).toMatchObject({ title: 'Harina 25 kg' });
+      expect(created).toMatchObject({ invoiceNumber: EXPENSE_INPUT.invoiceNumber, amount: '18500.50', invoiceDate: '2026-10-24', userId: harness.userId, version: 1, providerName: EXPENSE_PROVIDER.name });
+      expect(await harness.repository.findById(created.id)).toMatchObject({ title: 'Harina 25 kg', providerId: EXPENSE_PROVIDER.id });
     });
 
     it('busca por número sin distinguir mayúsculas y rechaza un número repetido', async () => {
@@ -39,6 +40,12 @@ export function describeExpenseRepository(label: string, setup: () => Promise<Ex
       expect(await harness.repository.update({ id: created.id, version: 1 }, EXPENSE_INPUT)).toBeNull();
       expect(await harness.repository.remove({ id: created.id, version: 1 })).toBe(false);
       expect(await harness.repository.remove({ id: created.id, version: 2 })).toBe(true);
+    });
+
+    it('lista cada gasto con el nombre de su proveedor y rechaza un proveedor inexistente', async () => {
+      await insert();
+      expect(await harness.repository.findAll()).toMatchObject([{ providerId: EXPENSE_PROVIDER.id, providerName: EXPENSE_PROVIDER.name }]);
+      expect(await failureCode(insert({ invoiceNumber: '9', providerId: crypto.randomUUID() }))).toBe('RELATION_NOT_FOUND');
     });
 
     it('lista por fecha de la factura, la más nueva primero', async () => {

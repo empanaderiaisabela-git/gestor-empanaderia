@@ -14,8 +14,8 @@ export function PromoLineRow({ promo, board, actions }: PromoLineRowProps): JSX.
   return (
     <tr className='border-b border-zinc-100 dark:border-zinc-800'>
       <td className='py-2 pr-2'>
-        <span className='font-semibold text-zinc-900 dark:text-zinc-100'>Promo · {promo.name}</span>
-        {flavors && <span className='block text-sm text-zinc-500'>{flavors}</span>}
+        <span className='font-semibold text-zinc-900 dark:text-zinc-50'>Promo · {promo.name}</span>
+        {flavors && <span className='block text-sm text-zinc-700 dark:text-zinc-200'>{flavors}</span>}
         {!isPromoComplete(promo) && (
           <button onClick={() => actions.onReopen(promo.id)} className='inline-block mt-1 px-2 py-0.5 rounded-full text-xs font-bold bg-amber-50 text-amber-800 dark:bg-amber-500/10 dark:text-amber-300'>
             faltan gustos · elegir

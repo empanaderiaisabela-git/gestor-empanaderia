@@ -4,8 +4,8 @@ import { canVisit, homeFor, navigationFor } from './navigation';
 const labels = (role: 'admin' | 'vendedor'): string[] => navigationFor(role).map((item) => item.label);
 
 describe('menú por rol (US-2 CA-1)', () => {
-  it('el vendedor ve Ventas/Pedidos y Clientes, en ese orden; nunca Stock ni Auditoría (US-16)', () => {
-    expect(labels('vendedor')).toEqual(['Ventas/Pedidos', 'Clientes']);
+  it('el vendedor ve Ventas/Pedidos, Stock y Clientes, en ese orden; nunca Auditoría (US-31)', () => {
+    expect(labels('vendedor')).toEqual(['Ventas/Pedidos', 'Stock', 'Clientes']);
   });
 
   it('el admin ve las secciones que ya existen en el orden del local', () => {
@@ -27,7 +27,7 @@ describe('a dónde entra y a dónde puede ir cada rol (US-2 CA-4)', () => {
     expect(canVisit('vendedor', path)).toBe(true);
   });
 
-  it.each(['/', '/stock', '/logs', '/usuarios', '/proveedores', '/categorias', '/alta-de-productos', '/productos', '/ventasx', '/promociones', '/tarjetas', '/gastos'])('el vendedor no puede entrar a %s', (path) => {
+  it.each(['/', '/logs', '/usuarios', '/proveedores', '/categorias', '/alta-de-productos', '/productos', '/ventasx', '/promociones', '/tarjetas', '/gastos'])('el vendedor no puede entrar a %s', (path) => {
     expect(canVisit('vendedor', path)).toBe(false);
   });
 

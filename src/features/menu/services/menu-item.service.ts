@@ -19,6 +19,11 @@ const orStale = (item: MenuItem | null): MenuItem => {
   return item;
 };
 
+const notBase = (item: MenuItem | null): MenuItem | null => {
+  if (item?.isBase) throw new AppError('VALIDATION');
+  return item;
+};
+
 const snapshotOf = (item: MenuItem): Record<string, unknown> => ({ group: item.group, name: item.name, unitCost: item.unitCost, price1: item.price1, price3: item.price3, price6: item.price6, price12: item.price12 });
 type AuditFacts = { action: MenuAuditEntry['action']; item: MenuItem; detail: Record<string, unknown> };
 const entry = (caller: Caller, { action, item, detail }: AuditFacts): MenuAuditEntry => ({ userId: caller.id, action, entity: 'MENU_ITEM', entityId: item.id, detail });
@@ -31,7 +36,7 @@ async function createItem({ items, audit }: MenuScope, caller: Caller, input: Me
 }
 
 async function updateItem({ items, audit }: MenuScope, caller: Caller, { id, input }: { id: string; input: MenuItemUpdateInput }): Promise<MenuItem> {
-  const current = await items.findById(id);
+  const current = notBase(await items.findById(id));
   if (!current) throw new AppError('NOT_FOUND', { entity: 'el producto' });
   const sameName = await items.findByName(current.group, input.name);
   if (sameName && sameName.id !== id) throw new AppError('DUPLICATE');
@@ -41,6 +46,7 @@ async function updateItem({ items, audit }: MenuScope, caller: Caller, { id, inp
 }
 
 async function setItemActive({ items, audit }: MenuScope, caller: Caller, { id, isActive, version }: MenuItemToggleInput): Promise<MenuItem> {
+  notBase(await items.findById(id));
   const item = orStale(await items.update({ id, version }, { isActive }));
   const detail = { group: item.group, name: item.name, active: isActive, action: isActive ? 'Reactivado' : 'Desactivado' };
   await audit(entry(caller, { action: isActive ? 'ACTUALIZAR' : 'ELIMINAR', item, detail }));
@@ -48,13 +54,14 @@ async function setItemActive({ items, audit }: MenuScope, caller: Caller, { id, 
 }
 
 async function setItemVisible({ items, audit }: MenuScope, caller: Caller, { id, isVisible, version }: MenuItemVisibilityInput): Promise<MenuItem> {
+  notBase(await items.findById(id));
   const item = orStale(await items.update({ id, version }, { isVisible }));
   await audit(entry(caller, { action: 'ACTUALIZAR', item, detail: { group: item.group, name: item.name, visible: isVisible } }));
   return item;
 }
 
 async function removeItem({ items, audit }: MenuScope, caller: Caller, ref: MenuItemDeleteInput): Promise<void> {
-  const item = orStale(await items.findById(ref.id));
+  const item = orStale(notBase(await items.findById(ref.id)));
   if (!(await items.remove(ref))) throw new AppError('STALE_VERSION');
   await audit(entry(caller, { action: 'ELIMINAR', item, detail: { ...snapshotOf(item), note: 'Eliminación permanente' } }));
 }

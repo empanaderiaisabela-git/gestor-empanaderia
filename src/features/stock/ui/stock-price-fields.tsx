@@ -4,16 +4,16 @@ import { priceFieldsOf, priceLabelOf } from '@/features/menu/domain/menu-groups'
 import type { MenuItemDef } from '@/features/menu/domain/menu-item.schema';
 import { SALE_PRICE_TERM } from '@/features/menu/domain/menu-terms';
 import { formatMoney } from '@/lib/format-money';
-import type { EntryValues, FormErrors } from './stock-forms';
+import type { FormErrors, PriceTexts } from './stock-forms';
 
-type StockPriceFieldsProps = {
+type StockPriceFieldsProps<T extends PriceTexts> = {
   item: MenuItemDef;
-  values: EntryValues;
+  values: T;
   errors: FormErrors;
-  onChange: (values: EntryValues) => void;
+  onChange: (values: T) => void;
 };
 
-export function StockPriceFields({ item, values, errors, onChange }: StockPriceFieldsProps): JSX.Element {
+export function StockPriceFields<T extends PriceTexts>({ item, values, errors, onChange }: StockPriceFieldsProps<T>): JSX.Element {
   return (
     <>
       {priceFieldsOf(item.group).map((field) => {

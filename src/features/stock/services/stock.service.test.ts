@@ -10,12 +10,12 @@ const PROVIDER = '22222222-2222-4222-8222-222222222222';
 describe('stock.service (US-4)', () => {
   let fake: FakeStockUnitOfWork;
   let service: StockService;
-  const empanada = stockItem({ id: '11111111-1111-4111-8111-111111111111' });
-  const pizza = stockItem({ id: '33333333-3333-4333-8333-333333333333', group: 'pizzas', name: 'Muzza', stock: '2.5', unitCost: '3000.00', price1: '11000.00' });
+  const empanada = stockItem({ id: '11111111-1111-4111-8111-111111111111', price1: '1200.00', price3: '3400.00', price6: '6500.00', price12: '12000.00' });
+  const coca = stockItem({ id: '33333333-3333-4333-8333-333333333333', group: 'coca_cola', name: 'Coca 500', stock: '3.0', unitCost: '3000.00', price1: '3500.00' });
 
   beforeEach(() => {
     fake = createFakeStockUnitOfWork();
-    fake.state.items.push({ ...empanada }, { ...pizza });
+    fake.state.items.push({ ...empanada }, { ...coca });
     fake.state.usernames.set(CALLER.id, 'admin');
     fake.state.providerNames.set(PROVIDER, 'Molino del Sur');
     service = createStockService({ unitOfWork: fake });
@@ -42,19 +42,15 @@ describe('stock.service (US-4)', () => {
   });
 
   it('una merma descuenta el stock, guarda el costo del momento y audita PÉRDIDA (CA-4)', async () => {
-    const { item, loss } = await service.registerLoss(CALLER, { menuItemId: pizza.id, quantity: 0.5, reason: 'Se quemó' });
+    const { item, loss } = await service.registerLoss(CALLER, { menuItemId: coca.id, quantity: 1, reason: 'Se cayó' });
     expect(item).toMatchObject({ stock: '2.0' });
-    expect(loss).toMatchObject({ quantity: '0.5', unitCost: '3000.00', reason: 'Se quemó' });
-    expect(fake.state.audits.at(-1)).toMatchObject({ action: 'PÉRDIDA', entity: 'STOCK_LOSS', detail: { stockBefore: 2.5, stockAfter: 2 } });
+    expect(loss).toMatchObject({ quantity: '1.0', unitCost: '3000.00', reason: 'Se cayó' });
+    expect(fake.state.audits.at(-1)).toMatchObject({ action: 'PÉRDIDA', entity: 'STOCK_LOSS', detail: { stockBefore: 3, stockAfter: 2 } });
   });
 
   it('INSUFFICIENT_STOCK: una merma mayor que el stock (CA-5)', async () => {
     await expect(service.registerLoss(CALLER, { menuItemId: empanada.id, quantity: 11, reason: 'x' })).rejects.toMatchObject({ code: 'INSUFFICIENT_STOCK', message: 'No hay stock suficiente de Carne suave.' });
     await expect(service.registerLoss(CALLER, { menuItemId: empanada.id, quantity: 10, reason: 'x' })).resolves.toMatchObject({ item: { stock: '0.0' } });
-  });
-
-  it('VALIDATION: sólo las pizzas admiten media unidad de merma', async () => {
-    await expect(service.registerLoss(CALLER, { menuItemId: empanada.id, quantity: 0.5, reason: 'x' })).rejects.toMatchObject({ code: 'VALIDATION' });
   });
 
   it('NOT_FOUND: el gusto ya no existe', async () => {

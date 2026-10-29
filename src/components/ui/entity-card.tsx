@@ -42,14 +42,15 @@ export function EntityCard({ title, subtitle, badges, details, actions }: Entity
       {/* Header row: title + action menu */}
       <div className='flex items-start justify-between gap-2'>
         <div className='min-w-0 flex-1'>
-          <div className='font-bold text-zinc-900 dark:text-zinc-100 truncate'>{title}</div>
-          {subtitle && <div className='text-xs text-zinc-500 truncate mt-0.5'>{subtitle}</div>}
+          <div className='font-bold text-zinc-900 dark:text-zinc-50 truncate'>{title}</div>
+          {subtitle && <div className='text-xs text-zinc-700 dark:text-zinc-200 truncate mt-0.5'>{subtitle}</div>}
         </div>
 
+        {actions && (
         <div className='relative shrink-0' ref={menuRef}>
           <button
             onClick={() => setOpen((v) => !v)}
-            className='p-1.5 rounded-lg text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors'
+            className='p-1.5 rounded-lg text-zinc-600 dark:text-zinc-300 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors'
             aria-label='Acciones'
           >
             <MoreVertical className='w-5 h-5' />
@@ -66,10 +67,11 @@ export function EntityCard({ title, subtitle, badges, details, actions }: Entity
             </div>
           )}
         </div>
+        )}
       </div>
 
       {badges && <div className='flex flex-wrap gap-1.5'>{badges}</div>}
-      {details && <div className='text-sm text-zinc-600 dark:text-zinc-400 space-y-1'>{details}</div>}
+      {details && <div className='text-sm text-zinc-800 dark:text-zinc-200 space-y-1'>{details}</div>}
     </div>
   );
 }
@@ -87,7 +89,7 @@ export function CardAction({
   variant?: 'default' | 'danger' | 'warning' | 'success';
 }) {
   const colors = {
-    default: 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800',
+    default: 'text-zinc-900 dark:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800',
     danger: 'text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10',
     warning: 'text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-500/10',
     success: 'text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-500/10',

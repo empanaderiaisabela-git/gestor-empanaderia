@@ -4,9 +4,6 @@ export type MenuGroup = (typeof MENU_GROUPS)[number];
 export const PRICE_FIELDS = ['price1', 'price3', 'price6', 'price12'] as const;
 export type PriceField = (typeof PRICE_FIELDS)[number];
 
-export const GROUP_PRICED = ['empanadas', 'ciabattas'] as const;
-export type GroupPricedGroup = (typeof GROUP_PRICED)[number];
-
 export type Presentation = { key: string; label: string; units: number; priceField: PriceField; flavors: 1 | 2 };
 export type GroupInfo = { label: string; kind: 'comida' | 'bebida'; presentations: readonly Presentation[] };
 
@@ -38,14 +35,8 @@ export function priceLabelOf(group: MenuGroup, field: PriceField): string {
   return GROUPS[group].presentations.find((presentation) => presentation.priceField === field)?.label ?? field;
 }
 
-export function allowsHalfStock(group: MenuGroup): boolean {
-  return group === 'pizzas';
-}
+export const BASE_GROUPS = ['pizzas', 'ciabattas'] as const satisfies readonly MenuGroup[];
 
-export function isPricedByGroup(group: MenuGroup): group is GroupPricedGroup {
-  return GROUP_PRICED.some((priced) => priced === group);
-}
-
-export function itemPriceFieldsOf(group: MenuGroup): PriceField[] {
-  return isPricedByGroup(group) ? [] : priceFieldsOf(group);
+export function hasBase(group: MenuGroup): boolean {
+  return BASE_GROUPS.some((baseGroup) => baseGroup === group);
 }

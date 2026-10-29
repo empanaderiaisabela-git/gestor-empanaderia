@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { createFakeCheckoutUnitOfWork } from '../testing/fake-checkout-unit-of-work';
 import { createFakeSaleHistoryUnitOfWork } from '../testing/fake-sale-history';
-import { CALLER, CARNE, checkoutOf, COCA, cokes, halfAndHalf, halfDozen, loadMenu, MUZZA, NAPO, POLLO, stockOf } from '../testing/checkout-fixtures';
+import { CALLER, CARNE, checkoutOf, COCA, cokes, halfAndHalf, halfDozen, loadMenu, POLLO, PREPIZZA, stockOf } from '../testing/checkout-fixtures';
 import { createCheckoutService } from './checkout.service';
 import { createSaleHistoryService } from './sale-history.service';
 
@@ -26,11 +26,11 @@ describe('historial y anulación (US-7)', () => {
     expect(sales[0].lines.map((line) => line.description)).toEqual(['2 Carne + 4 Pollo', 'Muzza / Napolitana']);
   });
 
-  it('anular repone el stock exacto, también las medias pizzas, y borra la venta (CA-3)', async () => {
+  it('anular repone el stock exacto, la prepizza de la mitad y mitad incluida, y borra la venta (CA-3; US-29 CA-4)', async () => {
     const { saleId } = await checkout.checkout(CALLER, checkoutOf([halfDozen, halfAndHalf, cokes(2)], { payments: cash(23000) }));
     const voided = await history.voidSale(ADMIN, saleId);
     expect(voided.id).toBe(saleId);
-    expect([CARNE, POLLO, MUZZA, NAPO, COCA].map((item) => stockOf(fake, item.id))).toEqual(['10.0', '10.0', '2.5', '2.0', '5.0']);
+    expect([CARNE, POLLO, PREPIZZA, COCA].map((item) => stockOf(fake, item.id))).toEqual(['10.0', '10.0', '2.0', '5.0']);
     expect(await history.list()).toEqual([]);
     expect(fake.audits.at(-1)).toEqual({
       userId: ADMIN.id,

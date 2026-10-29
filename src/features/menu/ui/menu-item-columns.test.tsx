@@ -4,7 +4,7 @@ import type { MenuItemDef } from '@/features/menu/domain/menu-item.schema';
 import { renderMenuItemCard } from './menu-item-card';
 import { getMenuItemColumns, type MenuItemRowActions } from './menu-item-columns';
 
-const BASE: MenuItemDef = { id: 'x', group: 'empanadas', name: 'Carne', unitCost: 400, stock: 24, price1: null, price3: null, price6: null, price12: null, isActive: true, isVisible: false, version: 1, createdAt: '', updatedAt: '' };
+const BASE: MenuItemDef = { id: 'x', group: 'empanadas', name: 'Carne', unitCost: 400, stock: 24, price1: null, price3: null, price6: null, price12: null, isActive: true, isVisible: false, isBase: false, version: 1, createdAt: '', updatedAt: '' };
 
 function rowActions(): MenuItemRowActions {
   return { onEdit: vi.fn(), onToggleActive: vi.fn(), onDelete: vi.fn(), onToggleVisible: vi.fn(), onPhotos: vi.fn() };
@@ -16,6 +16,11 @@ describe('fila de la grilla y tarjeta mobile (US-3 CA-5)', () => {
     render(<div>{columns.slice(0, 3).map((column, index) => <span key={index}>{column.cell({ ...BASE, isActive: false })}</span>)}</div>);
     expect(columns.map((column) => column.header)).toEqual(['Grupo', 'Gusto / bebida', 'Stock', 'Acciones']);
     ['Empanadas', 'Carne', 'Inactivo', '24'].forEach((text) => expect(screen.getByText(text)).toBeDefined());
+  });
+
+  it('los gustos de Pizzas y Ciabattas no tienen stock propio: muestran una raya (US-29)', () => {
+    render(<span>{getMenuItemColumns(rowActions())[2].cell({ ...BASE, group: 'pizzas', name: 'Napolitana', stock: 0 })}</span>);
+    expect(screen.getByText('—')).toBeDefined();
   });
 
   it('los botones de la fila editan, desactivan y borran', () => {
@@ -33,7 +38,7 @@ describe('fila de la grilla y tarjeta mobile (US-3 CA-5)', () => {
     const actions = rowActions();
     render(renderMenuItemCard(actions)({ ...BASE, group: 'pizzas', name: 'Muzza', price1: 11000, isActive: false }));
     expect(screen.getByText('Pizzas')).toBeDefined();
-    expect(screen.getByText('Stock 24')).toBeDefined();
+    expect(screen.getByText('Stock —')).toBeDefined();
     fireEvent.click(screen.getByRole('button', { name: 'Acciones' }));
     fireEvent.click(screen.getByText('Activar'));
     expect(actions.onToggleActive).toHaveBeenCalled();
