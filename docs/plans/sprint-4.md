@@ -288,6 +288,9 @@ El dev revisó el Sprint 4 antes del merge a `main` y pidió cuatro arreglos. No
   de un gusto, sin cantidad ni proveedor. Guarda con `setStockPricingAction` (US-28), igual que "Costo y precio".
 - **US-34** (S, nivel 2): desplegable a la izquierda del filtro de categoría para ordenar por stock o quedarse con lo
   que falta (`src/features/stock/domain/stock-order.ts`, D-16).
+- **US-35** (S, nivel 2): en la lista de gustos de Ventas, un aviso verde al agregar (wireframe
+  `agregar-a-la-lista-de-compras`), los gustos del más barato al más caro y un buscador sin mayúsculas ni acentos
+  (`src/features/order/domain/flavor-list.ts`).
 
 ### D-16 · Los gustos sin stock propio al ordenar
 
@@ -323,6 +326,7 @@ El dev revisó el Sprint 4 antes del merge a `main` y pidió cuatro arreglos. No
 | — (revisión del dev) | Estadísticas con desde y hasta, hoy por defecto | US-32 |
 | — (segunda revisión) | Precio de pizzas y ciabattas desde "Ingresar stock" | BUG-25 |
 | — (segunda revisión) | Ordenar la grilla de Stock por cantidad | US-34 |
+| — (segunda revisión) | Aviso al agregar, gustos por precio y buscador en Ventas | US-35 |
 
 ---
 

@@ -1,6 +1,7 @@
 import type { JSX } from 'react';
 import type { MenuItemDef } from '@/features/menu/domain/menu-item.schema';
 import { type AddMode, isHalfAndHalf, type OrderLine, presentationOf, remaining } from '@/features/order/domain/order-line';
+import { flavorPrice } from '@/features/order/domain/flavor-list';
 import { availableStock } from '@/features/order/domain/order-usage';
 import { formatMoney } from '@/lib/format-money';
 import type { OrderBoardModel } from './use-order-board';
@@ -8,10 +9,6 @@ import type { OrderBoardModel } from './use-order-board';
 type FlavorRowProps = { line: OrderLine; lines: OrderLine[]; item: MenuItemDef; board: OrderBoardModel; inPromo?: boolean; onAdd: (menuItemId: string, mode: AddMode) => void };
 
 const button = 'px-3 py-1.5 rounded-lg text-sm font-semibold bg-brand-600 text-white hover:bg-brand-700 disabled:opacity-40 disabled:cursor-not-allowed';
-
-function priceOf({ line, item }: Pick<FlavorRowProps, 'line' | 'item'>): number | null {
-  return item[presentationOf(line)?.priceField ?? 'price1'];
-}
 
 function priceLabel(price: number | null, inPromo: boolean): string {
   if (inPromo) return 'En la promo';
@@ -25,7 +22,7 @@ export function FlavorRow({ line, lines, item, board, inPromo = false, onAdd }: 
   const half = presentation ? isHalfAndHalf(presentation) : false;
   const isPack = (presentation?.units ?? 1) > 1;
   const chosen = line.flavors.some((flavor) => flavor.menuItemId === item.id);
-  const price = priceOf({ line, item });
+  const price = flavorPrice(line, item);
   const unsellable = price === null && !inPromo;
   return (
     <li className='flex items-center justify-between gap-3 py-2 border-b border-zinc-100 dark:border-zinc-800'>

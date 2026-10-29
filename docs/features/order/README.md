@@ -1,7 +1,8 @@
 # Feature: pedido (tablero, cobro e historial de ventas)
 
 - **US relacionadas**: US-5 (tablero y pedido actual), US-6 (cobro), US-7 (historial, comprobante y anulación) y
-  US-29 (las pizzas y las ciabattas descuentan prepizzas y panes).
+  US-29 (las pizzas y las ciabattas descuentan prepizzas y panes) y US-35 (aviso, orden por precio y buscador en la
+  lista de gustos).
 - **Código**: `src/features/order/` (domain, store, actions, services, repository, ui, testing). Pantallas en
   `src/app/(main)/ventas/` (Ventas/Pedidos) y `src/app/(main)/ventas/nueva/` (tablero).
 - **Datos que usa**: gustos, bebidas, sus precios y stock del feature `menu` (`fetchMenuItems`). Al cobrar escribe en `sales`, `sale_lines`, `sale_line_items`, `sale_payments` y
@@ -191,7 +192,10 @@ que sumar el total".
   con el precio: si todos los gustos valen lo mismo, ese precio; si no, "desde $X" (el más bajo).
   Avisa si el grupo no tiene gustos y deshabilita los botones.
 - `FlavorPicker` / `FlavorRow`: gustos con su precio ("Sin precio" no se puede agregar) y stock disponible, y los
-  botones según la presentación.
+  botones según la presentación. Van del más barato al más caro según el precio de la presentación (a igual precio,
+  por nombre; sin precio, al final), con un buscador "Buscar gusto" que ignora mayúsculas y acentos
+  (`domain/flavor-list.ts`, US-35). Al agregar, un aviso verde arriba (`AddedToast`, 2 s) dice "Se agregó <gusto> al
+  pedido".
 - `OrderDrawer` (US-24): un botón flotante abajo a la derecha, con el ícono `Ticket` y un número que cuenta los
   productos (una docena suma 1, una promo suma 1), abre desde la derecha el panel con `CurrentOrder`. Se cierra con
   la X, con Escape o tocando afuera; Cobrar lo cierra y abre el cobro.

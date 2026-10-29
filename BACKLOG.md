@@ -3104,7 +3104,7 @@ que se lea de un vistazo cuánto sale la unidad, 3, 6 y 12.
 **Objetivo**: lo que pidió el cliente después de ver la demo del Sprint 3. Todos los precios en Stock; el stock de
 pizzas y ciabattas pasa a ser de prepizzas y panes; gastos con su proveedor; clientes con sólo el nombre obligatorio;
 títulos y letras más fáciles de leer; y, por pedido del dev, que el vendedor
-vea el stock sin costos. Al revisarlo, el dev sumó arreglos (BUG-23, BUG-24, BUG-25, US-32, US-33 y US-34) antes del cierre.
+vea el stock sin costos. Al revisarlo, el dev sumó arreglos (BUG-23, BUG-24, BUG-25, US-32 a US-35) antes del cierre.
 
 **Plan del sprint**: [`docs/plans/sprint-4.md`](docs/plans/sprint-4.md). Tiene las decisiones del dev (2026-10-28),
 las decisiones provisorias D-1 a D-11, el orden y la trazabilidad de cada punto del pedido en `specs.md` a su ítem.
@@ -3126,8 +3126,9 @@ las decisiones provisorias D-1 a D-11, el orden y la trazabilidad de cada punto 
 | 10  | [US-32](#us-32--estadísticas-desde-y-hasta)                                     | Estadísticas: desde y hasta                             | En revisión | US-21      | 2 h             |
 | 11  | [BUG-25](#bug-25--stock-costo-y-precio-de-pizzas-y-ciabattas-desde-ingresar-stock) | Stock: costo y precio de pizzas y ciabattas desde "Ingresar stock" | En revisión | BUG-23 | 1 h |
 | 12  | [US-34](#us-34--stock-ordenar-por-cantidad)                                     | Stock: ordenar por cantidad                             | En revisión | BUG-23     | 45 min          |
-| 13  | [T-22](#t-22--cierre-del-sprint-4)                                              | Cierre del Sprint 4                                     | En progreso | todos      | 1 h             |
-|     |                                                                                 | **Total del sprint**                                    |             |            | **22 h 30 min** |
+| 13  | [US-35](#us-35--ventas-aviso-al-agregar-gustos-por-precio-y-buscador)           | Ventas: aviso al agregar, gustos por precio y buscador  | En revisión | US-5       | 45 min          |
+| 14  | [T-22](#t-22--cierre-del-sprint-4)                                              | Cierre del Sprint 4                                     | En progreso | todos      | 1 h             |
+|     |                                                                                 | **Total del sprint**                                    |             |            | **23 h 15 min** |
 
 ### T-21 · Backlog del Sprint 4 desde el pedido del cliente
 
@@ -3612,6 +3613,40 @@ sepa rápido qué hay que reponer.
 - `src/features/stock/domain/stock-order.ts` (`orderStock`, con test y fuzz) y `ui/stock-filters.tsx`, que junta el
   desplegable "Ordenar Stock" y el filtro de categoría.
 - Lint, typecheck, 120 tests de Stock y 9 E2E de Stock, navegación y prepizzas en verde.
+
+### US-35 · Ventas: aviso al agregar, gustos por precio y buscador
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-29 |
+| Tamaño       | S         |
+| Depende de   | US-5      |
+| Plan         | [`docs/plans/sprint-4.md`](docs/plans/sprint-4.md#segunda-revisión-del-dev-2026-10-29) |
+| Merge        | —         |
+| Horas reales | 45 min    |
+
+**Historia**: Como vendedor quiero ver claro que un gusto se sumó al pedido, y encontrar los gustos por precio o por
+nombre, de forma que arme el pedido rápido y sin dudas.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · Al tocar "Agregar", "Agregar uno" o "Completar" en la lista de gustos aparece arriba un aviso verde, por 2 segundos, que dice "Se agregó <gusto> al pedido" (wireframe `agregar-a-la-lista-de-compras`) · Estimación: 20 min · Completado: 2026-10-29 17:09
+
+- [x] **CA-2** · La lista de gustos va del más barato al más caro según el precio de la presentación (a igual precio, por nombre; sin precio, al final) · Estimación: 10 min · Completado: 2026-10-29 17:09
+
+- [x] **CA-3** · La lista tiene un buscador "Buscar gusto" que no distingue mayúsculas, minúsculas ni acentos, y avisa "Ningún gusto coincide."; tests de dominio con fuzz, de componente y E2E · Estimación: 15 min · Completado: 2026-10-29 17:09
+
+**Notas**
+
+- Pedido del dev (2026-10-29), con el wireframe `docs/wireframes-ventas-gestor/agregar-a-la-lista-de-compras.png`.
+- `src/features/order/domain/flavor-list.ts` (`flavorPrice`, que ahora usa también `FlavorRow`, y `visibleFlavors`)
+  y `ui/added-toast.tsx` (el aviso va en un portal sobre el modal y no tapa clics).
+- No se miró en el navegador: el puerto 3000 lo ocupaba el `npm run dev` del dev. Lo cubren los tests de componente
+  y los E2E.
+- Lint, typecheck, 229 tests de pedidos y 9 E2E de tablero, cobro, promos y prepizzas en verde.
+- Nivel 2.
 
 ### T-22 · Cierre del Sprint 4
 

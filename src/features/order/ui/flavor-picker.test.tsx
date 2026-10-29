@@ -46,6 +46,26 @@ describe('lista de gustos de una presentación (US-5 CA-2 a CA-4)', () => {
     expect(useOrderStore.getState().lines[0].flavors).toEqual([{ menuItemId: 'muzza', units: 0.5 }, { menuItemId: 'napo', units: 0.5 }]);
   });
 
+  it('las pizzas van de la más barata a la más cara y el buscador ignora mayúsculas y acentos (US-35)', () => {
+    act(() => useOrderStore.getState().start('pizzas', 'pizza_1'));
+    render(<FlavorPicker board={board} />);
+    const gustos = (): string[] => within(screen.getByRole('list', { name: 'Gustos' })).getAllByRole('listitem').map((item) => item.querySelector('p')?.textContent ?? '');
+    expect(gustos()).toEqual(['Muzza', 'Napolitana']);
+    fireEvent.change(screen.getByLabelText('Buscar gusto'), { target: { value: 'NÁPO' } });
+    expect(gustos()).toEqual(['Napolitana']);
+    fireEvent.change(screen.getByLabelText('Buscar gusto'), { target: { value: 'fugazzeta' } });
+    expect(screen.getByText('Ningún gusto coincide.')).toBeDefined();
+  });
+
+  it('al agregar, un aviso verde dice qué se sumó al pedido (US-35)', async () => {
+    act(() => useOrderStore.getState().start('empanadas', 'u1'));
+    render(<FlavorPicker board={board} />);
+    fireEvent.click(within(rowOf('Pollo')).getByRole('button', { name: 'Agregar' }));
+    const aviso = await screen.findByRole('status');
+    expect(aviso.textContent).toBe('Se agregó Pollo al pedido');
+    expect(aviso.className).toContain('bg-emerald-600');
+  });
+
   it('las bebidas de Coca-Cola se suman de a una y "Listo" cierra la lista', () => {
     act(() => useOrderStore.getState().start('coca_cola', 'u1'));
     render(<FlavorPicker board={board} />);

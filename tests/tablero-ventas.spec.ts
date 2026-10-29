@@ -8,6 +8,7 @@ test.describe('tablero de ventas (US-5)', () => {
     await page.goto('/ventas/nueva');
     await grupo(page, 'Empanadas').getByRole('button', { name: /½ docena/ }).click();
     await gusto(page, 'Carne').getByRole('button', { name: 'Agregar uno' }).click();
+    await expect(page.getByText('Se agregó Carne al pedido')).toBeVisible();
     await gusto(page, 'Carne').getByRole('button', { name: 'Agregar uno' }).click();
     await expect(page.getByText('2 Carne · faltan 4')).toBeVisible();
     await gusto(page, 'Pollo').getByRole('button', { name: 'Completar' }).click();
@@ -17,6 +18,18 @@ test.describe('tablero de ventas (US-5)', () => {
     const pedido = page.getByRole('region', { name: 'Pedido actual' });
     await expect(pedido.getByText('2 Carne + 4 Pollo')).toBeVisible();
     await expect(pedido.getByText('$6.500').first()).toBeVisible();
+  });
+
+  test('los gustos van del más barato al más caro y se buscan sin importar mayúsculas (US-35)', async ({ page }) => {
+    await page.goto('/ventas/nueva');
+    await grupo(page, 'Empanadas').getByRole('button', { name: /^1 unidad/ }).click();
+    await expect(gusto(page, 'Humita')).toBeVisible();
+    const montos = (await page.getByRole('list', { name: 'Gustos' }).getByRole('listitem').locator('p:nth-child(2)').allInnerTexts()).map((texto) => Number(texto.split(' · ')[0].replace(/\D/g, '')));
+    expect(montos.length).toBeGreaterThan(1);
+    expect([...montos].sort((a, b) => a - b)).toEqual(montos);
+    await page.getByLabel('Buscar gusto').fill('HUMITA');
+    await expect(page.getByRole('list', { name: 'Gustos' }).getByRole('listitem')).toHaveCount(1);
+    await expect(gusto(page, 'Humita')).toBeVisible();
   });
 
   test('una ½ docena a medio armar muestra lo que falta y no deja cobrar', async ({ page }) => {
