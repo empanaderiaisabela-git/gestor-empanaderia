@@ -3666,7 +3666,7 @@ se probó.
 
 **Criterios de aceptación**
 
-- [x] **CA-1** · `npm run verify` completo y todos los E2E en verde sobre `develop` · Estimación: 30 min · Completado: 2026-10-29 00:23 (la primera corrida fue el 2026-10-28 17:23; se repitió después de la revisión del dev)
+- [x] **CA-1** · `npm run verify` completo y todos los E2E en verde sobre `develop` · Estimación: 30 min · Completado: 2026-10-29 17:19 (la primera corrida fue el 2026-10-28 17:23; se repitió después de cada revisión del dev)
 
 - [ ] **CA-2** · README, `docs/architecture.md` y `docs/initial_prompt.md` al día; con el OK del dev, merge local `develop → main` con el tag `sprint-4` · Estimación: 30 min · Completado: —
 
@@ -3683,3 +3683,5 @@ se probó.
   verde con 985 tests, cobertura 96,14/89,87, 108 de integración, mutación 90,29 y build; 69 E2E en verde. README,
   `docs/architecture.md`, `docs/initial_prompt.md` y el resumen de `docs/plans/sprint-4.md` al día. Los arreglos de
   la revisión no traen migraciones.
+- Después de la segunda revisión (BUG-25, US-34 y US-35), sobre `develop` en `b1023b5`: `npm run verify` en verde
+  con 1005 tests, cobertura 96,2/90,21, 108 de integración, mutación 89,79 y build; 71 E2E en verde. Sin migraciones.

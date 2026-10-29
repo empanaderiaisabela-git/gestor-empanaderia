@@ -353,6 +353,9 @@ tu OK.
 | BUG-24 | `8a1d9a6` | La grilla ya no tiembla al llevar la barra de scroll al fondo |
 | US-33 | `e457361` | Gastos se filtra entre dos fechas, con el mes en curso por defecto |
 | US-32 | `d672fa7` | Estadísticas se ve entre dos fechas, con hoy por defecto |
+| BUG-25 | `734699c` | Costo y precio de pizzas y ciabattas también desde "Ingresar stock" |
+| US-34 | `02481b4` | La grilla de Stock se ordena por cantidad o muestra sólo lo que falta |
+| US-35 | `b1023b5` | En Ventas, aviso verde al agregar, gustos por precio y buscador |
 
 #### T-21 · 416a2f2
 - Tu pedido del cliente quedó guardado tal cual en `specs.md` y pasó a la lista de tareas, con este plan.
@@ -408,6 +411,16 @@ tu OK.
 - **US-32 · d672fa7**: Estadísticas tiene "Desde" y "Hasta", con la jornada de hoy en las dos. Suma todas las
   jornadas del rango (de 7 a 7), hasta 366 días. Con más de un día, el cuadro de ventas muestra fecha y hora.
 
+#### Segunda revisión (2026-10-29)
+
+- **BUG-25 · 734699c**: "Ingresar stock" vuelve a ofrecer Pizzas y Ciabattas, pero sólo para elegir el gusto y
+  cargarle costo y precio (ya vienen con los actuales), sin cantidad ni proveedor. Los gustos nuevos se crean en Alta
+  de productos.
+- **US-34 · 02481b4**: a la izquierda de "Todas las categorías" hay un desplegable: orden por categoría, stock
+  creciente, stock decreciente, solo sin stock y quitar sin stock.
+- **US-35 · b1023b5**: al agregar un gusto al pedido aparece arriba un aviso verde ("Se agregó Muzza al pedido"); la
+  lista va del más barato al más caro y tiene un buscador que no distingue mayúsculas ni acentos.
+
 ### Decisiones provisorias del agente (resumen)
 
 Detalle, ejemplo y qué cambia si respondés otra cosa: [arriba](#decisiones-provisorias-del-agente).
@@ -429,6 +442,8 @@ Detalle, ejemplo y qué cambia si respondés otra cosa: [arriba](#decisiones-pro
 | D-13 | Gastos arranca del 1 al último día del mes en curso |
 | D-14 | Estadísticas cuenta jornadas de 7 a 7, con un máximo de 366 días |
 | D-15 | Los arreglos de tu revisión entraron al Sprint 4, antes del merge a `main` |
+| D-16 | Al ordenar Stock, los gustos sin stock propio van al final y no cuentan como "sin stock" |
+| D-17 | El precio de una pizza desde "Ingresar stock" no trae la casilla "Aplicar a todos" (sigue en la fila) |
 
 ### Para revisar
 
