@@ -39,7 +39,7 @@ export function FlavorPicker({ board }: { board: OrderBoardModel }): JSX.Element
       <button onClick={done} className='mt-4 w-full rounded-lg border border-zinc-300 dark:border-zinc-700 py-2 font-semibold'>
         Listo
       </button>
-      <AddedToast name={toast.added} />
+      <AddedToast added={toast.added} />
     </ResponsiveModal>
   );
 }

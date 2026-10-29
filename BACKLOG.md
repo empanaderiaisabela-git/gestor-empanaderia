@@ -3126,9 +3126,9 @@ las decisiones provisorias D-1 a D-11, el orden y la trazabilidad de cada punto 
 | 10  | [US-32](#us-32--estadísticas-desde-y-hasta)                                     | Estadísticas: desde y hasta                             | En revisión | US-21      | 2 h             |
 | 11  | [BUG-25](#bug-25--stock-costo-y-precio-de-pizzas-y-ciabattas-desde-ingresar-stock) | Stock: costo y precio de pizzas y ciabattas desde "Ingresar stock" | En revisión | BUG-23 | 1 h |
 | 12  | [US-34](#us-34--stock-ordenar-por-cantidad)                                     | Stock: ordenar por cantidad                             | En revisión | BUG-23     | 45 min          |
-| 13  | [US-35](#us-35--ventas-aviso-al-agregar-gustos-por-precio-y-buscador)           | Ventas: aviso al agregar, gustos por precio y buscador  | En revisión | US-5       | 45 min          |
+| 13  | [US-35](#us-35--ventas-aviso-al-agregar-gustos-por-precio-y-buscador)           | Ventas: aviso al agregar, gustos por precio y buscador  | En revisión | US-5       | 1 h 5 min       |
 | 14  | [T-22](#t-22--cierre-del-sprint-4)                                              | Cierre del Sprint 4                                     | En progreso | todos      | 1 h             |
-|     |                                                                                 | **Total del sprint**                                    |             |            | **23 h 15 min** |
+|     |                                                                                 | **Total del sprint**                                    |             |            | **23 h 35 min** |
 
 ### T-21 · Backlog del Sprint 4 desde el pedido del cliente
 
@@ -3625,7 +3625,7 @@ sepa rápido qué hay que reponer.
 | Depende de   | US-5      |
 | Plan         | [`docs/plans/sprint-4.md`](docs/plans/sprint-4.md#segunda-revisión-del-dev-2026-10-29) |
 | Merge        | —         |
-| Horas reales | 45 min    |
+| Horas reales | 1 h 5 min |
 
 **Historia**: Como vendedor quiero ver claro que un gusto se sumó al pedido, y encontrar los gustos por precio o por
 nombre, de forma que arme el pedido rápido y sin dudas.
@@ -3638,6 +3638,8 @@ nombre, de forma que arme el pedido rápido y sin dudas.
 
 - [x] **CA-3** · La lista tiene un buscador "Buscar gusto" que no distingue mayúsculas, minúsculas ni acentos, y avisa "Ningún gusto coincide."; tests de dominio con fuzz, de componente y E2E · Estimación: 15 min · Completado: 2026-10-29 17:09
 
+- [x] **CA-4** · El aviso baja suave desde arriba, queda quieto y se desvanece; dura 3 segundos y cada agregado lo vuelve a animar (sin animación si el sistema pide menos movimiento) · Estimación: 20 min · Completado: 2026-10-29 19:15
+
 **Notas**
 
 - Pedido del dev (2026-10-29), con el wireframe `docs/wireframes-ventas-gestor/agregar-a-la-lista-de-compras.png`.
@@ -3646,6 +3648,9 @@ nombre, de forma que arme el pedido rápido y sin dudas.
 - No se miró en el navegador: el puerto 3000 lo ocupaba el `npm run dev` del dev. Lo cubren los tests de componente
   y los E2E.
 - Lint, typecheck, 229 tests de pedidos y 9 E2E de tablero, cobro, promos y prepizzas en verde.
+- CA-4, pedido del dev en la tercera revisión: keyframe `toast-drop` en `src/app/motion.css` (Tailwind v4 genera
+  `animate-toast-drop`). El aviso lleva `key` por agregado para que la animación arranque de nuevo. El E2E de
+  tablero comprueba `animation-name` en Chromium.
 - Nivel 2.
 
 ### T-22 · Cierre del Sprint 4

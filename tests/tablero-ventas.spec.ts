@@ -9,6 +9,7 @@ test.describe('tablero de ventas (US-5)', () => {
     await grupo(page, 'Empanadas').getByRole('button', { name: /½ docena/ }).click();
     await gusto(page, 'Carne').getByRole('button', { name: 'Agregar uno' }).click();
     await expect(page.getByText('Se agregó Carne al pedido')).toBeVisible();
+    await expect(page.getByRole('status').filter({ hasText: 'Se agregó Carne' })).toHaveCSS('animation-name', 'toast-drop');
     await gusto(page, 'Carne').getByRole('button', { name: 'Agregar uno' }).click();
     await expect(page.getByText('2 Carne · faltan 4')).toBeVisible();
     await gusto(page, 'Pollo').getByRole('button', { name: 'Completar' }).click();

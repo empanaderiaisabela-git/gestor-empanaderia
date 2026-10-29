@@ -194,8 +194,8 @@ que sumar el total".
 - `FlavorPicker` / `FlavorRow`: gustos con su precio ("Sin precio" no se puede agregar) y stock disponible, y los
   botones según la presentación. Van del más barato al más caro según el precio de la presentación (a igual precio,
   por nombre; sin precio, al final), con un buscador "Buscar gusto" que ignora mayúsculas y acentos
-  (`domain/flavor-list.ts`, US-35). Al agregar, un aviso verde arriba (`AddedToast`, 2 s) dice "Se agregó <gusto> al
-  pedido".
+  (`domain/flavor-list.ts`, US-35). Al agregar, un aviso verde (`AddedToast`) baja desde arriba, dice "Se agregó
+  <gusto> al pedido" y se desvanece a los 3 s.
 - `OrderDrawer` (US-24): un botón flotante abajo a la derecha, con el ícono `Ticket` y un número que cuenta los
   productos (una docena suma 1, una promo suma 1), abre desde la derecha el panel con `CurrentOrder`. Se cierra con
   la X, con Escape o tocando afuera; Cobrar lo cierra y abre el cobro.

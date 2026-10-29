@@ -66,6 +66,17 @@ describe('lista de gustos de una presentación (US-5 CA-2 a CA-4)', () => {
     expect(aviso.className).toContain('bg-emerald-600');
   });
 
+  it('cada agregado vuelve a bajar el aviso desde arriba', async () => {
+    act(() => useOrderStore.getState().start('empanadas', 'u6'));
+    render(<FlavorPicker board={board} />);
+    fireEvent.click(within(rowOf('Carne')).getByRole('button', { name: 'Agregar uno' }));
+    const primero = await screen.findByRole('status');
+    fireEvent.click(within(rowOf('Carne')).getByRole('button', { name: 'Agregar uno' }));
+    const segundo = await screen.findByRole('status');
+    expect(segundo).not.toBe(primero);
+    expect(segundo.className).toContain('animate-toast-drop');
+  });
+
   it('las bebidas de Coca-Cola se suman de a una y "Listo" cierra la lista', () => {
     act(() => useOrderStore.getState().start('coca_cola', 'u1'));
     render(<FlavorPicker board={board} />);

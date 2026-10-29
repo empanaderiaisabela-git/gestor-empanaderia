@@ -309,6 +309,12 @@ El dev revisó el Sprint 4 antes del merge a `main` y pidió cuatro arreglos. No
   este precio a todos los gustos" queda sólo en el botón "Costo y precio" de la fila.
 - **Si el dev responde otra cosa**: se suma la casilla también acá. Nivel 1.
 
+## Tercera revisión del dev (2026-10-29)
+
+- **US-35 CA-4** (nivel 2): el aviso verde de Ventas baja suave desde arriba y se desvanece a los 3 segundos
+  (`src/app/motion.css`). Cada agregado lo vuelve a animar.
+- El dev ya corrió las migraciones en Supabase: quedaron 22.
+
 ## Trazabilidad: `specs.md` → ítems
 
 | Línea de `specs.md` | Pedido | Ítem |
