@@ -11,26 +11,14 @@ import { TableSkeleton } from '@/components/ui/table-skeleton';
 import { TEST_IDS } from '@/constants/test-ids';
 import { useAuthStore } from '@/features/auth/store/auth.store';
 import type { MenuItemDef } from '@/features/menu/domain/menu-item.schema';
-import { CATEGORY_LABELS, categoryOf, hasOwnStock, isStockCategory, STOCK_CATEGORIES, STOCKED_CATEGORIES } from '@/features/stock/domain/stock-categories';
+import { CATEGORY_LABELS, categoryOf, hasOwnStock } from '@/features/stock/domain/stock-categories';
 import { getStockColumns, getStockViewColumns, StockBadge, StockButtons, type StockRowActions } from './stock-columns';
 import { StockEntryModal } from './stock-entry-modal';
+import { StockFilters } from './stock-filters';
 import { StockHistoryModal } from './stock-history-modal';
 import { StockLossModal } from './stock-loss-modal';
 import { StockPricingModal } from './stock-pricing-modal';
-import { type StockPanelModel, useStockPanel } from './use-stock-panel';
-
-function CategoryFilter({ model, isAdmin }: { model: StockPanelModel; isAdmin: boolean }): JSX.Element {
-  return (
-    <select aria-label='Filtrar Stock' value={model.categoryFilter} onChange={(event) => model.setCategoryFilter(isStockCategory(event.target.value) ? event.target.value : 'todos')} className='h-11 px-3 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 text-sm'>
-      <option value='todos'>Todas las categorías</option>
-      {(isAdmin ? STOCK_CATEGORIES : STOCKED_CATEGORIES).map((category) => (
-        <option key={category} value={category}>
-          {CATEGORY_LABELS[category]}
-        </option>
-      ))}
-    </select>
-  );
-}
+import { useStockPanel } from './use-stock-panel';
 
 const renderCard = (actions: StockRowActions | null) =>
   function StockCard(item: MenuItemDef): JSX.Element {
@@ -51,7 +39,7 @@ export function StockPanel(): JSX.Element {
   );
   return (
     <div className='flex flex-col flex-1 h-full overflow-hidden'>
-      <PanelToolbar search={model.search} onSearchChange={model.setSearch} searchPlaceholder='Buscar gusto o bebida...' searchPlaceholderMobile='Buscar...' data-testid={TEST_IDS.general.inputBusquedaTabla} filters={<CategoryFilter model={model} isAdmin={isAdmin} />} actions={actions && addButton} />
+      <PanelToolbar search={model.search} onSearchChange={model.setSearch} searchPlaceholder='Buscar gusto o bebida...' searchPlaceholderMobile='Buscar...' data-testid={TEST_IDS.general.inputBusquedaTabla} filters={<StockFilters model={model} isAdmin={isAdmin} />} actions={actions && addButton} />
       <GlobalMessage message={model.message} />
       <ResponsivePanelView columns={actions ? getStockColumns(actions) : getStockViewColumns()} data={actions ? model.items : model.items.filter(hasOwnStock)} emptyMessage='No hay gustos ni bebidas activos en esta categoría.' renderCard={renderCard(actions)} />
       <StockEntryModal model={model} />

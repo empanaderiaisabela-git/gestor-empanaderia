@@ -112,7 +112,9 @@ La grilla lee los gustos con `fetchMenuItems` del feature `menu`.
 
 `src/app/(main)/stock/page.tsx` → `StockPanel`:
 
-- Barra con búsqueda, filtro por categoría ("Filtrar Stock") y "Ingresar stock".
+- Barra con búsqueda, el desplegable "Ordenar Stock" (orden por categoría, stock creciente o decreciente, solo sin
+  stock o quitar sin stock; US-34, `domain/stock-order.ts`), el filtro por categoría ("Filtrar Stock") e "Ingresar
+  stock". Al ordenar, los gustos sin stock propio van al final y no cuentan como "sin stock" (D-16).
 - Grilla con categoría, gusto, stock ("Sin stock" en rojo), precio (los del gusto, uno por renglón, o "Sin precio";
   BUG-22) y costo ("Sin costo"). Las acciones de cada fila son ingresar, pérdida, "Costo y precio" (ícono `Tags`) e
   historial. La base es su propia categoría, con "—" en gusto, precio y costo y sólo ingresar y pérdida; los gustos de

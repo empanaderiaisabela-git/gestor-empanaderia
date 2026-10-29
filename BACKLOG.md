@@ -3125,7 +3125,7 @@ las decisiones provisorias D-1 a D-11, el orden y la trazabilidad de cada punto 
 | 9   | [US-33](#us-33--gastos-filtro-desde-y-hasta-con-el-mes-por-defecto)             | Gastos: filtro desde y hasta, con el mes por defecto    | En revisión | US-27      | 1 h             |
 | 10  | [US-32](#us-32--estadísticas-desde-y-hasta)                                     | Estadísticas: desde y hasta                             | En revisión | US-21      | 2 h             |
 | 11  | [BUG-25](#bug-25--stock-costo-y-precio-de-pizzas-y-ciabattas-desde-ingresar-stock) | Stock: costo y precio de pizzas y ciabattas desde "Ingresar stock" | En revisión | BUG-23 | 1 h |
-| 12  | [US-34](#us-34--stock-ordenar-por-cantidad)                                     | Stock: ordenar por cantidad                             | Por hacer   | BUG-23     | 45 min          |
+| 12  | [US-34](#us-34--stock-ordenar-por-cantidad)                                     | Stock: ordenar por cantidad                             | En revisión | BUG-23     | 45 min          |
 | 13  | [T-22](#t-22--cierre-del-sprint-4)                                              | Cierre del Sprint 4                                     | En progreso | todos      | 1 h             |
 |     |                                                                                 | **Total del sprint**                                    |             |            | **22 h 30 min** |
 
@@ -3587,28 +3587,31 @@ o varios.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Por hacer |
+| Estado       | En revisión |
 | Dueño        | Agente    |
-| Inicio       | —         |
+| Inicio       | 2026-10-29 |
 | Tamaño       | S         |
 | Depende de   | BUG-23    |
 | Plan         | [`docs/plans/sprint-4.md`](docs/plans/sprint-4.md#segunda-revisión-del-dev-2026-10-29) |
 | Merge        | —         |
-| Horas reales | —         |
+| Horas reales | 30 min    |
 
 **Historia**: Como administrador quiero ordenar la grilla de Stock por cantidad o ver sólo lo que falta, de forma que
 sepa rápido qué hay que reponer.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · A la izquierda de "Todas las categorías" hay un desplegable con "Orden por categoría" (el de siempre), "Stock creciente", "Stock decreciente", "Solo sin stock" y "Quitar sin stock"; se combina con la categoría y la búsqueda · Estimación: 30 min · Completado: —
+- [x] **CA-1** · A la izquierda de "Todas las categorías" hay un desplegable con "Orden por categoría" (el de siempre), "Stock creciente", "Stock decreciente", "Solo sin stock" y "Quitar sin stock"; se combina con la categoría y la búsqueda · Estimación: 30 min · Completado: 2026-10-29 17:01
 
-- [ ] **CA-2** · Los gustos sin stock propio (pizzas y ciabattas) van al final al ordenar y no cuentan como "sin stock" (D-16); tests del orden y E2E · Estimación: 15 min · Completado: —
+- [x] **CA-2** · Los gustos sin stock propio (pizzas y ciabattas) van al final al ordenar y no cuentan como "sin stock" (D-16); tests del orden y E2E · Estimación: 15 min · Completado: 2026-10-29 17:01
 
 **Notas**
 
 - Pedido del dev (2026-10-29). Lo ven el administrador y el vendedor.
 - Nivel 2.
+- `src/features/stock/domain/stock-order.ts` (`orderStock`, con test y fuzz) y `ui/stock-filters.tsx`, que junta el
+  desplegable "Ordenar Stock" y el filtro de categoría.
+- Lint, typecheck, 120 tests de Stock y 9 E2E de Stock, navegación y prepizzas en verde.
 
 ### T-22 · Cierre del Sprint 4
 
