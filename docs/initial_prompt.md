@@ -44,9 +44,9 @@ Funciones que ya existen (Sprints 1 a 4):
   (US-8 y US-9).
 - Tarjetas con planes de 1, 3, 6 o 12 cuotas y su recargo; el recargo es de la tarjeta: la venta y los pagos
   quedan al precio original y el recargo sólo se guarda como dato (US-10, US-11 y BUG-20).
-- Estadísticas de la jornada (7:00 a 6:59): ganancia en limpio, ventas, dinero por comida y por promos, lo
+- Estadísticas de una o varias jornadas (7:00 a 6:59), entre "Desde" y "Hasta" (US-32): ganancia en limpio, ventas, dinero por comida y por promos, lo
   cobrado por medio de pago (sin "Total facturado") y los cuadros de vendedores por turno y de ventas (US-12, US-13 y US-21).
-- Anotador de gastos con número de factura único y el proveedor que emitió la factura, que no cambia las Estadísticas (US-14, US-27).
+- Anotador de gastos con número de factura único y el proveedor que emitió la factura, filtrado entre dos fechas con el mes en curso por defecto, que no cambia las Estadísticas (US-14, US-27, US-33).
 - ABM de clientes (sólo el nombre es obligatorio, US-26), proveedores y usuarios, y auditoría de toda operación.
 - Catálogo público que se regenera a demanda.
 
@@ -105,22 +105,26 @@ Hacer preguntas de más es mejor que inventar.
     ítem y trazabilidad con `specs.md` y con las respuestas del cliente.
 - **Sprint 3 implementado** ("Aclaraciones del dev": T-19, BUG-17 a BUG-21, US-16 a US-22 y T-18) en `develop`,
   a la espera de la revisión del dev y del merge a `main` con el tag `sprint-3`. La migración 0017 es del Sprint 3.
-- **Sprint 4 implementado** ("Pedido del cliente tras la demo": T-21, US-26 a US-31 y T-22) en `develop`, a la espera
+- **Sprint 4 implementado** ("Pedido del cliente tras la demo": T-21, US-26 a US-33, BUG-23, BUG-24 y T-22) en `develop`, a la espera
   de la revisión del dev y del merge a `main` con el tag `sprint-4`. Plan, decisiones y resumen para el dev en
   [`sprint-4.md`](plans/sprint-4.md).
   - Qué cambió: clientes con sólo el nombre obligatorio y DNI opcional (US-26); títulos más grandes y más contraste
     en el panel (US-30); el proveedor de la factura en cada gasto (US-27); todos los precios por gusto, cargados en
     Stock, sin `menu_group_prices` (US-28); prepizzas y panes de ciabatta como stock de Pizzas y Ciabattas (US-29);
-    el vendedor ve Stock sin costos (US-31).
+    el vendedor ve Stock sin costos (US-31). De la revisión del dev: Prepizza y Pan de ciabatta como categorías de
+    Stock, sin elegir gusto (BUG-23); la grilla ya no tiembla al llevar el scroll al fondo (BUG-24); Gastos con
+    "Desde" y "Hasta", el mes por defecto (US-33); Estadísticas con "Desde" y "Hasta", hoy por defecto (US-32).
   - Lo hizo el agente solo, de forma autónoma (2026-10-28), con subagentes Sonnet y Opus cuyo trabajo revisó. Las
-    **decisiones provisorias D-1 a D-11** esperan la confirmación del dev y están en
+    **decisiones provisorias D-1 a D-15** esperan la confirmación del dev y están en
     [`sprint-4.md`](plans/sprint-4.md#decisiones-provisorias-del-agente), con la pregunta, un ejemplo y qué cambia si
     responde otra cosa:
     - D-1 mitad y mitad descuenta 1 prepizza; D-2 las bases viven sólo en Stock; D-3 un gusto de pizza o ciabatta
       aparece en Ventas si queda una base y tiene precio; D-4 precio por gusto en Empanadas y Ciabattas, docena
       surtida proporcional; D-5 gastos viejos sin proveedor; D-6 correo y DNI opcionales, DNI vacío como `null`;
       D-7 contraste con un reemplazo de clases; D-8 la anulación devuelve las bases; D-9 el catálogo marca stock
-      según la base; D-10 un proveedor con gastos no se borra; D-11 una promo descuenta lo mismo que la venta suelta.
+      según la base; D-10 un proveedor con gastos no se borra; D-11 una promo descuenta lo mismo que la venta suelta;
+      D-12 los gustos de pizza y ciabatta quedan en Stock sólo para "Costo y precio"; D-13 Gastos arranca con el mes
+      en curso; D-14 Estadísticas cuenta jornadas, hasta 366; D-15 los arreglos de la revisión entran al Sprint 4.
   - Las migraciones 0018 a 0021 son del Sprint 4. La base de Supabase la migra el dev; la local, `npm run db:migrate`.
   - Ningún ítem nuevo se arranca sin el OK del dev.
 - Git: `main` recibe un merge de `develop` al cierre de cada sprint. El trabajo nuevo sale de `develop`. El repo de GitHub

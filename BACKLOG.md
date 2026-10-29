@@ -3567,7 +3567,7 @@ se probó.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · `npm run verify` completo y todos los E2E en verde sobre `develop` · Estimación: 30 min · Completado: — (se corrió el 2026-10-28 17:23; se repite después de la revisión del dev)
+- [x] **CA-1** · `npm run verify` completo y todos los E2E en verde sobre `develop` · Estimación: 30 min · Completado: 2026-10-29 00:23 (la primera corrida fue el 2026-10-28 17:23; se repitió después de la revisión del dev)
 
 - [ ] **CA-2** · README, `docs/architecture.md` y `docs/initial_prompt.md` al día; con el OK del dev, merge local `develop → main` con el tag `sprint-4` · Estimación: 30 min · Completado: —
 
@@ -3580,3 +3580,7 @@ se probó.
   día; el resumen en lenguaje simple está al final de `docs/plans/sprint-4.md`. Falta el merge local
   `develop → main` con el tag `sprint-4`, que espera el OK del dev.
 - Antes de usar `main` contra Supabase, el dev corre las migraciones 0018 a 0021 (quedan 22 en total).
+- Después de la revisión del dev (BUG-23, BUG-24, US-32 y US-33), sobre `develop` en `d672fa7`: `npm run verify` en
+  verde con 985 tests, cobertura 96,14/89,87, 108 de integración, mutación 90,29 y build; 69 E2E en verde. README,
+  `docs/architecture.md`, `docs/initial_prompt.md` y el resumen de `docs/plans/sprint-4.md` al día. Los arreglos de
+  la revisión no traen migraciones.

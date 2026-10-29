@@ -319,6 +319,10 @@ tu OK.
 | US-28 | `bb5f3f3` | Todos los precios se cargan en Stock, por gusto; se van las tarjetas de precios de Alta |
 | US-29 | `91c21ee` | Pizzas y ciabattas se cuentan en prepizzas y panes; cada venta descuenta uno |
 | US-31 | `a7745c6` | El vendedor ve el stock, sin costos |
+| BUG-23 | `62b2eb4` | Prepizza y Pan de ciabatta son categorías: se ingresan sin elegir gusto |
+| BUG-24 | `8a1d9a6` | La grilla ya no tiembla al llevar la barra de scroll al fondo |
+| US-33 | `e457361` | Gastos se filtra entre dos fechas, con el mes en curso por defecto |
+| US-32 | `d672fa7` | Estadísticas se ve entre dos fechas, con hoy por defecto |
 
 #### T-21 · 416a2f2
 - Tu pedido del cliente quedó guardado tal cual en `specs.md` y pasó a la lista de tareas, con este plan.
@@ -360,6 +364,20 @@ tu OK.
   costos: el costo no sale del servidor.
 - De paso se arregló la carga de datos de prueba, que se trababa con gastos que ya tienen proveedor.
 
+#### Arreglos de tu revisión (2026-10-28 y 29)
+
+- **BUG-23 · 62b2eb4**: en "Ingresar stock", la categoría ofrece Prepizza y Pan de ciabatta (ya no Pizzas ni
+  Ciabattas) y no pide gusto: sólo cantidad y proveedor. En la grilla, la columna "Categoría" dice Prepizza o Pan de
+  ciabatta y "Gusto / bebida", "—". Los gustos de pizza y ciabatta siguen ahí sólo para "Costo y precio", y el
+  vendedor no los ve.
+- **BUG-24 · 8a1d9a6**: la grilla calculaba mal el alto de las filas de Stock (que son más altas por la lista de
+  precios) y, al llegar al fondo, el alto total cambiaba y la barra saltaba. Ahora mide cada fila. Vale para todas
+  las grillas del panel.
+- **US-33 · e457361**: Gastos tiene "Desde" y "Hasta", que arrancan en el 1 y el último día del mes; la X los limpia
+  y muestra todo.
+- **US-32 · d672fa7**: Estadísticas tiene "Desde" y "Hasta", con la jornada de hoy en las dos. Suma todas las
+  jornadas del rango (de 7 a 7), hasta 366 días. Con más de un día, el cuadro de ventas muestra fecha y hora.
+
 ### Decisiones provisorias del agente (resumen)
 
 Detalle, ejemplo y qué cambia si respondés otra cosa: [arriba](#decisiones-provisorias-del-agente).
@@ -377,6 +395,10 @@ Detalle, ejemplo y qué cambia si respondés otra cosa: [arriba](#decisiones-pro
 | D-9 | En el catálogo, un gusto de pizza o ciabatta figura con stock si queda una base |
 | D-10 | Un proveedor con gastos no se puede borrar |
 | D-11 | Una promo con pizza o ciabatta descuenta lo mismo que la venta suelta |
+| D-12 | Los gustos de pizza y ciabatta quedan en Stock sólo para "Costo y precio"; el vendedor no los ve |
+| D-13 | Gastos arranca del 1 al último día del mes en curso |
+| D-14 | Estadísticas cuenta jornadas de 7 a 7, con un máximo de 366 días |
+| D-15 | Los arreglos de tu revisión entraron al Sprint 4, antes del merge a `main` |
 
 ### Para revisar
 
@@ -389,6 +411,8 @@ Detalle, ejemplo y qué cambia si respondés otra cosa: [arriba](#decisiones-pro
 - **Archivo de más**: `docs/wireframes-ventas-gestor/mensaje-raro.png` entró por error en el commit de US-28
   (`bb5f3f3`). Decidí si se borra.
 - **`.gitignore`**: tiene un cambio sin commitear que el agente no hizo.
+- **Etiqueta del filtro de Stock**: el selector se llama "Filtrar Stock" para los lectores de pantalla. "Filtrar por
+  categoría" chocaba en los E2E con la etiqueta "Categoría" del formulario.
 - Pregunta abierta para el cliente: cómo se cobra una docena surtida cuando los gustos tengan precios distintos (D-4).
 
 </details>
