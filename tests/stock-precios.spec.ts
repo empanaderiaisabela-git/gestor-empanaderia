@@ -29,7 +29,7 @@ test.describe('Precios en Stock (US-17 y US-28)', () => {
     await expect(page.getByRole('row', { name: new RegExp(gusto) }).getByText('1 unidad: $11.000')).toBeVisible();
   });
 
-  test('Alta ya no tiene precios por grupo; cada ciabatta tiene el suyo en "Costo y precio" y se ingresa sólo el pan (US-28, US-29)', async ({ page }) => {
+  test('Alta ya no tiene precios por grupo; cada ciabatta tiene el suyo en "Costo y precio" o en Ingresar stock, y el pan se ingresa sin gusto (US-28, US-29, BUG-25)', async ({ page }) => {
     await page.goto('/alta-de-productos');
     await expect(page.getByRole('button').filter({ hasText: 'Nuevo gusto o bebida' })).toBeVisible();
     await expect(page.getByRole('form', { name: /^Precios de/ })).toHaveCount(0);
@@ -43,9 +43,15 @@ test.describe('Precios en Stock (US-17 y US-28)', () => {
     await page.keyboard.press('Escape');
 
     await page.getByRole('button').filter({ hasText: 'Ingresar stock' }).click();
-    await expect(page.getByLabel('Categoría').locator('option', { hasText: /^Ciabattas$/ })).toHaveCount(0);
     await page.getByLabel('Categoría').selectOption({ label: 'Pan de ciabatta' });
     await expect(page.getByLabel('Gusto o bebida')).toHaveCount(0);
+
+    await page.getByLabel('Categoría').selectOption({ label: 'Ciabattas' });
+    await page.getByLabel('Gusto o bebida').selectOption({ label: 'Bondiola' });
+    await expect(page.getByLabel('Precio de venta, 1 unidad')).toHaveValue('6000');
+    await expect(page.getByLabel('Cantidad que entra')).toHaveCount(0);
+    await page.getByRole('button', { name: 'Guardar', exact: true }).click();
+    await expect(page.getByText(/^Costo y precio guardados: Bondiola/)).toBeVisible();
   });
 
   test('aumento de la docena: el precio de un gusto se aplica a todos los de Empanadas (US-28 CA-5)', async ({ page }) => {

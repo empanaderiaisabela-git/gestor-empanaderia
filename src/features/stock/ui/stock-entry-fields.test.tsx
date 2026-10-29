@@ -33,10 +33,18 @@ describe('Ingresar stock: primero la categoría, después el gusto (US-18)', () 
     expect([screen.getByLabelText('Cantidad que entra'), screen.getByLabelText('Proveedor (opcional)')]).toHaveLength(2);
   });
 
-  it('la categoría ofrece Prepizza y Pan de ciabatta, y no Pizzas ni Ciabattas (BUG-23)', () => {
+  it('la categoría ofrece las bases y también Pizzas y Ciabattas, éstas sólo para costo y precio (BUG-23, BUG-25)', () => {
     renderFields(BLANK);
     const options = within(screen.getByLabelText('Categoría')).getAllByRole('option').map((option) => option.textContent);
-    expect(options).toEqual(['Elegí una categoría', 'Empanadas', 'Prepizza', 'Sanguches', 'Pan de ciabatta', 'Coca-Cola', 'Pepsi']);
+    expect(options).toEqual(['Elegí una categoría', 'Empanadas', 'Prepizza', 'Pizzas', 'Sanguches', 'Pan de ciabatta', 'Ciabattas', 'Coca-Cola', 'Pepsi']);
+  });
+
+  it('en Pizzas se elige el gusto, sin la Prepizza, y no se pide cantidad ni proveedor (BUG-25)', () => {
+    renderFields({ ...BLANK, category: 'pizzas' });
+    const options = within(screen.getByLabelText('Gusto o bebida')).getAllByRole('option').map((option) => option.textContent);
+    expect(options).toEqual(['Elegí un gusto o bebida', 'Muzza']);
+    expect(screen.queryByLabelText('Cantidad que entra')).toBeNull();
+    expect(screen.queryByLabelText('Proveedor (opcional)')).toBeNull();
   });
 
   it('elegir Prepizza toma la base; elegir otra categoría limpia el gusto', () => {

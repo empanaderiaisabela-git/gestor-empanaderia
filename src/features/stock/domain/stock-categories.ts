@@ -25,6 +25,8 @@ export const isStockCategory = (value: string): value is StockCategory => STOCK_
 
 export const isBaseCategory = (category: string): boolean => category === 'prepizzas' || category === 'panes_ciabatta';
 
+export const isPriceOnlyCategory = (category: string): boolean => category === 'pizzas' || category === 'ciabattas';
+
 export function categoryOf(item: Categorized): StockCategory {
   if (!item.isBase) return item.group;
   return item.group === 'pizzas' ? 'prepizzas' : 'panes_ciabatta';

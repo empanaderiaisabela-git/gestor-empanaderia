@@ -282,6 +282,30 @@ El dev revisó el Sprint 4 antes del merge a `main` y pidió cuatro arreglos. No
   - La acción recibe `{ from, to }`, con jornadas de 7 a 7 y un tope de 366 días (D-14).
   - El repositorio ya filtra por rango.
 
+## Segunda revisión del dev (2026-10-29)
+
+- **BUG-25** (S, nivel 2): "Ingresar stock" vuelve a ofrecer Pizzas y Ciabattas, pero sólo para el costo y el precio
+  de un gusto, sin cantidad ni proveedor. Guarda con `setStockPricingAction` (US-28), igual que "Costo y precio".
+- **US-34** (S, nivel 2): desplegable a la izquierda del filtro de categoría para ordenar por stock o quedarse con lo
+  que falta (`src/features/stock/domain/stock-order.ts`, D-16).
+
+### D-16 · Los gustos sin stock propio al ordenar
+
+- **Pregunta**: un gusto de pizza no tiene stock propio (depende de las prepizzas). ¿Dónde va al ordenar por stock y
+  cuenta como "sin stock"?
+- **Situación**: quedan 0 prepizzas y el administrador elige "Solo sin stock".
+- **Elegido**: al ordenar, esos gustos van al final; "Solo sin stock" muestra la Prepizza (que es la que falta) y no
+  los gustos, y "Quitar sin stock" los deja.
+- **Si el dev responde otra cosa**: los gustos toman el stock de su base al ordenar y filtrar. Nivel 2.
+
+### D-17 · El formulario de precio de una pizza
+
+- **Pregunta**: al elegir Pizzas en "Ingresar stock", ¿qué campos van?
+- **Situación**: el administrador sube el precio de la Napolitana.
+- **Elegido**: el gusto, "Costo para el local" y "Precio de venta", precargados con los actuales. La casilla "Aplicar
+  este precio a todos los gustos" queda sólo en el botón "Costo y precio" de la fila.
+- **Si el dev responde otra cosa**: se suma la casilla también acá. Nivel 1.
+
 ## Trazabilidad: `specs.md` → ítems
 
 | Línea de `specs.md` | Pedido | Ítem |
@@ -297,6 +321,8 @@ El dev revisó el Sprint 4 antes del merge a `main` y pidió cuatro arreglos. No
 | — (revisión del dev) | La grilla de Stock tiembla al arrastrar el scroll al fondo | BUG-24 |
 | — (revisión del dev) | Gastos con desde y hasta, el mes por defecto | US-33 |
 | — (revisión del dev) | Estadísticas con desde y hasta, hoy por defecto | US-32 |
+| — (segunda revisión) | Precio de pizzas y ciabattas desde "Ingresar stock" | BUG-25 |
+| — (segunda revisión) | Ordenar la grilla de Stock por cantidad | US-34 |
 
 ---
 

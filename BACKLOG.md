@@ -3104,7 +3104,7 @@ que se lea de un vistazo cuánto sale la unidad, 3, 6 y 12.
 **Objetivo**: lo que pidió el cliente después de ver la demo del Sprint 3. Todos los precios en Stock; el stock de
 pizzas y ciabattas pasa a ser de prepizzas y panes; gastos con su proveedor; clientes con sólo el nombre obligatorio;
 títulos y letras más fáciles de leer; y, por pedido del dev, que el vendedor
-vea el stock sin costos. Al revisarlo, el dev sumó cuatro arreglos (BUG-23, BUG-24, US-32 y US-33) antes del cierre.
+vea el stock sin costos. Al revisarlo, el dev sumó arreglos (BUG-23, BUG-24, BUG-25, US-32, US-33 y US-34) antes del cierre.
 
 **Plan del sprint**: [`docs/plans/sprint-4.md`](docs/plans/sprint-4.md). Tiene las decisiones del dev (2026-10-28),
 las decisiones provisorias D-1 a D-11, el orden y la trazabilidad de cada punto del pedido en `specs.md` a su ítem.
@@ -3124,8 +3124,10 @@ las decisiones provisorias D-1 a D-11, el orden y la trazabilidad de cada punto 
 | 8   | [BUG-24](#bug-24--la-grilla-tiembla-al-arrastrar-el-scroll-hasta-el-fondo)      | La grilla tiembla al arrastrar el scroll hasta el fondo | En revisión | BUG-23     | 45 min          |
 | 9   | [US-33](#us-33--gastos-filtro-desde-y-hasta-con-el-mes-por-defecto)             | Gastos: filtro desde y hasta, con el mes por defecto    | En revisión | US-27      | 1 h             |
 | 10  | [US-32](#us-32--estadísticas-desde-y-hasta)                                     | Estadísticas: desde y hasta                             | En revisión | US-21      | 2 h             |
-| 11  | [T-22](#t-22--cierre-del-sprint-4)                                              | Cierre del Sprint 4                                     | En progreso | todos      | 1 h             |
-|     |                                                                                 | **Total del sprint**                                    |             |            | **20 h 45 min** |
+| 11  | [BUG-25](#bug-25--stock-costo-y-precio-de-pizzas-y-ciabattas-desde-ingresar-stock) | Stock: costo y precio de pizzas y ciabattas desde "Ingresar stock" | En revisión | BUG-23 | 1 h |
+| 12  | [US-34](#us-34--stock-ordenar-por-cantidad)                                     | Stock: ordenar por cantidad                             | Por hacer   | BUG-23     | 45 min          |
+| 13  | [T-22](#t-22--cierre-del-sprint-4)                                              | Cierre del Sprint 4                                     | En progreso | todos      | 1 h             |
+|     |                                                                                 | **Total del sprint**                                    |             |            | **22 h 30 min** |
 
 ### T-21 · Backlog del Sprint 4 desde el pedido del cliente
 
@@ -3548,6 +3550,65 @@ o varios.
   muestra fecha y hora en lugar de sólo la hora, y los textos vacíos dicen "en estas fechas".
 - Lint, typecheck, 103 tests de Estadísticas y Gastos, 12 de integración (uno nuevo con un rango de tres jornadas)
   y el E2E de Estadísticas en verde.
+
+### BUG-25 · Stock: costo y precio de pizzas y ciabattas desde "Ingresar stock"
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-29 |
+| Tamaño       | S         |
+| Depende de   | BUG-23    |
+| Plan         | [`docs/plans/sprint-4.md`](docs/plans/sprint-4.md#segunda-revisión-del-dev-2026-10-29) |
+| Merge        | —         |
+| Horas reales | 45 min    |
+
+**Historia**: Como administrador quiero cargar el costo y el precio de un gusto de pizza o de ciabatta desde
+"Ingresar stock", de forma que tenga precio aunque su stock dependa de las prepizzas o los panes.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · En "Ingresar stock", la Categoría vuelve a ofrecer Pizzas y Ciabattas. Al elegirlas se elige el gusto y se cargan "Costo para el local" y "Precio de venta" (precargados con los actuales), sin cantidad ni proveedor; se guarda con la misma acción que "Costo y precio" · Estimación: 45 min · Completado: 2026-10-29 16:55
+
+- [x] **CA-2** · Prepizza y Pan de ciabatta siguen pidiendo sólo cantidad y proveedor, y la grilla sigue mostrando las bases y los gustos; tests del formulario y E2E de cargar el precio de una pizza · Estimación: 15 min · Completado: 2026-10-29 16:55
+
+**Notas**
+
+- Pedido del dev (2026-10-29): al sacar Pizzas y Ciabattas de "Ingresar stock" (BUG-23) no quedaba a la vista cómo
+  ponerles precio. El botón "Costo y precio" de cada fila sigue.
+- Sólo UI: el servidor ya guarda costo y precio de un gusto con base (`setStockPricingAction`, US-28).
+- Nivel 2.
+- En Pizzas y Ciabattas, el selector de gusto no muestra el stock (no tienen) y el botón dice "Guardar". Sin la
+  casilla "Aplicar a todos", que sigue en "Costo y precio" de la fila (D-17).
+- Lint, typecheck, 113 tests de Stock y 8 E2E de Stock, precios y prepizzas en verde.
+
+### US-34 · Stock: ordenar por cantidad
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Por hacer |
+| Dueño        | Agente    |
+| Inicio       | —         |
+| Tamaño       | S         |
+| Depende de   | BUG-23    |
+| Plan         | [`docs/plans/sprint-4.md`](docs/plans/sprint-4.md#segunda-revisión-del-dev-2026-10-29) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como administrador quiero ordenar la grilla de Stock por cantidad o ver sólo lo que falta, de forma que
+sepa rápido qué hay que reponer.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · A la izquierda de "Todas las categorías" hay un desplegable con "Orden por categoría" (el de siempre), "Stock creciente", "Stock decreciente", "Solo sin stock" y "Quitar sin stock"; se combina con la categoría y la búsqueda · Estimación: 30 min · Completado: —
+
+- [ ] **CA-2** · Los gustos sin stock propio (pizzas y ciabattas) van al final al ordenar y no cuentan como "sin stock" (D-16); tests del orden y E2E · Estimación: 15 min · Completado: —
+
+**Notas**
+
+- Pedido del dev (2026-10-29). Lo ven el administrador y el vendedor.
+- Nivel 2.
 
 ### T-22 · Cierre del Sprint 4
 

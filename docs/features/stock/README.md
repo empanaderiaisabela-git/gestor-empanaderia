@@ -40,8 +40,9 @@ Muestra el stock de cada gusto y bebida activos, agrupados por grupo, y permite:
   y la base sigue sin costo ni precios (con costo o precios, `VALIDATION`). La pérdida de una base baja el contador
   con costo 0, así no resta de la ganancia. "Costo y precio" de una base da `VALIDATION`.
 - **Gustos de Pizzas y Ciabattas (US-29)**: no reciben ingresos ni pérdidas (`VALIDATION`); su costo y su precio se
-  cargan con "Costo y precio". "Ingresar stock" no ofrece las categorías Pizzas ni Ciabattas: ofrece Prepizza y Pan de
-  ciabatta, que toman la base sin pedir gusto (BUG-23). "Aplicar este precio a todos los gustos" no toca la base (`lockGroup` la excluye).
+  cargan con "Costo y precio" de su fila o desde "Ingresar stock": las categorías Pizzas y Ciabattas piden el gusto,
+  el costo y el precio (precargados), sin cantidad ni proveedor, y guardan con `setStockPricingAction` (BUG-25).
+  Prepizza y Pan de ciabatta toman la base sin pedir gusto (BUG-23). "Aplicar este precio a todos los gustos" no toca la base (`lockGroup` la excluye).
 - **Stock es sólo del administrador** (dev, 2026-10-26, US-16): el vendedor no ve la sección ni puede ingresar
   stock, registrar mermas o leer el historial.
 - Cada movimiento sube la `version` del gusto: si alguien lo estaba editando en Alta de productos, recibe
@@ -117,7 +118,8 @@ La grilla lee los gustos con `fetchMenuItems` del feature `menu`.
   historial. La base es su propia categoría, con "—" en gusto, precio y costo y sólo ingresar y pérdida; los gustos de
   Pizzas y Ciabattas muestran "—" en Stock y sólo "Costo y precio" (US-29).
 - Modales: `StockEntryModal` (categoría, gusto, cantidad, costo, precios de venta y proveedor; en Prepizza y Pan de
-  ciabatta, sin gusto: sólo cantidad y proveedor), `StockLossModal`,
+  ciabatta, sin gusto: sólo cantidad y proveedor; en Pizzas y Ciabattas, gusto, costo y precio, y guarda como "Costo y
+  precio"), `StockLossModal`,
   `StockPricingModal` (costo, precios del grupo precargados y la casilla "Aplicar este precio a todos los gustos de
   <Grupo>") y `StockHistoryModal` (cargando, vacío y lista).
 
