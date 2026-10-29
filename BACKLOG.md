@@ -3122,7 +3122,7 @@ las decisiones provisorias D-1 a D-11, el orden y la trazabilidad de cada punto 
 | 6   | [US-31](#us-31--el-vendedor-ve-el-stock-sin-costos)                             | El vendedor ve el stock, sin costos                     | En revisión | US-29      | 1 h 30 min      |
 | 7   | [BUG-23](#bug-23--stock-prepizza-y-pan-de-ciabatta-como-categorías)             | Stock: Prepizza y Pan de ciabatta como categorías       | En revisión | US-31      | 1 h 30 min      |
 | 8   | [BUG-24](#bug-24--la-grilla-tiembla-al-arrastrar-el-scroll-hasta-el-fondo)      | La grilla tiembla al arrastrar el scroll hasta el fondo | En revisión | BUG-23     | 45 min          |
-| 9   | [US-33](#us-33--gastos-filtro-desde-y-hasta-con-el-mes-por-defecto)             | Gastos: filtro desde y hasta, con el mes por defecto    | Por hacer   | US-27      | 1 h             |
+| 9   | [US-33](#us-33--gastos-filtro-desde-y-hasta-con-el-mes-por-defecto)             | Gastos: filtro desde y hasta, con el mes por defecto    | En revisión | US-27      | 1 h             |
 | 10  | [US-32](#us-32--estadísticas-desde-y-hasta)                                     | Estadísticas: desde y hasta                             | Por hacer   | US-21      | 2 h             |
 | 11  | [T-22](#t-22--cierre-del-sprint-4)                                              | Cierre del Sprint 4                                     | En progreso | todos      | 1 h             |
 |     |                                                                                 | **Total del sprint**                                    |             |            | **20 h 45 min** |
@@ -3486,29 +3486,34 @@ de forma que pueda ver las últimas filas.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Por hacer |
+| Estado       | En revisión |
 | Dueño        | Agente    |
-| Inicio       | —         |
+| Inicio       | 2026-10-29 |
 | Tamaño       | S         |
 | Depende de   | US-27     |
 | Plan         | [`docs/plans/sprint-4.md`](docs/plans/sprint-4.md#revisión-del-dev-2026-10-28) |
 | Merge        | —         |
-| Horas reales | —         |
+| Horas reales | 30 min    |
 
 **Historia**: Como administrador quiero filtrar los gastos entre dos fechas, de forma que vea lo que se gastó en un
 mes o en varios.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · Gastos tiene "Desde" y "Hasta", que arrancan en el 1 y el último día del mes en curso (hora de Argentina, D-13); la grilla muestra sólo los gastos con fecha de factura entre las dos, ambas incluidas · Estimación: 45 min · Completado: —
+- [x] **CA-1** · Gastos tiene "Desde" y "Hasta", que arrancan en el 1 y el último día del mes en curso (hora de Argentina, D-13); la grilla muestra sólo los gastos con fecha de factura entre las dos, ambas incluidas · Estimación: 45 min · Completado: 2026-10-29 00:07
 
-- [ ] **CA-2** · La X limpia el filtro y muestra todos los gastos; tests del mes (febrero bisiesto, diciembre, último día a las 23:30) y E2E de Gastos con la fecha de hoy · Estimación: 15 min · Completado: —
+- [x] **CA-2** · La X limpia el filtro y muestra todos los gastos; tests del mes (febrero bisiesto, diciembre, último día a las 23:30) y E2E de Gastos con la fecha de hoy · Estimación: 15 min · Completado: 2026-10-29 00:07
 
 **Notas**
 
 - Pedido del dev al revisar el Sprint 4 (2026-10-28).
 - El filtro es del lado del cliente, como el historial de ventas: `fetchExpenses` ya trae todos los gastos.
 - Nivel 2.
+- `argentinaMonth` (`src/lib/format-date-time.ts`) da el primer y el último día del mes en Buenos Aires.
+  `DateRangePicker` ahora nombra sus campos "Desde" y "Hasta" y no deja elegir un "Hasta" anterior a "Desde"; eso
+  también vale en el historial de ventas y en Auditoría.
+- El E2E de Gastos carga la factura con la fecha de hoy, para que el filtro del mes no la esconda.
+- Lint, typecheck, 282 tests de Gastos, fechas y ventas, y 5 E2E de Gastos e historial en verde.
 
 ### US-32 · Estadísticas: desde y hasta
 

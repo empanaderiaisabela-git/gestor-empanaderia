@@ -1,6 +1,6 @@
 # Feature: gastos
 
-- **US relacionadas**: US-14.
+- **US relacionadas**: US-14, US-27, US-33.
 - **Código**: `src/features/expense/` (domain, repository, services, actions, store, ui), tabla en
   `src/lib/db/expense-schema.ts`, pantalla en `src/app/(main)/gastos/`.
 
@@ -16,6 +16,9 @@ demuestra).
 - Título de hasta 100 caracteres; monto mayor a 0 con 2 decimales como máximo; fecha de la factura obligatoria, sin
   foto (cliente, 2026-10-25).
 - La lista va por fecha de la factura, la más nueva primero, con búsqueda por número o título.
+- "Desde" y "Hasta" filtran por fecha de la factura, ambas incluidas, y arrancan en el 1 y el último día del mes en
+  curso, en hora de Argentina (US-33, D-13). La X las limpia y muestra todos los gastos. El filtro es del lado del
+  cliente: `fetchExpenses` ya trae todos.
 - Se edita y se borra con `version`.
 
 ## Roles y permisos
@@ -53,6 +56,6 @@ Cada cambio se audita con la entidad `EXPENSE` ("GASTO" en Auditoría).
 
 ## Pantallas
 
-`ExpensesPanel`: búsqueda por número o título, sincronizar y "Nuevo gasto"; grilla con fecha de la factura, número,
+`ExpensesPanel`: búsqueda por número o título, "Desde" y "Hasta" (`DateRangePicker`), sincronizar y "Nuevo gasto"; grilla con fecha de la factura, número,
 título, monto y acciones (editar, borrar); en mobile, tarjetas. El formulario (`ExpenseFormModal`) pide número,
 título, monto y fecha de la factura (por defecto, hoy).

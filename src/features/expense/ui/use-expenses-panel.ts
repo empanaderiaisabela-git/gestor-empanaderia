@@ -9,9 +9,14 @@ import type { ExpenseDef, ExpenseInput, ExpenseUpdateInput } from '@/features/ex
 import { useExpenseStore } from '@/features/expense/store/expense.store';
 import { useEntityActions } from '@/hooks/use-entity-actions';
 import { useEntityManager } from '@/hooks/use-entity-manager';
+import { argentinaMonth } from '@/lib/format-date-time';
 import { normalizeForSearch } from '@/lib/utils';
 
+export type DateRange = { start: string; end: string };
+
 export type ExpensesPanelModel = {
+  dates: DateRange;
+  setDates: (dates: DateRange) => void;
   manager: ReturnType<typeof useEntityManager<ExpenseDef>>;
   actions: ReturnType<typeof useEntityActions<ExpenseDef, ExpenseInput, ExpenseUpdateInput>>;
   visibleExpenses: ExpenseDef[];
@@ -19,11 +24,12 @@ export type ExpensesPanelModel = {
   initialLoading: boolean;
 };
 
-function visible(expenses: ExpenseDef[], search: string): ExpenseDef[] {
+function visible(expenses: ExpenseDef[], search: string, { start, end }: DateRange): ExpenseDef[] {
   const terms = normalizeForSearch(search).split(/\s+/);
   return expenses.filter((expense) => {
     const text = normalizeForSearch(`${expense.invoiceNumber} ${expense.title} ${expense.providerName ?? ''}`);
-    return terms.every((term) => text.includes(term));
+    const inRange = (!start || expense.invoiceDate >= start) && (!end || expense.invoiceDate <= end);
+    return inRange && terms.every((term) => text.includes(term));
   });
 }
 
@@ -60,7 +66,8 @@ export function useExpensesPanel(): ExpensesPanelModel {
     editingItem: manager.editingItem,
     showInactive: true,
   });
+  const [dates, setDates] = useState<DateRange>(() => argentinaMonth(new Date()));
   const initialLoading = useInitialLoad(isLoaded, setExpenses);
-  const visibleExpenses = useMemo(() => visible(expenses, manager.search), [expenses, manager.search]);
-  return { manager, actions, visibleExpenses, providers: useProviders(), initialLoading };
+  const visibleExpenses = useMemo(() => visible(expenses, manager.search, dates), [expenses, manager.search, dates]);
+  return { dates, setDates, manager, actions, visibleExpenses, providers: useProviders(), initialLoading };
 }

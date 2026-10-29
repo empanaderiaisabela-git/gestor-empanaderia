@@ -1,6 +1,7 @@
 import { expect, type Page, test } from '@playwright/test';
 import { db } from '../src/lib/db';
 import { providers } from '../src/lib/db/schema';
+import { argentinaDay, argentinaMonth } from '../src/lib/format-date-time';
 
 async function loginComo(page: Page, usuario: string): Promise<void> {
   await page.goto('/login');
@@ -9,24 +10,27 @@ async function loginComo(page: Page, usuario: string): Promise<void> {
   await page.getByRole('button', { name: 'Iniciar Sesión' }).click();
 }
 
-test.describe('Gastos (US-14)', () => {
+test.describe('Gastos (US-14, US-33)', () => {
   test('el admin anota un gasto con su proveedor y lo encuentra por su número de factura', async ({ page }) => {
     const numero = `E2E-${Date.now()}`;
     const proveedor = `Molino E2E ${Date.now()}`;
     await db.insert(providers).values({ name: proveedor });
+    const hoy = argentinaDay(new Date());
     await page.goto('/gastos');
+    await expect(page.getByLabel('Desde').filter({ visible: true })).toHaveValue(argentinaMonth(new Date()).start);
+    await expect(page.getByLabel('Hasta').filter({ visible: true })).toHaveValue(argentinaMonth(new Date()).end);
     await page.getByRole('button', { name: 'Nuevo gasto' }).click();
     await page.getByLabel('Número de factura').fill(numero);
     await page.getByLabel('Título').fill('Harina 25 kg');
     await page.getByLabel('Proveedor').selectOption({ label: proveedor });
     await page.getByLabel('Monto').fill('18500');
-    await page.getByLabel('Fecha de la factura').fill('2026-10-24');
+    await page.getByLabel('Fecha de la factura').fill(hoy);
     await page.getByRole('button', { name: 'Anotar gasto' }).click();
     await expect(page.getByText('Se registró el gasto')).toBeVisible();
 
     await page.getByPlaceholder('Buscar por número de factura o título...').filter({ visible: true }).fill(numero);
     const fila = page.getByRole('row', { name: new RegExp(numero) });
-    await expect(fila).toContainText('24/10/2026');
+    await expect(fila).toContainText(hoy.split('-').reverse().join('/'));
     await expect(fila).toContainText(proveedor);
     await expect(fila).toContainText('$18.500');
   });

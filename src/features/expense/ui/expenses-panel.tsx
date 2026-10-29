@@ -4,6 +4,7 @@ import { Plus, RefreshCcw } from 'lucide-react';
 import type { JSX } from 'react';
 import { GlobalMessage } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
+import { DateRangePicker } from '@/components/ui/date-range-picker';
 import { PanelToolbar } from '@/components/ui/panel-toolbar';
 import { ConfirmModal } from '@/components/ui/responsive-modal';
 import { ResponsivePanelView } from '@/components/ui/responsive-panel-view';
@@ -14,7 +15,9 @@ import { type ExpenseRowActions, getExpenseColumns } from './expense-columns';
 import { ExpenseFormModal } from './expense-form-modal';
 import { type ExpensesPanelModel, useExpensesPanel } from './use-expenses-panel';
 
-function ExpensesToolbar({ model: { manager, actions } }: { model: ExpensesPanelModel }): JSX.Element {
+function ExpensesToolbar({ model }: { model: ExpensesPanelModel }): JSX.Element {
+  const { manager, actions, dates, setDates } = model;
+  const range = <DateRangePicker startDate={dates.start} endDate={dates.end} onStartChange={(start) => setDates({ ...dates, start })} onEndChange={(end) => setDates({ ...dates, end })} onClear={() => setDates({ start: '', end: '' })} />;
   const sync = (
     <Button variant='secondary' size='icon' onClick={() => actions.syncData(true)} disabled={actions.isPending} title='Sincronizar Datos' className='h-11 w-11 flex-none' data-testid={TEST_IDS.general.btnSincronizar}>
       <RefreshCcw className={`w-5 h-5 ${actions.isPending ? 'animate-spin' : ''}`} />
@@ -25,7 +28,7 @@ function ExpensesToolbar({ model: { manager, actions } }: { model: ExpensesPanel
       Nuevo gasto
     </Button>
   );
-  return <PanelToolbar search={manager.search} onSearchChange={manager.setSearch} searchPlaceholder='Buscar por número de factura o título...' searchPlaceholderMobile='Buscar gastos...' data-testid={TEST_IDS.general.inputBusquedaTabla} sync={sync} actions={add} />;
+  return <PanelToolbar search={manager.search} onSearchChange={manager.setSearch} searchPlaceholder='Buscar por número de factura o título...' searchPlaceholderMobile='Buscar gastos...' data-testid={TEST_IDS.general.inputBusquedaTabla} filters={range} sync={sync} actions={add} />;
 }
 
 export function ExpensesPanel(): JSX.Element {
@@ -37,7 +40,7 @@ export function ExpensesPanel(): JSX.Element {
     <div className='flex flex-col flex-1 h-full overflow-hidden'>
       <ExpensesToolbar model={model} />
       <GlobalMessage message={manager.globalMessage} />
-      <ResponsivePanelView columns={getExpenseColumns(rowActions)} data={model.visibleExpenses} isLoading={actions.isPending} emptyMessage='Todavía no hay gastos anotados.' renderCard={renderExpenseCard(rowActions)} />
+      <ResponsivePanelView columns={getExpenseColumns(rowActions)} data={model.visibleExpenses} isLoading={actions.isPending} emptyMessage={model.dates.start || model.dates.end ? 'No hay gastos en estas fechas.' : 'Todavía no hay gastos anotados.'} renderCard={renderExpenseCard(rowActions)} />
       <ExpenseFormModal model={model} />
       <ConfirmModal
         isOpen={Boolean(manager.itemToDelete)}
