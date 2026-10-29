@@ -8,7 +8,8 @@ const action = vi.hoisted(() => ({ fetch: vi.fn() }));
 vi.mock('@/features/stats/actions/fetch-workday-stats', () => ({ fetchWorkdayStats: action.fetch }));
 
 const STATS: WorkdayStats = {
-  day: '2026-10-25',
+  from: '2026-10-25',
+  to: '2026-10-25',
   vendorTable: [
     { vendor: 'ana', shift: 'morning', count: 3, amount: 15000 },
     { vendor: 'ana', shift: 'afternoon', count: 4, amount: 27100 },
@@ -27,7 +28,7 @@ const card = (name: string): HTMLElement => screen.getByRole('region', { name })
 describe('pantalla de Estadísticas (US-12 CA-1 a CA-5)', () => {
   beforeEach(() => {
     useStatsStore.setState({ stats: null, isLoaded: false });
-    action.fetch.mockImplementation(async (day: string) => ({ success: true, data: { ...STATS, day } }));
+    action.fetch.mockImplementation(async (period: { from: string; to: string }) => ({ success: true, data: { ...STATS, ...period } }));
   });
 
   it('abre con la jornada de hoy y muestra cada comida con su color, las promos, la ganancia, las ventas y los 4 medios', async () => {
@@ -40,7 +41,8 @@ describe('pantalla de Estadísticas (US-12 CA-1 a CA-5)', () => {
     expect(within(card('Ganancia')).getByText('$20.000')).toBeDefined();
     expect(within(card('Ventas registradas')).getByText('7')).toBeDefined();
     expect(['Efectivo', 'Transferencia', 'Débito', 'Crédito'].map((name) => within(card(name)).getByText(/\$/).textContent)).toEqual(['$20.000', '$10.000', '$5.500', '$6.600']);
-    expect(action.fetch).toHaveBeenCalledWith(expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/));
+    const today = expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/);
+    expect(action.fetch).toHaveBeenCalledWith({ from: today, to: today });
   });
 
   it('muestra las comidas en filas de 4 y 3, después ventas y ganancia, y los medios de pago; sin Total facturado (US-21)', async () => {
@@ -58,18 +60,26 @@ describe('pantalla de Estadísticas (US-12 CA-1 a CA-5)', () => {
     expect(within(screen.getByRole('table', { name: 'Ventas' })).getAllByRole('row')[1].textContent).toBe('Sin nombre00:30$6.600');
   });
 
-  it('elegir otra jornada la pide al servidor', async () => {
+  it('elegir "Desde" y "Hasta" pide ese rango al servidor; un "Desde" posterior mueve también "Hasta" (US-32)', async () => {
     render(<StatsPanel />);
-    fireEvent.change(await screen.findByLabelText('Jornada'), { target: { value: '2026-10-20' } });
-    await waitFor(() => expect(action.fetch).toHaveBeenLastCalledWith('2026-10-20'));
+    fireEvent.change(await screen.findByLabelText('Desde'), { target: { value: '2026-10-01' } });
+    fireEvent.change(screen.getByLabelText('Hasta'), { target: { value: '2026-10-31' } });
+    await waitFor(() => expect(action.fetch).toHaveBeenLastCalledWith({ from: '2026-10-01', to: '2026-10-31' }));
+    fireEvent.change(screen.getByLabelText('Desde'), { target: { value: '2026-11-05' } });
+    await waitFor(() => expect(action.fetch).toHaveBeenLastCalledWith({ from: '2026-11-05', to: '2026-11-05' }));
   });
 
-  it('una jornada sin ventas lo dice', async () => {
-    action.fetch.mockResolvedValue({ success: true, data: { ...STATS, salesCount: 0, day: '2026-10-25' } });
-    useStatsStore.setState({ stats: null, isLoaded: false });
+  it('con un rango de varios días, el cuadro de ventas muestra la fecha y la hora (US-32)', async () => {
     render(<StatsPanel />);
-    fireEvent.change(await screen.findByLabelText('Jornada'), { target: { value: '2026-10-25' } });
-    expect(await screen.findByText('No hubo ventas en esta jornada.')).toBeDefined();
+    fireEvent.change(await screen.findByLabelText('Desde'), { target: { value: '2026-10-01' } });
+    const ventas = await screen.findByRole('table', { name: 'Ventas' });
+    await waitFor(() => expect(within(ventas).getAllByRole('row')[1].textContent).toBe('Sin nombre26/10/2026, 00:30$6.600'));
+  });
+
+  it('un rango sin ventas lo dice', async () => {
+    action.fetch.mockImplementation(async (period: { from: string; to: string }) => ({ success: true, data: { ...STATS, ...period, salesCount: 0 } }));
+    render(<StatsPanel />);
+    expect(await screen.findByText('No hubo ventas en estas fechas.')).toBeDefined();
   });
 
   it('si el servidor falla, muestra el motivo', async () => {

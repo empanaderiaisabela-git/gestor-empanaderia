@@ -1,9 +1,10 @@
 # Feature: estadísticas de la jornada
 
-- **US relacionadas**: US-12 (KPI de la jornada), US-13 (cuadros de vendedores y de ventas) y US-21 (forma del panel de referencia). Antes la tocaron
+- **US relacionadas**: US-12 (KPI de la jornada), US-13 (cuadros de vendedores y de ventas), US-21 (forma del panel de referencia) y US-32 (desde y hasta). Antes la tocaron
   BUG-5 (consultas en paralelo), BUG-7 (sin `password_hash`) y BUG-12 (sólo admin).
 - **Código**: `src/features/stats/`:
-  - `domain/workday.ts`: la jornada de una fecha, la fecha de una jornada y su schema.
+  - `domain/workday.ts`: la jornada de una fecha, la fecha de una jornada, el rango de jornadas (`periodRange`) y sus
+    schemas.
   - `domain/stats.schema.ts`: tipos del resumen de la jornada y de los KPI.
   - `repository/stats.repository.ts`: `getWorkdaySnapshot`.
   - `services/compute-workday-stats.ts`: cálculo puro de los KPI; `workday-stats.service.ts`: `getWorkdayStats`.
@@ -14,7 +15,7 @@
 
 ## Qué hace
 
-Muestra los números de una **jornada** del local, por defecto la de hoy, con un selector para elegir otra. El orden
+Muestra los números de un rango de **jornadas** del local, "Desde" y "Hasta", por defecto la de hoy en las dos (US-32). El orden
 sigue el panel de referencia (US-21), en filas que se apilan en pantallas chicas:
 
 - **Comidas** (fila de 4): Empanadas, Pizzas, Sanguches y Ciabattas. **Fila de 3**: Coca-Cola, Pepsi y **Promos**.
@@ -34,6 +35,9 @@ mejores vendedores (cliente, 2026-10-25). El KPI "Total facturado" se quitó de 
 
 - **Jornada**: de 7:00 a 6:59 del día siguiente, en hora de Argentina (UTC−3, sin horario de verano). Una venta de la
   0:30 cuenta para la jornada que empezó a las 7 (dev, 2026-10-25).
+- **Rango** (US-32, D-14): va de las 7:00 de "Desde" a las 6:59 del día siguiente a "Hasta". "Hasta" no puede ser
+  anterior a "Desde" y el rango tiene hasta 366 jornadas (`workdayPeriodSchema`). En la pantalla, un "Desde"
+  posterior a "Hasta" mueve los dos.
 - **Dinero por comida**: cada línea suma en su grupo. El descuento de la venta se reparte entre las comidas en
   proporción a lo que pesa cada una (dev, 2026-10-25): la suma de los cuadros es lo cobrado por los productos. Las
   líneas de promo van al cuadro Promos. El recargo de las cuotas no es de ninguna comida.
@@ -56,7 +60,7 @@ mejores vendedores (cliente, 2026-10-25). El KPI "Total facturado" se quitó de 
 
 | Action | Acceso | Entrada | Respuesta |
 |---|---|---|---|
-| `fetchWorkdayStats(day?)` | admin | `day` AAAA-MM-DD (`workdaySchema`); sin día, la jornada de hoy | `ActionResult<WorkdayStats>` |
+| `fetchWorkdayStats(period?)` | admin | `{ from, to }` AAAA-MM-DD (`workdayPeriodSchema`); sin rango, la jornada de hoy | `ActionResult<WorkdayStats>` |
 
 ## Datos
 
@@ -70,11 +74,11 @@ con el costo congelado) y los pagos (con el recargo); y las mermas de la jornada
 |---|---|---|---|
 | Sin sesión | `UNAUTHENTICATED` | No autorizado (Token faltante) | `workday-stats.contract.test.ts` |
 | El vendedor la pide | `FORBIDDEN` | Solo los administradores pueden realizar esta acción | `workday-stats.contract.test.ts` |
-| Jornada inválida | `VALIDATION` | Los datos proporcionados no son válidos. | `workday-stats.contract.test.ts` |
+| Jornada inválida, "Hasta" anterior a "Desde" o más de 366 jornadas | `VALIDATION` | Los datos proporcionados no son válidos. | `workday-stats.contract.test.ts` |
 | Falla inesperada | `UNEXPECTED` | Ocurrió un error inesperado al procesar el panel de estadísticas. | `workday-stats.contract.test.ts` |
 
 ## Pantallas
 
-`StatsPanel`: selector "Jornada" y "Sincronizar"; los KPI (sin descripción de la jornada bajo el título); y al final los cuadros de vendedores y de ventas (con
-"Nadie vendió en esta jornada." cuando están vacíos); mientras carga, un esqueleto; si la jornada no tuvo ventas, "No
-hubo ventas en esta jornada." con los cuadros en $0; si el servidor falla, el motivo.
+`StatsPanel`: "Desde" y "Hasta" (`DateRangePicker`) y "Sincronizar"; los KPI (sin descripción de la jornada bajo el título); y al final los cuadros de vendedores y de ventas (con
+"Nadie vendió en estas fechas." cuando están vacíos; con más de un día, el cuadro de ventas muestra fecha y hora); mientras carga, un esqueleto; si el rango no tuvo ventas, "No
+hubo ventas en estas fechas." con los cuadros en $0; si el servidor falla, el motivo.

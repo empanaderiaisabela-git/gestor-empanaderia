@@ -3123,7 +3123,7 @@ las decisiones provisorias D-1 a D-11, el orden y la trazabilidad de cada punto 
 | 7   | [BUG-23](#bug-23--stock-prepizza-y-pan-de-ciabatta-como-categorías)             | Stock: Prepizza y Pan de ciabatta como categorías       | En revisión | US-31      | 1 h 30 min      |
 | 8   | [BUG-24](#bug-24--la-grilla-tiembla-al-arrastrar-el-scroll-hasta-el-fondo)      | La grilla tiembla al arrastrar el scroll hasta el fondo | En revisión | BUG-23     | 45 min          |
 | 9   | [US-33](#us-33--gastos-filtro-desde-y-hasta-con-el-mes-por-defecto)             | Gastos: filtro desde y hasta, con el mes por defecto    | En revisión | US-27      | 1 h             |
-| 10  | [US-32](#us-32--estadísticas-desde-y-hasta)                                     | Estadísticas: desde y hasta                             | Por hacer   | US-21      | 2 h             |
+| 10  | [US-32](#us-32--estadísticas-desde-y-hasta)                                     | Estadísticas: desde y hasta                             | En revisión | US-21      | 2 h             |
 | 11  | [T-22](#t-22--cierre-del-sprint-4)                                              | Cierre del Sprint 4                                     | En progreso | todos      | 1 h             |
 |     |                                                                                 | **Total del sprint**                                    |             |            | **20 h 45 min** |
 
@@ -3519,29 +3519,35 @@ mes o en varios.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Por hacer |
+| Estado       | En revisión |
 | Dueño        | Agente    |
-| Inicio       | —         |
+| Inicio       | 2026-10-29 |
 | Tamaño       | M         |
 | Depende de   | US-21     |
 | Plan         | [`docs/plans/sprint-4.md`](docs/plans/sprint-4.md#revisión-del-dev-2026-10-28) |
 | Merge        | —         |
-| Horas reales | —         |
+| Horas reales | 45 min    |
 
 **Historia**: Como administrador quiero ver las estadísticas entre dos fechas, de forma que pueda mirar un mes entero
 o varios.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · Estadísticas tiene "Desde" y "Hasta", las dos con la jornada de hoy por defecto; los números suman las ventas y pérdidas desde el inicio de la jornada "Desde" hasta el fin de la jornada "Hasta" (de 7 a 7, D-14) · Estimación: 1 h 15 min · Completado: —
+- [x] **CA-1** · Estadísticas tiene "Desde" y "Hasta", las dos con la jornada de hoy por defecto; los números suman las ventas y pérdidas desde el inicio de la jornada "Desde" hasta el fin de la jornada "Hasta" (de 7 a 7, D-14) · Estimación: 1 h 15 min · Completado: 2026-10-29 00:13
 
-- [ ] **CA-2** · "Hasta" anterior a "Desde" o un rango de más de 366 días da `VALIDATION`; el vendedor sigue con `FORBIDDEN`; tests de contrato y fuzz del rango, y E2E con las dos fechas · Estimación: 45 min · Completado: —
+- [x] **CA-2** · "Hasta" anterior a "Desde" o un rango de más de 366 días da `VALIDATION`; el vendedor sigue con `FORBIDDEN`; tests de contrato y fuzz del rango, y E2E con las dos fechas · Estimación: 45 min · Completado: 2026-10-29 00:13
 
 **Notas**
 
 - Pedido del dev al revisar el Sprint 4 (2026-10-28).
 - El repositorio ya filtra por un rango: cambian el schema de la acción, el servicio, el cálculo y la UI.
 - Nivel 3: cambia la entrada de una Server Action.
+- `fetchWorkdayStats` recibe `{ from, to }` (`workdayPeriodSchema`, `strictObject`) y `periodRange` arma el rango
+  para el repositorio, que no cambió. `WorkdayStats.day` pasó a `from` y `to`.
+- En la pantalla, un "Desde" posterior a "Hasta" mueve los dos (y al revés). Con más de un día, el cuadro de ventas
+  muestra fecha y hora en lugar de sólo la hora, y los textos vacíos dicen "en estas fechas".
+- Lint, typecheck, 103 tests de Estadísticas y Gastos, 12 de integración (uno nuevo con un rango de tres jornadas)
+  y el E2E de Estadísticas en verde.
 
 ### T-22 · Cierre del Sprint 4
 

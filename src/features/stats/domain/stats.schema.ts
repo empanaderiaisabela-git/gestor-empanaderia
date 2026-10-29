@@ -21,7 +21,8 @@ export type VendorRow = { vendor: string; shift: Shift; count: number; amount: n
 export type SaleRow = { buyer: string; at: string; amount: number };
 
 export type WorkdayStats = {
-  day: string;
+  from: string;
+  to: string;
   vendorTable: VendorRow[];
   saleTable: SaleRow[];
   byGroup: Record<MenuGroup, number>;

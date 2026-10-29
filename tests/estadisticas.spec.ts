@@ -18,7 +18,8 @@ test.describe('Estadísticas de la jornada (US-12)', () => {
     await expect(page.getByText('Venta registrada por $3.200')).toBeVisible();
 
     await page.goto('/');
-    await expect(page.getByLabel('Jornada')).toHaveValue(/^\d{4}-\d{2}-\d{2}$/);
+    await expect(page.getByLabel('Desde')).toHaveValue(/^\d{4}-\d{2}-\d{2}$/);
+    await expect(page.getByLabel('Hasta')).toHaveValue(await page.getByLabel('Desde').inputValue());
     const pepsi = page.getByRole('region', { name: 'Pepsi', exact: true });
     await expect(pepsi).toBeVisible();
     expect(await montoDe(pepsi)).toBeGreaterThanOrEqual(3200);

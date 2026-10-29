@@ -28,9 +28,9 @@ describe('los gastos no tocan Estadísticas (US-14 CA-3)', () => {
     await seedWorkday();
     await seedTestUser('admin');
     await db.insert(providers).values(EXPENSE_PROVIDER);
-    const before = await getWorkdayStats(SEEDED_WORKDAY);
+    const before = await getWorkdayStats({ from: SEEDED_WORKDAY, to: SEEDED_WORKDAY });
     await drizzleExpenseRepository(db).insert({ ...EXPENSE_INPUT, invoiceDate: SEEDED_WORKDAY, userId: TEST_USER_IDS.admin });
-    expect(await getWorkdayStats(SEEDED_WORKDAY)).toEqual(before);
+    expect(await getWorkdayStats({ from: SEEDED_WORKDAY, to: SEEDED_WORKDAY })).toEqual(before);
   });
 
   it('el CHECK rechaza un monto de 0', async () => {
