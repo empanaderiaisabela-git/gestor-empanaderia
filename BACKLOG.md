@@ -3121,7 +3121,7 @@ las decisiones provisorias D-1 a D-11, el orden y la trazabilidad de cada punto 
 | 5   | [US-29](#us-29--prepizzas-y-panes-de-ciabatta)                                  | Prepizzas y panes de ciabatta                           | En revisión | US-28      | 5 h 30 min      |
 | 6   | [US-31](#us-31--el-vendedor-ve-el-stock-sin-costos)                             | El vendedor ve el stock, sin costos                     | En revisión | US-29      | 1 h 30 min      |
 | 7   | [BUG-23](#bug-23--stock-prepizza-y-pan-de-ciabatta-como-categorías)             | Stock: Prepizza y Pan de ciabatta como categorías       | En revisión | US-31      | 1 h 30 min      |
-| 8   | [BUG-24](#bug-24--la-grilla-tiembla-al-arrastrar-el-scroll-hasta-el-fondo)      | La grilla tiembla al arrastrar el scroll hasta el fondo | Por hacer   | BUG-23     | 45 min          |
+| 8   | [BUG-24](#bug-24--la-grilla-tiembla-al-arrastrar-el-scroll-hasta-el-fondo)      | La grilla tiembla al arrastrar el scroll hasta el fondo | En revisión | BUG-23     | 45 min          |
 | 9   | [US-33](#us-33--gastos-filtro-desde-y-hasta-con-el-mes-por-defecto)             | Gastos: filtro desde y hasta, con el mes por defecto    | Por hacer   | US-27      | 1 h             |
 | 10  | [US-32](#us-32--estadísticas-desde-y-hasta)                                     | Estadísticas: desde y hasta                             | Por hacer   | US-21      | 2 h             |
 | 11  | [T-22](#t-22--cierre-del-sprint-4)                                              | Cierre del Sprint 4                                     | En progreso | todos      | 1 h             |
@@ -3454,27 +3454,33 @@ forma que cargue la cantidad sin elegir además un gusto que siempre es el mismo
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Por hacer |
+| Estado       | En revisión |
 | Dueño        | Agente    |
-| Inicio       | —         |
+| Inicio       | 2026-10-29 |
 | Tamaño       | XS        |
 | Depende de   | BUG-23    |
 | Plan         | [`docs/plans/sprint-4.md`](docs/plans/sprint-4.md#revisión-del-dev-2026-10-28) |
 | Merge        | —         |
-| Horas reales | —         |
+| Horas reales | 30 min    |
 
 **Historia**: Como administrador quiero arrastrar la barra de scroll de una grilla hasta el fondo sin que tiemble,
 de forma que pueda ver las últimas filas.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · Al arrastrar la barra de la grilla de Stock contra el fondo, la grilla no tiembla y la barra no se traba; medido en el navegador antes y después (`scrollTop` estable), también en Logs y Clientes · Estimación: 45 min · Completado: —
+- [x] **CA-1** · Al arrastrar la barra de la grilla de Stock contra el fondo, la grilla no tiembla y la barra no se traba; medido en el navegador antes y después (`scrollTop` estable), también en Logs y Clientes · Estimación: 45 min · Completado: 2026-10-29 00:03
 
 **Notas**
 
 - Pedido del dev al revisar el Sprint 4 (2026-10-28).
 - La grilla es `src/components/ui/virtualized-data-table.tsx` (react-virtuoso), que usan 10 paneles.
 - Nivel 2.
+- Causa: la grilla suponía filas de 64 px (`fixedItemHeight = 64` por defecto), y las de Stock miden 119 px por la
+  lista de precios. Al llegar al fondo, Virtuoso cambiaba las filas dibujadas y el alto total saltaba de 1109 a 944
+  px, así que la barra se movía sola. Ahora mide cada fila (sin alto fijo por defecto) y el Scroller ya no tiene
+  `scroll-smooth`, que animaba esas correcciones.
+- Medido en el navegador a 1440 px: con la barra pegada al fondo, el alto queda en 1109 px en Stock y en 3277 px en
+  Logs, y se ve la última fila. Lint, typecheck y 44 E2E de Clientes, Proveedores, Usuarios y Stock en verde.
 
 ### US-33 · Gastos: filtro desde y hasta, con el mes por defecto
 

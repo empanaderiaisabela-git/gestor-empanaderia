@@ -25,7 +25,7 @@ const Scroller = React.forwardRef<HTMLDivElement, any>((props, ref) => (
   <div
     {...props}
     ref={ref}
-    className='relative overflow-y-auto rounded-lg border border-zinc-200 dark:border-zinc-800 flex-1 bg-white dark:bg-zinc-900 custom-scrollbar scroll-smooth'
+    className='relative overflow-y-auto rounded-lg border border-zinc-200 dark:border-zinc-800 flex-1 bg-white dark:bg-zinc-900 custom-scrollbar'
   />
 ));
 Scroller.displayName = 'Scroller';
@@ -66,7 +66,7 @@ const VirtuosoComponents: TableComponents<any> = {
   TableBody: VirtuosoTableBody,
 };
 
-export function VirtualizedDataTable<T extends { id: string | number }>({ columns, data, isLoading, emptyMessage = 'No se han encontrado resultados.', hasMore, onEndReached, fixedItemHeight = 64 }: VirtualizedDataTableProps<T>) {
+export function VirtualizedDataTable<T extends { id: string | number }>({ columns, data, isLoading, emptyMessage = 'No se han encontrado resultados.', hasMore, onEndReached, fixedItemHeight }: VirtualizedDataTableProps<T>) {
   const colSpanCount = columns.length;
 
   const rowContent = (_index: number, row: T) => {
