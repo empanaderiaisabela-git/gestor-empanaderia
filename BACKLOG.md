@@ -3127,7 +3127,7 @@ las decisiones provisorias D-1 a D-11, el orden y la trazabilidad de cada punto 
 | 11  | [BUG-25](#bug-25--stock-costo-y-precio-de-pizzas-y-ciabattas-desde-ingresar-stock) | Stock: costo y precio de pizzas y ciabattas desde "Ingresar stock" | En revisión | BUG-23 | 1 h |
 | 12  | [US-34](#us-34--stock-ordenar-por-cantidad)                                     | Stock: ordenar por cantidad                             | En revisión | BUG-23     | 45 min          |
 | 13  | [US-35](#us-35--ventas-aviso-al-agregar-gustos-por-precio-y-buscador)           | Ventas: aviso al agregar, gustos por precio y buscador  | En revisión | US-5       | 1 h 5 min       |
-| 14  | [T-22](#t-22--cierre-del-sprint-4)                                              | Cierre del Sprint 4                                     | En progreso | todos      | 1 h             |
+| 14  | [T-22](#t-22--cierre-del-sprint-4)                                              | Cierre del Sprint 4                                     | En revisión | todos      | 1 h             |
 |     |                                                                                 | **Total del sprint**                                    |             |            | **23 h 35 min** |
 
 ### T-21 · Backlog del Sprint 4 desde el pedido del cliente
@@ -3659,13 +3659,13 @@ nombre, de forma que arme el pedido rápido y sin dudas.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | En progreso |
+| Estado       | En revisión |
 | Dueño        | Agente    |
 | Inicio       | 2026-10-28 |
 | Tamaño       | S         |
 | Depende de   | todos     |
 | Plan         | [`docs/plans/sprint-4.md`](docs/plans/sprint-4.md) |
-| Merge        | —         |
+| Merge        | `chore(release): sprint 4` en `main`, tag `sprint-4` |
 | Horas reales | —         |
 
 **Historia**: Como dev quiero el Sprint 4 verificado completo y en `main`, de forma que la próxima demo muestre lo que
@@ -3675,7 +3675,7 @@ se probó.
 
 - [x] **CA-1** · `npm run verify` completo y todos los E2E en verde sobre `develop` · Estimación: 30 min · Completado: 2026-10-29 17:19 (la primera corrida fue el 2026-10-28 17:23; se repitió después de cada revisión del dev)
 
-- [ ] **CA-2** · README, `docs/architecture.md` y `docs/initial_prompt.md` al día; con el OK del dev, merge local `develop → main` con el tag `sprint-4` · Estimación: 30 min · Completado: —
+- [ ] **CA-2** · README, `docs/architecture.md` y `docs/initial_prompt.md` al día; con el OK del dev, merge local `develop → main` con el tag `sprint-4` · Estimación: 30 min · Completado: 2026-10-29 19:40
 
 **Notas**
 
@@ -3692,3 +3692,7 @@ se probó.
   la revisión no traen migraciones.
 - Después de la segunda revisión (BUG-25, US-34 y US-35), sobre `develop` en `b1023b5`: `npm run verify` en verde
   con 1005 tests, cobertura 96,2/90,21, 108 de integración, mutación 89,79 y build; 71 E2E en verde. Sin migraciones.
+- Tercera revisión (US-35 CA-4, el aviso animado), sobre `develop` en `2916cf4`: `npm run verify` en verde con 1006
+  tests, cobertura 96,21/90,14, 108 de integración, mutación 89,79 y build; 72 E2E en verde.
+- El dev corrió las migraciones en Supabase el 2026-10-29: quedaron 22. Hoy el sistema corre sólo en local.
+- El dev dio el OK al merge a `main` el 2026-10-29.
