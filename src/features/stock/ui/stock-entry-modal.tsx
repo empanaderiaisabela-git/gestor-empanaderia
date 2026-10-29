@@ -4,16 +4,18 @@ import { PackagePlus } from 'lucide-react';
 import { type FormEvent, type JSX, useEffect, useState } from 'react';
 import { ErrorAlert } from '@/components/ui/alert';
 import { ResponsiveModal } from '@/components/ui/responsive-modal';
+import { categoryOf } from '@/features/stock/domain/stock-categories';
 import { StockEntryFields } from './stock-entry-fields';
 import { type EntryValues, type FormErrors, parseEntry } from './stock-forms';
 import type { StockPanelModel } from './use-stock-panel';
 
-const blank = (group: string, menuItemId: string): EntryValues => ({ group, menuItemId, quantity: '', unitCost: '', providerId: '', price1: '', price3: '', price6: '', price12: '' });
+const blank = (category: string, menuItemId: string): EntryValues => ({ category, menuItemId, quantity: '', unitCost: '', providerId: '', price1: '', price3: '', price6: '', price12: '' });
 
 export function StockEntryModal({ model }: { model: StockPanelModel }): JSX.Element {
   const isOpen = model.dialog?.kind === 'entry';
-  const preselected = model.dialog?.item?.id ?? '';
-  const preselectedGroup = model.dialog?.item?.group ?? '';
+  const preselectedItem = model.dialog?.item ?? null;
+  const preselected = preselectedItem?.id ?? '';
+  const preselectedCategory = preselectedItem ? categoryOf(preselectedItem) : '';
   const [values, setValues] = useState<EntryValues>(blank('', ''));
   const [errors, setErrors] = useState<FormErrors>({});
   const [serverError, setServerError] = useState<string | null>(null);
@@ -21,10 +23,10 @@ export function StockEntryModal({ model }: { model: StockPanelModel }): JSX.Elem
 
   useEffect(() => {
     if (!isOpen) return;
-    setValues(blank(preselectedGroup, preselected));
+    setValues(blank(preselectedCategory, preselected));
     setErrors({});
     setServerError(null);
-  }, [isOpen, preselected, preselectedGroup]);
+  }, [isOpen, preselected, preselectedCategory]);
 
   const submit = async (event: FormEvent): Promise<void> => {
     event.preventDefault();

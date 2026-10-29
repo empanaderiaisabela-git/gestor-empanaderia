@@ -1,10 +1,10 @@
 import { History, type LucideIcon, PackageMinus, PackagePlus, Tags } from 'lucide-react';
 import type { JSX } from 'react';
 import type { ColumnDef } from '@/components/ui/virtualized-data-table';
-import { GROUPS, hasBase } from '@/features/menu/domain/menu-groups';
 import type { MenuItemDef } from '@/features/menu/domain/menu-item.schema';
 import { priceList } from '@/features/menu/domain/menu-price-list';
 import { COST_TERM, SALE_PRICE_TERM } from '@/features/menu/domain/menu-terms';
+import { CATEGORY_LABELS, categoryOf, hasOwnStock } from '@/features/stock/domain/stock-categories';
 import { formatMoney } from '@/lib/format-money';
 import type { StockDialog } from './use-stock-panel';
 
@@ -18,15 +18,13 @@ const BUTTONS: Record<DialogKind, { title: string; tone: string; Icon: LucideIco
   history: { title: 'Historial de ingresos', tone: 'text-brand-600 dark:text-brand-400', Icon: History },
 };
 
-const isStockless = (item: MenuItemDef): boolean => hasBase(item.group) && !item.isBase;
-
 function kindsOf(item: MenuItemDef): DialogKind[] {
   if (item.isBase) return ['entry', 'loss'];
-  return isStockless(item) ? ['pricing'] : ['entry', 'loss', 'pricing', 'history'];
+  return hasOwnStock(item) ? ['entry', 'loss', 'pricing', 'history'] : ['pricing'];
 }
 
 export function StockBadge({ item }: { item: MenuItemDef }): JSX.Element {
-  if (isStockless(item)) return <>—</>;
+  if (!hasOwnStock(item)) return <>—</>;
   const empty = item.stock <= 0;
   const tone = empty ? 'bg-red-50 text-red-700 dark:bg-red-500/10 dark:text-red-400' : 'bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400';
   return <span className={`px-2.5 py-0.5 rounded-full text-sm font-bold ${tone}`}>{empty ? 'Sin stock' : item.stock.toLocaleString('es-AR')}</span>;
@@ -66,8 +64,8 @@ const costText = (item: MenuItemDef): string => {
 
 export function getStockViewColumns(): ColumnDef<MenuItemDef>[] {
   return [
-    { header: 'Grupo', cellClassName: 'text-zinc-700 dark:text-zinc-200', cell: (item) => GROUPS[item.group].label },
-    { header: 'Gusto / bebida', cellClassName: 'font-bold text-zinc-900 dark:text-zinc-50', cell: (item) => item.name },
+    { header: 'Categoría', cellClassName: 'text-zinc-700 dark:text-zinc-200', cell: (item) => CATEGORY_LABELS[categoryOf(item)] },
+    { header: 'Gusto / bebida', cellClassName: 'font-bold text-zinc-900 dark:text-zinc-50', cell: (item) => (item.isBase ? '—' : item.name) },
     { header: 'Stock', cell: (item) => <StockBadge item={item} /> },
   ];
 }

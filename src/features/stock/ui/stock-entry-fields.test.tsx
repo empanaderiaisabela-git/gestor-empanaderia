@@ -7,7 +7,7 @@ import type { EntryValues } from './stock-forms';
 const item = (id: string, group: MenuItemDef['group'], name: string): MenuItemDef => ({ id, group, name, unitCost: 100, stock: 3, price1: 1000, price3: null, price6: null, price12: null, isActive: true, isVisible: false, isBase: false, version: 1, createdAt: '', updatedAt: '' });
 const PREPIZZA: MenuItemDef = { ...item('e', 'pizzas', 'Prepizza'), unitCost: null, price1: null, isBase: true };
 const ITEMS = [item('a', 'sanguches', 'Primavera'), item('b', 'sanguches', 'Jamón y queso'), item('c', 'pepsi', 'Pepsi 1,5 L'), item('d', 'pizzas', 'Muzza'), PREPIZZA];
-const BLANK: EntryValues = { group: '', menuItemId: '', quantity: '', unitCost: '', providerId: '', price1: '', price3: '', price6: '', price12: '' };
+const BLANK: EntryValues = { category: '', menuItemId: '', quantity: '', unitCost: '', providerId: '', price1: '', price3: '', price6: '', price12: '' };
 
 function renderFields(values: EntryValues, onChange = vi.fn()): typeof onChange {
   render(<StockEntryFields values={values} errors={{}} items={ITEMS} providers={[]} onChange={onChange} />);
@@ -21,22 +21,29 @@ describe('Ingresar stock: primero la categoría, después el gusto (US-18)', () 
   });
 
   it('con una categoría, el gusto lista sólo los de esa categoría', () => {
-    renderFields({ ...BLANK, group: 'sanguches' });
+    renderFields({ ...BLANK, category: 'sanguches' });
     const options = within(screen.getByLabelText('Gusto o bebida')).getAllByRole('option').map((option) => option.textContent);
     expect(options).toEqual(['Elegí un gusto o bebida', 'Primavera (stock 3)', 'Jamón y queso (stock 3)']);
   });
 
-  it('en Pizzas ofrece sólo la Prepizza, que pide cantidad y proveedor, sin costo ni precio (US-29 CA-2)', () => {
-    renderFields({ ...BLANK, group: 'pizzas', menuItemId: PREPIZZA.id });
-    const options = within(screen.getByLabelText('Gusto o bebida')).getAllByRole('option').map((option) => option.textContent);
-    expect(options).toEqual(['Elegí un gusto o bebida', 'Prepizza (stock 3)']);
+  it('Prepizza es una categoría: no pide gusto, sólo cantidad y proveedor, sin costo ni precio (BUG-23)', () => {
+    renderFields({ ...BLANK, category: 'prepizzas', menuItemId: PREPIZZA.id });
+    expect(screen.queryByLabelText('Gusto o bebida')).toBeNull();
     expect(screen.queryByLabelText(/Costo para el local|Precio de venta/)).toBeNull();
-    expect(screen.getByLabelText('Proveedor (opcional)')).toBeDefined();
+    expect([screen.getByLabelText('Cantidad que entra'), screen.getByLabelText('Proveedor (opcional)')]).toHaveLength(2);
   });
 
-  it('cambiar de categoría limpia el gusto elegido', () => {
-    const onChange = renderFields({ ...BLANK, group: 'pizzas', menuItemId: 'a' });
+  it('la categoría ofrece Prepizza y Pan de ciabatta, y no Pizzas ni Ciabattas (BUG-23)', () => {
+    renderFields(BLANK);
+    const options = within(screen.getByLabelText('Categoría')).getAllByRole('option').map((option) => option.textContent);
+    expect(options).toEqual(['Elegí una categoría', 'Empanadas', 'Prepizza', 'Sanguches', 'Pan de ciabatta', 'Coca-Cola', 'Pepsi']);
+  });
+
+  it('elegir Prepizza toma la base; elegir otra categoría limpia el gusto', () => {
+    const onChange = renderFields({ ...BLANK, category: 'sanguches', menuItemId: 'a' });
+    fireEvent.change(screen.getByLabelText('Categoría'), { target: { value: 'prepizzas' } });
+    expect(onChange).toHaveBeenLastCalledWith(expect.objectContaining({ category: 'prepizzas', menuItemId: PREPIZZA.id }));
     fireEvent.change(screen.getByLabelText('Categoría'), { target: { value: 'pepsi' } });
-    expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ group: 'pepsi', menuItemId: '' }));
+    expect(onChange).toHaveBeenLastCalledWith(expect.objectContaining({ category: 'pepsi', menuItemId: '' }));
   });
 });

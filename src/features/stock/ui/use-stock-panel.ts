@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
 import { fetchMenuItems } from '@/features/menu/actions/fetch-menu-items';
-import type { MenuGroup } from '@/features/menu/domain/menu-groups';
 import type { MenuItemDef } from '@/features/menu/domain/menu-item.schema';
 import { useMenuStore } from '@/features/menu/store/menu.store';
 import { fetchProviders } from '@/features/provider/actions/fetch-providers';
@@ -8,6 +7,7 @@ import type { ProviderDef } from '@/features/provider/domain/provider.schema';
 import { registerStockEntryAction } from '@/features/stock/actions/register-stock-entry';
 import { registerStockLossAction } from '@/features/stock/actions/register-stock-loss';
 import { setStockPricingAction } from '@/features/stock/actions/set-stock-pricing';
+import { categoryOf, type StockCategory } from '@/features/stock/domain/stock-categories';
 import type { StockEntryInput, StockLossInput, StockPricingInput } from '@/features/stock/domain/stock.schema';
 import { normalizeForSearch } from '@/lib/utils';
 
@@ -21,8 +21,8 @@ export type StockPanelModel = {
   providers: ProviderDef[];
   search: string;
   setSearch: (value: string) => void;
-  groupFilter: MenuGroup | 'todos';
-  setGroupFilter: (value: MenuGroup | 'todos') => void;
+  categoryFilter: StockCategory | 'todos';
+  setCategoryFilter: (value: StockCategory | 'todos') => void;
   dialog: StockDialog;
   setDialog: (dialog: StockDialog) => void;
   message: Message;
@@ -50,14 +50,14 @@ export function useStockPanel(): StockPanelModel {
   const allItems = useMenuStore((state) => state.items);
   const { loading, providers, reload } = useStockData();
   const [search, setSearch] = useState('');
-  const [groupFilter, setGroupFilter] = useState<MenuGroup | 'todos'>('todos');
+  const [categoryFilter, setCategoryFilter] = useState<StockCategory | 'todos'>('todos');
   const [dialog, setDialog] = useState<StockDialog>(null);
   const [message, setMessage] = useState<Message>(null);
   const activeItems = useMemo(() => allItems.filter((item) => item.isActive), [allItems]);
   const items = useMemo(() => {
     const term = normalizeForSearch(search);
-    return activeItems.filter((item) => normalizeForSearch(item.name).includes(term) && (groupFilter === 'todos' || item.group === groupFilter));
-  }, [activeItems, search, groupFilter]);
+    return activeItems.filter((item) => normalizeForSearch(item.name).includes(term) && (categoryFilter === 'todos' || categoryOf(item) === categoryFilter));
+  }, [activeItems, search, categoryFilter]);
   const submit = async (result: Promise<{ success: boolean; error?: string; message?: string }>): Promise<string | null> => {
     const outcome = await result;
     if (!outcome.success) return outcome.error ?? 'No se pudo registrar el movimiento';
@@ -69,5 +69,5 @@ export function useStockPanel(): StockPanelModel {
   const submitEntry = (input: StockEntryInput): Promise<string | null> => submit(registerStockEntryAction(input));
   const submitLoss = (input: StockLossInput): Promise<string | null> => submit(registerStockLossAction(input));
   const submitPricing = (input: StockPricingInput): Promise<string | null> => submit(setStockPricingAction(input));
-  return { loading, items, activeItems, providers, search, setSearch, groupFilter, setGroupFilter, dialog, setDialog, message, submitEntry, submitLoss, submitPricing };
+  return { loading, items, activeItems, providers, search, setSearch, categoryFilter, setCategoryFilter, dialog, setDialog, message, submitEntry, submitLoss, submitPricing };
 }

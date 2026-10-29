@@ -7,7 +7,7 @@ const ITEM: MenuItemDef = { id: 'a', group: 'sanguches', name: 'Primavera', unit
 
 describe('grilla de Stock (US-4 CA-1)', () => {
   it('muestra el costo para el local (US-16)', () => {
-    expect(getStockColumns({ open: vi.fn() }).map((column) => column.header)).toEqual(['Grupo', 'Gusto / bebida', 'Stock', 'Precio de venta', 'Costo para el local', 'Acciones']);
+    expect(getStockColumns({ open: vi.fn() }).map((column) => column.header)).toEqual(['Categoría', 'Gusto / bebida', 'Stock', 'Precio de venta', 'Costo para el local', 'Acciones']);
   });
 
   it('cada celda muestra grupo, gusto, stock, precio y costo', () => {
@@ -54,11 +54,11 @@ describe('grilla de Stock (US-4 CA-1)', () => {
     expect(open.mock.calls).toEqual([[{ kind: 'entry', item: ITEM }], [{ kind: 'loss', item: ITEM }], [{ kind: 'pricing', item: ITEM }], [{ kind: 'history', item: ITEM }]]);
   });
 
-  it('la base muestra su contador y sólo Ingresar stock y Registrar pérdida, sin precio ni costo (US-29 CA-2)', () => {
+  it('la base es una categoría con su contador y sólo Ingresar stock y Registrar pérdida, sin gusto, precio ni costo (BUG-23)', () => {
     const base: MenuItemDef = { ...ITEM, id: 'p', group: 'pizzas', name: 'Prepizza', unitCost: null, stock: 3, price1: null, price3: null, price6: null, price12: null, isBase: true };
     render(<div>{getStockColumns({ open: vi.fn() }).map((column, index) => <span key={index}>{column.cell(base)}</span>)}</div>);
-    expect(screen.getByText('3')).toBeDefined();
-    expect(screen.getAllByText('—')).toHaveLength(2);
+    expect([screen.getByText('Prepizza'), screen.getByText('3')]).toHaveLength(2);
+    expect(screen.getAllByText('—')).toHaveLength(3);
     expect(screen.getAllByRole('button').map((button) => button.title)).toEqual(['Ingresar stock', 'Registrar pérdida']);
   });
 

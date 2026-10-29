@@ -27,13 +27,14 @@ describe('pantalla de Stock (US-4)', () => {
     actions.entry.mockResolvedValue({ success: true, message: 'Stock ingresado: Humita queda con 29', data: { menuItemId: ITEM.id, stock: 29, version: 2 } });
   });
 
-  it('el vendedor sólo ve grupo, gusto y stock, sin botones ni costo (US-31)', async () => {
+  it('el vendedor sólo ve categoría, gusto y stock, sin botones, costo ni categorías sin stock (US-31, BUG-23)', async () => {
     useAuthStore.setState({ user: { id: 'v', username: 'vendedor', role: 'vendedor' }, isAuthenticated: true });
-    actions.fetchItems.mockResolvedValue([PREPIZZA, COCA]);
+    actions.fetchItems.mockResolvedValue([PREPIZZA, COCA, MUZZA]);
     render(<StockPanel />);
     const headers = await screen.findAllByRole('columnheader');
-    expect(headers.map((header) => header.textContent)).toEqual(['Grupo', 'Gusto / bebida', 'Stock']);
+    expect(headers.map((header) => header.textContent)).toEqual(['Categoría', 'Gusto / bebida', 'Stock']);
     expect(screen.queryByRole('button', { name: 'Ingresar stock' })).toBeNull();
+    expect(screen.queryByRole('option', { name: 'Pizzas' })).toBeNull();
   });
 
   it('el admin carga cantidad, costo y proveedor', async () => {
@@ -48,14 +49,13 @@ describe('pantalla de Stock (US-4)', () => {
     await waitFor(() => expect(actions.entry).toHaveBeenCalledWith({ menuItemId: ITEM.id, quantity: 12, unitCost: 460, providerId: null }), { timeout: 5000 });
   });
 
-  it('en Pizzas, Ingresar stock ofrece sólo la Prepizza y pide la cantidad, sin costo ni precio (US-29 CA-2)', async () => {
+  it('la categoría Prepizza pide sólo la cantidad, sin gusto, costo ni precio (BUG-23)', async () => {
     useMenuStore.setState({ items: [ITEM, PREPIZZA, MUZZA] });
     actions.fetchItems.mockResolvedValue([ITEM, PREPIZZA, MUZZA]);
     render(<StockPanel />);
     fireEvent.click(await screen.findByRole('button', { name: 'Ingresar stock' }));
-    fireEvent.change(screen.getByLabelText('Categoría'), { target: { value: 'pizzas' } });
-    expect(screen.queryByRole('option', { name: /Muzza/ })).toBeNull();
-    fireEvent.change(screen.getByLabelText('Gusto o bebida'), { target: { value: PREPIZZA.id } });
+    fireEvent.change(screen.getByLabelText('Categoría'), { target: { value: 'prepizzas' } });
+    expect(screen.queryByLabelText('Gusto o bebida')).toBeNull();
     expect(screen.queryByLabelText(/Costo para el local/)).toBeNull();
     fireEvent.change(screen.getByLabelText('Cantidad que entra'), { target: { value: '2' } });
     fireEvent.click(screen.getByRole('button', { name: 'Ingresar' }));
@@ -77,10 +77,10 @@ describe('pantalla de Stock (US-4)', () => {
     expect(await screen.findByText('Falta el costo para el local.')).toBeDefined();
   });
 
-  it('filtra por grupo y por nombre sin romper la pantalla', async () => {
+  it('filtra por categoría y por nombre sin romper la pantalla', async () => {
     render(<StockPanel />);
-    fireEvent.change(await screen.findByLabelText('Filtrar por grupo'), { target: { value: 'pizzas' } });
-    fireEvent.change(screen.getByLabelText('Filtrar por grupo'), { target: { value: 'todos' } });
+    fireEvent.change(await screen.findByLabelText('Filtrar Stock'), { target: { value: 'prepizzas' } });
+    fireEvent.change(screen.getByLabelText('Filtrar Stock'), { target: { value: 'todos' } });
     expect(screen.getByRole('button', { name: 'Ingresar stock' })).toBeDefined();
   });
 

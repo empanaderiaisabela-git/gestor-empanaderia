@@ -14,12 +14,14 @@ async function agregarPizza(page: Page, presentacion: RegExp, gustos: string[]):
   await page.getByRole('button', { name: 'Listo' }).click();
 }
 
-test.describe('prepizzas (US-29)', () => {
+test.describe('prepizzas (US-29, BUG-23)', () => {
   test('se ingresan 2 prepizzas, se venden una mitad y mitad y una Muzza, y los gustos de pizza desaparecen de Ventas', async ({ page }) => {
     await page.goto('/stock');
-    await page.getByLabel('Filtrar por grupo').selectOption({ label: 'Pizzas' });
+    await page.getByLabel('Filtrar Stock').selectOption({ label: 'Prepizza' });
     await expect(page.getByRole('row').nth(1)).toContainText('Prepizza');
-    await (await filaDeStock(page, 'Prepizza')).getByTitle('Ingresar stock').click();
+    await page.getByRole('button').filter({ hasText: 'Ingresar stock' }).click();
+    await page.getByLabel('Categoría').selectOption({ label: 'Prepizza' });
+    await expect(page.getByLabel('Gusto o bebida')).toHaveCount(0);
     await expect(page.getByLabel(/Costo para el local/)).toHaveCount(0);
     await page.getByLabel('Cantidad que entra').fill('2');
     await page.getByRole('button', { name: 'Ingresar', exact: true }).click();

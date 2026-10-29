@@ -18,9 +18,10 @@ Muestra el stock de cada gusto y bebida activos, agrupados por grupo, y permite:
 - **Registrar una pérdida** (la merma): descuenta stock con un motivo y guarda el costo del momento.
 - **Ver el historial de ingresos** de cada gusto.
 - **Prepizzas y panes de ciabatta** (US-29): Pizzas y Ciabattas no guardan stock por gusto. Guardan una **base** por
-  grupo, "Prepizza" y "Pan de ciabatta" (`menu_items.is_base`), que es la primera fila de su grupo, con su contador,
-  "Ingresar stock" y "Registrar pérdida". Los gustos de esos grupos muestran "—" en Stock y sólo tienen "Costo y
-  precio".
+  grupo, "Prepizza" y "Pan de ciabatta" (`menu_items.is_base`), con su contador, "Ingresar stock" y "Registrar
+  pérdida". En Stock, cada base es una **categoría** propia (BUG-23, `domain/stock-categories.ts`), con "—" en
+  "Gusto / bebida". Los gustos de esos grupos quedan en las categorías Pizzas y Ciabattas, con "—" en Stock y sólo
+  "Costo y precio"; el vendedor no los ve.
 
 ## Reglas de negocio
 
@@ -39,8 +40,8 @@ Muestra el stock de cada gusto y bebida activos, agrupados por grupo, y permite:
   y la base sigue sin costo ni precios (con costo o precios, `VALIDATION`). La pérdida de una base baja el contador
   con costo 0, así no resta de la ganancia. "Costo y precio" de una base da `VALIDATION`.
 - **Gustos de Pizzas y Ciabattas (US-29)**: no reciben ingresos ni pérdidas (`VALIDATION`); su costo y su precio se
-  cargan con "Costo y precio". En "Ingresar stock", la categoría Pizzas ofrece sólo la Prepizza y Ciabattas sólo el
-  pan. "Aplicar este precio a todos los gustos" no toca la base (`lockGroup` la excluye).
+  cargan con "Costo y precio". "Ingresar stock" no ofrece las categorías Pizzas ni Ciabattas: ofrece Prepizza y Pan de
+  ciabatta, que toman la base sin pedir gusto (BUG-23). "Aplicar este precio a todos los gustos" no toca la base (`lockGroup` la excluye).
 - **Stock es sólo del administrador** (dev, 2026-10-26, US-16): el vendedor no ve la sección ni puede ingresar
   stock, registrar mermas o leer el historial.
 - Cada movimiento sube la `version` del gusto: si alguien lo estaba editando en Alta de productos, recibe
@@ -110,13 +111,13 @@ La grilla lee los gustos con `fetchMenuItems` del feature `menu`.
 
 `src/app/(main)/stock/page.tsx` → `StockPanel`:
 
-- Barra con búsqueda, filtro por grupo y "Ingresar stock".
-- Grilla con grupo, gusto, stock ("Sin stock" en rojo), precio (los del gusto, uno por renglón, o "Sin precio";
+- Barra con búsqueda, filtro por categoría ("Filtrar Stock") y "Ingresar stock".
+- Grilla con categoría, gusto, stock ("Sin stock" en rojo), precio (los del gusto, uno por renglón, o "Sin precio";
   BUG-22) y costo ("Sin costo"). Las acciones de cada fila son ingresar, pérdida, "Costo y precio" (ícono `Tags`) e
-  historial. La base va primera en su grupo, con "—" en precio y costo y sólo ingresar y pérdida; los gustos de
+  historial. La base es su propia categoría, con "—" en gusto, precio y costo y sólo ingresar y pérdida; los gustos de
   Pizzas y Ciabattas muestran "—" en Stock y sólo "Costo y precio" (US-29).
-- Modales: `StockEntryModal` (categoría, gusto, cantidad, costo, precios de venta y proveedor; para una base, sólo
-  cantidad y proveedor), `StockLossModal`,
+- Modales: `StockEntryModal` (categoría, gusto, cantidad, costo, precios de venta y proveedor; en Prepizza y Pan de
+  ciabatta, sin gusto: sólo cantidad y proveedor), `StockLossModal`,
   `StockPricingModal` (costo, precios del grupo precargados y la casilla "Aplicar este precio a todos los gustos de
   <Grupo>") y `StockHistoryModal` (cargando, vacío y lista).
 

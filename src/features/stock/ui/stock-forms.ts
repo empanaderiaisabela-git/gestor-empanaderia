@@ -3,7 +3,7 @@ import type { MenuItemDef } from '@/features/menu/domain/menu-item.schema';
 import { type StockEntryInput, stockEntrySchema, type StockLossInput, stockLossSchema, type StockPricingInput, stockPricingSchema } from '@/features/stock/domain/stock.schema';
 
 export type PriceTexts = Record<PriceField, string>;
-export type EntryValues = PriceTexts & { group: string; menuItemId: string; quantity: string; unitCost: string; providerId: string };
+export type EntryValues = PriceTexts & { category: string; menuItemId: string; quantity: string; unitCost: string; providerId: string };
 export type PricingValues = PriceTexts & { unitCost: string; applyToGroup: boolean };
 export type LossValues = { quantity: string; reason: string };
 export type FormErrors = Partial<Record<string, string>>;

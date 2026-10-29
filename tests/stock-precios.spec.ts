@@ -43,8 +43,9 @@ test.describe('Precios en Stock (US-17 y US-28)', () => {
     await page.keyboard.press('Escape');
 
     await page.getByRole('button').filter({ hasText: 'Ingresar stock' }).click();
-    await page.getByLabel('Categoría').selectOption({ label: 'Ciabattas' });
-    await expect(page.getByLabel('Gusto o bebida').locator('option')).toHaveText(['Elegí un gusto o bebida', /^Pan de ciabatta \(stock \d+\)$/]);
+    await expect(page.getByLabel('Categoría').locator('option', { hasText: /^Ciabattas$/ })).toHaveCount(0);
+    await page.getByLabel('Categoría').selectOption({ label: 'Pan de ciabatta' });
+    await expect(page.getByLabel('Gusto o bebida')).toHaveCount(0);
   });
 
   test('aumento de la docena: el precio de un gusto se aplica a todos los de Empanadas (US-28 CA-5)', async ({ page }) => {

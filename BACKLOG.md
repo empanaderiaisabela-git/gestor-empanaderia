@@ -3120,7 +3120,7 @@ las decisiones provisorias D-1 a D-11, el orden y la trazabilidad de cada punto 
 | 4   | [US-28](#us-28--todos-los-precios-en-stock)                                     | Todos los precios en Stock                              | En revisión | T-21       | 3 h             |
 | 5   | [US-29](#us-29--prepizzas-y-panes-de-ciabatta)                                  | Prepizzas y panes de ciabatta                           | En revisión | US-28      | 5 h 30 min      |
 | 6   | [US-31](#us-31--el-vendedor-ve-el-stock-sin-costos)                             | El vendedor ve el stock, sin costos                     | En revisión | US-29      | 1 h 30 min      |
-| 7   | [BUG-23](#bug-23--stock-prepizza-y-pan-de-ciabatta-como-categorías)             | Stock: Prepizza y Pan de ciabatta como categorías       | Por hacer   | US-31      | 1 h 30 min      |
+| 7   | [BUG-23](#bug-23--stock-prepizza-y-pan-de-ciabatta-como-categorías)             | Stock: Prepizza y Pan de ciabatta como categorías       | En revisión | US-31      | 1 h 30 min      |
 | 8   | [BUG-24](#bug-24--la-grilla-tiembla-al-arrastrar-el-scroll-hasta-el-fondo)      | La grilla tiembla al arrastrar el scroll hasta el fondo | Por hacer   | BUG-23     | 45 min          |
 | 9   | [US-33](#us-33--gastos-filtro-desde-y-hasta-con-el-mes-por-defecto)             | Gastos: filtro desde y hasta, con el mes por defecto    | Por hacer   | US-27      | 1 h             |
 | 10  | [US-32](#us-32--estadísticas-desde-y-hasta)                                     | Estadísticas: desde y hasta                             | Por hacer   | US-21      | 2 h             |
@@ -3419,31 +3419,36 @@ al administrador y sin ver lo que le cuesta al local.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Por hacer |
+| Estado       | En revisión |
 | Dueño        | Agente    |
-| Inicio       | —         |
+| Inicio       | 2026-10-28 |
 | Tamaño       | S         |
 | Depende de   | US-31     |
 | Plan         | [`docs/plans/sprint-4.md`](docs/plans/sprint-4.md#revisión-del-dev-2026-10-28) |
 | Merge        | —         |
-| Horas reales | —         |
+| Horas reales | 1 h       |
 
 **Historia**: Como administrador quiero elegir "Prepizza" o "Pan de ciabatta" como categoría al ingresar stock, de
 forma que cargue la cantidad sin elegir además un gusto que siempre es el mismo.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · En "Ingresar stock", la Categoría ofrece Prepizza y Pan de ciabatta en lugar de Pizzas y Ciabattas; al elegirlas no aparece "Gusto o bebida", y el resto del formulario (cantidad y proveedor) queda igual · Estimación: 45 min · Completado: —
+- [x] **CA-1** · En "Ingresar stock", la Categoría ofrece Prepizza y Pan de ciabatta en lugar de Pizzas y Ciabattas; al elegirlas no aparece "Gusto o bebida", y el resto del formulario (cantidad y proveedor) queda igual · Estimación: 45 min · Completado: 2026-10-28 23:53
 
-- [ ] **CA-2** · En la grilla, la columna "Categoría" muestra Prepizza y Pan de ciabatta, y "Gusto / bebida" muestra "—" en esas filas; el filtro las ofrece como categorías. Los gustos de pizza y ciabatta siguen sólo para "Costo y precio" (D-12) · Estimación: 30 min · Completado: —
+- [x] **CA-2** · En la grilla, la columna "Categoría" muestra Prepizza y Pan de ciabatta, y "Gusto / bebida" muestra "—" en esas filas; el filtro las ofrece como categorías. Los gustos de pizza y ciabatta siguen sólo para "Costo y precio" (D-12) · Estimación: 30 min · Completado: 2026-10-28 23:53
 
-- [ ] **CA-3** · El vendedor ve las prepizzas y los panes como categorías y no ve las filas de gustos de pizza y ciabatta, que no tienen stock (D-12); E2E del ingreso de prepizzas y de la grilla del vendedor · Estimación: 15 min · Completado: —
+- [x] **CA-3** · El vendedor ve las prepizzas y los panes como categorías y no ve las filas de gustos de pizza y ciabatta, que no tienen stock (D-12); E2E del ingreso de prepizzas y de la grilla del vendedor · Estimación: 15 min · Completado: 2026-10-28 23:53
 
 **Notas**
 
 - Pedido del dev al revisar el Sprint 4 (2026-10-28): US-29 dejaba la base como un gusto más dentro de su grupo.
 - Sólo UI: el servidor ya rechaza ingresos y pérdidas de gustos de pizza y ciabatta. Sin migración.
 - Nivel 2.
+- `src/features/stock/domain/stock-categories.ts` define las categorías de Stock (`categoryOf`, `hasOwnStock`,
+  `STOCKED_CATEGORIES`). La columna "Grupo" pasó a "Categoría"; el filtro se llama "Filtrar Stock", porque "Filtrar
+  por categoría" chocaba en los E2E con la etiqueta "Categoría" del formulario.
+- Lint, typecheck, 110 tests de Stock y 13 E2E de Stock, prepizzas, navegación, precios y concurrencia en verde;
+  mirado en el navegador a 1440 px.
 
 ### BUG-24 · La grilla tiembla al arrastrar el scroll hasta el fondo
 

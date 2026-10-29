@@ -1,8 +1,8 @@
 import type { JSX } from 'react';
 import { FormField, inputClass } from '@/components/ui/form-field';
-import { GROUPS, hasBase, MENU_GROUPS } from '@/features/menu/domain/menu-groups';
 import type { MenuItemDef } from '@/features/menu/domain/menu-item.schema';
 import { costLabelOf } from '@/features/menu/domain/menu-terms';
+import { CATEGORY_LABELS, categoryOf, isBaseCategory, STOCKED_CATEGORIES } from '@/features/stock/domain/stock-categories';
 import { formatMoney } from '@/lib/format-money';
 import type { ProviderDef } from '@/features/provider/domain/provider.schema';
 import type { EntryValues, FormErrors } from './stock-forms';
@@ -17,24 +17,29 @@ type StockEntryFieldsProps = {
 };
 
 function ItemSelects({ values, errors, items, onChange }: Pick<StockEntryFieldsProps, 'values' | 'errors' | 'items' | 'onChange'>): JSX.Element {
+  const inCategory = items.filter((item) => categoryOf(item) === values.category);
+  const isBase = isBaseCategory(values.category);
+  const choose = (category: string): void => onChange({ ...values, category, menuItemId: isBaseCategory(category) ? (items.find((item) => categoryOf(item) === category)?.id ?? '') : '' });
   return (
     <>
-      <FormField label='Categoría'>
-        <select value={values.group} onChange={(event) => onChange({ ...values, group: event.target.value, menuItemId: '' })} className={inputClass(false)}>
+      <FormField label='Categoría' error={isBase ? errors.menuItemId : undefined}>
+        <select value={values.category} onChange={(event) => choose(event.target.value)} className={inputClass(isBase && Boolean(errors.menuItemId))}>
           <option value=''>Elegí una categoría</option>
-          {MENU_GROUPS.map((group) => <option key={group} value={group}>{GROUPS[group].label}</option>)}
+          {STOCKED_CATEGORIES.map((category) => <option key={category} value={category}>{CATEGORY_LABELS[category]}</option>)}
         </select>
       </FormField>
-      <FormField label='Gusto o bebida' error={errors.menuItemId}>
-        <select value={values.menuItemId} disabled={values.group === ''} onChange={(event) => onChange({ ...values, menuItemId: event.target.value })} className={inputClass(Boolean(errors.menuItemId))}>
-          <option value=''>Elegí un gusto o bebida</option>
-          {items.filter((item) => item.group === values.group && (item.isBase || !hasBase(item.group))).map((item) => (
-            <option key={item.id} value={item.id}>
-              {item.name} (stock {item.stock.toLocaleString('es-AR')})
-            </option>
-          ))}
-        </select>
-      </FormField>
+      {!isBase && (
+        <FormField label='Gusto o bebida' error={errors.menuItemId}>
+          <select value={values.menuItemId} disabled={values.category === ''} onChange={(event) => onChange({ ...values, menuItemId: event.target.value })} className={inputClass(Boolean(errors.menuItemId))}>
+            <option value=''>Elegí un gusto o bebida</option>
+            {inCategory.map((item) => (
+              <option key={item.id} value={item.id}>
+                {item.name} (stock {item.stock.toLocaleString('es-AR')})
+              </option>
+            ))}
+          </select>
+        </FormField>
+      )}
     </>
   );
 }
