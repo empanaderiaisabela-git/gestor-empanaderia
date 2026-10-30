@@ -1,9 +1,7 @@
 'use client';
 
-import { RefreshCcw } from 'lucide-react';
 import type { JSX } from 'react';
 import { ErrorAlert } from '@/components/ui/alert';
-import { Button } from '@/components/ui/button';
 import { DateRangePicker } from '@/components/ui/date-range-picker';
 import { TableSkeleton } from '@/components/ui/table-skeleton';
 import { type StatsModel, useWorkdayStats } from './use-workday-stats';
@@ -17,9 +15,6 @@ function StatsToolbar({ model }: { model: StatsModel }): JSX.Element {
   return (
     <div className='flex flex-wrap items-end gap-3'>
       <DateRangePicker startDate={period.from} endDate={period.to} onStartChange={setFrom} onEndChange={setTo} />
-      <Button variant='secondary' onClick={model.reload} disabled={model.loading} leftIcon={<RefreshCcw className={`w-4 h-4 ${model.loading ? 'animate-spin' : ''}`} />}>
-        Sincronizar
-      </Button>
     </div>
   );
 }

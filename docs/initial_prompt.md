@@ -210,7 +210,7 @@ Detalle en [`docs/architecture.md`](architecture.md).
   - La barrera real está en cada Server Action, con `verifyAuthOrAdmin`, que lanza `AppError` (`UNAUTHENTICATED`,
     `SESSION_EXPIRED`, `INACTIVE_USER` o `FORBIDDEN`).
 - **Concurrencia optimista**: toda tabla que recibe `UPDATE` tiene `version`. El update filtra por `id` y
-  `version`; si afecta 0 filas, hay conflicto y el usuario tiene que sincronizar. El stock se descuenta con un
+  `version`; si afecta 0 filas, hay conflicto: la lista se vuelve a leer sola y el usuario repite el cambio (US-38). El stock se descuenta con un
   bloqueo `SELECT … FOR UPDATE` de cada gusto y un guardado por `id` y `version` (cobro, ingresos, mermas y
   anulaciones).
 - **Auditoría**: toda mutación escribe en `audit_logs` dentro de la misma transacción.

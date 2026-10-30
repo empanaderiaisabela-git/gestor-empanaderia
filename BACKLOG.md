@@ -3720,7 +3720,7 @@ trazabilidad de cada punto del pedido en `specs.md` a su ítem.
 | 2   | [US-36](#us-36--carrito--para-sumar-uno) | Carrito: "+" para sumar uno | En revisión | BUG-26 | 1 h |
 | 3   | [US-39](#us-39--promos-selector-prolijo-quitar-uno-y-siguiente) | Promos: selector prolijo, "Quitar uno" y "Siguiente" | En revisión | T-23 | 2 h |
 | 4   | [US-37](#us-37--cliente-en-el-carrito-con-alta-automática) | Cliente en el carrito, con alta automática | En revisión | US-36 | 4 h |
-| 5   | [US-38](#us-38--datos-al-día-sin-sincronizar) | Datos al día sin "Sincronizar" | Por hacer | T-23 | 2 h 30 min |
+| 5   | [US-38](#us-38--datos-al-día-sin-sincronizar) | Datos al día sin "Sincronizar" | En revisión | T-23 | 2 h 30 min |
 | 6   | [T-24](#t-24--cierre-del-sprint-5) | Cierre del Sprint 5 | Por hacer | todos | 1 h |
 |     |    | **Total del sprint** | | | **11 h 45 min** |
 
@@ -3911,29 +3911,43 @@ se completen solos si ya es cliente, de forma que la grilla de Clientes se arme 
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Por hacer |
+| Estado       | En revisión |
 | Dueño        | Agente    |
-| Inicio       | — |
+| Inicio       | 2026-10-29 |
 | Tamaño       | M         |
 | Depende de   | T-23      |
 | Plan         | [`docs/plans/sprint-5.md`](docs/plans/sprint-5.md) |
 | Merge        | —         |
-| Horas reales | —         |
+| Horas reales | 1 h 30 min |
 
 **Historia**: Como usuario del sistema quiero ver siempre los datos al día al entrar a cada pantalla, de forma que no
 tenga que tocar "Sincronizar" todo el tiempo.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · Cada pantalla trae sus datos al entrar y después de guardar, también lo que cargaron otras computadoras (D-3). Lo cubre un test del hook de carga · Estimación: 1 h · Completado: —
+- [x] **CA-1** · Cada pantalla trae sus datos al entrar y después de guardar, también lo que cargaron otras computadoras (D-3). Lo cubre un test del hook de carga · Estimación: 1 h · Completado: 2026-10-30 01:33
 
-- [ ] **CA-2** · Una venta o una anulación se ven en Estadísticas al entrar, sin sincronizar. Lo cubre un E2E · Estimación: 30 min · Completado: —
+- [x] **CA-2** · Una venta o una anulación se ven en Estadísticas al entrar, sin sincronizar. Lo cubre un E2E · Estimación: 30 min · Completado: 2026-10-30 01:33
 
-- [ ] **CA-3** · No quedan botones "Sincronizar". El error de versión dice "Otro usuario cambió estos datos. Ya se actualizaron; intentá de nuevo" y recarga la lista (P-7) · Estimación: 1 h · Completado: —
+- [x] **CA-3** · No quedan botones "Sincronizar". El error de versión dice "Otro usuario cambió estos datos. Ya se actualizaron; intentá de nuevo" y recarga la lista (P-7) · Estimación: 1 h · Completado: 2026-10-30 01:33
 
 **Notas**
 
 - Nivel 2, con los E2E completos. No suma ISR Writes de Vercel (ver `docs/plans/sprint-5.md`).
+- Cambio central: `useFreshDataOnEnter` (`src/hooks/use-fresh-data.ts`), en el layout del panel, invalida todas
+  las cachés (`invalidateAllCaches`) cada vez que cambia la ruta. Cada panel ya relee cuando su store queda con
+  `isLoaded` en `false`, así que todas las pantallas (también el tablero de Ventas, Stock y Estadísticas) traen datos
+  frescos al entrar, incluido lo que cargaron otras computadoras. No usa `revalidatePath` ni `router.refresh()`: no
+  suma ISR Writes de Vercel.
+- Se quitaron los botones "Sincronizar" de los 10 paneles y el id `btnSincronizar`. Los objetos de página de los E2E
+  cambian `sincronizar()` por `recargar()` (recarga la página).
+- P-7: el error de versión dice "Otro usuario cambió estos datos. Ya se actualizaron; intentá de nuevo." y la lista
+  se relee sola (`useEntityActions` ante cualquier error; Clientes, por `onError` del modal). El de relación borrada
+  queda en "Una de las entidades relacionadas ya no existe.", sin pedir sincronizar.
+- Docs: `docs/architecture.md`, `docs/initial_prompt.md` y los README de tarjetas, gastos, alta, promos,
+  proveedores, estadísticas y stock.
+- Lint, typecheck, 1033 tests unitarios y de componente, y los 76 E2E en verde (concurrencia 6 de 6 con
+  `--repeat-each=3`).
 
 ### T-24 · Cierre del Sprint 5
 

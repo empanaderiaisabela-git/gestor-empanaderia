@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useAuthStore } from '@/features/auth/store/auth.store';
 import { fetchSaleHistory } from '@/features/order/actions/fetch-sale-history';
@@ -21,10 +21,10 @@ describe('pantalla Ventas/Pedidos (US-7 CA-1)', () => {
     expect(screen.getAllByText('No hay ventas que coincidan con los filtros.').length).toBeGreaterThan(0);
   });
 
-  it('Sincronizar vuelve a leer el historial', async () => {
+  it('lee el historial al entrar y ya no tiene botón "Sincronizar" (US-38)', async () => {
     vi.mocked(fetchSaleHistory).mockResolvedValue([saleDef()]);
     render(<SaleHistoryPanel />);
-    fireEvent.click(await screen.findByTitle('Sincronizar'));
-    expect(fetchSaleHistory).toHaveBeenCalledTimes(2);
+    await waitFor(() => expect(fetchSaleHistory).toHaveBeenCalledTimes(1));
+    expect(screen.queryByTitle('Sincronizar')).toBeNull();
   });
 });

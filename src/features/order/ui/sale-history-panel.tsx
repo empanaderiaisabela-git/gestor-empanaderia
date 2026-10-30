@@ -1,10 +1,9 @@
 'use client';
 
-import { Plus, RefreshCcw } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import Link from 'next/link';
 import type { JSX } from 'react';
 import { GlobalMessage } from '@/components/ui/alert';
-import { Button } from '@/components/ui/button';
 import { DateRangePicker } from '@/components/ui/date-range-picker';
 import { PanelToolbar } from '@/components/ui/panel-toolbar';
 import { ResponsivePanelView } from '@/components/ui/responsive-panel-view';
@@ -20,17 +19,12 @@ import { type SaleHistoryModel, useSaleHistory } from './use-sale-history';
 function Toolbar({ model }: { model: SaleHistoryModel }): JSX.Element {
   const { filters, setFilters } = model;
   const dates = <DateRangePicker startDate={filters.startDate} endDate={filters.endDate} onStartChange={(startDate) => setFilters({ startDate })} onEndChange={(endDate) => setFilters({ endDate })} />;
-  const sync = (
-    <Button variant='secondary' size='icon' onClick={() => void model.reload()} title='Sincronizar' className='h-11 w-11 flex-none' data-testid={TEST_IDS.general.btnSincronizar}>
-      <RefreshCcw className='w-5 h-5' />
-    </Button>
-  );
   const newOrder = (
     <Link href='/ventas/nueva' className='h-11 inline-flex items-center justify-center gap-2 px-4 rounded-lg bg-brand-600 hover:bg-brand-700 text-white text-sm font-medium shrink-0 shadow-sm' data-testid={TEST_IDS.general.btnAgregar}>
       <Plus className='w-5 h-5' /> Nuevo pedido
     </Link>
   );
-  return <PanelToolbar search={filters.search} onSearchChange={(search) => setFilters({ search })} searchPlaceholder='Buscar por comprador o vendedor...' searchPlaceholderMobile='Buscar ventas...' data-testid={TEST_IDS.general.inputBusquedaTabla} filters={dates} sync={sync} actions={newOrder} />;
+  return <PanelToolbar search={filters.search} onSearchChange={(search) => setFilters({ search })} searchPlaceholder='Buscar por comprador o vendedor...' searchPlaceholderMobile='Buscar ventas...' data-testid={TEST_IDS.general.inputBusquedaTabla} filters={dates} actions={newOrder} />;
 }
 
 function VoidConfirm({ model }: { model: SaleHistoryModel }): JSX.Element {

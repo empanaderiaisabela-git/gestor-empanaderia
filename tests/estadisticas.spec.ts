@@ -35,4 +35,23 @@ test.describe('Estadísticas de la jornada (US-12)', () => {
     await expect(page.getByRole('table', { name: 'Vendedores' }).getByRole('row').filter({ hasText: 'admin' }).first()).toContainText(/Mañana|Tarde/);
     await expect(page.getByRole('table', { name: 'Ventas' }).getByRole('row').filter({ hasText: '$3.200' }).first()).toBeVisible();
   });
+
+  test('una venta se ve al volver a Estadísticas por el menú, sin "Sincronizar" (US-38)', async ({ page }) => {
+    const registradas = page.getByRole('region', { name: 'Ventas registradas' }).locator('p').nth(1);
+    await page.goto('/');
+    const antes = Number(await registradas.innerText());
+    await expect(page.getByRole('button', { name: 'Sincronizar' })).toHaveCount(0);
+    await page.getByRole('navigation').getByRole('link', { name: 'Ventas/Pedidos' }).click();
+    await page.getByRole('link', { name: 'Nuevo pedido' }).click();
+    await grupo(page, 'Pepsi').getByRole('button', { name: /1 unidad/ }).click();
+    await gusto(page, 'Pepsi 1,5 L').getByRole('button', { name: 'Agregar' }).click();
+    await page.getByRole('button', { name: 'Listo' }).click();
+    await page.getByRole('button', { name: /^Ver pedido/ }).click();
+    await page.getByRole('region', { name: 'Pedido actual' }).getByLabel('Nombre del cliente').fill('Cliente al día');
+    await page.getByRole('region', { name: 'Pedido actual' }).getByRole('button', { name: /^Cobrar/ }).click();
+    await page.getByRole('button', { name: /^Confirmar/ }).click();
+    await expect(page.getByText(/Venta registrada/)).toBeVisible();
+    await page.getByRole('navigation').getByRole('link', { name: 'Estadísticas' }).click();
+    await expect.poll(async () => Number(await registradas.innerText())).toBeGreaterThan(antes);
+  });
 });

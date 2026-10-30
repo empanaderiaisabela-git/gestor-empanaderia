@@ -46,7 +46,7 @@ Muestra el stock de cada gusto y bebida activos, agrupados por grupo, y permite:
 - **Stock es sólo del administrador** (dev, 2026-10-26, US-16): el vendedor no ve la sección ni puede ingresar
   stock, registrar mermas o leer el historial.
 - Cada movimiento sube la `version` del gusto: si alguien lo estaba editando en Alta de productos, recibe
-  `STALE_VERSION` y sincroniza.
+  `STALE_VERSION` y la lista se vuelve a leer sola (US-38).
 
 ## Roles y permisos
 

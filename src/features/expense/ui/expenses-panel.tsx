@@ -1,6 +1,6 @@
 'use client';
 
-import { Plus, RefreshCcw } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import type { JSX } from 'react';
 import { GlobalMessage } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -18,17 +18,12 @@ import { type ExpensesPanelModel, useExpensesPanel } from './use-expenses-panel'
 function ExpensesToolbar({ model }: { model: ExpensesPanelModel }): JSX.Element {
   const { manager, actions, dates, setDates } = model;
   const range = <DateRangePicker startDate={dates.start} endDate={dates.end} onStartChange={(start) => setDates({ ...dates, start })} onEndChange={(end) => setDates({ ...dates, end })} onClear={() => setDates({ start: '', end: '' })} />;
-  const sync = (
-    <Button variant='secondary' size='icon' onClick={() => actions.syncData(true)} disabled={actions.isPending} title='Sincronizar Datos' className='h-11 w-11 flex-none' data-testid={TEST_IDS.general.btnSincronizar}>
-      <RefreshCcw className={`w-5 h-5 ${actions.isPending ? 'animate-spin' : ''}`} />
-    </Button>
-  );
   const add = (
     <Button variant='primary' onClick={() => manager.openFormModal()} leftIcon={<Plus className='w-5 h-5' />} className='h-11 w-full sm:w-auto text-sm font-medium shrink-0 shadow-sm xl:text-base' data-testid={TEST_IDS.general.btnAgregar}>
       Nuevo gasto
     </Button>
   );
-  return <PanelToolbar search={manager.search} onSearchChange={manager.setSearch} searchPlaceholder='Buscar por número de factura o título...' searchPlaceholderMobile='Buscar gastos...' data-testid={TEST_IDS.general.inputBusquedaTabla} filters={range} sync={sync} actions={add} />;
+  return <PanelToolbar search={manager.search} onSearchChange={manager.setSearch} searchPlaceholder='Buscar por número de factura o título...' searchPlaceholderMobile='Buscar gastos...' data-testid={TEST_IDS.general.inputBusquedaTabla} filters={range} actions={add} />;
 }
 
 export function ExpensesPanel(): JSX.Element {

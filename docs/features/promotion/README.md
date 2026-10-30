@@ -64,13 +64,13 @@ Cada cambio se audita con la entidad `PROMOTION` ("PROMOCIÓN" en Auditoría): n
 | Sin productos, precio ≤ 0, presentación que no es del grupo, producto repetido, nombre inválido | `VALIDATION` | Los datos proporcionados no son válidos. | `promotion-errors.contract.test.ts`, `promotion.schema.test.ts` |
 | Nombre de otra promo | `DUPLICATE` | Ya existe un registro con esos datos (DNI, nombre o código duplicado). | `promotion-errors.contract.test.ts`, `promotion.service.test.ts` |
 | Borrar una promo que ya se vendió | `HAS_RELATIONS` | No se puede completar la operación porque existen registros relacionados. | `promotion-errors.contract.test.ts` |
-| Editar, activar o borrar con una versión vieja | `STALE_VERSION` | Los datos en el servidor han cambiado. Por favor, sincroniza la lista e intenta nuevamente. | `promotion-errors.contract.test.ts` |
+| Editar, activar o borrar con una versión vieja | `STALE_VERSION` | Otro usuario cambió estos datos. Ya se actualizaron; intentá de nuevo. | `promotion-errors.contract.test.ts` |
 
 ## Pantallas
 
 `src/app/(main)/promociones/page.tsx` → `PromotionsPanel`:
 
-- Barra con búsqueda por nombre, "Ver Inactivas", sincronizar y "Nueva promoción".
+- Barra con búsqueda por nombre, "Ver Inactivas" y "Nueva promoción".
 - Grilla con nombre (marca "Inactiva"), contenido ("Empanadas · 1 docena + Coca-Cola · 1 unidad × 2"), precio de venta
   y acciones (activar o desactivar, editar, borrar). En mobile, tarjetas con lo mismo.
 - Formulario (`PromotionFormModal`):

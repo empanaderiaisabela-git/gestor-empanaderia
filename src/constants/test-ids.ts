@@ -1,6 +1,5 @@
 export const TEST_IDS = {
   general: {
-    btnSincronizar: 'btnSincronizar',
     btnAgregar: 'btnAgregar',
     btnVerOcultos: 'btnVerOcultos',
     inputBusquedaTabla: 'inputBusquedaTabla',

@@ -10,6 +10,7 @@ import { useAuthStore } from '@/features/auth/store/auth.store';
 import { logoutAction } from '@/features/auth/actions/auth.actions';
 import { BrandLogo } from '@/components/brand/brand-logo';
 import { homeFor } from '@/config/navigation';
+import { useFreshDataOnEnter } from '@/hooks/use-fresh-data';
 import { SidebarNav } from './sidebar-nav';
 
 export default function MainLayout({ children }: { children: ReactNode }) {
@@ -22,6 +23,7 @@ export default function MainLayout({ children }: { children: ReactNode }) {
 
   const user = useAuthStore((state) => state.user);
   const logoutState = useAuthStore((state) => state.logoutState);
+  useFreshDataOnEnter();
 
   // Prevent hydration mismatch on themes
   useEffect(() => setMounted(true), []);

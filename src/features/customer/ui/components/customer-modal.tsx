@@ -14,10 +14,11 @@ interface CustomerModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: (data: CustomerDef, message?: string) => void;
+  onError?: () => void;
   editingItem?: CustomerDef | null;
 }
 
-export function CustomerModal({ isOpen, onClose, onSuccess, editingItem }: CustomerModalProps) {
+export function CustomerModal({ isOpen, onClose, onSuccess, onError, editingItem }: CustomerModalProps) {
   const [isPending, startTransition] = useTransition();
   const [serverError, setServerError] = useState<string | null>(null);
 
@@ -62,6 +63,7 @@ export function CustomerModal({ isOpen, onClose, onSuccess, editingItem }: Custo
 
       if (!result.success) {
         setServerError(result.error);
+        onError?.();
         return;
       }
 

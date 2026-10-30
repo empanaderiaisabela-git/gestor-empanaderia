@@ -25,18 +25,10 @@ interface UseEntityActionsProps<TDef, TInput, TUpdateInput = Partial<TInput>> {
 export function useEntityActions<TDef extends { id?: string; isActive?: boolean }, TInput, TUpdateInput = Partial<TInput>>({ handlers, setStoreData, onSuccessMessage, onErrorMessage, closeFormModal, setServerError, setItemToDelete, editingItem, showInactive }: UseEntityActionsProps<TDef, TInput, TUpdateInput>) {
   const [isPending, startTransition] = useTransition();
 
-  const syncData = async (manual = false) => {
-    startTransition(async () => {
-      if (manual) {
-        invalidateAllCaches();
-      }
-      const resp = await handlers.fetchData(showInactive);
-      setStoreData(resp);
+  const refresh = async () => setStoreData(await handlers.fetchData(showInactive));
 
-      if (manual) {
-        onSuccessMessage('Datos sincronizados con éxito.');
-      }
-    });
+  const syncData = async () => {
+    startTransition(refresh);
   };
 
   const handleEditSubmit = (data: TInput | TUpdateInput) => {
@@ -51,7 +43,7 @@ export function useEntityActions<TDef extends { id?: string; isActive?: boolean 
         result = await handlers.createAction(data as TInput);
       }
 
-      if (!result.success) { setServerError(result.error); return; }
+      if (!result.success) { setServerError(result.error); await refresh(); return; }
 
       closeFormModal();
       onSuccessMessage(result.message || 'Operación exitosa');
@@ -68,7 +60,7 @@ export function useEntityActions<TDef extends { id?: string; isActive?: boolean 
 
       const result = await handlers.deleteAction(id);
 
-      if (!result.success) { onErrorMessage(result.error); return; }
+      if (!result.success) { onErrorMessage(result.error); await refresh(); return; }
 
       onSuccessMessage(result.message || 'Operación exitosa');
       invalidateAllCaches();
@@ -85,6 +77,7 @@ export function useEntityActions<TDef extends { id?: string; isActive?: boolean 
       const result = await handlers.toggleActiveAction(item.id!, nextStatus);
       if (!result.success) {
         onErrorMessage(result.error);
+        await refresh();
       } else {
         onSuccessMessage(result.message || 'Operación exitosa');
         invalidateAllCaches();
