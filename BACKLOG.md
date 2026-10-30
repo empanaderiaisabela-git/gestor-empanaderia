@@ -3724,8 +3724,9 @@ trazabilidad de cada punto del pedido en `specs.md` a su ítem.
 | 6   | [BUG-27](#bug-27--selector-los-botones-de-un-gusto-con-nombre-largo-se-desalinean) | Selector: los botones de un gusto con nombre largo se desalinean | En revisión | US-39 | 20 min |
 | 7   | [US-40](#us-40--estadísticas-calendarios-a-la-derecha-del-título) | Estadísticas: calendarios a la derecha del título | En revisión | US-32 | 15 min |
 | 8   | [US-41](#us-41--estadísticas-fondo-suave-del-color-de-cada-tarjeta) | Estadísticas: fondo suave del color de cada tarjeta | En revisión | US-21 | 15 min |
-| 9   | [T-24](#t-24--cierre-del-sprint-5) | Cierre del Sprint 5 | En progreso | todos | 1 h |
-|     |    | **Total del sprint** | | | **12 h 35 min** |
+| 9   | [US-42](#us-42--estadísticas-los-cuadros-de-abajo-scrollean-por-dentro) | Estadísticas: los cuadros de abajo scrollean por dentro | En revisión | US-13 | 15 min |
+| 10  | [T-24](#t-24--cierre-del-sprint-5) | Cierre del Sprint 5 | En progreso | todos | 1 h |
+|     |    | **Total del sprint** | | | **12 h 50 min** |
 
 ### T-23 · Backlog del Sprint 5
 
@@ -4045,6 +4046,37 @@ vistazo con su categoría.
 - Nivel 1.
 - Las tarjetas de medios de pago ya tenían fondo de color, así que quedan igual.
 - `GROUP_THEME.outline` pasa a llamarse `kpi`, porque ahora lleva el marco y el fondo. Sólo lo usa Estadísticas.
+
+### US-42 · Estadísticas: los cuadros de abajo scrollean por dentro
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-30 |
+| Tamaño       | XS        |
+| Depende de   | US-13     |
+| Plan         | Pedido del dev el 2026-10-30, sin plan aparte |
+| Merge        | —         |
+| Horas reales | 25 min |
+
+**Historia**: Como administrador quiero que el cuadro de Ventas de Estadísticas muestre 5 ventas y tenga su propio
+scroll, de forma que con más ventas no se estire toda la página.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · Los cuadros Vendedores y Ventas muestran hasta 5 filas enteras (14 rem); desde la sexta, scrollean por dentro con el encabezado fijo arriba. Se puede scrollear con el teclado. Lo cubre un test de componente con 40 ventas · Estimación: 10 min · Completado: 2026-10-30 11:20
+
+- [x] **CA-2** · En el navegador, con un rango de varios días, la página no se estira por el cuadro de Ventas · Estimación: 5 min · Completado: 2026-10-30 11:22
+
+**Notas**
+
+- Nivel 1.
+- El cambio está en `StatsTable`, que comparten los dos cuadros, así que Vendedores se comporta igual.
+- El dev pidió el scroll desde 5 ventas (primero el cuadro medía 24 rem, unas 9 filas). Quedó en 14 rem: el encabezado
+  y 5 filas miden 13,25 rem más los bordes, así que 5 ventas entran sin barra y la sexta ya scrollea.
+- Medido sobre la base local con 13 ventas: el contenido mide 544 px y el cuadro 238 px. Se ven 5 filas enteras, la
+  quinta termina a 230,7 px y la sexta a 270 px.
 
 ### T-24 · Cierre del Sprint 5
 
