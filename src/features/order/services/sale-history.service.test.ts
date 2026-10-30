@@ -19,7 +19,7 @@ describe('historial y anulación (US-7)', () => {
 
   it('lista las ventas de la más nueva a la más vieja, con sus líneas en orden y sus pagos (CA-1)', async () => {
     const first = await checkout.checkout(CALLER, checkoutOf([cokes(1)], { payments: cash(2500) }));
-    const second = await checkout.checkout(CALLER, checkoutOf([halfDozen, halfAndHalf], { buyerName: 'Marta', payments: cash(18000) }));
+    const second = await checkout.checkout(CALLER, checkoutOf([halfDozen, halfAndHalf], { payments: cash(18000) }));
     const sales = await history.list();
     expect(sales.map((sale) => sale.id)).toEqual([second.saleId, first.saleId]);
     expect(sales[0]).toMatchObject({ buyerName: 'Marta', vendorName: 'vendedora', total: '18000.00', payments: [{ type: 'efectivo', amount: '18000.00' }] });
@@ -37,7 +37,7 @@ describe('historial y anulación (US-7)', () => {
       action: 'ELIMINAR',
       entity: 'SALE',
       entityId: saleId,
-      detail: { total: 23000, buyerName: null, vendorName: 'vendedora', lines: ['2 Carne + 4 Pollo', 'Muzza / Napolitana', 'Coca 500'], payments: [{ type: 'efectivo', amount: 23000 }], note: 'Venta anulada. Stock repuesto.' },
+      detail: { total: 23000, buyerName: 'Marta', vendorName: 'vendedora', lines: ['2 Carne + 4 Pollo', 'Muzza / Napolitana', 'Coca 500'], payments: [{ type: 'efectivo', amount: 23000 }], note: 'Venta anulada. Stock repuesto.' },
     });
   });
 

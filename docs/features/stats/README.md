@@ -79,6 +79,6 @@ con el costo congelado) y los pagos (con el recargo); y las mermas de la jornada
 
 ## Pantallas
 
-`StatsPanel`: "Desde" y "Hasta" (`DateRangePicker`) y "Sincronizar"; los KPI (sin descripción de la jornada bajo el título); y al final los cuadros de vendedores y de ventas (con
+`StatsPanel`: "Desde" y "Hasta" (`DateRangePicker`), sin "Sincronizar" (los datos se leen al entrar, US-38); los KPI (sin descripción de la jornada bajo el título); y al final los cuadros de vendedores y de ventas (con
 "Nadie vendió en estas fechas." cuando están vacíos; con más de un día, el cuadro de ventas muestra fecha y hora); mientras carga, un esqueleto; si el rango no tuvo ventas, "No
 hubo ventas en estas fechas." con los cuadros en $0; si el servidor falla, el motivo.

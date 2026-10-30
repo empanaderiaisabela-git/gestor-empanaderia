@@ -20,6 +20,8 @@ export const saleRowSchema = z.object({
   id: z.uuid(),
   createdAt: z.union([z.date(), z.string()]),
   buyerName: z.string().nullable(),
+  buyerPhone: z.string().nullable(),
+  buyerAddress: z.string().nullable(),
   vendorName: z.string(),
   total: amount,
   discountAmount: amount,
@@ -34,3 +36,4 @@ export const voidSaleSchema = z.strictObject({ saleId: z.uuid('Elegí una venta 
 export type VoidSaleInput = z.infer<typeof voidSaleSchema>;
 
 export const buyerLabel = (buyerName: string | null): string => buyerName?.trim() || 'Sin nombre';
+export const buyerContact = ({ buyerPhone, buyerAddress }: Pick<SaleDef, 'buyerPhone' | 'buyerAddress'>): string => [buyerPhone, buyerAddress].filter(Boolean).join(' · ');

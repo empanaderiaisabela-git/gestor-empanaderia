@@ -4,7 +4,7 @@ import { ProveedoresPage } from './pages/ProveedoresPage';
 
 test.describe.parallel('Pruebas de Concurrencia', () => {
   test('Escenario A: Edición Concurrente de Cliente (Lost Update)', async ({ browser }) => {
-    const errorMessage = "Los datos en el servidor han cambiado. Por favor, sincroniza la lista e intenta nuevamente.";
+    const errorMessage = 'Otro usuario cambió estos datos. Ya se actualizaron; intentá de nuevo.';
 
     const context1 = await browser.newContext();
     const context2 = await browser.newContext();
@@ -40,9 +40,9 @@ test.describe.parallel('Pruebas de Concurrencia', () => {
     await expect(page2.getByText(errorMessage)).toBeVisible();
 
     await clientesPage2.btnCancelar.click();
-    await clientesPage2.sincronizar();
     await clientesPage2.buscarCliente(clienteEfimero.nombre);
     const fila2Sync = clientesPage2.obtenerFilaPorNombre(clienteEfimero.nombre);
+    await expect(fila2Sync).toContainText('1111111111');
     await fila2Sync.getByRole('button', { name: ClientesPage.UI.BTN_EDITAR, exact: true }).click();
 
     await expect(clientesPage2.inputTelefono).toHaveValue('1111111111');
@@ -54,7 +54,7 @@ test.describe.parallel('Pruebas de Concurrencia', () => {
   test('Escenario C: el proveedor se borra mientras otro carga un ingreso de stock con él', async ({ browser }) => {
     const context1 = await browser.newContext();
     const context2 = await browser.newContext();
-    const errorMessage = 'Una de las entidades relacionadas ya no existe. Por favor, sincroniza los datos.';
+    const errorMessage = 'Una de las entidades relacionadas ya no existe.';
     const page1 = await context1.newPage();
     const page2 = await context2.newPage();
 

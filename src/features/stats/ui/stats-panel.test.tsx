@@ -35,7 +35,8 @@ describe('pantalla de Estadísticas (US-12 CA-1 a CA-5)', () => {
     render(<StatsPanel />);
     expect(await within(await screen.findByRole('region', { name: 'Empanadas' })).findByText('$12.000')).toBeDefined();
     expect(card('Empanadas').className).toContain('border-group-empanadas-accent');
-    expect(card('Empanadas').className).toContain('bg-white');
+    expect(card('Empanadas').className).toContain('bg-group-empanadas-accent/5 dark:border-group-empanadas-dark-accent dark:bg-group-empanadas-dark-accent/10');
+    expect(card('Ganancia').className).toContain('bg-stat-profit-accent/5 dark:border-stat-profit-dark-accent dark:bg-stat-profit-dark-accent/10');
     expect(card('Efectivo').className).toContain('bg-pay-efectivo');
     expect(within(card('Promos')).getByText('$9.000')).toBeDefined();
     expect(within(card('Ganancia')).getByText('$20.000')).toBeDefined();
@@ -74,6 +75,13 @@ describe('pantalla de Estadísticas (US-12 CA-1 a CA-5)', () => {
     fireEvent.change(await screen.findByLabelText('Desde'), { target: { value: '2026-10-01' } });
     const ventas = await screen.findByRole('table', { name: 'Ventas' });
     await waitFor(() => expect(within(ventas).getAllByRole('row')[1].textContent).toBe('Sin nombre26/10/2026, 00:30$6.600'));
+  });
+
+  it('los calendarios van a la derecha del título, con "Fecha de inicio" y "Fecha de fin" debajo (US-40)', async () => {
+    render(<StatsPanel />);
+    const fila = (await screen.findByRole('heading', { name: 'Resumen de la actividad' })).closest('.justify-between');
+    expect(fila?.contains(screen.getByLabelText('Desde'))).toBe(true);
+    expect(screen.getAllByText(/^Fecha de (inicio|fin)$/).map((caption) => caption.textContent)).toEqual(['Fecha de inicio', 'Fecha de fin']);
   });
 
   it('un rango sin ventas lo dice', async () => {

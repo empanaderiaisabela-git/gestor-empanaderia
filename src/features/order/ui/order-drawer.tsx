@@ -42,8 +42,8 @@ export function OrderDrawer({ board, onCheckout }: OrderDrawerProps): JSX.Elemen
   return (
     <>
       <CartButton count={count} onOpen={() => setIsOpen(true)} />
-      <div onClick={close} aria-hidden='true' className={`fixed inset-0 z-40 bg-black/50 transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} />
-      <aside aria-label='Carrito' aria-hidden={!isOpen} inert={!isOpen} className={`fixed inset-y-0 right-0 z-40 w-full sm:max-w-xl flex flex-col bg-zinc-50 dark:bg-zinc-950 shadow-2xl transition-[transform,visibility] duration-300 ease-out ${isOpen ? 'translate-x-0' : 'translate-x-full invisible'}`}>
+      <div onClick={close} aria-hidden='true' className={`fixed inset-0 z-40 bg-black/50 transition-opacity duration-[450ms] ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} />
+      <aside aria-label='Carrito' aria-hidden={!isOpen} inert={!isOpen} className={`fixed inset-y-0 right-0 z-40 w-full sm:max-w-xl lg:w-[45vw] lg:max-w-none flex flex-col bg-zinc-50 dark:bg-zinc-950 shadow-2xl transition-[transform,visibility] duration-[450ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${isOpen ? 'translate-x-0' : 'translate-x-full invisible'}`}>
         <div className='flex justify-end p-2'>
           <button onClick={close} aria-label='Cerrar pedido' className='p-2 rounded-full hover:bg-zinc-200 dark:hover:bg-zinc-800'>
             <X className='w-5 h-5' aria-hidden='true' />

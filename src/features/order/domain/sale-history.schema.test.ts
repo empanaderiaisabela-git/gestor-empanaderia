@@ -7,6 +7,8 @@ const ROW = {
   id: SALE,
   createdAt: new Date(0),
   buyerName: null,
+  buyerPhone: null,
+  buyerAddress: null,
   vendorName: 'vendedora',
   total: '18500.00',
   discountAmount: '0.00',

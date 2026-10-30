@@ -45,6 +45,7 @@ export class CustomerRepository {
               name: input.name,
               phone: input.phone || '',
               email: input.email || '',
+              address: input.address ?? '',
               isActive: true,
               updatedAt: sql`NOW()`,
               version: sql`${customers.version} + 1`,
@@ -65,6 +66,7 @@ export class CustomerRepository {
         name: input.name,
         phone: input.phone || '',
         email: input.email || '',
+        address: input.address ?? '',
         documentNumber: input.documentNumber || null,
         isActive: true,
         version: 1,
@@ -82,6 +84,7 @@ export class CustomerRepository {
     if (input.name !== undefined) updateData.name = input.name;
     if (input.phone !== undefined) updateData.phone = input.phone || '';
     if (input.email !== undefined) updateData.email = input.email || '';
+    if (input.address !== undefined) updateData.address = input.address;
 
     if (input.documentNumber !== undefined) updateData.documentNumber = input.documentNumber || null;
 

@@ -23,9 +23,9 @@ export const MESSAGES = {
       UNIQUE_VIOLATION: 'Ya existe un registro con esos datos (DNI, nombre o código duplicado).',
       FOREIGN_KEY_VIOLATION: 'No se puede completar la operación porque existen registros relacionados.',
       NOT_FOUND: (entity: string) => `${sentence(entity)} ya no existe.`,
-      CONCURRENCY: 'Los datos en el servidor han cambiado. Por favor, sincroniza la lista e intenta nuevamente.',
+      CONCURRENCY: 'Otro usuario cambió estos datos. Ya se actualizaron; intentá de nuevo.',
       GENERIC: (entity: string) => `Ocurrió un error inesperado al procesar ${entity}.`,
-      RELATION_NOT_FOUND: 'Una de las entidades relacionadas ya no existe. Por favor, sincroniza los datos.',
+      RELATION_NOT_FOUND: 'Una de las entidades relacionadas ya no existe.',
     },
     AUTH: {
       UNAUTHORIZED: 'No tienes permisos para realizar esta acción.',

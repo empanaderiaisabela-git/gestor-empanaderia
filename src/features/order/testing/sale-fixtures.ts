@@ -5,6 +5,8 @@ export function saleDef(overrides: Partial<SaleDef> = {}): SaleDef {
     id: '20000000-0000-4000-8000-000000000001',
     createdAt: '2026-10-25T17:05:00.000Z',
     buyerName: 'Marta',
+    buyerPhone: null,
+    buyerAddress: null,
     vendorName: 'vendedora',
     total: 18500,
     discountAmount: 0,

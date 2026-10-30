@@ -23,16 +23,31 @@ describe('promos en el pedido actual (US-9 CA-1 y CA-2)', () => {
     expect(state().openLineId).toBeNull();
   });
 
-  it('al completar un producto pasa al siguiente y al terminar se cierra la lista', () => {
+  it('no avanza solo: "Siguiente" pasa al producto siguiente y en el último cierra la lista (US-39 CA-4)', () => {
     state().startPromo(PROMO);
     state().addToOpenPromo('carne', 'one');
-    expect(state().openPromo?.part).toBe(0);
     state().addToOpenPromo('pollo', 'rest');
+    expect(state().openPromo?.part).toBe(0);
+    state().nextPromoPart();
     expect(state().openPromo?.part).toBe(1);
     state().addToOpenPromo('coca', 'one');
+    state().nextPromoPart();
     state().addToOpenPromo('sprite', 'one');
+    expect(state().openPromo?.part).toBe(2);
+    state().nextPromoPart();
     expect(state().openPromo).toBeNull();
     expect(state().promos[0].parts.map((part) => part.flavors.map((flavor) => flavor.menuItemId))).toEqual([['carne', 'pollo'], ['coca'], ['sprite']]);
+  });
+
+  it('"Quitar uno" resta del producto abierto de la promo y de la línea común abierta (US-39 CA-3)', () => {
+    state().startPromo(PROMO);
+    state().addToOpenPromo('carne', 'rest');
+    state().removeFromOpen('carne');
+    expect(state().promos[0].parts[0].flavors).toEqual([{ menuItemId: 'carne', units: 5 }]);
+    state().start('empanadas', 'u6');
+    state().add('pollo', 'one');
+    state().removeFromOpen('pollo');
+    expect(state().lines[0].flavors).toEqual([]);
   });
 
   it('una promo a medio armar se puede retomar donde quedó, y se puede quitar', () => {

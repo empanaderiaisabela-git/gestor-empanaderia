@@ -221,8 +221,10 @@ sequenceDiagram
 
 Al montar, el panel mira `isLoaded` en su store. Si es `false`, llama a `fetchX()` (Server Action), que valida
 la sesión, lee del repositorio y **parsea las filas con `*RowSchema`** antes de devolverlas, de modo que la forma
-de la respuesta está garantizada. La lista queda en el store hasta la próxima invalidación o hasta que el usuario
-toca "Sincronizar". La búsqueda y los filtros se resuelven en memoria del cliente. La excepción es la auditoría,
+de la respuesta está garantizada. La lista queda en el store hasta la próxima invalidación. Desde US-38, `useFreshDataOnEnter`
+(`src/hooks/use-fresh-data.ts`, en el layout del panel) invalida todas las cachés cada vez que cambia la ruta, así
+que cada pantalla vuelve a leer al entrar; no hay botón "Sincronizar". No usa `revalidatePath` ni
+`router.refresh()`, así que no suma ISR Writes de Vercel. La búsqueda y los filtros se resuelven en memoria del cliente. La excepción es la auditoría,
 que se pagina y busca en el servidor con `unaccent`.
 
 ### Catálogo público
@@ -247,8 +249,8 @@ Problema que resuelve: dos personas editan lo mismo y la segunda pisa los cambio
 | Columna | `version integer not null default 1` en toda tabla que recibe `UPDATE`: `users`, `providers`, `customers`, `menu_items`, `promotions`, `cards`, `expenses`. |
 | Lectura | El `*RowSchema` incluye `version` y el cliente la guarda con la fila. |
 | Escritura | El `*UpdateSchema` exige `version`. El repositorio filtra `WHERE id = :id AND version = :version` y suma 1 a `version`. |
-| Conflicto | 0 filas afectadas ⇒ `ConcurrencyError` (objetivo: `AppError('STALE_VERSION')`) ⇒ "Los datos en el servidor han cambiado. Por favor, sincroniza la lista e intenta nuevamente." |
-| Resolución | El usuario sincroniza y vuelve a editar sobre datos frescos. No hay merge automático. |
+| Conflicto | 0 filas afectadas ⇒ `ConcurrencyError` (objetivo: `AppError('STALE_VERSION')`) ⇒ "Otro usuario cambió estos datos. Ya se actualizaron; intentá de nuevo." |
+| Resolución | Ante el error, la lista se vuelve a leer sola (`useEntityActions`) y el usuario repite el cambio sobre datos frescos. No hay merge automático. |
 
 Casos especiales:
 

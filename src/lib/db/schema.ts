@@ -38,6 +38,7 @@ export const customers = pgTable('customers', {
   name: varchar('name', { length: 100 }).notNull(),
   phone: varchar('phone', { length: 30 }).notNull().default(''),
   email: varchar('email', { length: 100 }).notNull().default(''),
+  address: varchar('address', { length: 150 }).notNull().default(''),
   documentNumber: varchar('document_number', { length: 20 }).unique(),
   isActive: boolean('is_active').default(true).notNull(),
   version: integer('version').default(1).notNull(),
@@ -58,7 +59,9 @@ export const sales = pgTable(
     total: numeric('total', { precision: 10, scale: 2 }).notNull(),
     discountAmount: numeric('discount_amount', { precision: 10, scale: 2 }).default('0').notNull(),
     discountPercentage: numeric('discount_percentage', { precision: 5, scale: 2 }).default('0').notNull(),
-    buyerName: varchar('buyer_name', { length: 60 }),
+    buyerName: varchar('buyer_name', { length: 100 }),
+    buyerPhone: varchar('buyer_phone', { length: 30 }),
+    buyerAddress: varchar('buyer_address', { length: 150 }),
     createdAt: timestamp('created_at').defaultNow().notNull(),
   },
   (table) => [index('sales_customer_id_idx').on(table.customerId), index('sales_vendor_id_idx').on(table.vendorId)]

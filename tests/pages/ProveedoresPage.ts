@@ -40,7 +40,6 @@ export class ProveedoresPage {
   readonly btnVerInactivos: Locator;
   readonly btnCancelar: Locator;
   readonly btnDesvincular: Locator;
-  readonly btnSincronizar: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -56,7 +55,6 @@ export class ProveedoresPage {
     this.btnCancelar = page.getByRole('button', { name: ProveedoresPage.UI.BTN_CANCELAR, exact: true });
     this.btnVerInactivos = page.getByTestId(TEST_IDS.general.btnVerOcultos).filter({ visible: true });
     this.btnDesvincular = page.getByRole('button', { name: ProveedoresPage.UI.BTN_DESVINCULAR, exact: true });
-    this.btnSincronizar = page.getByTestId(TEST_IDS.general.btnSincronizar);
   }
 
   // =========================================================================
@@ -149,8 +147,8 @@ export class ProveedoresPage {
     await this.btnVerInactivos.click();
   }
 
-  async sincronizar() {
-    await this.btnSincronizar.click();
+  async recargar() {
+    await this.page.reload();
   }
 
   async vincularIngresoDeStock(nombre: string): Promise<void> {
@@ -170,7 +168,7 @@ export class ProveedoresPage {
       isActive: true,
     });
 
-    await this.sincronizar();
+    await this.recargar();
     return nombre;
   }
 

@@ -54,8 +54,8 @@ y la respuesta con `providerRowSchema`.
 ## Pantallas
 
 `/proveedores` (`src/app/(main)/proveedores/page.tsx`) monta `ProvidersPanel` (`src/features/provider/ui/`): tabla en
-escritorio, tarjetas en el celular, filtro "Ver Inactivos" y el modal del formulario. Sólo el admin ve "Agregar",
-"Sincronizar" y "Eliminar". E2E: `tests/proveedores.spec.ts`.
+escritorio, tarjetas en el celular, filtro "Ver Inactivos" y el modal del formulario. Sólo el admin ve "Agregar" y
+"Eliminar". E2E: `tests/proveedores.spec.ts`.
 
 ## Tests
 

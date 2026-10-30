@@ -20,7 +20,7 @@ describe('acción de cobro (US-6)', () => {
     await asUser({ role: 'vendedor' });
     const result = await checkoutAction(ORDER);
     expect(result).toEqual({ success: true, message: 'Venta registrada por $18.000', data: { saleId: fakeCheckout.sales[0].id, total: 18000 } });
-    expect(fakeCheckout.sales[0]).toMatchObject({ vendorId: TEST_USER_IDS.vendedor, buyerName: null });
+    expect(fakeCheckout.sales[0]).toMatchObject({ vendorId: TEST_USER_IDS.vendedor, buyerName: 'Marta' });
   });
 
   it('UNAUTHENTICATED: sin sesión no se cobra', async () => {

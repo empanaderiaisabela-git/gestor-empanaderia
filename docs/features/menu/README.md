@@ -109,7 +109,7 @@ T-11).
 | Un vendedor crea, edita, activa o borra | `FORBIDDEN` | Solo los administradores pueden realizar esta acción | `menu-errors.contract.test.ts` |
 | Nombre vacío o de más de 60 | `VALIDATION` | Los datos proporcionados no son válidos. | `menu-errors.contract.test.ts`, `domain/*.schema.test.ts` |
 | Nombre repetido en el grupo | `DUPLICATE` | Ya existe un registro con esos datos (DNI, nombre o código duplicado). | `menu-errors.contract.test.ts` |
-| Editar, activar o borrar con una versión vieja | `STALE_VERSION` | Los datos en el servidor han cambiado. Por favor, sincroniza la lista e intenta nuevamente. | `menu-errors.contract.test.ts` |
+| Editar, activar o borrar con una versión vieja | `STALE_VERSION` | Otro usuario cambió estos datos. Ya se actualizaron; intentá de nuevo. | `menu-errors.contract.test.ts` |
 | Editar un producto que ya no existe | `NOT_FOUND` | El producto ya no existe. | `menu-errors.contract.test.ts` |
 | Borrar un producto con movimientos | `HAS_RELATIONS` | No se puede completar la operación porque existen registros relacionados. | `menu-errors.contract.test.ts` |
 | Editar, activar, desactivar, mostrar en el catálogo o borrar una base (US-29) | `VALIDATION` | Los datos proporcionados no son válidos. | `services/menu-bases.test.ts` |
@@ -118,7 +118,7 @@ T-11).
 | Foto de más de 5 MB (no se llama a Cloudinary) | `VALIDATION` | La imagen no puede superar los 5 MB | `upload-menu-photo.contract.test.ts`, `domain/catalog.test.ts` |
 | Foto para un gusto que ya no existe (no se llama a Cloudinary) | `NOT_FOUND` | El producto ya no existe. | `upload-menu-photo.contract.test.ts`, `services/menu-photo.service.test.ts` |
 | Borrar una foto que ya no está | `NOT_FOUND` | La foto ya no existe. | `menu-catalog.contract.test.ts` |
-| Visibilidad con una versión vieja | `STALE_VERSION` | Los datos en el servidor han cambiado. Por favor, sincroniza la lista e intenta nuevamente. | `menu-catalog.contract.test.ts` |
+| Visibilidad con una versión vieja | `STALE_VERSION` | Otro usuario cambió estos datos. Ya se actualizaron; intentá de nuevo. | `menu-catalog.contract.test.ts` |
 
 Si Cloudinary sube la foto pero falla el guardado en la base, la imagen se borra de Cloudinary (BUG-11). Los límites (JPG, PNG o WEBP de hasta 5 MB) son una decisión provisoria del agente (D-5 de [`sprint-2.md`](../../plans/sprint-2.md#d-5--formatos-y-tamaño-de-las-fotos-bug-11)).
 

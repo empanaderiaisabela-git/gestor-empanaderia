@@ -105,9 +105,8 @@ Hacer preguntas de más es mejor que inventar.
     ítem y trazabilidad con `specs.md` y con las respuestas del cliente.
 - **Sprint 3 implementado** ("Aclaraciones del dev": T-19, BUG-17 a BUG-21, US-16 a US-22 y T-18) en `develop`,
   a la espera de la revisión del dev y del merge a `main` con el tag `sprint-3`. La migración 0017 es del Sprint 3.
-- **Sprint 4 implementado** ("Pedido del cliente tras la demo": T-21, US-26 a US-35, BUG-23 a BUG-25 y T-22) en `develop`, a la espera
-  de la revisión del dev y del merge a `main` con el tag `sprint-4`. Plan, decisiones y resumen para el dev en
-  [`sprint-4.md`](plans/sprint-4.md).
+- **Sprint 4 cerrado** ("Pedido del cliente tras la demo": T-21, US-26 a US-35, BUG-23 a BUG-25 y T-22): en `main` con el
+  tag `sprint-4` desde el 2026-10-29. Plan, decisiones y resumen para el dev en [`sprint-4.md`](plans/sprint-4.md).
   - Qué cambió: clientes con sólo el nombre obligatorio y DNI opcional (US-26); títulos más grandes y más contraste
     en el panel (US-30); el proveedor de la factura en cada gasto (US-27); todos los precios por gusto, cargados en
     Stock, sin `menu_group_prices` (US-28); prepizzas y panes de ciabatta como stock de Pizzas y Ciabattas (US-29);
@@ -130,13 +129,30 @@ Hacer preguntas de más es mejor que inventar.
       D-16 al ordenar Stock, los gustos sin stock propio van al final; D-17 el precio de una pizza desde "Ingresar
       stock" no trae la casilla "Aplicar a todos".
   - Las migraciones 0018 a 0021 son del Sprint 4. La base de Supabase la migra el dev; la local, `npm run db:migrate`.
+- **Sprint 5 cerrado** ("Cierre de la primera entrega": T-23, BUG-26, BUG-27, US-36 a US-42 y T-24): en `main` con el
+  tag `sprint-5` desde el 2026-10-30. Plan, decisiones y resumen en [`sprint-5.md`](plans/sprint-5.md).
+  - Qué cambió:
+    - El carrito: columnas separadas, el 45 % del ancho desde `lg` y un slide de 450 ms (BUG-26). La regla global
+      de transiciones pasó a `@layer base`: sin capa anulaba todas las clases `transition-*` de Tailwind v4.
+    - Un "+" en cada renglón del carrito, que respeta el stock (US-36).
+    - El selector de las promos: título en tres renglones, botones en un renglón, "Quitar uno" y "Siguiente"
+      (US-39).
+    - El cliente en el carrito, con nombre obligatorio, teléfono y domicilio, sugerencias de Clientes y alta
+      automática al cobrar (US-37).
+    - Datos frescos al entrar a cada pantalla, sin botones "Sincronizar" (US-38, `useFreshDataOnEnter`).
+    - De la revisión del dev: los botones del selector alineados con nombres largos (BUG-27); en Estadísticas, los
+      calendarios a la derecha del título (US-40, `PageHeader` acepta `actions`), el fondo suave de cada tarjeta
+      (US-41) y los cuadros de abajo con scroll propio desde la sexta fila (US-42).
+  - Decisiones: las del dev (D-1 a D-4), las provisorias P-1 a P-8 y las tomadas durante la implementación (I-1 a
+    I-5) en [`sprint-5.md`](plans/sprint-5.md). El dev revisó el sprint y dio el OK al merge el 2026-10-30.
+  - La migración 0022 es del Sprint 5 (quedan 23). La base de Supabase la migra el dev.
   - Ningún ítem nuevo se arranca sin el OK del dev.
 - Git: `main` recibe un merge de `develop` al cierre de cada sprint. El trabajo nuevo sale de `develop`. El repo de GitHub
   es **público**: todo lo que se pushea queda publicado.
 - **No existe todavía**: `docs/conventions/`.
 - **Sí existen**:
-  - `BACKLOG.md`, con los Sprints 0 a 4 en orden de ejecución.
-  - Los planes de cada sprint en `docs/plans/sprint-0.md`, `sprint-1.md`, `sprint-2.md`, `sprint-3.md` y `sprint-4.md`: orden, decisiones del
+  - `BACKLOG.md`, con los Sprints 0 a 5 en orden de ejecución.
+  - Los planes de cada sprint en `docs/plans/sprint-0.md`, `sprint-1.md`, `sprint-2.md`, `sprint-3.md`, `sprint-4.md` y `sprint-5.md`: orden, decisiones del
     dev y enfoque de cada ítem.
   - Las plantillas en `docs/templates/` (`plan.md`, `feature.md`, `adr.md`), los planes en `docs/plans/` y los
     ADR en `docs/adr/`.
@@ -210,7 +226,7 @@ Detalle en [`docs/architecture.md`](architecture.md).
   - La barrera real está en cada Server Action, con `verifyAuthOrAdmin`, que lanza `AppError` (`UNAUTHENTICATED`,
     `SESSION_EXPIRED`, `INACTIVE_USER` o `FORBIDDEN`).
 - **Concurrencia optimista**: toda tabla que recibe `UPDATE` tiene `version`. El update filtra por `id` y
-  `version`; si afecta 0 filas, hay conflicto y el usuario tiene que sincronizar. El stock se descuenta con un
+  `version`; si afecta 0 filas, hay conflicto: la lista se vuelve a leer sola y el usuario repite el cambio (US-38). El stock se descuenta con un
   bloqueo `SELECT … FOR UPDATE` de cada gusto y un guardado por `id` y `version` (cobro, ingresos, mermas y
   anulaciones).
 - **Auditoría**: toda mutación escribe en `audit_logs` dentro de la misma transacción.

@@ -1,6 +1,6 @@
 import type { MenuGroup } from '@/features/menu/domain/menu-groups';
 import { describeFlavors } from './order-describe';
-import { type AddMode, addFlavor, isComplete, type OrderLine } from './order-line';
+import { type AddMode, addFlavor, isComplete, type OrderLine, removeFlavor } from './order-line';
 import { orderTotal, type PriceBook, round2 } from './order-pricing';
 
 type PartKey = { group: MenuGroup; presentationKey: string };
@@ -30,6 +30,11 @@ export function addToPromo(promo: PromoLine, { part, menuItemId, mode }: PromoAd
   const next = current && addFlavor(current, menuItemId, mode);
   if (!next) return null;
   return { ...promo, parts: promo.parts.map((existing, index) => (index === part ? next : existing)) };
+}
+
+export function removeFromPromo(promo: PromoLine, part: number, menuItemId: string): PromoLine | null {
+  const next = promo.parts[part] && removeFlavor(promo.parts[part], menuItemId);
+  return next ? { ...promo, parts: promo.parts.map((existing, index) => (index === part ? next : existing)) } : null;
 }
 
 export const promoUsageLines = (promos: readonly PromoLine[]): OrderLine[] => promos.flatMap((promo) => promo.parts);

@@ -1,4 +1,4 @@
-import { Plus, RefreshCcw } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import type { JSX } from 'react';
 import { Button } from '@/components/ui/button';
 import { PanelToolbar } from '@/components/ui/panel-toolbar';
@@ -42,11 +42,6 @@ export function MenuToolbar({ model }: { model: MenuPanelModel }): JSX.Element {
           <GroupSelect model={model} />
           <ToggleFilter id='showInactive-menu' checked={model.showInactive} onChange={model.setShowInactive} label='Ver Inactivos' data-testid={TEST_IDS.general.btnVerOcultos} />
         </>
-      }
-      sync={
-        <Button variant='secondary' size='icon' onClick={() => actions.syncData(true)} disabled={actions.isPending} title='Sincronizar Datos' className='h-11 w-11 flex-none' data-testid={TEST_IDS.general.btnSincronizar}>
-          <RefreshCcw className={`w-5 h-5 ${actions.isPending ? 'animate-spin' : ''}`} />
-        </Button>
       }
       actions={
         <Button variant='primary' onClick={() => manager.openFormModal()} leftIcon={<Plus className='w-5 h-5' />} className='h-11 w-full sm:w-auto text-sm font-medium shrink-0 shadow-sm xl:text-base' data-testid={TEST_IDS.general.btnAgregar}>

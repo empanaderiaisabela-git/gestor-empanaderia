@@ -1,8 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { History, X, RefreshCcw, User } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { History, X, User } from 'lucide-react';
 import { TableSkeleton } from '@/components/ui/table-skeleton';
 import { PanelToolbar } from '@/components/ui/panel-toolbar';
 import { DateRangePicker } from '@/components/ui/date-range-picker';
@@ -11,7 +10,6 @@ import { type AuditLogDef } from '@/features/audit/domain/audit-log.schema';
 import { auditReference, entityLabel } from '@/features/audit/domain/audit-reference';
 import { fetchAuditLogs } from '@/features/audit/actions/audit.actions';
 import { useAuditStore } from '@/features/audit/store/audit.store';
-import { invalidateAllCaches } from '@/stores';
 import { useEntityManager } from '@/hooks/use-entity-manager';
 import { getAuditColumns } from '@/config/tables/audit-columns';
 import { TEST_IDS } from '@/constants/test-ids';
@@ -97,7 +95,7 @@ export function LogPanel() {
   const [selectedLog, setSelectedLog] = useState<AuditLogDef | null>(null);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
-  const { search, setSearch, globalMessage, showGlobalMessage } = useEntityManager<AuditLogDef>();
+  const { search, setSearch, globalMessage } = useEntityManager<AuditLogDef>();
   const isFirstRender = useRef(true);
 
   const loadData = useCallback(async (reset = false) => {
@@ -146,12 +144,6 @@ export function LogPanel() {
     return () => window.removeEventListener('keydown', onKey);
   }, [selectedLog]);
 
-  const handleSync = async () => {
-    invalidateAllCaches();
-    await loadData(true);
-    showGlobalMessage('success', 'Datos sincronizados con éxito.');
-  };
-
   const columns = getAuditColumns({ onView: setSelectedLog });
 
   if (initialLoading) return <div className='mt-8 animate-in fade-in duration-500'><TableSkeleton /></div>;
@@ -173,11 +165,6 @@ export function LogPanel() {
             onClear={() => { setStartDate(''); setEndDate(''); }}
             data-testid={TEST_IDS.logPanel.inputFiltroFecha}
           />
-        }
-        sync={
-          <Button variant='secondary' size='icon' onClick={handleSync} disabled={isPending} title='Sincronizar' className='h-11 w-11 flex-none' data-testid={TEST_IDS.general.btnSincronizar}>
-            <RefreshCcw className={`w-5 h-5 ${isPending ? 'animate-spin' : ''}`} />
-          </Button>
         }
       />
 

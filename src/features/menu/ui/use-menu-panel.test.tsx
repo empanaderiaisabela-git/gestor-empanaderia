@@ -44,10 +44,10 @@ describe('useMenuPanel', () => {
     await waitFor(() => expect(actions.remove).toHaveBeenCalledWith({ id: 'b', version: 4 }));
   });
 
-  it('sincronizar vuelve a pedir la lista', async () => {
+  it('recargar vuelve a pedir la lista', async () => {
     const { result } = renderHook(() => useMenuPanel());
     act(() => {
-      void result.current.actions.syncData(true);
+      void result.current.actions.syncData();
     });
     await waitFor(() => expect(actions.fetch).toHaveBeenCalled());
   });

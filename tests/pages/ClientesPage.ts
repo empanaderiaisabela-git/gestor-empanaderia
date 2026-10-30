@@ -35,7 +35,6 @@ export class ClientesPage {
   readonly btnActualizar: Locator;
   readonly btnVerInactivos: Locator;
   readonly btnCancelar: Locator;
-  readonly btnSincronizar: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -51,7 +50,6 @@ export class ClientesPage {
     this.btnActualizar = page.getByRole('button', { name: ClientesPage.UI.BTN_ACTUALIZAR, exact: true });
     this.btnCancelar = page.getByRole('button', { name: ClientesPage.UI.BTN_CANCELAR, exact: true });
     this.btnVerInactivos = page.getByTestId(TEST_IDS.general.btnVerOcultos).filter({ visible: true });
-    this.btnSincronizar = page.getByTestId(TEST_IDS.general.btnSincronizar);
   }
 
   // =========================================================================
@@ -140,8 +138,8 @@ export class ClientesPage {
     await this.btnVerInactivos.click();
   }
 
-  async sincronizar() {
-    await this.btnSincronizar.click();
+  async recargar() {
+    await this.page.reload();
   }
 
   async abrirFormularioCreacion() {
@@ -166,7 +164,7 @@ export class ClientesPage {
       isActive: true,
     });
 
-    await this.sincronizar();
+    await this.recargar();
     return { nombre, dni, tel, email };
   }
 

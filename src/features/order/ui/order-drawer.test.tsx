@@ -19,7 +19,10 @@ function addDozen(): void {
 }
 
 describe('carrito desplegable de Ventas (US-24)', () => {
-  beforeEach(() => store().clear());
+  beforeEach(() => {
+    store().clear();
+    store().setBuyer({ name: 'Marta' });
+  });
 
   it('cerrado: sólo se ve el botón del ticket, sin número con el pedido vacío', () => {
     render(<OrderDrawer board={board} onCheckout={vi.fn()} />);
@@ -47,6 +50,14 @@ describe('carrito desplegable de Ventas (US-24)', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Ver pedido (1)' }));
     fireEvent.keyDown(window, { key: 'Escape' });
     expect(screen.queryByRole('region', { name: 'Pedido actual' })).toBeNull();
+  });
+
+  it('en pantallas grandes ocupa un poco menos de la mitad y entra con un slide suave (BUG-26)', () => {
+    render(<OrderDrawer board={board} onCheckout={vi.fn()} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Ver pedido' }));
+    const panel = screen.getByRole('complementary', { name: 'Carrito' });
+    expect(panel.className).toContain('lg:w-[45vw]');
+    expect(panel.className).toContain('duration-[450ms]');
   });
 
   it('Cobrar cierra el carrito y abre el cobro', () => {

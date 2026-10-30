@@ -14,7 +14,7 @@ function legacySale(): string {
   const id = crypto.randomUUID();
   const line = { group: 'pizzas' as const, presentationKey: 'pizza_2', promotionId: null, quantity: 1, unitPrice: 10000, subtotal: 10000, description: 'Muzza / Napolitana', position: 0 };
   const items = [{ menuItemId: MUZZA.id, units: 0.5, unitCost: 2000 }, { menuItemId: NAPO.id, units: 0.5, unitCost: 1500 }, { menuItemId: JYQ.id, units: 1, unitCost: 900 }];
-  fake.sales.push({ id, createdAt: new Date(0), vendorId: CALLER.id, buyerName: null, total: 10000, discountAmount: 0, discountPercentage: 0, payments: [], lines: [{ ...line, items }] });
+  fake.sales.push({ id, createdAt: new Date(0), vendorId: CALLER.id, customerId: null, buyerName: 'Marta', buyerPhone: null, buyerAddress: null, total: 10000, discountAmount: 0, discountPercentage: 0, payments: [], lines: [{ ...line, items }] });
   return id;
 }
 

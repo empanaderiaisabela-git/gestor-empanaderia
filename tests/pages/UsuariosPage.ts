@@ -46,7 +46,6 @@ export class UsuariosPage {
   readonly btnVerInactivos: Locator;
   readonly btnDesvincular: Locator;
   readonly comboRol: Locator;
-  readonly btnSincronizar: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -64,7 +63,6 @@ export class UsuariosPage {
     this.btnVerInactivos = page.getByRole('checkbox', { name: 'Ver Inactivos', exact: true }).filter({ visible: true });
     this.btnDesvincular = page.getByRole('button', { name: 'Eliminar Acceso', exact: true });
     this.comboRol = page.getByRole('combobox');
-    this.btnSincronizar = page.getByTestId(TEST_IDS.general.btnSincronizar);
   }
 
   // =========================================================================
@@ -182,8 +180,8 @@ export class UsuariosPage {
     await this.btnVerInactivos.click();
   }
 
-  async sincronizar() {
-    await this.btnSincronizar.click();
+  async recargar() {
+    await this.page.reload();
   }
 
   async inyectarUsuarioEfimero(rol: UserRole = USER_ROLES.VENDEDOR): Promise<string> {
@@ -196,7 +194,7 @@ export class UsuariosPage {
       isActive: true,
     });
 
-    await this.sincronizar();
+    await this.recargar();
     return username;
   }
 

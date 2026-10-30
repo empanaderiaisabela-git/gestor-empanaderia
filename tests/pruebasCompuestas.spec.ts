@@ -10,6 +10,7 @@ test.describe.serial('Pruebas compuestas: restricciones de eliminación', () => 
     await page.getByRole('list', { name: 'Gustos' }).getByRole('listitem').filter({ hasText: GUSTO }).getByRole('button', { name: 'Agregar' }).click();
     await page.getByRole('button', { name: 'Listo' }).click();
     await page.getByRole('button', { name: /^Ver pedido/ }).click();
+    await page.getByRole('region', { name: 'Pedido actual' }).getByLabel('Nombre del cliente').fill('Cliente compuesto');
     await page.getByRole('region', { name: 'Pedido actual' }).getByRole('button', { name: /Cobrar/ }).click();
     await page.getByRole('button', { name: /Confirmar/ }).click();
     await expect(page.getByText(/Venta registrada por/)).toBeVisible();

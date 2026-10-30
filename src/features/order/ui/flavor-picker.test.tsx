@@ -77,6 +77,17 @@ describe('lista de gustos de una presentación (US-5 CA-2 a CA-4)', () => {
     expect(segundo.className).toContain('animate-toast-drop');
   });
 
+  it('"Quitar uno" va en rojo a la izquierda, resta una unidad y se apaga sin unidades (US-39)', () => {
+    act(() => useOrderStore.getState().start('empanadas', 'u6'));
+    render(<FlavorPicker board={board} />);
+    const quitar = (): HTMLElement => within(rowOf('Carne')).getByRole('button', { name: 'Quitar uno' });
+    expect([quitar().hasAttribute('disabled'), quitar().className.includes('bg-red-600')]).toEqual([true, true]);
+    fireEvent.click(within(rowOf('Carne')).getByRole('button', { name: 'Agregar uno' }));
+    fireEvent.click(quitar());
+    expect(useOrderStore.getState().lines[0].flavors).toEqual([]);
+    expect(within(rowOf('Carne')).getAllByRole('button').map((button) => button.textContent)).toEqual(['Quitar uno', 'Agregar uno', 'Completar']);
+  });
+
   it('las bebidas de Coca-Cola se suman de a una y "Listo" cierra la lista', () => {
     act(() => useOrderStore.getState().start('coca_cola', 'u1'));
     render(<FlavorPicker board={board} />);

@@ -52,10 +52,10 @@ Cada cambio se audita con la entidad `EXPENSE` ("GASTO" en Auditoría).
 | Un vendedor carga, edita o borra | `FORBIDDEN` | Solo los administradores pueden realizar esta acción | `expense-errors.contract.test.ts` |
 | Número o título vacíos o largos, monto ≤ 0 o con más de 2 decimales, fecha inválida | `VALIDATION` | Los datos proporcionados no son válidos. | `expense-errors.contract.test.ts`, `expense.schema.test.ts` |
 | Número de factura repetido | `DUPLICATE` | Ya existe un registro con esos datos (DNI, nombre o código duplicado). | `expense-errors.contract.test.ts` |
-| Editar o borrar con una versión vieja | `STALE_VERSION` | Los datos en el servidor han cambiado. Por favor, sincroniza la lista e intenta nuevamente. | `expense-errors.contract.test.ts` |
+| Editar o borrar con una versión vieja | `STALE_VERSION` | Otro usuario cambió estos datos. Ya se actualizaron; intentá de nuevo. | `expense-errors.contract.test.ts` |
 
 ## Pantallas
 
-`ExpensesPanel`: búsqueda por número o título, "Desde" y "Hasta" (`DateRangePicker`), sincronizar y "Nuevo gasto"; grilla con fecha de la factura, número,
+`ExpensesPanel`: búsqueda por número o título, "Desde" y "Hasta" (`DateRangePicker`) y "Nuevo gasto"; grilla con fecha de la factura, número,
 título, monto y acciones (editar, borrar); en mobile, tarjetas. El formulario (`ExpenseFormModal`) pide número,
 título, monto y fecha de la factura (por defecto, hoy).

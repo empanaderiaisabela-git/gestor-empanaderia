@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { createFakeCheckoutUnitOfWork } from '../testing/fake-checkout-unit-of-work';
-import { CALLER, CARNE, checkoutOf, COCA, cokes, halfAndHalf, halfDozen, loadMenu, MUZZA, NAPO, POLLO, PREPIZZA, stockOf } from '../testing/checkout-fixtures';
+import { CALLER, CARNE, checkoutOf, CLIENTE, COCA, cokes, halfAndHalf, halfDozen, loadMenu, MUZZA, NAPO, POLLO, PREPIZZA, stockOf } from '../testing/checkout-fixtures';
 import { createCheckoutService } from './checkout.service';
 
 const fake = createFakeCheckoutUnitOfWork();
@@ -13,14 +13,17 @@ describe('cobrar el pedido (US-6)', () => {
   it('cobra una ½ docena surtida y una pizza mitad y mitad con dos medios de pago (CA-1, CA-3)', async () => {
     const payments = [{ type: 'efectivo' as const, amount: 10000 }, { type: 'debito' as const, amount: 8000 }];
     const saved = payments.map((payment) => ({ ...payment, cardId: null, installments: null, surchargePct: null, surchargeAmount: null }));
-    const result = await service.checkout(CALLER, checkoutOf([halfDozen, halfAndHalf], { buyerName: 'Marta', payments }));
+    const result = await service.checkout(CALLER, checkoutOf([halfDozen, halfAndHalf], { payments }));
     expect(result.total).toBe(18000);
     expect(fake.sales).toEqual([
       {
         id: result.saleId,
         createdAt: expect.any(Date),
         vendorId: CALLER.id,
+        customerId: CLIENTE.id,
         buyerName: 'Marta',
+        buyerPhone: null,
+        buyerAddress: null,
         total: 18000,
         discountAmount: 0,
         discountPercentage: 0,

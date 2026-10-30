@@ -41,6 +41,15 @@ export function addFlavor(line: OrderLine, menuItemId: string, mode: AddMode): O
   return { ...line, flavors };
 }
 
+export function removeFlavor(line: OrderLine, menuItemId: string): OrderLine | null {
+  const presentation = presentationOf(line);
+  const current = line.flavors.find((flavor) => flavor.menuItemId === menuItemId);
+  if (!presentation || !current) return null;
+  const units = current.units - (isHalfAndHalf(presentation) ? 0.5 : 1);
+  const flavors = units > 0 ? line.flavors.map((flavor) => (flavor === current ? { ...flavor, units } : flavor)) : line.flavors.filter((flavor) => flavor !== current);
+  return { ...line, flavors };
+}
+
 const signature = (line: OrderLine): string =>
   [line.group, line.presentationKey, ...[...line.flavors].sort((a, b) => a.menuItemId.localeCompare(b.menuItemId)).map((flavor) => `${flavor.menuItemId}:${flavor.units}`)].join('|');
 

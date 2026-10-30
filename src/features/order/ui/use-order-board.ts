@@ -10,6 +10,7 @@ export type OrderBoardModel = {
   itemsOf: (group: MenuGroup) => MenuItemDef[];
   book: PriceBook;
   nameOf: (menuItemId: string) => string;
+  itemOf: (menuItemId: string) => MenuItemDef | undefined;
   baseOf: (group: MenuGroup) => MenuItemDef | null;
 };
 
@@ -23,6 +24,7 @@ export function boardModelOf(items: MenuItemDef[], loading = false): OrderBoardM
     itemsOf: (group) => active.filter((item) => item.group === group),
     book: { item: (id) => byId.get(id) },
     nameOf: (id) => byId.get(id)?.name ?? 'Producto',
+    itemOf: (id) => byId.get(id),
     baseOf,
   };
 }

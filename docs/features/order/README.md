@@ -15,12 +15,15 @@ Coca-Cola y Pepsi). Cada subdivisión tiene un botón por presentación. Al toca
 
 - **Empanadas y Sanguches** (1, 3, 6 y 12): cada gusto tiene **"Agregar uno"** (+1 de ese gusto) y
   **"Completar"** (llena lo que falta con ese gusto). Así se arman las surtidas dentro de la misma presentación.
+  A la izquierda, **"Quitar uno"** (rojo) resta una unidad de ese gusto; está apagado si el gusto no tiene unidades
+  (US-39). También está en las pizzas de 2 sabores y en todas las filas de las promos.
 - **Pizzas**: "1 sabor" pide un gusto; "2 sabores" pide dos gustos distintos (mitad y mitad).
 - **Ciabattas y bebidas**: "Agregar" suma una unidad.
 
 La lista queda abierta para seguir cargando hasta tocar "Listo". El "Pedido actual" muestra comida, cantidad,
-unidades e importe, el total y el comprador (opcional; vacío = "Sin nombre"). Una línea a medio armar muestra
-"faltan N" y no deja cobrar.
+unidades e importe, el total y los datos del cliente: nombre (obligatorio), teléfono y domicilio, con sugerencias de
+Clientes (US-37, ver `docs/features/customer/README.md`). Sin nombre, o con una línea a medio armar ("faltan N"), no
+se puede cobrar. Cada renglón común tiene "−" y "+" (US-36): el "+" se apaga si el stock no alcanza (`canAddOne`).
 
 ## Reglas de negocio
 
@@ -55,9 +58,10 @@ Corren en el navegador y el servidor las reutiliza al cobrar.
 
 ## Cobro (US-6)
 
-"Cobrar" abre un modal con el comprador, el descuento en % y en $, y los 4 medios de pago. Se eligen hasta 2: con
+"Cobrar" abre un modal con el cliente, el descuento en % y en $, y los 4 medios de pago. Se eligen hasta 2: con
 dos, se carga el monto del primero y el segundo se lleva el resto. El navegador manda **sólo** el pedido (grupo,
-presentación, gustos con sus unidades y cantidad), el comprador, el descuento y los pagos. Nunca manda precios,
+presentación, gustos con sus unidades y cantidad), el cliente (`buyer`: el cliente elegido o `null`, nombre,
+teléfono y domicilio), el descuento y los pagos. Nunca manda precios,
 costos ni total: `checkoutSchema` es `strictObject` y rechaza cualquier campo de más.
 
 `checkout.service` hace todo en una transacción:
@@ -68,7 +72,8 @@ costos ni total: `checkoutSchema` es `strictObject` y rechaza cualquier campo de
 3. Recalcula los precios con la base, aplica el descuento y controla que los pagos sumen el total.
 4. Controla el stock de todos los gustos y recién después lo descuenta, filtrando por `id` y `version`. En Pizzas
    y Ciabattas controla y descuenta la base: una unidad por pizza o ciabatta (`stockUsage`).
-5. Guarda la venta (vendedor = quien cobra; comprador o `null`), cada línea con lo cobrado y la descripción de sus
+5. Vincula al cliente elegido (si se desactivó o se borró, `NOT_FOUND`) o crea uno nuevo, con su log. Guarda la
+   venta (vendedor = quien cobra; cliente con el nombre, el teléfono y el domicilio anotados), cada línea con lo cobrado y la descripción de sus
    gustos, lo que consume de cada gusto con el **costo congelado** (mitad y mitad: 0,5 de cada uno) y los pagos.
 6. Audita `CREAR` / `SALE`.
 
@@ -105,8 +110,9 @@ producto cuyo grupo no tiene gustos activos queda deshabilitada.
 - Elegir una promo la suma al pedido y abre la lista de gustos de su primer producto. Cada producto se abre en
   tantas partes como su cantidad: "2 × Coca-Cola · 1 unidad" pide dos bebidas, que pueden ser distintas.
 - La lista es la misma del tablero ("Agregar uno", "Completar", sólo gustos con stock), pero dice "En la promo" en
-  lugar del precio: se cobra el precio de la promo. Al completar un producto pasa al siguiente y, al terminar, se
-  cierra sola.
+  lugar del precio: se cobra el precio de la promo. El título va en tres renglones: la promo, el producto y "(1 de
+  N)". No avanza sola (US-39): "Siguiente" se habilita con el producto completo y en el último dice "Listo" y
+  cierra. Para dejarla a medio armar se cierra con la X.
 - En el pedido, la promo aparece como "Promo · <nombre>" con sus gustos y su precio. A medio armar muestra
   "faltan gustos · elegir", que retoma donde quedó, y bloquea el cobro. Se pueden sumar varias, iguales o distintas.
 
@@ -132,7 +138,7 @@ vendedor, el pedido, los medios de pago, el descuento y el total, con búsqueda 
 fechas (días de Argentina, con `argentinaDay`). **"Nuevo pedido"** abre el tablero; reemplaza al "Nueva Venta" del
 POS viejo ("Consideraciones del primer sprint" de `specs.md`).
 
-- **Comprobante**: la marca, comprador y vendedor, cada línea con su presentación y sus gustos (también la mitad y
+- **Comprobante**: la marca, comprador y vendedor, el teléfono y el domicilio si los tiene, cada línea con su presentación y sus gustos (también la mitad y
   mitad), el subtotal, los descuentos, el total y cada pago. Se imprime con el navegador.
 - **Anular** (sólo admin), en `sale-history.service` y en una transacción:
   1. Bloquea la venta con `SELECT … FOR UPDATE`. Si ya no está, `NOT_FOUND`: una venta no se anula dos veces.

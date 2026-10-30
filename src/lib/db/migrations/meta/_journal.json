@@ -155,6 +155,13 @@
       "when": 1793214951378,
       "tag": "0021_prepizzas-y-panes",
       "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1793330664512,
+      "tag": "0022_cliente-en-la-venta",
+      "breakpoints": true
     }
   ]
 }

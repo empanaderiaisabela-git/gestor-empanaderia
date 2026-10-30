@@ -56,11 +56,11 @@ recargo · 3 cuotas +10 %").
 | Sin planes, cuotas que no son 1, 3, 6 o 12, cuotas repetidas, recargo fuera de 0–100, nombre inválido | `VALIDATION` | Los datos proporcionados no son válidos. | `card-errors.contract.test.ts`, `card.schema.test.ts` |
 | Nombre de otra tarjeta | `DUPLICATE` | Ya existe un registro con esos datos (DNI, nombre o código duplicado). | `card-errors.contract.test.ts` |
 | Borrar una tarjeta ya usada en un cobro (US-11) | `HAS_RELATIONS` | No se puede completar la operación porque existen registros relacionados. | `card-errors.contract.test.ts` |
-| Editar, activar o borrar con una versión vieja | `STALE_VERSION` | Los datos en el servidor han cambiado. Por favor, sincroniza la lista e intenta nuevamente. | `card-errors.contract.test.ts` |
+| Editar, activar o borrar con una versión vieja | `STALE_VERSION` | Otro usuario cambió estos datos. Ya se actualizaron; intentá de nuevo. | `card-errors.contract.test.ts` |
 
 ## Pantallas
 
-`src/app/(main)/tarjetas/page.tsx` → `CardsPanel`: barra con búsqueda, "Ver Inactivas", sincronizar y "Nueva
+`src/app/(main)/tarjetas/page.tsx` → `CardsPanel`: barra con búsqueda, "Ver Inactivas" y "Nueva
 tarjeta"; grilla con el nombre (marca "Inactiva"), los planes y las acciones; en mobile, tarjetas con lo mismo. El
 formulario (`CardFormModal`) pide el nombre y la lista de planes (cuotas y recargo %), con "Agregar plan" y "Quitar
 plan".

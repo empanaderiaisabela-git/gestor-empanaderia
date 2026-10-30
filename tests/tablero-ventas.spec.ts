@@ -44,6 +44,31 @@ test.describe('tablero de ventas (US-5)', () => {
     await expect(pedido.getByRole('button', { name: /Cobrar/ })).toBeDisabled();
   });
 
+  test('el "+" del carrito suma una unidad del mismo renglón (US-36)', async ({ page }) => {
+    await page.goto('/ventas/nueva');
+    await grupo(page, 'Empanadas').getByRole('button', { name: /^1 unidad/ }).click();
+    await gusto(page, 'Humita').getByRole('button', { name: 'Agregar' }).click();
+    await page.getByRole('button', { name: 'Listo' }).click();
+    await page.getByRole('button', { name: /^Ver pedido/ }).click();
+    await page.getByRole('region', { name: 'Pedido actual' }).getByTitle('Sumar uno').click();
+    await expect(page.getByRole('region', { name: 'Pedido actual' }).getByText('1 unidad × 2')).toBeVisible();
+  });
+
+  test('el carrito entra con slide suave, ocupa un poco menos de la mitad y separa las columnas (BUG-26)', async ({ page }) => {
+    await page.setViewportSize({ width: 1400, height: 900 });
+    await page.goto('/ventas/nueva');
+    await grupo(page, 'Empanadas').getByRole('button', { name: /½ docena/ }).click();
+    await gusto(page, 'Humita').getByRole('button', { name: 'Agregar uno' }).click();
+    await page.getByRole('button', { name: 'Listo' }).click();
+    await page.getByRole('button', { name: /^Ver pedido/ }).click();
+    const carrito = page.getByRole('complementary', { name: 'Carrito' });
+    await expect(carrito).toHaveCSS('transition-duration', '0.45s');
+    await expect.poll(async () => Math.round((await carrito.boundingBox())?.width ?? 0)).toBe(630);
+    const [cantidad, unidades] = await Promise.all(['Cantidad', 'Unidades'].map(async (nombre) => (await carrito.getByRole('columnheader', { name: nombre }).boundingBox()) ?? { x: 0, width: 0 }));
+    expect(unidades.x - (cantidad.x + cantidad.width)).toBeGreaterThanOrEqual(0);
+    await expect(carrito.getByRole('columnheader', { name: 'Unidades' })).toHaveCSS('padding-left', '12.75px');
+  });
+
   test.describe('con "menos movimiento" en el sistema', () => {
     test.use({ contextOptions: { reducedMotion: 'reduce' } });
 

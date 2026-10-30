@@ -15,18 +15,20 @@ function StatsTable({ title, headers, empty, children }: TableProps): JSX.Elemen
       {children.length === 0 ? (
         <p className='text-sm text-zinc-700 dark:text-zinc-200'>{empty}</p>
       ) : (
-        <table aria-label={title} className='w-full text-left text-sm'>
-          <thead className='text-xs uppercase text-zinc-700 dark:text-zinc-200'>
-            <tr>
-              {headers.map((header, index) => (
-                <th key={header} className={`${cell} ${index === headers.length - 1 ? 'text-right' : ''}`}>
-                  {header}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>{children}</tbody>
-        </table>
+        <div tabIndex={0} className='max-h-56 overflow-y-auto custom-scrollbar'>
+          <table aria-label={title} className='w-full text-left text-sm'>
+            <thead className='sticky top-0 bg-white dark:bg-zinc-900 text-xs uppercase text-zinc-700 dark:text-zinc-200'>
+              <tr>
+                {headers.map((header, index) => (
+                  <th key={header} className={`${cell} ${index === headers.length - 1 ? 'text-right' : ''}`}>
+                    {header}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>{children}</tbody>
+          </table>
+        </div>
       )}
     </section>
   );

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { Plus, RefreshCcw } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { TableSkeleton } from '@/components/ui/table-skeleton';
 import { ToggleFilter } from '@/components/ui/toggle-filter';
@@ -31,7 +31,7 @@ export function UserPanel() {
   const { isModalOpen, editingItem, openFormModal, closeFormModal, itemToDelete, setItemToDelete, serverError, setServerError, globalMessage, showGlobalMessage, search, setSearch } =
     useEntityManager<UserDef>();
 
-  const { isPending, syncData, handleEditSubmit, handleDelete, handleToggleActive } = useEntityActions<UserDef, UserInput, UserUpdateInput>({
+  const { isPending, handleEditSubmit, handleDelete, handleToggleActive } = useEntityActions<UserDef, UserInput, UserUpdateInput>({
     handlers: { fetchData: fetchUsers, createAction: createUserAction, updateAction: updateUserAction, deleteAction: deleteUserAction, toggleActiveAction: toggleUserActiveAction },
     setStoreData: setUsers,
     onSuccessMessage: (msg) => showGlobalMessage('success', msg),
@@ -75,11 +75,6 @@ export function UserPanel() {
         data-testid={TEST_IDS.general.inputBusquedaTabla}
         filters={
           <ToggleFilter id='showInactives-user' checked={showInactives} onChange={setShowInactives} label='Ver Inactivos' data-testid={TEST_IDS.general.btnVerOcultos} />
-        }
-        sync={
-          <Button variant='secondary' size='icon' onClick={() => syncData(true)} disabled={isPending} title='Sincronizar' className='h-11 w-11 flex-none' data-testid={TEST_IDS.general.btnSincronizar}>
-            <RefreshCcw className={`w-5 h-5 ${isPending ? 'animate-spin' : ''}`} />
-          </Button>
         }
         actions={
           <Button onClick={() => openFormModal()} variant='primary' leftIcon={<Plus className='w-5 h-5' />} className='h-11 w-full sm:w-auto text-sm font-medium shrink-0 shadow-sm xl:text-base' data-testid={TEST_IDS.general.btnAgregar}>

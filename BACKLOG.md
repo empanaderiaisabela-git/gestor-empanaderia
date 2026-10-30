@@ -3696,3 +3696,420 @@ se probó.
   tests, cobertura 96,21/90,14, 108 de integración, mutación 89,79 y build; 72 E2E en verde.
 - El dev corrió las migraciones en Supabase el 2026-10-29: quedaron 22. Hoy el sistema corre sólo en local.
 - El dev dio el OK al merge a `main` el 2026-10-29.
+
+## Sprint 5 · Cierre de la primera entrega
+
+------------------------------------------------------------------------------------------------------------------------
+
+**Objetivo**: lo que pidió el cliente en la reunión del 2026-10-29 para cerrar la primera entrega:
+
+- En el carrito: un "+", los datos del cliente con alta automática, columnas separadas y un panel más ancho con
+  slide suave.
+- En las promos: un selector de gustos prolijo, con "Quitar uno" y "Siguiente".
+- En todo el sistema: datos al día sin tocar "Sincronizar".
+
+**Plan del sprint**: [`docs/plans/sprint-5.md`](docs/plans/sprint-5.md). Tiene las decisiones del dev (2026-10-29), las provisorias P-1 a P-8, el orden y la
+trazabilidad de cada punto del pedido en `specs.md` a su ítem.
+
+### Resumen del Sprint 5
+
+| #   | ID | Título | Estado | Depende de | Estimación |
+| --- | -- | ------ | ------ | ---------- | ---------- |
+| 0   | [T-23](#t-23--backlog-del-sprint-5) | Backlog del Sprint 5 | En revisión | T-22 | 30 min |
+| 1   | [BUG-26](#bug-26--carrito-columnas-separadas-más-ancho-y-slide-suave) | Carrito: columnas separadas, más ancho y slide suave | En revisión | T-23 | 45 min |
+| 2   | [US-36](#us-36--carrito--para-sumar-uno) | Carrito: "+" para sumar uno | En revisión | BUG-26 | 1 h |
+| 3   | [US-39](#us-39--promos-selector-prolijo-quitar-uno-y-siguiente) | Promos: selector prolijo, "Quitar uno" y "Siguiente" | En revisión | T-23 | 2 h |
+| 4   | [US-37](#us-37--cliente-en-el-carrito-con-alta-automática) | Cliente en el carrito, con alta automática | En revisión | US-36 | 4 h |
+| 5   | [US-38](#us-38--datos-al-día-sin-sincronizar) | Datos al día sin "Sincronizar" | En revisión | T-23 | 2 h 30 min |
+| 6   | [BUG-27](#bug-27--selector-los-botones-de-un-gusto-con-nombre-largo-se-desalinean) | Selector: los botones de un gusto con nombre largo se desalinean | En revisión | US-39 | 20 min |
+| 7   | [US-40](#us-40--estadísticas-calendarios-a-la-derecha-del-título) | Estadísticas: calendarios a la derecha del título | En revisión | US-32 | 15 min |
+| 8   | [US-41](#us-41--estadísticas-fondo-suave-del-color-de-cada-tarjeta) | Estadísticas: fondo suave del color de cada tarjeta | En revisión | US-21 | 15 min |
+| 9   | [US-42](#us-42--estadísticas-los-cuadros-de-abajo-scrollean-por-dentro) | Estadísticas: los cuadros de abajo scrollean por dentro | En revisión | US-13 | 15 min |
+| 10  | [T-24](#t-24--cierre-del-sprint-5) | Cierre del Sprint 5 | En revisión | todos | 1 h |
+|     |    | **Total del sprint** | | | **12 h 50 min** |
+
+### T-23 · Backlog del Sprint 5
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-29 |
+| Tamaño       | S         |
+| Depende de   | T-22      |
+| Plan         | [`docs/plans/sprint-5.md`](docs/plans/sprint-5.md) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como dev quiero el pedido del cliente para cerrar la primera entrega cargado como ítems, de forma que
+cada cambio tenga su criterio, su estimación y su rama.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · `BACKLOG.md` tiene el Sprint 5. Cada ítem lleva historia, CA medibles con estimación, dependencias y nivel de tests. `docs/plans/sprint-5.md` tiene las decisiones del dev, las provisorias, el orden y la trazabilidad de `specs.md` · Estimación: 25 min · Completado: 2026-10-29 23:55
+
+- [x] **CA-2** · `specs.md` tiene el pedido del cliente, textual, tal como lo pasó el dev · Estimación: 5 min · Completado: 2026-10-29 23:45
+
+### BUG-26 · Carrito: columnas separadas, más ancho y slide suave
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-29 |
+| Tamaño       | S         |
+| Depende de   | T-23      |
+| Plan         | [`docs/plans/sprint-5.md`](docs/plans/sprint-5.md) |
+| Merge        | —         |
+| Horas reales | 35 min |
+
+**Esperado**:
+
+- En el carrito, Cantidad y Unidades se leen como columnas separadas.
+- El panel es más ancho, un poco menos de la mitad de la pantalla.
+- El panel entra y sale con un slide suave.
+
+**Actual**:
+
+- Cantidad y Unidades quedan pegadas (wireframe `pedido-actual-ventas`). Las celdas tienen sólo 8 px de separación
+  y los encabezados, ninguna.
+- El panel mide `max-w-xl` y su slide dura 300 ms.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · Los encabezados y las celdas del carrito tienen separación horizontal. Cantidad, Unidades e Importe van en un solo renglón. Lo cubre un test de componente · Estimación: 20 min · Completado: 2026-10-29 23:59
+
+- [x] **CA-2** · Desde `lg`, el carrito ocupa el 45 % del ancho (P-8). En el celular y la tablet queda como hoy · Estimación: 10 min · Completado: 2026-10-29 23:59
+
+- [x] **CA-3** · El carrito entra hacia la izquierda y sale hacia la derecha con un slide de 450 ms, y el fondo acompaña. Se mide en el navegador · Estimación: 15 min · Completado: 2026-10-29 23:59
+
+**Notas**
+
+- Nivel 1.
+- **Causa de fondo del slide**: la regla global `* { transition-property: … }` de `globals.css` no estaba en
+  ninguna capa. En Tailwind v4, las utilidades viven en `@layer utilities`, y una regla sin capa les gana siempre,
+  así que ningún `transition-*` de la app tenía efecto: el carrito aparecía y desaparecía de golpe. La regla pasó a
+  `@layer base` en `src/app/motion.css`, y `globals.css` bajó 6 líneas. Ahora las transiciones de toda la app
+  funcionan como dicen sus clases.
+- E2E de `tablero-ventas` a 1400 px: el carrito mide 630 px (45 %), `transition-duration` es 0,45 s y los
+  encabezados tienen `padding-left` 12,75 px (`px-3` con la fuente de 17 px). Sin el cambio de capa, el test falla
+  (0,25 s).
+- El navegador integrado mostraba estilos viejos con el panel oculto, así que la medición quedó en el E2E.
+- Lint, typecheck, 12 tests de componente del carrito y 8 E2E de tablero en verde.
+
+### US-36 · Carrito: "+" para sumar uno
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-29 |
+| Tamaño       | S         |
+| Depende de   | BUG-26      |
+| Plan         | [`docs/plans/sprint-5.md`](docs/plans/sprint-5.md) |
+| Merge        | —         |
+| Horas reales | 30 min |
+
+**Historia**: Como vendedor quiero sumar uno a un renglón del carrito, igual que ya puedo restar uno, de forma que no
+tenga que volver al tablero para vender una unidad más.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · Cada renglón común del carrito tiene un "+" ("Sumar uno") al lado del "−" que suma una unidad del mismo renglón. Las promos no lo tienen (P-1) · Estimación: 30 min · Completado: 2026-10-30 00:09
+
+- [x] **CA-2** · El "+" se deshabilita si el stock no alcanza para una unidad más (`availableStock`). Lo cubren tests de store, de componente y E2E · Estimación: 30 min · Completado: 2026-10-30 00:09
+
+**Notas**
+
+- Nivel 2.
+- `canAddOne` (`src/features/order/domain/order-usage.ts`) usa `availableStock`: suma lo que pediría una unidad más
+  del renglón (una mitad y mitad pide una prepizza entera) y lo compara con lo que queda, contando las promos del
+  pedido. El tablero suma `itemOf` a su modelo, y el store, `addOne`.
+- Las filas del carrito reciben sus acciones agrupadas (`LineRowActions`), igual que las promos.
+- Lint, typecheck, 237 tests de pedidos (con fuzz) y 9 E2E de tablero en verde.
+
+### US-39 · Promos: selector prolijo, "Quitar uno" y "Siguiente"
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-29 |
+| Tamaño       | M         |
+| Depende de   | T-23      |
+| Plan         | [`docs/plans/sprint-5.md`](docs/plans/sprint-5.md) |
+| Merge        | —         |
+| Horas reales | 1 h 10 min |
+
+**Historia**: Como vendedor quiero armar los gustos de una promo en una ventana prolija, corregir un gusto de más y
+pasar al componente siguiente cuando yo quiera, de forma que no me equivoque al armar la promo.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · El título del selector se lee en tres renglones: nombre de la promo, componente ("Empanadas · 1 docena") y "(1 de 5)" (wireframe `seleccionador-de-componentes-promo`) · Estimación: 30 min · Completado: 2026-10-30 00:20
+
+- [x] **CA-2** · Todos los botones de la lista de gustos quedan en un solo renglón · Estimación: 10 min · Completado: 2026-10-30 00:20
+
+- [x] **CA-3** · A la izquierda de "Agregar uno" hay un "Quitar uno" rojo que resta una unidad de ese gusto. Está deshabilitado si el gusto no tiene unidades, y aparece también en una ½ docena común (P-2). Lo cubren tests de dominio con fuzz y de componente · Estimación: 45 min · Completado: 2026-10-30 00:20
+
+- [x] **CA-4** · El selector ya no avanza solo. "Siguiente" se habilita con el componente completo y lleva al siguiente. En el último dice "Listo" y cierra (D-4). Lo cubren tests de store, de componente y E2E · Estimación: 35 min · Completado: 2026-10-30 00:20
+
+**Notas**
+
+- Nivel 2.
+- `removeFlavor` (`order-line.ts`) es la inversa de `addFlavor`; en una pizza de 2 sabores saca la mitad entera.
+  `removeFromPromo` (`promo-line.ts`) la aplica a una parte de la promo.
+- El store suma `removeFromOpen` (línea abierta o parte abierta de la promo) y `nextPromoPart`, y `addToOpenPromo`
+  ya no avanza solo. Las acciones de línea (`removeOne`, `addOne`, `removeFromOpen`) pasaron a
+  `store/order-line-actions.ts`, igual que las de promos, para que el store no pase de 40 líneas por función.
+- El selector pasó de `max-w-md` a `max-w-lg` para que entren los tres botones en un renglón; en el celular, los
+  botones bajan debajo del nombre (`flex-wrap`), cada uno en un renglón.
+- Decisiones I-2 e I-3 en `docs/plans/sprint-5.md`.
+- Lint, typecheck, 242 tests de pedidos (fuzz de agregar y quitar) y 11 E2E de tablero, promos y prepizzas en verde.
+
+### US-37 · Cliente en el carrito, con alta automática
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-29 |
+| Tamaño       | L         |
+| Depende de   | US-36      |
+| Plan         | [`docs/plans/sprint-5.md`](docs/plans/sprint-5.md) |
+| Merge        | —         |
+| Horas reales | 1 h 50 min |
+
+**Historia**: Como vendedor quiero anotar el nombre, el teléfono y el domicilio del cliente al armar la venta, y que
+se completen solos si ya es cliente, de forma que la grilla de Clientes se arme sola con cada venta.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · La migración 0022 suma `customers.address` (hasta 150), lleva `sales.buyer_name` a 100 y suma `sales.buyer_phone` y `sales.buyer_address`, opcionales. Lo cubre un test de integración · Estimación: 30 min · Completado: 2026-10-30 00:53
+
+- [x] **CA-2** · El carrito pide Nombre (obligatorio), Teléfono y Domicilio (opcionales). "Cobrar" se deshabilita sin nombre, y el servidor responde `VALIDATION` "Anotá el nombre del cliente" (P-3) · Estimación: 45 min · Completado: 2026-10-30 00:53
+
+- [x] **CA-3** · Al escribir el nombre o el teléfono aparecen hasta 5 clientes activos que coinciden, sin importar mayúsculas ni acentos. Al elegir uno se completan sus datos (D-1, P-4) · Estimación: 1 h · Completado: 2026-10-30 00:53
+
+- [x] **CA-4** · Al cobrar sin elegir un cliente se crea uno nuevo en la misma transacción, con su log. Con un cliente elegido, la venta lo vincula sin cambiar Clientes y guarda los datos tal como se anotaron (D-2). Un cliente desactivado o borrado da `NOT_FOUND` "El cliente ya no existe" (P-5). Lo cubren tests de contrato, de servicio y de integración · Estimación: 1 h 15 min · Completado: 2026-10-30 00:53
+
+- [x] **CA-5** · Clientes muestra y edita el "Domicilio". El comprobante de la venta muestra el teléfono y el domicilio si los tiene (P-6). Lo cubre un E2E · Estimación: 30 min · Completado: 2026-10-30 00:53
+
+**Notas**
+
+- Nivel 3: cambia la entrada de `checkoutAction` y trae migración. La base de Supabase la migra el dev.
+- Migración `0022_cliente-en-la-venta`: `customers.address`, `sales.buyer_name` a 100, `sales.buyer_phone` y
+  `sales.buyer_address`. La base local quedó con 23 migraciones. **Supabase la corre el dev** (quedan 23).
+- `checkoutSchema` cambia `buyerName` por `buyer` (`customerId` o `null`, nombre, teléfono y domicilio), con las
+  reglas de `customer.schema.ts`. El paso `customerFor` (`services/checkout-customer.ts`) vincula o crea al cliente
+  dentro de la transacción del cobro, con `checkout-customers.repository.ts` (el cliente elegido se lee con
+  `FOR SHARE` para que no se borre a mitad del cobro).
+- Carrito: `ui/customer-fields.tsx` con las sugerencias de `customer/domain/customer-search.ts`. Clientes suma
+  "Domicilio" en la grilla, la tarjeta y el formulario; el comprobante muestra teléfono y domicilio.
+- Doc nuevo: `docs/features/customer/README.md`. Decisiones I-4 e I-5 en `docs/plans/sprint-5.md`.
+- `npm run verify` en verde: 1032 tests, cobertura 96,34/90,32, 111 de integración, mutación 89,82 y build. E2E:
+  `cliente-en-venta` (nuevo), cobro, promo, estadísticas, prepizzas, historial, crédito, compuestas y clientes (25 en
+  verde).
+
+### US-38 · Datos al día sin "Sincronizar"
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-29 |
+| Tamaño       | M         |
+| Depende de   | T-23      |
+| Plan         | [`docs/plans/sprint-5.md`](docs/plans/sprint-5.md) |
+| Merge        | —         |
+| Horas reales | 1 h 30 min |
+
+**Historia**: Como usuario del sistema quiero ver siempre los datos al día al entrar a cada pantalla, de forma que no
+tenga que tocar "Sincronizar" todo el tiempo.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · Cada pantalla trae sus datos al entrar y después de guardar, también lo que cargaron otras computadoras (D-3). Lo cubre un test del hook de carga · Estimación: 1 h · Completado: 2026-10-30 01:33
+
+- [x] **CA-2** · Una venta o una anulación se ven en Estadísticas al entrar, sin sincronizar. Lo cubre un E2E · Estimación: 30 min · Completado: 2026-10-30 01:33
+
+- [x] **CA-3** · No quedan botones "Sincronizar". El error de versión dice "Otro usuario cambió estos datos. Ya se actualizaron; intentá de nuevo" y recarga la lista (P-7) · Estimación: 1 h · Completado: 2026-10-30 01:33
+
+**Notas**
+
+- Nivel 2, con los E2E completos. No suma ISR Writes de Vercel (ver `docs/plans/sprint-5.md`).
+- Cambio central: `useFreshDataOnEnter` (`src/hooks/use-fresh-data.ts`), en el layout del panel, invalida todas
+  las cachés (`invalidateAllCaches`) cada vez que cambia la ruta. Cada panel ya relee cuando su store queda con
+  `isLoaded` en `false`, así que todas las pantallas (también el tablero de Ventas, Stock y Estadísticas) traen datos
+  frescos al entrar, incluido lo que cargaron otras computadoras. No usa `revalidatePath` ni `router.refresh()`: no
+  suma ISR Writes de Vercel.
+- Se quitaron los botones "Sincronizar" de los 10 paneles y el id `btnSincronizar`. Los objetos de página de los E2E
+  cambian `sincronizar()` por `recargar()` (recarga la página).
+- P-7: el error de versión dice "Otro usuario cambió estos datos. Ya se actualizaron; intentá de nuevo." y la lista
+  se relee sola (`useEntityActions` ante cualquier error; Clientes, por `onError` del modal). El de relación borrada
+  queda en "Una de las entidades relacionadas ya no existe.", sin pedir sincronizar.
+- Docs: `docs/architecture.md`, `docs/initial_prompt.md` y los README de tarjetas, gastos, alta, promos,
+  proveedores, estadísticas y stock.
+- Lint, typecheck, 1033 tests unitarios y de componente, y los 76 E2E en verde (concurrencia 6 de 6 con
+  `--repeat-each=3`).
+
+### BUG-27 · Selector: los botones de un gusto con nombre largo se desalinean
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-30 |
+| Tamaño       | XS        |
+| Depende de   | US-39     |
+| Plan         | Hotfix pedido por el dev el 2026-10-30, sin plan aparte |
+| Merge        | —         |
+| Horas reales | 25 min |
+
+**Esperado**: en el selector de gustos, los botones de todas las filas quedan en las mismas columnas, sin importar el
+largo del nombre.
+
+**Actual**: con "Carne cortada a cuchillo", los tres botones bajan al renglón de abajo y quedan pegados a la
+izquierda, desalineados de las otras filas.
+
+**Causa**: la fila usaba `flex-wrap`, y el bloque del nombre ocupaba todo el ancho de su texto. Si el nombre y los
+tres botones no entraban en el modal, el grupo de botones saltaba de renglón. No dependía de ser la primera fila,
+sino del largo del nombre. Antes de US-39 pasaba lo mismo, pero el que se partía era el texto de "Agregar uno".
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · Desde `sm`, el nombre y los botones van siempre en un renglón: el nombre largo se parte en su columna y los botones no se encogen. En el celular, el nombre va arriba y los botones abajo, en todas las filas por igual. Lo cubre un test de componente con un nombre largo · Estimación: 15 min · Completado: 2026-10-30 08:28
+
+- [x] **CA-2** · En el celular, los botones no se salen del modal: si no entran en un renglón, "Completar" baja al siguiente · Estimación: 5 min · Completado: 2026-10-30 08:29
+
+**Notas**
+
+- Nivel 1.
+- Medido en el navegador sobre la base local, con "Carne cortada a cuchillo": a 1024 px, los botones de las cuatro
+  filas empiezan en x = 416, 525 y 648; a 375 px, los tres botones quedan dentro de la lista (antes "Completar" se
+  salía 44 px, desde US-39).
+
+### US-40 · Estadísticas: calendarios a la derecha del título
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-30 |
+| Tamaño       | XS        |
+| Depende de   | US-32     |
+| Plan         | Hotfix pedido por el dev el 2026-10-30 (wireframe `fecha-inicio-fin.png`), sin plan aparte |
+| Merge        | —         |
+| Horas reales | 15 min |
+
+**Historia**: Como administrador quiero los calendarios de Estadísticas a la derecha del título, con una aclaración
+de cuál es el inicio y cuál el fin, de forma que el resto de la pantalla suba y no dude al elegir las fechas.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · Los calendarios van en el renglón del título "Resumen de la actividad", a la derecha, y el contenido sube a ese espacio · Estimación: 10 min · Completado: 2026-10-30 08:30
+
+- [x] **CA-2** · Debajo de los calendarios, en letra chica, dice "Fecha de inicio" bajo el izquierdo y "Fecha de fin" bajo el derecho. Lo cubre un test de componente · Estimación: 5 min · Completado: 2026-10-30 08:30
+
+**Notas**
+
+- Nivel 1.
+- `PageHeader` acepta `actions`, lo que va a la derecha del título. Las demás pantallas no lo usan y quedan igual.
+- En el celular, el título ocupa el ancho y los calendarios quedan uno arriba del otro, como antes. Las aclaraciones
+  también se apilan, en el mismo orden.
+
+### US-41 · Estadísticas: fondo suave del color de cada tarjeta
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-30 |
+| Tamaño       | XS        |
+| Depende de   | US-21     |
+| Plan         | Pedido del dev el 2026-10-30, sin plan aparte |
+| Merge        | —         |
+| Horas reales | 15 min |
+
+**Historia**: Como administrador quiero que cada tarjeta de Estadísticas con marco de color tenga un fondo muy suave
+de ese mismo color (Coca-Cola con marco rojo, fondo rojo muy suave), de forma que cada número se asocie de un
+vistazo con su categoría.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · Las tarjetas de cada comida, Promos, Ventas registradas y Ganancia tienen de fondo el color de su marco al 5 % en modo claro y al 10 % en modo oscuro. Lo cubre un test de componente · Estimación: 10 min · Completado: 2026-10-30 10:05
+
+- [x] **CA-2** · Los íconos, los títulos y los montos se leen igual que antes, en claro y en oscuro. Se mira en el navegador · Estimación: 5 min · Completado: 2026-10-30 10:07
+
+**Notas**
+
+- Nivel 1.
+- Las tarjetas de medios de pago ya tenían fondo de color, así que quedan igual.
+- `GROUP_THEME.outline` pasa a llamarse `kpi`, porque ahora lleva el marco y el fondo. Sólo lo usa Estadísticas.
+
+### US-42 · Estadísticas: los cuadros de abajo scrollean por dentro
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-30 |
+| Tamaño       | XS        |
+| Depende de   | US-13     |
+| Plan         | Pedido del dev el 2026-10-30, sin plan aparte |
+| Merge        | —         |
+| Horas reales | 25 min |
+
+**Historia**: Como administrador quiero que el cuadro de Ventas de Estadísticas muestre 5 ventas y tenga su propio
+scroll, de forma que con más ventas no se estire toda la página.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · Los cuadros Vendedores y Ventas muestran hasta 5 filas enteras (14 rem); desde la sexta, scrollean por dentro con el encabezado fijo arriba. Se puede scrollear con el teclado. Lo cubre un test de componente con 40 ventas · Estimación: 10 min · Completado: 2026-10-30 11:20
+
+- [x] **CA-2** · En el navegador, con un rango de varios días, la página no se estira por el cuadro de Ventas · Estimación: 5 min · Completado: 2026-10-30 11:22
+
+**Notas**
+
+- Nivel 1.
+- El cambio está en `StatsTable`, que comparten los dos cuadros, así que Vendedores se comporta igual.
+- El dev pidió el scroll desde 5 ventas (primero el cuadro medía 24 rem, unas 9 filas). Quedó en 14 rem: el encabezado
+  y 5 filas miden 13,25 rem más los bordes, así que 5 ventas entran sin barra y la sexta ya scrollea.
+- Medido sobre la base local con 13 ventas: el contenido mide 544 px y el cuadro 238 px. Se ven 5 filas enteras, la
+  quinta termina a 230,7 px y la sexta a 270 px.
+
+### T-24 · Cierre del Sprint 5
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-30 |
+| Tamaño       | S         |
+| Depende de   | todos      |
+| Plan         | [`docs/plans/sprint-5.md`](docs/plans/sprint-5.md) |
+| Merge        | `chore(release): sprint 5` en `main`, tag `sprint-5` |
+| Horas reales | —         |
+
+**Historia**: Como dev quiero el Sprint 5 verificado completo y en `main`, de forma que la primera entrega muestre lo
+que se probó.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · `npm run verify` completo y todos los E2E en verde sobre `develop` · Estimación: 30 min · Completado: 2026-10-30 01:45
+
+- [x] **CA-2** · README, `docs/architecture.md` y `docs/initial_prompt.md` al día. Con el OK del dev, merge local `develop → main` con el tag `sprint-5` · Estimación: 30 min · Completado: 2026-10-30 12:30
+
+**Notas**
+
+- CA-1, sobre `develop` en `ad0b673`: `npm run verify` en verde con 1033 tests, cobertura 96,48/90,25, 111 de
+  integración, mutación 89,82 y build; los 76 E2E en verde.
+- CA-2: README, `docs/architecture.md` (US-38) y `docs/initial_prompt.md` al día; el resumen en lenguaje simple está
+  al final de `docs/plans/sprint-5.md`. Falta el merge local `develop → main` con el tag `sprint-5`, que espera el OK
+  del dev.
+- Antes de usar `main` contra Supabase, el dev corre la migración 0022 (quedan 23).
+- Revisión del dev del 2026-10-30: pidió BUG-27, US-40, US-41 y US-42, todos de nivel 1 y sin migraciones. Entraron
+  a `develop` con su OK a cada commit.
+- Después de la revisión, sobre `develop` en `ce767dd`: `npm run verify` en verde (unit, contrato, fuzz, componentes,
+  cobertura, integración, mutación 89,82 y build) y los 76 E2E en verde.
+- El dev dio el OK al merge a `main` el 2026-10-30.
