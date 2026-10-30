@@ -23,6 +23,7 @@ async function outcome(path: string, session?: string): Promise<string> {
 describe('proxy.ts usa el mismo menú por rol (US-2)', () => {
   beforeEach(() => {
     vi.stubEnv('JWT_SECRET', TEST_JWT_SECRET);
+    vi.stubEnv('PUBLIC_CATALOG', 'true');
   });
 
   it('el vendedor entra a las secciones de su menú', async () => {
@@ -56,5 +57,30 @@ describe('proxy.ts usa el mismo menú por rol (US-2)', () => {
     const response = await proxy(await request('/ventas', 'token-falso'));
     expect(new URL(response.headers.get('location') ?? '').pathname).toBe('/home');
     expect(response.headers.get('set-cookie')).toContain('session=;');
+  });
+});
+
+describe('sin web pública se entra por /login (US-43)', () => {
+  beforeEach(() => {
+    vi.stubEnv('JWT_SECRET', TEST_JWT_SECRET);
+    vi.stubEnv('PUBLIC_CATALOG', 'false');
+  });
+
+  it.each([undefined, '', 'false'])('con PUBLIC_CATALOG=%s, sin sesión la raíz, el panel y todo lo público llevan a /login', async (value) => {
+    vi.stubEnv('PUBLIC_CATALOG', value);
+    const paths = ['/', '/ventas', '/home', '/product/abc', '/api/public/catalog'];
+    expect(await Promise.all(paths.map((path) => outcome(path)))).toEqual(paths.map(() => '→ /login'));
+    expect(await outcome('/login')).toBe('pasa');
+  });
+
+  it('una sesión inválida se borra y lleva a /login', async () => {
+    const response = await proxy(await request('/ventas', 'token-falso'));
+    expect(new URL(response.headers.get('location') ?? '').pathname).toBe('/login');
+    expect(response.headers.get('set-cookie')).toContain('session=;');
+  });
+
+  it('con sesión, el admin sigue viendo /home como vista previa y el vendedor va a su inicio', async () => {
+    expect(await outcome('/home', await tokenFor('admin'))).toBe('pasa');
+    expect(await outcome('/home', await tokenFor('vendedor'))).toBe('→ /ventas');
   });
 });

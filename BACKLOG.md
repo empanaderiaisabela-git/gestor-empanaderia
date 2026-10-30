@@ -12,6 +12,8 @@
 - [Sprint 2 · Promociones, tarjetas, estadísticas y gastos](#sprint-2--promociones-tarjetas-estadísticas-y-gastos)
 - [Sprint 3 · Aclaraciones del dev](#sprint-3--aclaraciones-del-dev)
 - [Sprint 4 · Pedido del cliente tras la demo](#sprint-4--pedido-del-cliente-tras-la-demo)
+- [Sprint 5 · Cierre de la primera entrega](#sprint-5--cierre-de-la-primera-entrega)
+- [Sin sprint asignado](#sin-sprint-asignado)
 
 ## Convenciones
 
@@ -4113,3 +4115,61 @@ que se probó.
 - Después de la revisión, sobre `develop` en `ce767dd`: `npm run verify` en verde (unit, contrato, fuzz, componentes,
   cobertura, integración, mutación 89,82 y build) y los 76 E2E en verde.
 - El dev dio el OK al merge a `main` el 2026-10-30.
+
+## Sin sprint asignado
+
+------------------------------------------------------------------------------------------------------------------------
+
+Ítems cargados que todavía no entraron a un sprint.
+
+### US-43 · Sin web pública por ahora: se entra por `/login`
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-30 |
+| Tamaño       | S         |
+| Depende de   | T-24      |
+| Plan         | [`docs/plans/US-43-sin-web-publica.md`](docs/plans/US-43-sin-web-publica.md) |
+| Merge        | —         |
+| Horas reales | 35 min |
+
+**Historia**: Como dev quiero desplegar en Vercel el sistema de gestión con la web pública (el catálogo de `/home` y
+`/product`) apagada, y que `/login` sea la entrada, de forma que la rotisería use sólo la gestión hasta que decida
+publicar la web, y que prenderla sea cambiar una variable y redesplegar, sin tocar código.
+
+**Contexto** (pedido del dev, 2026-10-30): por ahora la rotisería no va a usar la web. Se propuso apagarla con una
+variable de entorno en lugar de sacarla del deploy: las páginas siguen en el build, pero nadie puede entrar. Hoy
+`src/proxy.ts` deja públicas `/home`, `/product` y `/api/public`, y manda a `/home` a quien entra sin sesión o con una
+sesión inválida. El cierre de sesión ya vuelve a `/login`.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · Con la web apagada, `/home`, `/product/<id>` y `/api/public` mandan a `/login`. Quien entra sin sesión, también a la raíz del dominio, cae en `/login`, y una sesión inválida también lleva a `/login`. Lo cubren tests del proxy con la web prendida y apagada · Estimación: 40 min · Completado: 2026-10-30 12:45
+
+- [x] **CA-2** · La web está apagada salvo `PUBLIC_CATALOG=true` (D-1 del plan). Prendida, todo queda como hasta el Sprint 5 · Estimación: 10 min · Completado: 2026-10-30 12:45
+
+- [x] **CA-3** · Con la web apagada, guardar cambios del catálogo no regenera `/home` (no gasta ISR Writes de Vercel) · Estimación: 15 min · Completado: 2026-10-30 12:45
+
+- [x] **CA-4** · La variable está en `.env.example` con su explicación, y `docs/architecture.md` y el README dicen cómo prender y apagar la web. Los E2E corren con la web prendida (`.env.test`); la web apagada la cubren los tests del proxy y una prueba en el navegador · Estimación: 30 min · Completado: 2026-10-30 12:59
+
+- [ ] **CA-5** · El dev carga la variable en Vercel, redespliega y comprueba que la raíz del dominio abre `/login` · Estimación: 10 min · Completado: —
+
+**Respuestas a las preguntas abiertas**
+
+- Valor por defecto: la web queda **apagada** si la variable no está. El dev no entendió la pregunta y esperaba que,
+  al desplegar, la web no se viera; el agente eligió eso (D-1 del plan). Para prenderla: `PUBLIC_CATALOG=true` en
+  Vercel y redesplegar.
+- `/product/<id>` y `/api/public` también se cierran: el dev eligió cerrar todo lo público.
+- Buscadores: no hace falta, porque todo lleva a `/login`.
+
+**Notas**
+
+- Nivel 2: toca el proxy, que decide adónde va cada visitante.
+- Con sesión, las reglas por rol no cambian: el admin puede abrir `/home` como vista previa y el vendedor va a su
+  inicio.
+- En la PC del dev: sin `PUBLIC_CATALOG=true` en `.env.local`, la web local también queda apagada.
+- Probado en el navegador contra el dev server sin la variable: sin sesión, `/`, `/home`, `/product/abc`,
+  `/api/public/catalog` y `/ventas` terminan en `/login`; con la sesión de admin, `/home` abre.
+- Lint, typecheck, 880 tests unitarios y los E2E de `landing` y `navegacion` (6) en verde.

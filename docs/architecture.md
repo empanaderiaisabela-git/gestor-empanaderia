@@ -16,7 +16,7 @@ Una sola aplicación **Next.js 16 (App Router)** con dos caras:
 
 | Cara | Rutas | Quién la usa | Cómo renderiza |
 |---|---|---|---|
-| Catálogo público | `/home`, `/product/[id]` | Clientes del local, sin login | Server Components: `/home` estática con revalidación a demanda ([ADR 0004](adr/0004-revalidacion-a-demanda-del-catalogo.md)); `/product/[id]` dinámica |
+| Catálogo público | `/home`, `/product/[id]` | Clientes del local, sin login. Apagado salvo `PUBLIC_CATALOG=true` (US-43) | Server Components: `/home` estática con revalidación a demanda ([ADR 0004](adr/0004-revalidacion-a-demanda-del-catalogo.md)); `/product/[id]` dinámica |
 | Login | `/login` | Personal | Client Component + Server Action |
 | Panel de gestión | `/` (Estadísticas), `/gastos`, `/ventas` (Ventas/Pedidos), `/ventas/nueva` (tablero), `/promociones`, `/stock`, `/alta-de-productos`, `/tarjetas`, `/clientes`, `/proveedores`, `/usuarios`, `/logs` | `admin` y `vendedor` | Client Components + Server Actions |
 
@@ -128,7 +128,7 @@ Con el tope de 100 líneas, cuando un archivo crece se parte por operación (`cr
 
 | Ruta | Contenido |
 |---|---|
-| `src/proxy.ts` | Next 16 renombró `middleware.ts` a `proxy.ts`. Corre en cada request: valida la cookie `session`, redirige a `/home` si no hay sesión y aplica RBAC por ruta con **la misma lista que el menú** (`src/config/navigation.ts`, US-2): el `vendedor` sólo entra a Ventas/Pedidos, Clientes y Stock (US-31), y si pide otra sección va a `/ventas`. Con sesión, `/login` lleva al inicio de cada rol (admin: Estadísticas; vendedor: Ventas/Pedidos). Las rutas públicas están en `PUBLIC_PATHS`. |
+| `src/proxy.ts` | Next 16 renombró `middleware.ts` a `proxy.ts`. Corre en cada request: valida la cookie `session`, redirige a la entrada si no hay sesión (`/home` con la web pública prendida, `/login` con la web apagada; US-43) y aplica RBAC por ruta con **la misma lista que el menú** (`src/config/navigation.ts`, US-2): el `vendedor` sólo entra a Ventas/Pedidos, Clientes y Stock (US-31), y si pide otra sección va a `/ventas`. Con sesión, `/login` lleva al inicio de cada rol (admin: Estadísticas; vendedor: Ventas/Pedidos). Las rutas siempre públicas están en `PUBLIC_PATHS`, y las de la web pública (`/home`, `/product`, `/api/public`) en `CATALOG_PATHS`: cuentan como públicas sólo con `PUBLIC_CATALOG=true` (`isCatalogPublic()`, `src/lib/public-catalog.ts`). |
 | `src/features/<f>/actions/` | Server Actions. Única puerta del cliente al servidor: sesión y rol, validación Zod, service y `ActionResult`. |
 | `src/features/<f>/services/` | Reglas de negocio y orquestación. Abren la transacción y la pasan a los repositorios. Existe en `provider` (T-5, el molde), `menu`, `stock`, `order`, `promotion`, `card` y `expense`, con unidad de trabajo: el service nunca ve `tx`. `stats` lee la jornada en una sola transacción de sólo lectura y calcula con funciones puras. En `customer`, `user` y `audit` la lógica sigue repartida entre actions y repositorios, y se migra copiando `provider`. |
 | `src/features/<f>/repository/` | Acceso a datos con Drizzle. Reciben `tx` opcional para participar de una transacción y traducen "0 filas afectadas" a error de concurrencia. |
@@ -238,6 +238,10 @@ carrito ni pedidos online: el cliente consulta por WhatsApp o Instagram.
   (`src/lib/catalog-cache.ts`), y la página se regenera en la próxima visita (T-11,
   [ADR 0004](adr/0004-revalidacion-a-demanda-del-catalogo.md)).
 - `/product/[id]` se renderiza en cada pedido.
+- **Interruptor** (US-43): la web pública está apagada salvo `PUBLIC_CATALOG=true`. Apagada, `proxy.ts` manda a
+  `/login` a quien pide `/home`, `/product` o `/api/public` sin sesión, y `revalidateCatalog()` no regenera `/home`
+  (no gasta ISR Writes). Para prenderla se carga la variable en Vercel y se redespliega: el build arma `/home` de
+  cero. Con sesión, el admin puede abrir `/home` como vista previa.
 
 ## Concurrencia optimista
 

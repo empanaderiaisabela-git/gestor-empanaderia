@@ -147,6 +147,9 @@ Hacer preguntas de más es mejor que inventar.
     I-5) en [`sprint-5.md`](plans/sprint-5.md). El dev revisó el sprint y dio el OK al merge el 2026-10-30.
   - La migración 0022 es del Sprint 5 (quedan 23). La base de Supabase la migra el dev.
   - Ningún ítem nuevo se arranca sin el OK del dev.
+- **US-43** (sin sprint asignado): la web pública (`/home`, `/product`, `/api/public`) está **apagada salvo
+  `PUBLIC_CATALOG=true`**, y sin sesión se entra por `/login`. Para prenderla se carga la variable en Vercel y se
+  redespliega. Plan en [`US-43-sin-web-publica.md`](plans/US-43-sin-web-publica.md).
 - Git: `main` recibe un merge de `develop` al cierre de cada sprint. El trabajo nuevo sale de `develop`. El repo de GitHub
   es **público**: todo lo que se pushea queda publicado.
 - **No existe todavía**: `docs/conventions/`.

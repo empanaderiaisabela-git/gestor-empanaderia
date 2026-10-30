@@ -8,6 +8,7 @@ vi.mock('next/cache', () => ({ revalidatePath }));
 describe('revalidación a demanda del catálogo (T-11)', () => {
   beforeEach(() => {
     revalidatePath.mockReset();
+    vi.stubEnv('PUBLIC_CATALOG', 'true');
   });
 
   it('invalida la página del catálogo público', () => {
@@ -25,6 +26,13 @@ describe('revalidación a demanda del catálogo (T-11)', () => {
   it('si la mutación falló no invalida nada', () => {
     const result = { success: false, error: 'no' };
     expect(afterCatalogChange(result)).toBe(result);
+    expect(revalidatePath).not.toHaveBeenCalled();
+  });
+
+  it('con la web apagada no regenera /home, así no gasta ISR Writes (US-43)', () => {
+    vi.stubEnv('PUBLIC_CATALOG', 'false');
+    revalidateCatalog();
+    expect(afterCatalogChange({ success: true })).toEqual({ success: true });
     expect(revalidatePath).not.toHaveBeenCalled();
   });
 });
