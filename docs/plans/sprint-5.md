@@ -182,3 +182,35 @@ Se anotan acá, con la misma forma (pregunta, situación, elegido y qué cambia 
 - **Elegido**: no se tocan. Quedan con su nombre (o "Sin nombre") y sin cliente vinculado; sólo las ventas nuevas
   crean o vinculan clientes. La migración 0022 sólo agrega columnas.
 - **Si el dev responde otra cosa**: un script crea los clientes de las ventas viejas con nombre. Nivel 2.
+
+## Resumen del Sprint 5 (para el dev)
+
+<details>
+<summary>Qué se hizo, en lenguaje simple</summary>
+
+El agente hizo el sprint solo, entre el 2026-10-29 y el 2026-10-30, con permiso para commitear, integrar a `develop`
+y hacer push de cada ítem. Todo está en `develop`. **No** se pasó nada a `main` ni se puso la etiqueta `sprint-5`:
+eso espera tu OK.
+
+| Ítem | Commit | Qué cambió |
+|---|---|---|
+| T-23 | `16c274a` | El pedido del cliente cargado en el backlog, con este plan |
+| BUG-26 | `aacbf66` | El carrito separa Cantidad y Unidades, ocupa un poco menos de la mitad de la pantalla y entra y sale deslizándose |
+| US-36 | `17fa72c` | Cada renglón del carrito tiene un "+" para sumar uno; se apaga si no hay stock |
+| US-39 | `5088e58` | La ventana de gustos de una promo: título en tres renglones, botones en un renglón, "Quitar uno" en rojo y "Siguiente" |
+| US-37 | `9c2727b` | El carrito pide el nombre del cliente (obligatorio), el teléfono y el domicilio; sugiere clientes y da de alta a los nuevos |
+| US-38 | `ad0b673` | Cada pantalla trae los datos al día al entrar; ya no hay botones "Sincronizar" |
+
+Un hallazgo: el carrito no se deslizaba porque una regla global anulaba **todas** las animaciones de la app. Se
+corrigió esa regla (I-1), así que ahora se ven también otras transiciones que el código ya pedía.
+
+</details>
+
+### Para revisar
+
+- **Supabase**: falta correr la migración 0022 (quedan 23). Tu base local ya está migrada.
+- **Decisiones**: P-1 a P-8 e I-1 a I-5, arriba, cada una con su pregunta.
+- **Lo que no se miró en el navegador** (el panel del navegador integrado estaba oculto y mostraba estilos viejos):
+  el slide del carrito, la ventana de la promo y las sugerencias de clientes. Lo cubren los E2E, que miden la
+  duración del slide, el ancho del carrito y el flujo completo de cada pantalla.
+- **Merge**: `develop → main` con el tag `sprint-5`, cuando des el OK.

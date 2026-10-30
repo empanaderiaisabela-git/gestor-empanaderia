@@ -3721,7 +3721,7 @@ trazabilidad de cada punto del pedido en `specs.md` a su ítem.
 | 3   | [US-39](#us-39--promos-selector-prolijo-quitar-uno-y-siguiente) | Promos: selector prolijo, "Quitar uno" y "Siguiente" | En revisión | T-23 | 2 h |
 | 4   | [US-37](#us-37--cliente-en-el-carrito-con-alta-automática) | Cliente en el carrito, con alta automática | En revisión | US-36 | 4 h |
 | 5   | [US-38](#us-38--datos-al-día-sin-sincronizar) | Datos al día sin "Sincronizar" | En revisión | T-23 | 2 h 30 min |
-| 6   | [T-24](#t-24--cierre-del-sprint-5) | Cierre del Sprint 5 | Por hacer | todos | 1 h |
+| 6   | [T-24](#t-24--cierre-del-sprint-5) | Cierre del Sprint 5 | En progreso | todos | 1 h |
 |     |    | **Total del sprint** | | | **11 h 45 min** |
 
 ### T-23 · Backlog del Sprint 5
@@ -3953,9 +3953,9 @@ tenga que tocar "Sincronizar" todo el tiempo.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Por hacer |
+| Estado       | En progreso |
 | Dueño        | Agente    |
-| Inicio       | — |
+| Inicio       | 2026-10-30 |
 | Tamaño       | S         |
 | Depende de   | todos      |
 | Plan         | [`docs/plans/sprint-5.md`](docs/plans/sprint-5.md) |
@@ -3967,6 +3967,15 @@ que se probó.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · `npm run verify` completo y todos los E2E en verde sobre `develop` · Estimación: 30 min · Completado: —
+- [x] **CA-1** · `npm run verify` completo y todos los E2E en verde sobre `develop` · Estimación: 30 min · Completado: 2026-10-30 01:45
 
 - [ ] **CA-2** · README, `docs/architecture.md` y `docs/initial_prompt.md` al día. Con el OK del dev, merge local `develop → main` con el tag `sprint-5` · Estimación: 30 min · Completado: —
+
+**Notas**
+
+- CA-1, sobre `develop` en `ad0b673`: `npm run verify` en verde con 1033 tests, cobertura 96,48/90,25, 111 de
+  integración, mutación 89,82 y build; los 76 E2E en verde.
+- CA-2: README, `docs/architecture.md` (US-38) y `docs/initial_prompt.md` al día; el resumen en lenguaje simple está
+  al final de `docs/plans/sprint-5.md`. Falta el merge local `develop → main` con el tag `sprint-5`, que espera el OK
+  del dev.
+- Antes de usar `main` contra Supabase, el dev corre la migración 0022 (quedan 23).
