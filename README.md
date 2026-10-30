@@ -14,7 +14,7 @@ proveedores, usuarios y auditoría para la empanadería de un cliente. Next.js 1
 | Ruta | Qué hace |
 |---|---|
 | `/login` | Acceso con bcrypt y JWT en cookie HttpOnly |
-| `/home`, `/product/[id]` | Catálogo público: gustos y bebidas visibles y con precio, por grupo, con fotos (sin login) |
+| `/home`, `/product/[id]` | Catálogo público: gustos y bebidas visibles y con precio, por grupo, con fotos (sin login). **Apagado salvo `PUBLIC_CATALOG=true`** (US-43): sin la variable, la entrada es `/login` |
 | `/` | Estadísticas entre dos jornadas, de 7:00 a 6:59, con hoy por defecto (sólo admin): ganancia en limpio, ventas, dinero por comida (con ícono por grupo) y por promos, lo cobrado por medio de pago y los cuadros de vendedores por turno y de ventas |
 | `/gastos` | Anotador de gastos con número de factura único y proveedor, filtrado entre dos fechas con el mes en curso por defecto (sólo admin); no cambia las Estadísticas |
 | `/ventas` | Ventas/Pedidos: historial con comprobante y anulación (sólo admin); "Nuevo pedido" abre el tablero |
@@ -51,8 +51,8 @@ Credenciales del seed: usuario `admin`, contraseña `admin`.
 
 | Archivo | Uso | Versionado |
 |---|---|---|
-| `.env.local` | Desarrollo: `LOCAL_DATABASE_URL`, `JWT_SECRET`, `CLOUDINARY_URL` | No |
-| `.env.test` | Tests de integración y E2E: apunta a `db-test` (127.0.0.1:5434) | Sí (sin secretos reales) |
+| `.env.local` | Desarrollo: `LOCAL_DATABASE_URL`, `JWT_SECRET`, `CLOUDINARY_URL` y, para ver la web pública, `PUBLIC_CATALOG=true` | No |
+| `.env.test` | Tests de integración y E2E: apunta a `db-test` (127.0.0.1:5434), con la web pública prendida | Sí (sin secretos reales) |
 | `.env.prod` | Producción: `DATABASE_URL`, `JWT_SECRET`, `CLOUDINARY_URL` | **Nunca** |
 | `.env.example` | Plantilla de todas las variables | Sí |
 

@@ -27,6 +27,7 @@ describe('fotos, visibilidad y catálogo público (T-12)', () => {
     fakeMenu.reset();
     itemId = (await fakeMenu.read.items.insert({ group: 'pizzas', name: 'Muzza', unitCost: 4000, prices: { price1: 11000 } })).id;
     vi.mocked(revalidatePath).mockClear();
+    vi.stubEnv('PUBLIC_CATALOG', 'true');
     await asUser({ role: 'admin' });
   });
 

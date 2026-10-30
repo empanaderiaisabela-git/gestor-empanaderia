@@ -23,6 +23,7 @@ describe('acción Costo y precio de Stock (US-28 CA-5)', () => {
     fakeStock.reset();
     fakeStock.state.items.push({ ...CARNE }, { ...POLLO });
     vi.mocked(revalidatePath).mockClear();
+    vi.stubEnv('PUBLIC_CATALOG', 'true');
   });
 
   it('el admin guarda costo y precios; la respuesta es la fila del gusto y el catálogo se regenera', async () => {
