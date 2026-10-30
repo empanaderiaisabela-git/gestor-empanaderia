@@ -4,14 +4,14 @@ import { checkoutSchema } from './checkout.schema';
 
 const ITEM = '11111111-1111-4111-8111-111111111111';
 const LINE = { group: 'empanadas', presentationKey: 'u1', flavors: [{ menuItemId: ITEM, units: 1 }], quantity: 2 };
-const VALID = { lines: [LINE], discountPercentage: 0, discountAmount: 0, payments: [{ type: 'efectivo', amount: 3000 }] };
+const BUYER = { customerId: null, name: 'Marta', phone: '', address: '' };
+const VALID = { buyer: BUYER, lines: [LINE], discountPercentage: 0, discountAmount: 0, payments: [{ type: 'efectivo', amount: 3000 }] };
 const first = (input: unknown): string | undefined => checkoutSchema.safeParse(input).error?.issues[0]?.message;
 
 describe('lo que el navegador puede mandar al cobrar (US-6 CA-1 y CA-2)', () => {
-  it('acepta un pedido y deja el comprador vacío como null', () => {
-    expect(checkoutSchema.parse(VALID)).toEqual({ ...VALID, buyerName: null });
-    expect(checkoutSchema.parse({ ...VALID, buyerName: '   ' }).buyerName).toBeNull();
-    expect(checkoutSchema.parse({ ...VALID, buyerName: '  Marta ' }).buyerName).toBe('Marta');
+  it('acepta un pedido con el cliente nuevo o elegido, y recorta los espacios (US-37)', () => {
+    expect(checkoutSchema.parse(VALID)).toEqual(VALID);
+    expect(checkoutSchema.parse({ ...VALID, buyer: { customerId: ITEM, name: '  Marta ', phone: ' 11 5555-1234 ', address: ' Mitre 123 ' } }).buyer).toEqual({ customerId: ITEM, name: 'Marta', phone: '11 5555-1234', address: 'Mitre 123' });
   });
 
   it('acepta los 4 medios de pago, hasta 2 y distintos', () => {
@@ -33,7 +33,11 @@ describe('lo que el navegador puede mandar al cobrar (US-6 CA-1 y CA-2)', () => 
     { caso: 'pago en 0', input: { ...VALID, payments: [{ type: 'efectivo', amount: 0 }] }, message: 'El monto debe ser mayor a 0' },
     { caso: 'descuento de 101 %', input: { ...VALID, discountPercentage: 101 }, message: 'El descuento no puede superar el 100 %' },
     { caso: 'descuento negativo', input: { ...VALID, discountAmount: -1 }, message: 'El descuento no puede ser negativo' },
-    { caso: 'nombre de 61', input: { ...VALID, buyerName: 'a'.repeat(61) }, message: 'El nombre es demasiado largo' },
+    { caso: 'sin nombre del cliente', input: { ...VALID, buyer: { ...BUYER, name: '   ' } }, message: 'Anotá el nombre del cliente' },
+    { caso: 'nombre de 101', input: { ...VALID, buyer: { ...BUYER, name: 'a'.repeat(101) } }, message: 'Nombre demasiado largo' },
+    { caso: 'teléfono con letras', input: { ...VALID, buyer: { ...BUYER, phone: 'once' } }, message: 'Formato de teléfono inválido (solo números, +, - y espacios)' },
+    { caso: 'domicilio de 151', input: { ...VALID, buyer: { ...BUYER, address: 'a'.repeat(151) } }, message: 'Domicilio demasiado largo' },
+    { caso: 'cliente inválido', input: { ...VALID, buyer: { ...BUYER, customerId: 'x' } }, message: 'Elegí un cliente válido' },
     { caso: 'cantidad 1,5', input: { ...VALID, lines: [{ ...LINE, quantity: 1.5 }] }, message: 'La cantidad tiene que ser un número entero' },
     { caso: 'gusto inválido', input: { ...VALID, lines: [{ ...LINE, flavors: [{ menuItemId: 'x', units: 1 }] }] }, message: 'Elegí un gusto válido' },
     { caso: 'grupo inexistente', input: { ...VALID, lines: [{ ...LINE, group: 'helados' }] }, message: 'Elegí un grupo válido' },
@@ -52,6 +56,7 @@ describe('lo que el navegador puede mandar al cobrar (US-6 CA-1 y CA-2)', () => 
 
   it('no deja mandar precios, costos ni total (strictObject)', () => {
     expect(checkoutSchema.safeParse({ ...VALID, total: 1 }).success).toBe(false);
+    expect(checkoutSchema.safeParse({ ...VALID, buyer: { ...BUYER, email: 'a@b.c' } }).success).toBe(false);
     expect(checkoutSchema.safeParse({ ...VALID, lines: [{ ...LINE, unitPrice: 1 }] }).success).toBe(false);
     expect(checkoutSchema.safeParse({ ...VALID, lines: [{ ...LINE, flavors: [{ menuItemId: ITEM, units: 1, unitCost: 0 }] }] }).success).toBe(false);
   });

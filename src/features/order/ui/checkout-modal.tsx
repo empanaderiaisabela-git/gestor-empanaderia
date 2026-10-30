@@ -31,7 +31,7 @@ function DiscountFields({ form, onChange }: DiscountFieldsProps): JSX.Element {
 }
 
 export function CheckoutModal({ model, board }: CheckoutModalProps): JSX.Element {
-  const { lines, promos, buyerName } = useOrderStore();
+  const { lines, promos, buyer } = useOrderStore();
   const [form, setForm] = useState(BLANK_CHECKOUT);
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
@@ -57,7 +57,7 @@ export function CheckoutModal({ model, board }: CheckoutModalProps): JSX.Element
       <ErrorAlert error={error} />
       <div className='space-y-4'>
         <p className='text-sm text-zinc-700 dark:text-zinc-200'>
-          Comprador: {buyerName.trim() || 'Sin nombre'} · Subtotal {formatMoney(subtotal)}
+          Cliente: {[buyer.name, buyer.phone, buyer.address].map((value) => value.trim()).filter(Boolean).join(' · ')} · Subtotal {formatMoney(subtotal)}
         </p>
         <DiscountFields form={form} onChange={setForm} />
         <PaymentPicker form={form} total={check.total} cards={cards} onChange={setForm} />

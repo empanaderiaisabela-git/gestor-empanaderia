@@ -26,6 +26,10 @@ export function renderCustomerCard(actions: CustomerCardActionsProps) {
             <span>{customer.phone || '--'}</span>
           </div>
           <div className='flex justify-between'>
+            <span className='text-xs text-zinc-600 dark:text-zinc-300'>Domicilio</span>
+            <span>{customer.address || '--'}</span>
+          </div>
+          <div className='flex justify-between'>
             <span className='text-xs text-zinc-600 dark:text-zinc-300'>DNI</span>
             <span>{customer.documentNumber || '--'}</span>
           </div>

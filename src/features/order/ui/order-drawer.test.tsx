@@ -19,7 +19,10 @@ function addDozen(): void {
 }
 
 describe('carrito desplegable de Ventas (US-24)', () => {
-  beforeEach(() => store().clear());
+  beforeEach(() => {
+    store().clear();
+    store().setBuyer({ name: 'Marta' });
+  });
 
   it('cerrado: sólo se ve el botón del ticket, sin número con el pedido vacío', () => {
     render(<OrderDrawer board={board} onCheckout={vi.fn()} />);

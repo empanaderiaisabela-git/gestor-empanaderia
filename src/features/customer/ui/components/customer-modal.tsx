@@ -38,6 +38,7 @@ export function CustomerModal({ isOpen, onClose, onSuccess, editingItem }: Custo
           phone: editingItem.phone || '',
           email: editingItem.email || '',
           documentNumber: editingItem.documentNumber || '',
+          address: editingItem.address || '',
         });
       } else {
         reset({
@@ -45,6 +46,7 @@ export function CustomerModal({ isOpen, onClose, onSuccess, editingItem }: Custo
           phone: '',
           email: '',
           documentNumber: '',
+          address: '',
         });
       }
       setServerError(null);
@@ -151,6 +153,17 @@ export function CustomerModal({ isOpen, onClose, onSuccess, editingItem }: Custo
             />
             {errors.email && <p className='text-red-500 text-xs mt-1.5'>{errors.email.message}</p>}
           </div>
+        </div>
+
+        <div>
+          <label htmlFor='customer-address' className='block text-sm font-medium text-zinc-900 dark:text-zinc-100 mb-1.5'>Domicilio</label>
+          <input
+            id='customer-address'
+            type='text'
+            {...register('address')}
+            className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-brand-500 bg-zinc-50 dark:bg-zinc-950 dark:text-zinc-100 transition-colors text-sm ${errors.address ? 'border-red-500' : 'border-zinc-300 dark:border-zinc-700'}`}
+          />
+          {errors.address && <p className='text-red-500 text-xs mt-1.5'>{errors.address.message}</p>}
         </div>
       </div>
     </ResponsiveModal>

@@ -10,6 +10,8 @@ function viewOf(fake: FakeCheckoutUnitOfWork, sale: FakeSale): SaleView {
     id: sale.id,
     createdAt: sale.createdAt,
     buyerName: sale.buyerName,
+    buyerPhone: sale.buyerPhone,
+    buyerAddress: sale.buyerAddress,
     vendorName: fake.stock.state.usernames.get(sale.vendorId) ?? '?',
     total: money(sale.total),
     discountAmount: money(sale.discountAmount),

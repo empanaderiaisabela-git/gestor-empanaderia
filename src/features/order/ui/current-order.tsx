@@ -7,17 +7,18 @@ import { canAddOne } from '@/features/order/domain/order-usage';
 import { isPromoComplete, orderSubtotal, promoUsageLines } from '@/features/order/domain/promo-line';
 import { useOrderStore } from '@/features/order/store/order.store';
 import { formatMoney } from '@/lib/format-money';
+import { CustomerFields } from './customer-fields';
 import { OrderTable } from './order-table';
 import type { OrderBoardModel } from './use-order-board';
 
 type CurrentOrderProps = { board: OrderBoardModel; onCheckout?: () => void };
 
 export function CurrentOrder({ board, onCheckout }: CurrentOrderProps): JSX.Element {
-  const { lines, promos, buyerName, setBuyerName, remove, removeOne, addOne, clear, removePromo, reopenPromo } = useOrderStore();
+  const { lines, promos, buyer, remove, removeOne, addOne, clear, removePromo, reopenPromo } = useOrderStore();
   const visible = lines.filter((line) => line.flavors.length > 0);
   const usage = [...visible, ...promoUsageLines(promos)];
   const total = orderSubtotal(visible, promos, board.book);
-  const ready = visible.length + promos.length > 0 && visible.every(isComplete) && promos.every(isPromoComplete) && total !== null;
+  const ready = visible.length + promos.length > 0 && visible.every(isComplete) && promos.every(isPromoComplete) && total !== null && buyer.name.trim().length >= 2;
   return (
     <section aria-label='Pedido actual' className='rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 space-y-3'>
       <div className='flex flex-wrap items-center justify-between gap-3'>
@@ -27,10 +28,7 @@ export function CurrentOrder({ board, onCheckout }: CurrentOrderProps): JSX.Elem
           <span className='text-2xl font-black text-zinc-900 dark:text-zinc-50'>{formatMoney(total ?? 0)}</span>
         </p>
       </div>
-      <label className='block text-sm text-zinc-900 dark:text-zinc-100'>
-        Comprador (opcional)
-        <input value={buyerName} maxLength={60} onChange={(event) => setBuyerName(event.target.value)} placeholder='Sin nombre' className='mt-1 w-full px-3 py-2 border rounded-lg border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-950' />
-      </label>
+      <CustomerFields />
       <OrderTable lines={visible} promos={promos} board={board} lineActions={{ onRemove: remove, onRemoveOne: removeOne, onAddOne: addOne, canAddOne: (line) => canAddOne(line, usage, board) }} promoActions={{ onRemove: removePromo, onReopen: reopenPromo }} />
       <div className='flex justify-end gap-2'>
         <button onClick={clear} className='inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-zinc-300 dark:border-zinc-700'>

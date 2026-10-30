@@ -9,7 +9,7 @@ import type { PaymentType } from '@/features/order/domain/order-validation';
 
 export type SaleLineView = { group: MenuGroup | null; presentationKey: string | null; promotionId: string | null; quantity: number; unitPrice: string; subtotal: string; description: string };
 export type SalePaymentView = { type: PaymentType; amount: string; cardName: string | null; installments: number | null; surchargeAmount: string | null };
-export type SaleView = { id: string; createdAt: Date; buyerName: string | null; vendorName: string; total: string; discountAmount: string; discountPercentage: string; lines: SaleLineView[]; payments: SalePaymentView[] };
+export type SaleView = { id: string; createdAt: Date; buyerName: string | null; buyerPhone: string | null; buyerAddress: string | null; vendorName: string; total: string; discountAmount: string; discountPercentage: string; lines: SaleLineView[]; payments: SalePaymentView[] };
 export type SoldItem = { menuItemId: string; units: number };
 
 export type SaleHistoryRepository = {
@@ -24,7 +24,7 @@ type SaleRow = Omit<SaleView, 'lines' | 'payments'>;
 
 const HISTORY_LIMIT = 1000;
 
-const SALE_COLUMNS = { id: sales.id, createdAt: sales.createdAt, buyerName: sales.buyerName, vendorName: users.username, total: sales.total, discountAmount: sales.discountAmount, discountPercentage: sales.discountPercentage };
+const SALE_COLUMNS = { id: sales.id, createdAt: sales.createdAt, buyerName: sales.buyerName, buyerPhone: sales.buyerPhone, buyerAddress: sales.buyerAddress, vendorName: users.username, total: sales.total, discountAmount: sales.discountAmount, discountPercentage: sales.discountPercentage };
 const LINE_COLUMNS = { group: saleLines.group, presentationKey: saleLines.presentationKey, promotionId: saleLines.promotionId, quantity: saleLines.quantity, unitPrice: saleLines.unitPrice, subtotal: saleLines.subtotal, description: saleLines.description };
 
 const PAYMENT_COLUMNS = { type: salePayments.type, amount: salePayments.amount, cardName: cards.name, installments: salePayments.installments, surchargeAmount: salePayments.surchargeAmount };

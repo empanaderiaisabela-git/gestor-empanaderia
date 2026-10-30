@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { BRAND } from '@/config/brand';
 import { describeSoldPresentation } from '@/features/order/domain/order-describe';
 import { describePayment } from '@/features/order/domain/payment-describe';
-import { buyerLabel, type SaleDef } from '@/features/order/domain/sale-history.schema';
+import { buyerContact, buyerLabel, type SaleDef } from '@/features/order/domain/sale-history.schema';
 import { formatDateTime } from '@/lib/format-date-time';
 import { formatMoney } from '@/lib/format-money';
 
@@ -87,6 +87,7 @@ export function SaleReceipt({ sale, onClose }: SaleReceiptProps): JSX.Element {
           <p className='text-sm'>
             Comprador: <strong>{buyerLabel(sale.buyerName)}</strong> · Vendedor: <strong>{sale.vendorName}</strong>
           </p>
+          {buyerContact(sale) && <p className='text-sm'>{buyerContact(sale)}</p>}
           <ReceiptLines sale={sale} />
           <ReceiptTotals sale={sale} />
         </article>

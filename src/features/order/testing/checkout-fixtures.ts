@@ -1,8 +1,11 @@
-import type { CheckoutData, CheckoutLine, CheckoutPromo } from '@/features/order/domain/checkout.schema';
+import type { CheckoutBuyer, CheckoutData, CheckoutLine, CheckoutPromo } from '@/features/order/domain/checkout.schema';
 import { stockItem } from '@/features/stock/testing/stock-item';
 import type { FakeCheckoutUnitOfWork } from './fake-checkout-unit-of-work';
 
 export const CALLER = { id: '00000000-0000-4000-8000-00000000000b' };
+export const CLIENTE = { id: '20000000-0000-4000-8000-000000000001', name: 'Marta', phone: '', address: '', isActive: true };
+
+export const buyerOf = (name: string, extra: Partial<CheckoutBuyer> = {}): CheckoutBuyer => ({ customerId: null, name, phone: '', address: '', ...extra });
 
 const EMPANADA_PRICES = { price1: '1500.00', price3: '4200.00', price6: '8000.00', price12: '15000.00' };
 
@@ -28,11 +31,12 @@ export function promoOf(promotionId: string, quantity = 1): CheckoutPromo {
 }
 
 export function checkoutOf(lines: CheckoutLine[], overrides: Partial<CheckoutData> = {}): CheckoutData {
-  return { buyerName: null, lines, discountPercentage: 0, discountAmount: 0, payments: [], ...overrides };
+  return { buyer: buyerOf(CLIENTE.name, { customerId: CLIENTE.id }), lines, discountPercentage: 0, discountAmount: 0, payments: [], ...overrides };
 }
 
 export function loadMenu(fake: FakeCheckoutUnitOfWork): void {
   fake.reset();
+  fake.customers.push({ ...CLIENTE });
   fake.stock.state.items.push(...[CARNE, POLLO, MUZZA, NAPO, COCA, HUMITA, JYQ, PREPIZZA, PAN].map((item) => ({ ...item })));
 }
 

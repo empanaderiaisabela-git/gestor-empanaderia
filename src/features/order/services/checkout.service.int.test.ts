@@ -14,7 +14,8 @@ import { checkoutService } from './checkout.service';
 const CALLER = { id: TEST_USER_IDS.vendedor };
 const cash = (amount: number) => [{ type: 'efectivo' as const, amount }];
 const line = (menuItemId: string, quantity = 1) => ({ group: 'coca_cola' as const, presentationKey: 'u1', flavors: [{ menuItemId, units: 1 }], quantity });
-const order = (lines: ReturnType<typeof line>[], paid: number) => ({ buyerName: null, lines, discountPercentage: 0, discountAmount: 0, payments: cash(paid) });
+const BUYER = { customerId: null, name: 'Mostrador', phone: '', address: '' };
+const order = (lines: ReturnType<typeof line>[], paid: number) => ({ buyer: BUYER, lines, discountPercentage: 0, discountAmount: 0, payments: cash(paid) });
 
 async function stockOf(id: string): Promise<number> {
   const [row] = await db.select({ stock: menuItems.stock }).from(menuItems).where(eq(menuItems.id, id));
@@ -42,13 +43,13 @@ describe('cobro contra Postgres (US-6 CA-3 y CA-4)', () => {
   it('guarda la venta, sus líneas con el costo congelado, los pagos y la auditoría', async () => {
     const carne = await insertItem({ group: 'empanadas', name: 'Carne', unitCost: '400.00', stock: '12', price1: '1500.00', price3: '4200.00', price6: '8000.00', price12: '15000.00' });
     const empanadas = { group: 'empanadas' as const, presentationKey: 'u3', flavors: [{ menuItemId: carne, units: 3 }], quantity: 2 };
-    const { saleId, total } = await checkoutService.checkout(CALLER, { ...order([line(coca)], 10900), lines: [empanadas, line(coca)], buyerName: 'Marta' });
+    const { saleId, total } = await checkoutService.checkout(CALLER, { ...order([line(coca)], 10900), lines: [empanadas, line(coca)], buyer: { ...BUYER, name: 'Marta' } });
     expect(total).toBe(10900);
-    expect(await db.select().from(sales)).toMatchObject([{ id: saleId, vendorId: CALLER.id, buyerName: 'Marta', total: '10900.00', customerId: null }]);
+    expect(await db.select().from(sales)).toMatchObject([{ id: saleId, vendorId: CALLER.id, buyerName: 'Marta', total: '10900.00', customerId: expect.any(String) }]);
     expect(await db.select().from(saleLines)).toHaveLength(2);
     expect(await db.select({ units: saleLineItems.units, unitCost: saleLineItems.unitCost }).from(saleLineItems).where(eq(saleLineItems.menuItemId, carne))).toEqual([{ units: '6.0', unitCost: '400.00' }]);
     expect(await db.select({ type: salePayments.type, amount: salePayments.amount }).from(salePayments)).toEqual([{ type: 'efectivo', amount: '10900.00' }]);
-    expect(await db.select({ entity: auditLogs.entity, entityId: auditLogs.entityId }).from(auditLogs)).toEqual([{ entity: 'SALE', entityId: saleId }]);
+    expect(await db.select({ entity: auditLogs.entity, entityId: auditLogs.entityId }).from(auditLogs).orderBy(auditLogs.entity)).toEqual([{ entity: 'CUSTOMER', entityId: expect.any(String) }, { entity: 'SALE', entityId: saleId }]);
     expect([await stockOf(carne), await stockOf(coca)]).toEqual([6, 0]);
   });
 

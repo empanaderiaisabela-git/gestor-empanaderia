@@ -73,11 +73,11 @@ describe('pedido actual (US-5)', () => {
     state().start('coca_cola', 'u1');
     state().add('coca', 'one');
     state().close();
-    state().setBuyerName('Juan');
+    state().setBuyer({ name: 'Juan', phone: '11 5555-1234' });
     state().remove(state().lines[0].id);
     expect(state().lines).toEqual([]);
-    expect(state().buyerName).toBe('Juan');
+    expect(state().buyer).toEqual({ customerId: null, name: 'Juan', phone: '11 5555-1234', address: '' });
     state().clear();
-    expect(state().buyerName).toBe('');
+    expect(state().buyer.name).toBe('');
   });
 });

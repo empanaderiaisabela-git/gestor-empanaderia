@@ -164,3 +164,21 @@ Se anotan acá, con la misma forma (pregunta, situación, elegido y qué cambia 
 - **Elegido**: va en todas las filas de las promos, en las presentaciones de varias unidades (½ docena, docena) y en
   las pizzas de 2 sabores. No va en las líneas comunes de una sola unidad, que se corrigen con el "−" del carrito.
 - **Si el dev responde otra cosa**: se muestra también ahí, apagado. Nivel 1.
+
+### I-4 · Cambiar el nombre de un cliente elegido (US-37)
+
+- **Pregunta**: D-2 dice que cambiar el teléfono o el domicilio no toca Clientes. ¿Y si se cambia el nombre?
+- **Situación**: el vendedor elige "Marta Gómez" de las sugerencias, se da cuenta de que es otra persona y escribe
+  "Marta López".
+- **Elegido**: al cambiar el nombre, la venta deja de estar vinculada a ese cliente y se cobra como un cliente nuevo,
+  que se da de alta. El teléfono y el domicilio sí se pueden cambiar sin perder el vínculo. El carrito muestra
+  "Cliente registrado" mientras hay un cliente elegido.
+- **Si el dev responde otra cosa**: el nombre editado queda vinculado al cliente elegido. Nivel 1.
+
+### I-5 · Las ventas viejas y las de los tests (US-37)
+
+- **Pregunta**: las ventas anteriores no tienen cliente. ¿Se migran?
+- **Situación**: el historial tiene ventas con "Sin nombre" o con un comprador escrito a mano.
+- **Elegido**: no se tocan. Quedan con su nombre (o "Sin nombre") y sin cliente vinculado; sólo las ventas nuevas
+  crean o vinculan clientes. La migración 0022 sólo agrega columnas.
+- **Si el dev responde otra cosa**: un script crea los clientes de las ventas viejas con nombre. Nivel 2.

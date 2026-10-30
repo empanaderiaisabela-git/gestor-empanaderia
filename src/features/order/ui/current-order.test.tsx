@@ -17,7 +17,10 @@ function build(group: 'empanadas' | 'pizzas', key: string, picks: [string, 'one'
 }
 
 describe('pedido actual (US-5 CA-5 y CA-6)', () => {
-  beforeEach(() => store().clear());
+  beforeEach(() => {
+    store().clear();
+    store().setBuyer({ name: 'Marta' });
+  });
 
   it('"Quitar uno" resta una unidad de la línea (US-22)', () => {
     build('empanadas', 'u1', [['carne', 'one'], ['carne', 'one']]);
@@ -78,11 +81,15 @@ describe('pedido actual (US-5 CA-5 y CA-6)', () => {
     expect(store().lines).toEqual([]);
   });
 
-  it('el comprador es opcional y queda en el pedido hasta vaciar (CA-6)', () => {
+  it('sin el nombre del cliente no se cobra, y los datos quedan hasta vaciar (US-37 CA-2)', () => {
+    build('empanadas', 'u1', [['carne', 'one']]);
+    act(() => store().setBuyer({ name: '' }));
     render(<CurrentOrder board={board} onCheckout={vi.fn()} />);
-    fireEvent.change(screen.getByPlaceholderText('Sin nombre'), { target: { value: 'Juan' } });
-    expect(store().buyerName).toBe('Juan');
+    expect(screen.getByRole('button', { name: /Cobrar/ }).hasAttribute('disabled')).toBe(true);
+    fireEvent.change(screen.getByLabelText('Nombre del cliente'), { target: { value: 'Juan' } });
+    fireEvent.change(screen.getByLabelText('Domicilio (opcional)'), { target: { value: 'Mitre 123' } });
+    expect(screen.getByRole('button', { name: /Cobrar/ }).hasAttribute('disabled')).toBe(false);
     fireEvent.click(screen.getByRole('button', { name: /Vaciar/ }));
-    expect(store().buyerName).toBe('');
+    expect(store().buyer).toEqual({ customerId: null, name: '', phone: '', address: '' });
   });
 });

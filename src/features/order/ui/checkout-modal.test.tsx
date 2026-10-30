@@ -34,6 +34,7 @@ describe('cobrar desde el tablero (US-6 CA-1 y CA-5)', () => {
   beforeEach(() => {
     useMenuStore.setState({ items: [], isLoaded: false });
     store().clear();
+    store().setBuyer({ name: 'Marta' });
     vi.mocked(checkoutAction).mockReset();
   });
 
@@ -47,7 +48,7 @@ describe('cobrar desde el tablero (US-6 CA-1 y CA-5)', () => {
 
     expect(await screen.findByText('Venta registrada por $15.500')).toBeDefined();
     expect(checkoutAction).toHaveBeenCalledWith({
-      buyerName: '',
+      buyer: { customerId: null, name: 'Marta', phone: '', address: '' },
       lines: [PIZZA, COCA],
       promos: [],
       discountPercentage: 0,
@@ -86,10 +87,10 @@ describe('cobrar desde el tablero (US-6 CA-1 y CA-5)', () => {
   });
 
   it('con un descuento en $, el total baja y se muestra el comprador', async () => {
-    act(() => store().setBuyerName('Marta'));
+    act(() => store().setBuyer({ name: 'Marta', phone: '11 5555-1234' }));
     await openCheckout();
     fireEvent.change(screen.getByLabelText('Descuento $'), { target: { value: '500' } });
-    expect(screen.getByText('Comprador: Marta · Subtotal $15.500')).toBeDefined();
+    expect(screen.getByText('Cliente: Marta · 11 5555-1234 · Subtotal $15.500')).toBeDefined();
     expect(screen.getByRole('button', { name: 'Confirmar $15.000' })).toBeDefined();
   });
 });

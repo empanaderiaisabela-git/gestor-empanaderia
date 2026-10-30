@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { customerAddress, customerName, customerPhone } from '@/features/customer/domain/customer.schema';
 import { MENU_GROUPS } from '@/features/menu/domain/menu-groups';
 import { PAYMENT_TYPES } from './order-validation';
 
@@ -43,16 +44,18 @@ const paymentSchema = z
   })
   .refine(cardFits, { message: 'Elegí la tarjeta y las cuotas', path: ['cardId'] });
 
+const buyerSchema = z.strictObject({
+  customerId: z.uuid('Elegí un cliente válido').nullable(),
+  name: z.string('Anotá el nombre del cliente').trim().min(1, 'Anotá el nombre del cliente').pipe(customerName),
+  phone: customerPhone,
+  address: customerAddress,
+});
+
 const distinctTypes = (payments: { type: string }[]): boolean => new Set(payments.map((payment) => payment.type)).size === payments.length;
 
 export const checkoutSchema = z
   .strictObject({
-    buyerName: z
-      .string('Ingresá un nombre')
-      .trim()
-      .max(60, 'El nombre es demasiado largo')
-      .nullish()
-      .transform((value) => value || null),
+    buyer: buyerSchema,
     lines: z.array(lineSchema).max(MAX_LINES, 'El pedido tiene demasiadas líneas'),
     promos: z.array(promoLineSchema).max(MAX_LINES, 'El pedido tiene demasiadas promos').optional(),
     discountPercentage: z.number('Ingresá un porcentaje').min(0, 'El descuento no puede ser negativo').max(100, 'El descuento no puede superar el 100 %'),
@@ -64,4 +67,5 @@ export type CheckoutInput = z.input<typeof checkoutSchema>;
 export type CheckoutData = z.output<typeof checkoutSchema>;
 export type CheckoutLine = CheckoutData['lines'][number];
 export type CheckoutPromo = NonNullable<CheckoutData['promos']>[number];
+export type CheckoutBuyer = CheckoutData['buyer'];
 export type CheckoutResult = { saleId: string; total: number };

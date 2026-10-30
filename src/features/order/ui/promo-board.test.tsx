@@ -21,6 +21,7 @@ const rowOf = (name: string): HTMLElement => screen.getByText(name).closest('li'
 describe('promos en el tablero (US-9 CA-1 y CA-2)', () => {
   beforeEach(() => {
     store().clear();
+    store().setBuyer({ name: 'Marta' });
     usePromotionStore.setState({ promotions: [], isLoaded: false });
     promotions.fetch.mockResolvedValue([MEDIA_Y_COCA, promo({ id: 'p2', name: 'Vieja', isActive: false }), promo({ id: 'p3', name: 'Ciabatta', components: [{ group: 'ciabattas', presentationKey: 'u1', quantity: 1 }] })]);
   });

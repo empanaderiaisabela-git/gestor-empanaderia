@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useCustomerStore } from '@/features/customer/store/customer.store';
 import { useMenuStore } from '@/features/menu/store/menu.store';
 import { checkoutAction } from '@/features/order/actions/checkout';
 import type { Discount } from '@/features/order/domain/order-validation';
@@ -17,10 +18,10 @@ export type CheckoutModel = {
 };
 
 async function submit({ discount, payments }: CheckoutDraft): ReturnType<typeof checkoutAction> {
-  const { lines, promos, buyerName } = useOrderStore.getState();
+  const { lines, promos, buyer } = useOrderStore.getState();
   const filled = lines.filter((line) => line.flavors.length > 0);
   return checkoutAction({
-    buyerName,
+    buyer,
     lines: filled.map(({ group, presentationKey, flavors, quantity }) => ({ group, presentationKey, flavors, quantity })),
     promos: promos.map(({ promotionId, parts }) => ({ promotionId, quantity: 1, parts: parts.map(({ group, presentationKey, flavors }) => ({ group, presentationKey, flavors })) })),
     discountPercentage: discount.percentage,
@@ -36,6 +37,7 @@ export function useCheckout(): CheckoutModel {
   const confirm = async (draft: CheckoutDraft): Promise<string | null> => {
     const result = await submit(draft);
     useMenuStore.getState().setLoaded(false);
+    useCustomerStore.getState().setLoaded(false);
     if (!result.success) return result.error;
     useOrderStore.getState().clear();
     setOpen(false);

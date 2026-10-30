@@ -4,7 +4,7 @@ import { MESSAGES } from '@/config/messages';
 import { asUser, TEST_USER_IDS } from '@/test/as-user';
 import { cookieJar } from '@/test/cookie-jar';
 import { fakeCheckout } from '../testing/fake-checkout-unit-of-work';
-import { checkoutOf, COCA, cokes, loadMenu, stockOf } from '../testing/checkout-fixtures';
+import { buyerOf, checkoutOf, COCA, cokes, loadMenu, stockOf } from '../testing/checkout-fixtures';
 import { checkoutAction } from './checkout';
 import { fetchSaleHistory } from './fetch-sale-history';
 import { voidSaleAction } from './void-sale';
@@ -20,7 +20,7 @@ vi.mock('@/features/order/repository/sale-history-unit-of-work', async () => {
 
 async function sellTwoCokes(): Promise<string> {
   await asUser({ role: 'vendedor' });
-  const result = await checkoutAction(checkoutOf([cokes(2)], { buyerName: 'Rocío', payments: [{ type: 'debito', amount: 5000 }] }));
+  const result = await checkoutAction(checkoutOf([cokes(2)], { buyer: buyerOf('Rocío'), payments: [{ type: 'debito', amount: 5000 }] }));
   if (!result.success) throw new Error(result.error);
   return result.data.saleId;
 }

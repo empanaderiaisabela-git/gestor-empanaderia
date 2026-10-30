@@ -22,7 +22,7 @@ test.describe('cobrar el pedido (US-6)', () => {
 
     await page.getByRole('button', { name: /^Ver pedido/ }).click();
     const pedido = page.getByRole('region', { name: 'Pedido actual' });
-    await pedido.getByLabel('Comprador (opcional)').fill('Marta');
+    await pedido.getByLabel('Nombre del cliente').fill('Marta');
     await pedido.getByRole('button', { name: 'Cobrar $15.100' }).click();
     await page.getByRole('button', { name: 'Débito' }).click();
     await page.getByLabel('Monto en Efectivo').fill('10000');

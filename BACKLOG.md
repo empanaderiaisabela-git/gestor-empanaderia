@@ -3719,7 +3719,7 @@ trazabilidad de cada punto del pedido en `specs.md` a su ítem.
 | 1   | [BUG-26](#bug-26--carrito-columnas-separadas-más-ancho-y-slide-suave) | Carrito: columnas separadas, más ancho y slide suave | En revisión | T-23 | 45 min |
 | 2   | [US-36](#us-36--carrito--para-sumar-uno) | Carrito: "+" para sumar uno | En revisión | BUG-26 | 1 h |
 | 3   | [US-39](#us-39--promos-selector-prolijo-quitar-uno-y-siguiente) | Promos: selector prolijo, "Quitar uno" y "Siguiente" | En revisión | T-23 | 2 h |
-| 4   | [US-37](#us-37--cliente-en-el-carrito-con-alta-automática) | Cliente en el carrito, con alta automática | Por hacer | US-36 | 4 h |
+| 4   | [US-37](#us-37--cliente-en-el-carrito-con-alta-automática) | Cliente en el carrito, con alta automática | En revisión | US-36 | 4 h |
 | 5   | [US-38](#us-38--datos-al-día-sin-sincronizar) | Datos al día sin "Sincronizar" | Por hacer | T-23 | 2 h 30 min |
 | 6   | [T-24](#t-24--cierre-del-sprint-5) | Cierre del Sprint 5 | Por hacer | todos | 1 h |
 |     |    | **Total del sprint** | | | **11 h 45 min** |
@@ -3867,33 +3867,45 @@ pasar al componente siguiente cuando yo quiera, de forma que no me equivoque al 
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Por hacer |
+| Estado       | En revisión |
 | Dueño        | Agente    |
-| Inicio       | — |
+| Inicio       | 2026-10-29 |
 | Tamaño       | L         |
 | Depende de   | US-36      |
 | Plan         | [`docs/plans/sprint-5.md`](docs/plans/sprint-5.md) |
 | Merge        | —         |
-| Horas reales | —         |
+| Horas reales | 1 h 50 min |
 
 **Historia**: Como vendedor quiero anotar el nombre, el teléfono y el domicilio del cliente al armar la venta, y que
 se completen solos si ya es cliente, de forma que la grilla de Clientes se arme sola con cada venta.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · La migración 0022 suma `customers.address` (hasta 150), lleva `sales.buyer_name` a 100 y suma `sales.buyer_phone` y `sales.buyer_address`, opcionales. Lo cubre un test de integración · Estimación: 30 min · Completado: —
+- [x] **CA-1** · La migración 0022 suma `customers.address` (hasta 150), lleva `sales.buyer_name` a 100 y suma `sales.buyer_phone` y `sales.buyer_address`, opcionales. Lo cubre un test de integración · Estimación: 30 min · Completado: 2026-10-30 00:53
 
-- [ ] **CA-2** · El carrito pide Nombre (obligatorio), Teléfono y Domicilio (opcionales). "Cobrar" se deshabilita sin nombre, y el servidor responde `VALIDATION` "Anotá el nombre del cliente" (P-3) · Estimación: 45 min · Completado: —
+- [x] **CA-2** · El carrito pide Nombre (obligatorio), Teléfono y Domicilio (opcionales). "Cobrar" se deshabilita sin nombre, y el servidor responde `VALIDATION` "Anotá el nombre del cliente" (P-3) · Estimación: 45 min · Completado: 2026-10-30 00:53
 
-- [ ] **CA-3** · Al escribir el nombre o el teléfono aparecen hasta 5 clientes activos que coinciden, sin importar mayúsculas ni acentos. Al elegir uno se completan sus datos (D-1, P-4) · Estimación: 1 h · Completado: —
+- [x] **CA-3** · Al escribir el nombre o el teléfono aparecen hasta 5 clientes activos que coinciden, sin importar mayúsculas ni acentos. Al elegir uno se completan sus datos (D-1, P-4) · Estimación: 1 h · Completado: 2026-10-30 00:53
 
-- [ ] **CA-4** · Al cobrar sin elegir un cliente se crea uno nuevo en la misma transacción, con su log. Con un cliente elegido, la venta lo vincula sin cambiar Clientes y guarda los datos tal como se anotaron (D-2). Un cliente desactivado o borrado da `NOT_FOUND` "El cliente ya no existe" (P-5). Lo cubren tests de contrato, de servicio y de integración · Estimación: 1 h 15 min · Completado: —
+- [x] **CA-4** · Al cobrar sin elegir un cliente se crea uno nuevo en la misma transacción, con su log. Con un cliente elegido, la venta lo vincula sin cambiar Clientes y guarda los datos tal como se anotaron (D-2). Un cliente desactivado o borrado da `NOT_FOUND` "El cliente ya no existe" (P-5). Lo cubren tests de contrato, de servicio y de integración · Estimación: 1 h 15 min · Completado: 2026-10-30 00:53
 
-- [ ] **CA-5** · Clientes muestra y edita el "Domicilio". El comprobante de la venta muestra el teléfono y el domicilio si los tiene (P-6). Lo cubre un E2E · Estimación: 30 min · Completado: —
+- [x] **CA-5** · Clientes muestra y edita el "Domicilio". El comprobante de la venta muestra el teléfono y el domicilio si los tiene (P-6). Lo cubre un E2E · Estimación: 30 min · Completado: 2026-10-30 00:53
 
 **Notas**
 
 - Nivel 3: cambia la entrada de `checkoutAction` y trae migración. La base de Supabase la migra el dev.
+- Migración `0022_cliente-en-la-venta`: `customers.address`, `sales.buyer_name` a 100, `sales.buyer_phone` y
+  `sales.buyer_address`. La base local quedó con 23 migraciones. **Supabase la corre el dev** (quedan 23).
+- `checkoutSchema` cambia `buyerName` por `buyer` (`customerId` o `null`, nombre, teléfono y domicilio), con las
+  reglas de `customer.schema.ts`. El paso `customerFor` (`services/checkout-customer.ts`) vincula o crea al cliente
+  dentro de la transacción del cobro, con `checkout-customers.repository.ts` (el cliente elegido se lee con
+  `FOR SHARE` para que no se borre a mitad del cobro).
+- Carrito: `ui/customer-fields.tsx` con las sugerencias de `customer/domain/customer-search.ts`. Clientes suma
+  "Domicilio" en la grilla, la tarjeta y el formulario; el comprobante muestra teléfono y domicilio.
+- Doc nuevo: `docs/features/customer/README.md`. Decisiones I-4 e I-5 en `docs/plans/sprint-5.md`.
+- `npm run verify` en verde: 1032 tests, cobertura 96,34/90,32, 111 de integración, mutación 89,82 y build. E2E:
+  `cliente-en-venta` (nuevo), cobro, promo, estadísticas, prepizzas, historial, crédito, compuestas y clientes (25 en
+  verde).
 
 ### US-38 · Datos al día sin "Sincronizar"
 

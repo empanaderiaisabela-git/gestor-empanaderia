@@ -33,6 +33,7 @@ test.describe('prepizzas (US-29, BUG-23)', () => {
     await page.getByRole('button', { name: /^Ver pedido/ }).click();
     const pedido = page.getByRole('region', { name: 'Pedido actual' });
     await expect(pedido.getByText('Muzza / Napolitana')).toBeVisible();
+    await pedido.getByLabel('Nombre del cliente').fill('Cliente pizzas');
     await pedido.getByRole('button', { name: 'Cobrar $23.000' }).click();
     await page.getByRole('button', { name: 'Confirmar $23.000' }).click();
     await expect(page.getByText('Venta registrada por $23.000')).toBeVisible();

@@ -19,7 +19,7 @@ async function cobrarPedidoDeRocio(page: Page): Promise<void> {
   await page.getByRole('button', { name: 'Listo' }).click();
   await page.getByRole('button', { name: /^Ver pedido/ }).click();
   const pedido = page.getByRole('region', { name: 'Pedido actual' });
-  await pedido.getByLabel('Comprador (opcional)').fill('Rocío');
+  await pedido.getByLabel('Nombre del cliente').fill('Rocío');
   await pedido.getByRole('button', { name: 'Cobrar $10.500' }).click();
   await page.getByRole('button', { name: 'Confirmar $10.500' }).click();
   await expect(page.getByText('Venta registrada por $10.500')).toBeVisible();

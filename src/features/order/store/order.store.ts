@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import type { MenuGroup } from '@/features/menu/domain/menu-groups';
+import type { CheckoutBuyer } from '@/features/order/domain/checkout.schema';
 import { type AddMode, addFlavor, isComplete, mergeLine, type OrderLine } from '@/features/order/domain/order-line';
 import { type LineEditActions, lineEditActions } from './order-line-actions';
 import { type PromoActions, promoActions, type PromoState } from './order-promos';
@@ -9,22 +10,23 @@ type OrderState = PromoState &
   LineEditActions & {
     lines: OrderLine[];
     openLineId: string | null;
-    buyerName: string;
+    buyer: CheckoutBuyer;
     start: (group: MenuGroup, presentationKey: string) => void;
     add: (menuItemId: string, mode: AddMode) => boolean;
     close: () => void;
     remove: (lineId: string) => void;
     clear: () => void;
-    setBuyerName: (buyerName: string) => void;
+    setBuyer: (patch: Partial<CheckoutBuyer>) => void;
   };
 
 const newLine = (group: MenuGroup, presentationKey: string): OrderLine => ({ id: crypto.randomUUID(), group, presentationKey, flavors: [], quantity: 1 });
+const NO_BUYER: CheckoutBuyer = { customerId: null, name: '', phone: '', address: '' };
 const withoutEmpty = (lines: OrderLine[]): OrderLine[] => lines.filter((line) => line.flavors.length > 0);
 
 export const useOrderStore = create<OrderState>((set, get) => ({
   lines: [],
   openLineId: null,
-  buyerName: '',
+  buyer: NO_BUYER,
   promos: [],
   openPromo: null,
   ...promoActions(set, get),
@@ -48,6 +50,6 @@ export const useOrderStore = create<OrderState>((set, get) => ({
   },
   close: () => set({ lines: withoutEmpty(get().lines), openLineId: null, openPromo: null }),
   remove: (lineId) => set({ lines: get().lines.filter((line) => line.id !== lineId), openLineId: get().openLineId === lineId ? null : get().openLineId }),
-  clear: () => set({ lines: [], openLineId: null, buyerName: '', promos: [], openPromo: null }),
-  setBuyerName: (buyerName) => set({ buyerName }),
+  clear: () => set({ lines: [], openLineId: null, buyer: NO_BUYER, promos: [], openPromo: null }),
+  setBuyer: (patch) => set({ buyer: { ...get().buyer, ...patch } }),
 }));

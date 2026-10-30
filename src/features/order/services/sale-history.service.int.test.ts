@@ -40,7 +40,7 @@ describe('historial y anulación contra Postgres (US-7)', () => {
     const half = { group: 'pizzas' as const, presentationKey: 'pizza_2', flavors: [{ menuItemId: muzza, units: 0.5 }, { menuItemId: napo, units: 0.5 }], quantity: 1 };
     const whole = { group: 'pizzas' as const, presentationKey: 'pizza_1', flavors: [{ menuItemId: muzza, units: 1 }], quantity: 2 };
     const payments = [{ type: 'efectivo' as const, amount: 20000 }, { type: 'transferencia' as const, amount: 14000 }];
-    ({ saleId } = await checkoutService.checkout(VENDOR, { buyerName: 'Rocío', lines: [half, whole], discountPercentage: 0, discountAmount: 0, payments }));
+    ({ saleId } = await checkoutService.checkout(VENDOR, { buyer: { customerId: null, name: 'Rocío', phone: '', address: '' }, lines: [half, whole], discountPercentage: 0, discountAmount: 0, payments }));
   });
 
   afterAll(async () => {
@@ -60,7 +60,7 @@ describe('historial y anulación contra Postgres (US-7)', () => {
   it('el cobro descontó 3 prepizzas, y otra pizza sin prepizzas da INSUFFICIENT_STOCK (US-29 CA-3)', async () => {
     expect([await stockOf(prepizza), await stockOf(muzza), await stockOf(napo)]).toEqual([0, 0, 0]);
     const one = { group: 'pizzas' as const, presentationKey: 'pizza_1', flavors: [{ menuItemId: napo, units: 1 }], quantity: 1 };
-    const input = { buyerName: null, lines: [one], discountPercentage: 0, discountAmount: 0, payments: [{ type: 'efectivo' as const, amount: 12000 }] };
+    const input = { buyer: { customerId: null, name: 'Rocío', phone: '', address: '' }, lines: [one], discountPercentage: 0, discountAmount: 0, payments: [{ type: 'efectivo' as const, amount: 12000 }] };
     await expect(checkoutService.checkout(VENDOR, input)).rejects.toMatchObject({ code: 'INSUFFICIENT_STOCK', message: 'No hay stock suficiente de Prepizza.' });
   });
 

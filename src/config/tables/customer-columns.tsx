@@ -34,6 +34,11 @@ export function getCustomerColumns({ role, onEdit, onToggleActive }: ColumnActio
       cell: (c) => c.phone || '--',
     },
     {
+      header: 'Domicilio',
+      cellClassName: 'text-zinc-700 dark:text-zinc-200 max-w-[180px] truncate',
+      cell: (c) => <span title={c.address || '--'}>{c.address || '--'}</span>,
+    },
+    {
       header: 'Email',
       cellClassName: 'text-zinc-700 dark:text-zinc-200 max-w-[150px] truncate',
       cell: (c) => <span title={c.email || '--'}>{c.email || '--'}</span>,

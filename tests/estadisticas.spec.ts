@@ -11,6 +11,7 @@ test.describe('Estadísticas de la jornada (US-12)', () => {
     await gusto(page, 'Pepsi 1,5 L').getByRole('button', { name: 'Agregar' }).click();
     await page.getByRole('button', { name: 'Listo' }).click();
     await page.getByRole('button', { name: /^Ver pedido/ }).click();
+    await page.getByRole('region', { name: 'Pedido actual' }).getByLabel('Nombre del cliente').fill('Cliente estadísticas');
     await page.getByRole('region', { name: 'Pedido actual' }).getByRole('button', { name: 'Cobrar $3.200' }).click();
     await page.getByRole('button', { name: 'Transferencia' }).click();
     await page.getByRole('button', { name: 'Efectivo' }).click();
