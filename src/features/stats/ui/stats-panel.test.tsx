@@ -35,7 +35,8 @@ describe('pantalla de Estadísticas (US-12 CA-1 a CA-5)', () => {
     render(<StatsPanel />);
     expect(await within(await screen.findByRole('region', { name: 'Empanadas' })).findByText('$12.000')).toBeDefined();
     expect(card('Empanadas').className).toContain('border-group-empanadas-accent');
-    expect(card('Empanadas').className).toContain('bg-white');
+    expect(card('Empanadas').className).toContain('bg-group-empanadas-accent/5 dark:border-group-empanadas-dark-accent dark:bg-group-empanadas-dark-accent/10');
+    expect(card('Ganancia').className).toContain('bg-stat-profit-accent/5 dark:border-stat-profit-dark-accent dark:bg-stat-profit-dark-accent/10');
     expect(card('Efectivo').className).toContain('bg-pay-efectivo');
     expect(within(card('Promos')).getByText('$9.000')).toBeDefined();
     expect(within(card('Ganancia')).getByText('$20.000')).toBeDefined();

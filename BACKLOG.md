@@ -3723,8 +3723,9 @@ trazabilidad de cada punto del pedido en `specs.md` a su ítem.
 | 5   | [US-38](#us-38--datos-al-día-sin-sincronizar) | Datos al día sin "Sincronizar" | En revisión | T-23 | 2 h 30 min |
 | 6   | [BUG-27](#bug-27--selector-los-botones-de-un-gusto-con-nombre-largo-se-desalinean) | Selector: los botones de un gusto con nombre largo se desalinean | En revisión | US-39 | 20 min |
 | 7   | [US-40](#us-40--estadísticas-calendarios-a-la-derecha-del-título) | Estadísticas: calendarios a la derecha del título | En revisión | US-32 | 15 min |
-| 8   | [T-24](#t-24--cierre-del-sprint-5) | Cierre del Sprint 5 | En progreso | todos | 1 h |
-|     |    | **Total del sprint** | | | **12 h 20 min** |
+| 8   | [US-41](#us-41--estadísticas-fondo-suave-del-color-de-cada-tarjeta) | Estadísticas: fondo suave del color de cada tarjeta | En revisión | US-21 | 15 min |
+| 9   | [T-24](#t-24--cierre-del-sprint-5) | Cierre del Sprint 5 | En progreso | todos | 1 h |
+|     |    | **Total del sprint** | | | **12 h 35 min** |
 
 ### T-23 · Backlog del Sprint 5
 
@@ -4015,6 +4016,35 @@ de cuál es el inicio y cuál el fin, de forma que el resto de la pantalla suba 
 - `PageHeader` acepta `actions`, lo que va a la derecha del título. Las demás pantallas no lo usan y quedan igual.
 - En el celular, el título ocupa el ancho y los calendarios quedan uno arriba del otro, como antes. Las aclaraciones
   también se apilan, en el mismo orden.
+
+### US-41 · Estadísticas: fondo suave del color de cada tarjeta
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-30 |
+| Tamaño       | XS        |
+| Depende de   | US-21     |
+| Plan         | Pedido del dev el 2026-10-30, sin plan aparte |
+| Merge        | —         |
+| Horas reales | 15 min |
+
+**Historia**: Como administrador quiero que cada tarjeta de Estadísticas con marco de color tenga un fondo muy suave
+de ese mismo color (Coca-Cola con marco rojo, fondo rojo muy suave), de forma que cada número se asocie de un
+vistazo con su categoría.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · Las tarjetas de cada comida, Promos, Ventas registradas y Ganancia tienen de fondo el color de su marco al 5 % en modo claro y al 10 % en modo oscuro. Lo cubre un test de componente · Estimación: 10 min · Completado: 2026-10-30 10:05
+
+- [x] **CA-2** · Los íconos, los títulos y los montos se leen igual que antes, en claro y en oscuro. Se mira en el navegador · Estimación: 5 min · Completado: 2026-10-30 10:07
+
+**Notas**
+
+- Nivel 1.
+- Las tarjetas de medios de pago ya tenían fondo de color, así que quedan igual.
+- `GROUP_THEME.outline` pasa a llamarse `kpi`, porque ahora lleva el marco y el fondo. Sólo lo usa Estadísticas.
 
 ### T-24 · Cierre del Sprint 5
 

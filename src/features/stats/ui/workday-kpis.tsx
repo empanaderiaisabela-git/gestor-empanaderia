@@ -1,6 +1,6 @@
 import type { JSX } from 'react';
 import { GROUP_THEME } from '@/config/group-theme';
-import { NEUTRAL_CARD, PAYMENT_THEME, STAT_THEME } from '@/config/stat-theme';
+import { CARD_INK, PAYMENT_THEME, STAT_THEME } from '@/config/stat-theme';
 import { GROUPS, MENU_GROUPS } from '@/features/menu/domain/menu-groups';
 import { PAYMENT_LABELS, PAYMENT_TYPES } from '@/features/order/domain/order-validation';
 import type { WorkdayStats } from '@/features/stats/domain/stats.schema';
@@ -14,7 +14,7 @@ const title = 'text-base font-bold uppercase tracking-wider text-zinc-800 dark:t
 export function GroupKpis({ stats }: { stats: WorkdayStats }): JSX.Element {
   const card = (group: (typeof MENU_GROUPS)[number]): JSX.Element => {
     const theme = GROUP_THEME[group];
-    return <KpiCard key={group} label={GROUPS[group].label} value={stats.byGroup[group]} icon={theme.icon} chip={theme.chip} tone={`${NEUTRAL_CARD} ${theme.outline}`} />;
+    return <KpiCard key={group} label={GROUPS[group].label} value={stats.byGroup[group]} icon={theme.icon} chip={theme.chip} tone={`${CARD_INK} ${theme.kpi}`} />;
   };
   return (
     <div className='space-y-3'>
