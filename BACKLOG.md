@@ -3716,7 +3716,7 @@ trazabilidad de cada punto del pedido en `specs.md` a su ítem.
 | #   | ID | Título | Estado | Depende de | Estimación |
 | --- | -- | ------ | ------ | ---------- | ---------- |
 | 0   | [T-23](#t-23--backlog-del-sprint-5) | Backlog del Sprint 5 | En revisión | T-22 | 30 min |
-| 1   | [BUG-26](#bug-26--carrito-columnas-separadas-más-ancho-y-slide-suave) | Carrito: columnas separadas, más ancho y slide suave | Por hacer | T-23 | 45 min |
+| 1   | [BUG-26](#bug-26--carrito-columnas-separadas-más-ancho-y-slide-suave) | Carrito: columnas separadas, más ancho y slide suave | En revisión | T-23 | 45 min |
 | 2   | [US-36](#us-36--carrito--para-sumar-uno) | Carrito: "+" para sumar uno | Por hacer | BUG-26 | 1 h |
 | 3   | [US-39](#us-39--promos-selector-prolijo-quitar-uno-y-siguiente) | Promos: selector prolijo, "Quitar uno" y "Siguiente" | Por hacer | T-23 | 2 h |
 | 4   | [US-37](#us-37--cliente-en-el-carrito-con-alta-automática) | Cliente en el carrito, con alta automática | Por hacer | US-36 | 4 h |
@@ -3750,14 +3750,14 @@ cada cambio tenga su criterio, su estimación y su rama.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Por hacer |
+| Estado       | En revisión |
 | Dueño        | Agente    |
-| Inicio       | — |
+| Inicio       | 2026-10-29 |
 | Tamaño       | S         |
 | Depende de   | T-23      |
 | Plan         | [`docs/plans/sprint-5.md`](docs/plans/sprint-5.md) |
 | Merge        | —         |
-| Horas reales | —         |
+| Horas reales | 35 min |
 
 **Esperado**:
 
@@ -3773,15 +3773,25 @@ cada cambio tenga su criterio, su estimación y su rama.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · Los encabezados y las celdas del carrito tienen separación horizontal. Cantidad, Unidades e Importe van en un solo renglón. Lo cubre un test de componente · Estimación: 20 min · Completado: —
+- [x] **CA-1** · Los encabezados y las celdas del carrito tienen separación horizontal. Cantidad, Unidades e Importe van en un solo renglón. Lo cubre un test de componente · Estimación: 20 min · Completado: 2026-10-29 23:59
 
-- [ ] **CA-2** · Desde `lg`, el carrito ocupa el 45 % del ancho (P-8). En el celular y la tablet queda como hoy · Estimación: 10 min · Completado: —
+- [x] **CA-2** · Desde `lg`, el carrito ocupa el 45 % del ancho (P-8). En el celular y la tablet queda como hoy · Estimación: 10 min · Completado: 2026-10-29 23:59
 
-- [ ] **CA-3** · El carrito entra hacia la izquierda y sale hacia la derecha con un slide de 450 ms, y el fondo acompaña. Se mide en el navegador · Estimación: 15 min · Completado: —
+- [x] **CA-3** · El carrito entra hacia la izquierda y sale hacia la derecha con un slide de 450 ms, y el fondo acompaña. Se mide en el navegador · Estimación: 15 min · Completado: 2026-10-29 23:59
 
 **Notas**
 
 - Nivel 1.
+- **Causa de fondo del slide**: la regla global `* { transition-property: … }` de `globals.css` no estaba en
+  ninguna capa. En Tailwind v4, las utilidades viven en `@layer utilities`, y una regla sin capa les gana siempre,
+  así que ningún `transition-*` de la app tenía efecto: el carrito aparecía y desaparecía de golpe. La regla pasó a
+  `@layer base` en `src/app/motion.css`, y `globals.css` bajó 6 líneas. Ahora las transiciones de toda la app
+  funcionan como dicen sus clases.
+- E2E de `tablero-ventas` a 1400 px: el carrito mide 630 px (45 %), `transition-duration` es 0,45 s y los
+  encabezados tienen `padding-left` 12,75 px (`px-3` con la fuente de 17 px). Sin el cambio de capa, el test falla
+  (0,25 s).
+- El navegador integrado mostraba estilos viejos con el panel oculto, así que la medición quedó en el E2E.
+- Lint, typecheck, 12 tests de componente del carrito y 8 E2E de tablero en verde.
 
 ### US-36 · Carrito: "+" para sumar uno
 

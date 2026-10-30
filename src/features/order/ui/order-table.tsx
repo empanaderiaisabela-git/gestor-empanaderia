@@ -15,10 +15,10 @@ export function OrderTable({ lines, promos = [], board, onRemove, onRemoveOne, p
     <table className='w-full text-left'>
       <thead className='text-xs uppercase text-zinc-700 dark:text-zinc-200'>
         <tr>
-          <th className='pb-2'>Comida</th>
-          <th className='pb-2'>Cantidad</th>
-          <th className='pb-2'>Unidades</th>
-          <th className='pb-2 text-right'>Importe</th>
+          <th className='pb-2 pr-3'>Comida</th>
+          <th className='pb-2 px-3 whitespace-nowrap'>Cantidad</th>
+          <th className='pb-2 px-3 whitespace-nowrap'>Unidades</th>
+          <th className='pb-2 px-3 text-right'>Importe</th>
           <th />
         </tr>
       </thead>

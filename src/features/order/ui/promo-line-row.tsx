@@ -13,7 +13,7 @@ export function PromoLineRow({ promo, board, actions }: PromoLineRowProps): JSX.
   const flavors = describePromoFlavors(promo, board.nameOf);
   return (
     <tr className='border-b border-zinc-100 dark:border-zinc-800'>
-      <td className='py-2 pr-2'>
+      <td className='py-2 pr-3'>
         <span className='font-semibold text-zinc-900 dark:text-zinc-50'>Promo · {promo.name}</span>
         {flavors && <span className='block text-sm text-zinc-700 dark:text-zinc-200'>{flavors}</span>}
         {!isPromoComplete(promo) && (
@@ -22,9 +22,9 @@ export function PromoLineRow({ promo, board, actions }: PromoLineRowProps): JSX.
           </button>
         )}
       </td>
-      <td className='py-2 pr-2 text-sm'>1 promo</td>
-      <td className='py-2 pr-2 text-sm'>{units.toLocaleString('es-AR')}</td>
-      <td className='py-2 pr-2 text-right font-semibold'>{formatMoney(promo.price)}</td>
+      <td className='py-2 px-3 text-sm whitespace-nowrap'>1 promo</td>
+      <td className='py-2 px-3 text-sm whitespace-nowrap'>{units.toLocaleString('es-AR')}</td>
+      <td className='py-2 px-3 text-right font-semibold whitespace-nowrap'>{formatMoney(promo.price)}</td>
       <td className='py-2 text-right'>
         <button onClick={() => actions.onRemove(promo.id)} title='Quitar del pedido' className='p-1.5 rounded-lg text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-500/10'>
           <Trash2 className='w-4 h-4' />

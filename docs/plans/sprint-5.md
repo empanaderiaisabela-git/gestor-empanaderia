@@ -135,3 +135,13 @@ textuales en `docs/requerimientos/specs.md`, en "Pedido del cliente para cerrar 
 ## Decisiones tomadas durante la implementación
 
 Se anotan acá, con la misma forma (pregunta, situación, elegido y qué cambia si el dev responde otra cosa).
+
+### I-1 · Las transiciones de toda la app (BUG-26)
+
+- **Pregunta**: el slide del carrito no se veía porque una regla global de `globals.css` anulaba todas las clases
+  `transition-*`. ¿Se arregla sólo el carrito o la regla global?
+- **Situación**: el vendedor abre el carrito y aparece de golpe; tampoco se ven las transiciones de los botones con
+  `transition-opacity` o `transition-transform`.
+- **Elegido**: se arregla la regla global. Pasa a `@layer base`, así que las clases de cada componente le ganan.
+  Ahora se ven todas las transiciones que el código ya pedía, no sólo la del carrito.
+- **Si el dev responde otra cosa**: se vuelve a la regla sin capa y el carrito usa un estilo propio. Nivel 1.

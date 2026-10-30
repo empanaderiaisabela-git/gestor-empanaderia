@@ -44,6 +44,15 @@ describe('pedido actual (US-5 CA-5 y CA-6)', () => {
     expect(screen.getByText('$12.000')).toBeDefined();
   });
 
+  it('cantidad y unidades van separadas y en un renglón (BUG-26)', () => {
+    build('empanadas', 'u1', [['carne', 'one'], ['carne', 'one']]);
+    render(<CurrentOrder board={board} onCheckout={vi.fn()} />);
+    for (const cell of [screen.getByRole('columnheader', { name: 'Cantidad' }), screen.getByRole('columnheader', { name: 'Unidades' }), screen.getByText('1 unidad × 2')]) {
+      expect(cell.className).toContain('px-3');
+      expect(cell.className).toContain('whitespace-nowrap');
+    }
+  });
+
   it('una línea incompleta muestra "faltan N" y bloquea el cobro', () => {
     build('empanadas', 'u6', [['carne', 'one']]);
     render(<CurrentOrder board={board} onCheckout={vi.fn()} />);
