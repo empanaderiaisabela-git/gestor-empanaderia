@@ -3696,3 +3696,227 @@ se probó.
   tests, cobertura 96,21/90,14, 108 de integración, mutación 89,79 y build; 72 E2E en verde.
 - El dev corrió las migraciones en Supabase el 2026-10-29: quedaron 22. Hoy el sistema corre sólo en local.
 - El dev dio el OK al merge a `main` el 2026-10-29.
+
+## Sprint 5 · Cierre de la primera entrega
+
+------------------------------------------------------------------------------------------------------------------------
+
+**Objetivo**: lo que pidió el cliente en la reunión del 2026-10-29 para cerrar la primera entrega:
+
+- En el carrito: un "+", los datos del cliente con alta automática, columnas separadas y un panel más ancho con
+  slide suave.
+- En las promos: un selector de gustos prolijo, con "Quitar uno" y "Siguiente".
+- En todo el sistema: datos al día sin tocar "Sincronizar".
+
+**Plan del sprint**: [`docs/plans/sprint-5.md`](docs/plans/sprint-5.md). Tiene las decisiones del dev (2026-10-29), las provisorias P-1 a P-8, el orden y la
+trazabilidad de cada punto del pedido en `specs.md` a su ítem.
+
+### Resumen del Sprint 5
+
+| #   | ID | Título | Estado | Depende de | Estimación |
+| --- | -- | ------ | ------ | ---------- | ---------- |
+| 0   | [T-23](#t-23--backlog-del-sprint-5) | Backlog del Sprint 5 | En revisión | T-22 | 30 min |
+| 1   | [BUG-26](#bug-26--carrito-columnas-separadas-más-ancho-y-slide-suave) | Carrito: columnas separadas, más ancho y slide suave | Por hacer | T-23 | 45 min |
+| 2   | [US-36](#us-36--carrito--para-sumar-uno) | Carrito: "+" para sumar uno | Por hacer | BUG-26 | 1 h |
+| 3   | [US-39](#us-39--promos-selector-prolijo-quitar-uno-y-siguiente) | Promos: selector prolijo, "Quitar uno" y "Siguiente" | Por hacer | T-23 | 2 h |
+| 4   | [US-37](#us-37--cliente-en-el-carrito-con-alta-automática) | Cliente en el carrito, con alta automática | Por hacer | US-36 | 4 h |
+| 5   | [US-38](#us-38--datos-al-día-sin-sincronizar) | Datos al día sin "Sincronizar" | Por hacer | T-23 | 2 h 30 min |
+| 6   | [T-24](#t-24--cierre-del-sprint-5) | Cierre del Sprint 5 | Por hacer | todos | 1 h |
+|     |    | **Total del sprint** | | | **11 h 45 min** |
+
+### T-23 · Backlog del Sprint 5
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-29 |
+| Tamaño       | S         |
+| Depende de   | T-22      |
+| Plan         | [`docs/plans/sprint-5.md`](docs/plans/sprint-5.md) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como dev quiero el pedido del cliente para cerrar la primera entrega cargado como ítems, de forma que
+cada cambio tenga su criterio, su estimación y su rama.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · `BACKLOG.md` tiene el Sprint 5. Cada ítem lleva historia, CA medibles con estimación, dependencias y nivel de tests. `docs/plans/sprint-5.md` tiene las decisiones del dev, las provisorias, el orden y la trazabilidad de `specs.md` · Estimación: 25 min · Completado: 2026-10-29 23:55
+
+- [x] **CA-2** · `specs.md` tiene el pedido del cliente, textual, tal como lo pasó el dev · Estimación: 5 min · Completado: 2026-10-29 23:45
+
+### BUG-26 · Carrito: columnas separadas, más ancho y slide suave
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Por hacer |
+| Dueño        | Agente    |
+| Inicio       | — |
+| Tamaño       | S         |
+| Depende de   | T-23      |
+| Plan         | [`docs/plans/sprint-5.md`](docs/plans/sprint-5.md) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Esperado**:
+
+- En el carrito, Cantidad y Unidades se leen como columnas separadas.
+- El panel es más ancho, un poco menos de la mitad de la pantalla.
+- El panel entra y sale con un slide suave.
+
+**Actual**:
+
+- Cantidad y Unidades quedan pegadas (wireframe `pedido-actual-ventas`). Las celdas tienen sólo 8 px de separación
+  y los encabezados, ninguna.
+- El panel mide `max-w-xl` y su slide dura 300 ms.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · Los encabezados y las celdas del carrito tienen separación horizontal. Cantidad, Unidades e Importe van en un solo renglón. Lo cubre un test de componente · Estimación: 20 min · Completado: —
+
+- [ ] **CA-2** · Desde `lg`, el carrito ocupa el 45 % del ancho (P-8). En el celular y la tablet queda como hoy · Estimación: 10 min · Completado: —
+
+- [ ] **CA-3** · El carrito entra hacia la izquierda y sale hacia la derecha con un slide de 450 ms, y el fondo acompaña. Se mide en el navegador · Estimación: 15 min · Completado: —
+
+**Notas**
+
+- Nivel 1.
+
+### US-36 · Carrito: "+" para sumar uno
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Por hacer |
+| Dueño        | Agente    |
+| Inicio       | — |
+| Tamaño       | S         |
+| Depende de   | BUG-26      |
+| Plan         | [`docs/plans/sprint-5.md`](docs/plans/sprint-5.md) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como vendedor quiero sumar uno a un renglón del carrito, igual que ya puedo restar uno, de forma que no
+tenga que volver al tablero para vender una unidad más.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · Cada renglón común del carrito tiene un "+" ("Sumar uno") al lado del "−" que suma una unidad del mismo renglón. Las promos no lo tienen (P-1) · Estimación: 30 min · Completado: —
+
+- [ ] **CA-2** · El "+" se deshabilita si el stock no alcanza para una unidad más (`availableStock`). Lo cubren tests de store, de componente y E2E · Estimación: 30 min · Completado: —
+
+**Notas**
+
+- Nivel 2.
+
+### US-39 · Promos: selector prolijo, "Quitar uno" y "Siguiente"
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Por hacer |
+| Dueño        | Agente    |
+| Inicio       | — |
+| Tamaño       | M         |
+| Depende de   | T-23      |
+| Plan         | [`docs/plans/sprint-5.md`](docs/plans/sprint-5.md) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como vendedor quiero armar los gustos de una promo en una ventana prolija, corregir un gusto de más y
+pasar al componente siguiente cuando yo quiera, de forma que no me equivoque al armar la promo.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · El título del selector se lee en tres renglones: nombre de la promo, componente ("Empanadas · 1 docena") y "(1 de 5)" (wireframe `seleccionador-de-componentes-promo`) · Estimación: 30 min · Completado: —
+
+- [ ] **CA-2** · Todos los botones de la lista de gustos quedan en un solo renglón · Estimación: 10 min · Completado: —
+
+- [ ] **CA-3** · A la izquierda de "Agregar uno" hay un "Quitar uno" rojo que resta una unidad de ese gusto. Está deshabilitado si el gusto no tiene unidades, y aparece también en una ½ docena común (P-2). Lo cubren tests de dominio con fuzz y de componente · Estimación: 45 min · Completado: —
+
+- [ ] **CA-4** · El selector ya no avanza solo. "Siguiente" se habilita con el componente completo y lleva al siguiente. En el último dice "Listo" y cierra (D-4). Lo cubren tests de store, de componente y E2E · Estimación: 35 min · Completado: —
+
+**Notas**
+
+- Nivel 2.
+
+### US-37 · Cliente en el carrito, con alta automática
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Por hacer |
+| Dueño        | Agente    |
+| Inicio       | — |
+| Tamaño       | L         |
+| Depende de   | US-36      |
+| Plan         | [`docs/plans/sprint-5.md`](docs/plans/sprint-5.md) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como vendedor quiero anotar el nombre, el teléfono y el domicilio del cliente al armar la venta, y que
+se completen solos si ya es cliente, de forma que la grilla de Clientes se arme sola con cada venta.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · La migración 0022 suma `customers.address` (hasta 150), lleva `sales.buyer_name` a 100 y suma `sales.buyer_phone` y `sales.buyer_address`, opcionales. Lo cubre un test de integración · Estimación: 30 min · Completado: —
+
+- [ ] **CA-2** · El carrito pide Nombre (obligatorio), Teléfono y Domicilio (opcionales). "Cobrar" se deshabilita sin nombre, y el servidor responde `VALIDATION` "Anotá el nombre del cliente" (P-3) · Estimación: 45 min · Completado: —
+
+- [ ] **CA-3** · Al escribir el nombre o el teléfono aparecen hasta 5 clientes activos que coinciden, sin importar mayúsculas ni acentos. Al elegir uno se completan sus datos (D-1, P-4) · Estimación: 1 h · Completado: —
+
+- [ ] **CA-4** · Al cobrar sin elegir un cliente se crea uno nuevo en la misma transacción, con su log. Con un cliente elegido, la venta lo vincula sin cambiar Clientes y guarda los datos tal como se anotaron (D-2). Un cliente desactivado o borrado da `NOT_FOUND` "El cliente ya no existe" (P-5). Lo cubren tests de contrato, de servicio y de integración · Estimación: 1 h 15 min · Completado: —
+
+- [ ] **CA-5** · Clientes muestra y edita el "Domicilio". El comprobante de la venta muestra el teléfono y el domicilio si los tiene (P-6). Lo cubre un E2E · Estimación: 30 min · Completado: —
+
+**Notas**
+
+- Nivel 3: cambia la entrada de `checkoutAction` y trae migración. La base de Supabase la migra el dev.
+
+### US-38 · Datos al día sin "Sincronizar"
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Por hacer |
+| Dueño        | Agente    |
+| Inicio       | — |
+| Tamaño       | M         |
+| Depende de   | T-23      |
+| Plan         | [`docs/plans/sprint-5.md`](docs/plans/sprint-5.md) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como usuario del sistema quiero ver siempre los datos al día al entrar a cada pantalla, de forma que no
+tenga que tocar "Sincronizar" todo el tiempo.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · Cada pantalla trae sus datos al entrar y después de guardar, también lo que cargaron otras computadoras (D-3). Lo cubre un test del hook de carga · Estimación: 1 h · Completado: —
+
+- [ ] **CA-2** · Una venta o una anulación se ven en Estadísticas al entrar, sin sincronizar. Lo cubre un E2E · Estimación: 30 min · Completado: —
+
+- [ ] **CA-3** · No quedan botones "Sincronizar". El error de versión dice "Otro usuario cambió estos datos. Ya se actualizaron; intentá de nuevo" y recarga la lista (P-7) · Estimación: 1 h · Completado: —
+
+**Notas**
+
+- Nivel 2, con los E2E completos. No suma ISR Writes de Vercel (ver `docs/plans/sprint-5.md`).
+
+### T-24 · Cierre del Sprint 5
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Por hacer |
+| Dueño        | Agente    |
+| Inicio       | — |
+| Tamaño       | S         |
+| Depende de   | todos      |
+| Plan         | [`docs/plans/sprint-5.md`](docs/plans/sprint-5.md) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como dev quiero el Sprint 5 verificado completo y en `main`, de forma que la primera entrega muestre lo
+que se probó.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · `npm run verify` completo y todos los E2E en verde sobre `develop` · Estimación: 30 min · Completado: —
+
+- [ ] **CA-2** · README, `docs/architecture.md` y `docs/initial_prompt.md` al día. Con el OK del dev, merge local `develop → main` con el tag `sprint-5` · Estimación: 30 min · Completado: —

@@ -239,3 +239,36 @@ Para resumir, contador de stock de prepizzas sin precio, cada venta de cualquier
 Lo que si... necesito ayuda para vincular esta información, creo que lo mejor es tomar la decision que las prepizzas ya vienen dadas de alta con el sistema, y que directamente se seleccione el stock de ellas. Mismo panes de ciabatta.
 
 5: mi cliente me pide: titulos mas grandes, caracteres con fuentes oscuras es decir colores oscuros a las letras, en si un poco mas de claridad para la lectura de la información principal.
+
+---------------------------------------------------------------------------
+
+Pedido del cliente para cerrar la primera entrega (2026-10-29):
+
+perfecto, volvemos al planeamiento... acabo de tener una reunion virtual con mi cliente y ya me dijo algunas opiniones para ir cerrando la primer entrega del sistema, COSAS A MODIFICAR:
+
+en ventas, en el carrito que lleva la cuenta de lo que se agrega a la compra, un "+" en el carrito de venta para aumentar el item... tal como está el menos para restar, un mas ahora.
+
+Además... en el carrito armando la venta, se requiere que el vendedor anote sobre el cliente lo siguiente:
+nombre (obligatorio)
+telefono (opcoinal)
+domicilio (opcional)
+
+Si el cliente está dado de alta en clientes, que directamente se complete con los datos, si no lo está, es decir es su primer registro, que lo registre solo a la grilla de clientes.
+
+En todo el sistema: sincronizar con cada click los tableros, es decir, no tener que hacer el sincronizar todo el tiempo.
+
+mirar el wireframe "seleccionador-de-componentes-promo": observa varias cosas para arreglar:
+el titulo está cortado, dice:
+"promo 1 . Empanadas . 1 docena (1 de *salto de linea* 5)" y queda muy feo, quiero que se vea bien y prolijo:
+nombre de la promo
+componentes de la promo
+(1 de 5)
+
+el primer "agregar uno" tiene un salto de linea, dice 
+"agregar  
+   uno"
+eso no está prolojio tampoco, quiero que todos estén en un solo reglon cada boton
+A la izquierda del botón de agregar uno, todos deberian tener tambien un "Quitar uno" en rojo salton, el cual estará desactivado si es que no hay nada seleccionado aun, y con esto, se agregaría un botón de "Siguiente" para avanzar a completar los gustos de la siguiente componente de la promo
+
+En ventas: ver wireframe pedido-actual-ventas: fijate que "cantidad" y "unidades" están pegados practicamente, muy feo para la vista tambien. Deben estar claramente separadas las columnas. Para arreglar esto, puedes agrandar el espacio que ocupa el slide del carrito hacia la izquierda sin problema, asi ganas mas espacio en direccion hacia el centro de la pantalla, pero importante que no ocupe la totalidad de la pantalla, ni tampoco ocupe mas de la mitad; un poco menos de la mitad está bien.
+Extra: el carrito deberia tener un slide suave hacia la izquierda y un slide suave al guardarse hacia la derecha.
