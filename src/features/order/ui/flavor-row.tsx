@@ -52,14 +52,14 @@ export function FlavorRow({ line, lines, item, board, inPromo = false, onAdd, on
   const price = flavorPrice(line, item);
   const unsellable = price === null && !inPromo;
   return (
-    <li className='flex flex-wrap items-center justify-between gap-x-3 gap-y-2 py-2 border-b border-zinc-100 dark:border-zinc-800'>
-      <div className='min-w-0'>
+    <li className='flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3 py-2 border-b border-zinc-100 dark:border-zinc-800'>
+      <div className='min-w-0 sm:flex-1'>
         <p className='font-semibold text-zinc-900 dark:text-zinc-50'>{item.name}</p>
         <p className='text-xs text-zinc-700 dark:text-zinc-200'>
           {priceLabel(price, inPromo)} · stock {available.toLocaleString('es-AR')}
         </p>
       </div>
-      <div className='flex shrink-0 gap-2'>
+      <div className='flex max-w-full flex-wrap gap-2 sm:shrink-0 sm:flex-nowrap'>
         {(kind !== 'single' || inPromo) && (
           <button className={removeButton} disabled={!chosen} onClick={() => onRemove(item.id)}>
             Quitar uno

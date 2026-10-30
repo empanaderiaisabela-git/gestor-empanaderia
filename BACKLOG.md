@@ -3721,8 +3721,9 @@ trazabilidad de cada punto del pedido en `specs.md` a su ítem.
 | 3   | [US-39](#us-39--promos-selector-prolijo-quitar-uno-y-siguiente) | Promos: selector prolijo, "Quitar uno" y "Siguiente" | En revisión | T-23 | 2 h |
 | 4   | [US-37](#us-37--cliente-en-el-carrito-con-alta-automática) | Cliente en el carrito, con alta automática | En revisión | US-36 | 4 h |
 | 5   | [US-38](#us-38--datos-al-día-sin-sincronizar) | Datos al día sin "Sincronizar" | En revisión | T-23 | 2 h 30 min |
-| 6   | [T-24](#t-24--cierre-del-sprint-5) | Cierre del Sprint 5 | En progreso | todos | 1 h |
-|     |    | **Total del sprint** | | | **11 h 45 min** |
+| 6   | [BUG-27](#bug-27--selector-los-botones-de-un-gusto-con-nombre-largo-se-desalinean) | Selector: los botones de un gusto con nombre largo se desalinean | En revisión | US-39 | 20 min |
+| 7   | [T-24](#t-24--cierre-del-sprint-5) | Cierre del Sprint 5 | En progreso | todos | 1 h |
+|     |    | **Total del sprint** | | | **12 h 05 min** |
 
 ### T-23 · Backlog del Sprint 5
 
@@ -3948,6 +3949,42 @@ tenga que tocar "Sincronizar" todo el tiempo.
   proveedores, estadísticas y stock.
 - Lint, typecheck, 1033 tests unitarios y de componente, y los 76 E2E en verde (concurrencia 6 de 6 con
   `--repeat-each=3`).
+
+### BUG-27 · Selector: los botones de un gusto con nombre largo se desalinean
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-30 |
+| Tamaño       | XS        |
+| Depende de   | US-39     |
+| Plan         | Hotfix pedido por el dev el 2026-10-30, sin plan aparte |
+| Merge        | —         |
+| Horas reales | 25 min |
+
+**Esperado**: en el selector de gustos, los botones de todas las filas quedan en las mismas columnas, sin importar el
+largo del nombre.
+
+**Actual**: con "Carne cortada a cuchillo", los tres botones bajan al renglón de abajo y quedan pegados a la
+izquierda, desalineados de las otras filas.
+
+**Causa**: la fila usaba `flex-wrap`, y el bloque del nombre ocupaba todo el ancho de su texto. Si el nombre y los
+tres botones no entraban en el modal, el grupo de botones saltaba de renglón. No dependía de ser la primera fila,
+sino del largo del nombre. Antes de US-39 pasaba lo mismo, pero el que se partía era el texto de "Agregar uno".
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · Desde `sm`, el nombre y los botones van siempre en un renglón: el nombre largo se parte en su columna y los botones no se encogen. En el celular, el nombre va arriba y los botones abajo, en todas las filas por igual. Lo cubre un test de componente con un nombre largo · Estimación: 15 min · Completado: 2026-10-30 08:28
+
+- [x] **CA-2** · En el celular, los botones no se salen del modal: si no entran en un renglón, "Completar" baja al siguiente · Estimación: 5 min · Completado: 2026-10-30 08:29
+
+**Notas**
+
+- Nivel 1.
+- Medido en el navegador sobre la base local, con "Carne cortada a cuchillo": a 1024 px, los botones de las cuatro
+  filas empiezan en x = 416, 525 y 648; a 375 px, los tres botones quedan dentro de la lista (antes "Completar" se
+  salía 44 px, desde US-39).
 
 ### T-24 · Cierre del Sprint 5
 
