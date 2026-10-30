@@ -3722,8 +3722,9 @@ trazabilidad de cada punto del pedido en `specs.md` a su ítem.
 | 4   | [US-37](#us-37--cliente-en-el-carrito-con-alta-automática) | Cliente en el carrito, con alta automática | En revisión | US-36 | 4 h |
 | 5   | [US-38](#us-38--datos-al-día-sin-sincronizar) | Datos al día sin "Sincronizar" | En revisión | T-23 | 2 h 30 min |
 | 6   | [BUG-27](#bug-27--selector-los-botones-de-un-gusto-con-nombre-largo-se-desalinean) | Selector: los botones de un gusto con nombre largo se desalinean | En revisión | US-39 | 20 min |
-| 7   | [T-24](#t-24--cierre-del-sprint-5) | Cierre del Sprint 5 | En progreso | todos | 1 h |
-|     |    | **Total del sprint** | | | **12 h 05 min** |
+| 7   | [US-40](#us-40--estadísticas-calendarios-a-la-derecha-del-título) | Estadísticas: calendarios a la derecha del título | En revisión | US-32 | 15 min |
+| 8   | [T-24](#t-24--cierre-del-sprint-5) | Cierre del Sprint 5 | En progreso | todos | 1 h |
+|     |    | **Total del sprint** | | | **12 h 20 min** |
 
 ### T-23 · Backlog del Sprint 5
 
@@ -3985,6 +3986,35 @@ sino del largo del nombre. Antes de US-39 pasaba lo mismo, pero el que se partí
 - Medido en el navegador sobre la base local, con "Carne cortada a cuchillo": a 1024 px, los botones de las cuatro
   filas empiezan en x = 416, 525 y 648; a 375 px, los tres botones quedan dentro de la lista (antes "Completar" se
   salía 44 px, desde US-39).
+
+### US-40 · Estadísticas: calendarios a la derecha del título
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-30 |
+| Tamaño       | XS        |
+| Depende de   | US-32     |
+| Plan         | Hotfix pedido por el dev el 2026-10-30 (wireframe `fecha-inicio-fin.png`), sin plan aparte |
+| Merge        | —         |
+| Horas reales | 15 min |
+
+**Historia**: Como administrador quiero los calendarios de Estadísticas a la derecha del título, con una aclaración
+de cuál es el inicio y cuál el fin, de forma que el resto de la pantalla suba y no dude al elegir las fechas.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · Los calendarios van en el renglón del título "Resumen de la actividad", a la derecha, y el contenido sube a ese espacio · Estimación: 10 min · Completado: 2026-10-30 08:30
+
+- [x] **CA-2** · Debajo de los calendarios, en letra chica, dice "Fecha de inicio" bajo el izquierdo y "Fecha de fin" bajo el derecho. Lo cubre un test de componente · Estimación: 5 min · Completado: 2026-10-30 08:30
+
+**Notas**
+
+- Nivel 1.
+- `PageHeader` acepta `actions`, lo que va a la derecha del título. Las demás pantallas no lo usan y quedan igual.
+- En el celular, el título ocupa el ancho y los calendarios quedan uno arriba del otro, como antes. Las aclaraciones
+  también se apilan, en el mismo orden.
 
 ### T-24 · Cierre del Sprint 5
 

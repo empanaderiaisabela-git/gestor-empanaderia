@@ -76,6 +76,13 @@ describe('pantalla de Estadísticas (US-12 CA-1 a CA-5)', () => {
     await waitFor(() => expect(within(ventas).getAllByRole('row')[1].textContent).toBe('Sin nombre26/10/2026, 00:30$6.600'));
   });
 
+  it('los calendarios van a la derecha del título, con "Fecha de inicio" y "Fecha de fin" debajo (US-40)', async () => {
+    render(<StatsPanel />);
+    const fila = (await screen.findByRole('heading', { name: 'Resumen de la actividad' })).closest('.justify-between');
+    expect(fila?.contains(screen.getByLabelText('Desde'))).toBe(true);
+    expect(screen.getAllByText(/^Fecha de (inicio|fin)$/).map((caption) => caption.textContent)).toEqual(['Fecha de inicio', 'Fecha de fin']);
+  });
+
   it('un rango sin ventas lo dice', async () => {
     action.fetch.mockImplementation(async (period: { from: string; to: string }) => ({ success: true, data: { ...STATS, ...period, salesCount: 0 } }));
     render(<StatsPanel />);
