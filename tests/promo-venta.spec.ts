@@ -21,8 +21,14 @@ test.describe('vender una promo desde el tablero (US-9)', () => {
 
     await page.goto('/ventas/nueva');
     await page.getByRole('region', { name: 'Promos', exact: true }).getByRole('button', { name: new RegExp(nombre) }).click();
+    await expect(page.getByText('(1 de 2)')).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Siguiente' })).toBeDisabled();
     await gustoEnPromo(page, 'Muzza y cebolla').getByRole('button', { name: 'Completar' }).click();
+    await gustoEnPromo(page, 'Muzza y cebolla').getByRole('button', { name: 'Quitar uno' }).click();
+    await gustoEnPromo(page, 'Muzza y cebolla').getByRole('button', { name: 'Agregar uno' }).click();
+    await page.getByRole('button', { name: 'Siguiente' }).click();
     await gustoEnPromo(page, 'Sprite 1,5 L').getByRole('button', { name: 'Agregar' }).click();
+    await page.getByRole('button', { name: 'Listo' }).click();
 
     await page.getByRole('button', { name: /^Ver pedido/ }).click();
     const pedido = page.getByRole('region', { name: 'Pedido actual' });

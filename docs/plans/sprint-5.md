@@ -145,3 +145,22 @@ Se anotan acá, con la misma forma (pregunta, situación, elegido y qué cambia 
 - **Elegido**: se arregla la regla global. Pasa a `@layer base`, así que las clases de cada componente le ganan.
   Ahora se ven todas las transiciones que el código ya pedía, no sólo la del carrito.
 - **Si el dev responde otra cosa**: se vuelve a la regla sin capa y el carrito usa un estilo propio. Nivel 1.
+
+### I-2 · El botón de abajo en el selector de una promo (US-39)
+
+- **Pregunta**: con "Siguiente" y "Listo" (D-4), ¿sigue también el "Listo" de abajo, que cerraba aunque faltaran
+  gustos?
+- **Situación**: el vendedor está en el último producto de la promo y vería dos botones "Listo".
+- **Elegido**: en las promos queda un solo botón abajo: "Siguiente", o "Listo" en el último producto. Se habilita
+  con el producto completo. Para dejar una promo a medio armar se cierra con la X, y el carrito sigue mostrando
+  "faltan gustos · elegir". En las líneas comunes el "Listo" de abajo no cambia.
+- **Si el dev responde otra cosa**: vuelve el "Listo" de abajo junto a "Siguiente". Nivel 1.
+
+### I-3 · Dónde aparece "Quitar uno" (US-39)
+
+- **Pregunta**: ¿"Quitar uno" va en todas las filas de todos los selectores?
+- **Situación**: el vendedor elige "1 unidad" de empanadas: al tocar "Agregar" la línea ya se completa y se abre
+  otra vacía, así que "Quitar uno" quedaría siempre apagado.
+- **Elegido**: va en todas las filas de las promos, en las presentaciones de varias unidades (½ docena, docena) y en
+  las pizzas de 2 sabores. No va en las líneas comunes de una sola unidad, que se corrigen con el "−" del carrito.
+- **Si el dev responde otra cosa**: se muestra también ahí, apagado. Nivel 1.

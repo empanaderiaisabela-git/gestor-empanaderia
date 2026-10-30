@@ -3718,7 +3718,7 @@ trazabilidad de cada punto del pedido en `specs.md` a su ítem.
 | 0   | [T-23](#t-23--backlog-del-sprint-5) | Backlog del Sprint 5 | En revisión | T-22 | 30 min |
 | 1   | [BUG-26](#bug-26--carrito-columnas-separadas-más-ancho-y-slide-suave) | Carrito: columnas separadas, más ancho y slide suave | En revisión | T-23 | 45 min |
 | 2   | [US-36](#us-36--carrito--para-sumar-uno) | Carrito: "+" para sumar uno | En revisión | BUG-26 | 1 h |
-| 3   | [US-39](#us-39--promos-selector-prolijo-quitar-uno-y-siguiente) | Promos: selector prolijo, "Quitar uno" y "Siguiente" | Por hacer | T-23 | 2 h |
+| 3   | [US-39](#us-39--promos-selector-prolijo-quitar-uno-y-siguiente) | Promos: selector prolijo, "Quitar uno" y "Siguiente" | En revisión | T-23 | 2 h |
 | 4   | [US-37](#us-37--cliente-en-el-carrito-con-alta-automática) | Cliente en el carrito, con alta automática | Por hacer | US-36 | 4 h |
 | 5   | [US-38](#us-38--datos-al-día-sin-sincronizar) | Datos al día sin "Sincronizar" | Por hacer | T-23 | 2 h 30 min |
 | 6   | [T-24](#t-24--cierre-del-sprint-5) | Cierre del Sprint 5 | Por hacer | todos | 1 h |
@@ -3828,31 +3828,40 @@ tenga que volver al tablero para vender una unidad más.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Por hacer |
+| Estado       | En revisión |
 | Dueño        | Agente    |
-| Inicio       | — |
+| Inicio       | 2026-10-29 |
 | Tamaño       | M         |
 | Depende de   | T-23      |
 | Plan         | [`docs/plans/sprint-5.md`](docs/plans/sprint-5.md) |
 | Merge        | —         |
-| Horas reales | —         |
+| Horas reales | 1 h 10 min |
 
 **Historia**: Como vendedor quiero armar los gustos de una promo en una ventana prolija, corregir un gusto de más y
 pasar al componente siguiente cuando yo quiera, de forma que no me equivoque al armar la promo.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · El título del selector se lee en tres renglones: nombre de la promo, componente ("Empanadas · 1 docena") y "(1 de 5)" (wireframe `seleccionador-de-componentes-promo`) · Estimación: 30 min · Completado: —
+- [x] **CA-1** · El título del selector se lee en tres renglones: nombre de la promo, componente ("Empanadas · 1 docena") y "(1 de 5)" (wireframe `seleccionador-de-componentes-promo`) · Estimación: 30 min · Completado: 2026-10-30 00:20
 
-- [ ] **CA-2** · Todos los botones de la lista de gustos quedan en un solo renglón · Estimación: 10 min · Completado: —
+- [x] **CA-2** · Todos los botones de la lista de gustos quedan en un solo renglón · Estimación: 10 min · Completado: 2026-10-30 00:20
 
-- [ ] **CA-3** · A la izquierda de "Agregar uno" hay un "Quitar uno" rojo que resta una unidad de ese gusto. Está deshabilitado si el gusto no tiene unidades, y aparece también en una ½ docena común (P-2). Lo cubren tests de dominio con fuzz y de componente · Estimación: 45 min · Completado: —
+- [x] **CA-3** · A la izquierda de "Agregar uno" hay un "Quitar uno" rojo que resta una unidad de ese gusto. Está deshabilitado si el gusto no tiene unidades, y aparece también en una ½ docena común (P-2). Lo cubren tests de dominio con fuzz y de componente · Estimación: 45 min · Completado: 2026-10-30 00:20
 
-- [ ] **CA-4** · El selector ya no avanza solo. "Siguiente" se habilita con el componente completo y lleva al siguiente. En el último dice "Listo" y cierra (D-4). Lo cubren tests de store, de componente y E2E · Estimación: 35 min · Completado: —
+- [x] **CA-4** · El selector ya no avanza solo. "Siguiente" se habilita con el componente completo y lleva al siguiente. En el último dice "Listo" y cierra (D-4). Lo cubren tests de store, de componente y E2E · Estimación: 35 min · Completado: 2026-10-30 00:20
 
 **Notas**
 
 - Nivel 2.
+- `removeFlavor` (`order-line.ts`) es la inversa de `addFlavor`; en una pizza de 2 sabores saca la mitad entera.
+  `removeFromPromo` (`promo-line.ts`) la aplica a una parte de la promo.
+- El store suma `removeFromOpen` (línea abierta o parte abierta de la promo) y `nextPromoPart`, y `addToOpenPromo`
+  ya no avanza solo. Las acciones de línea (`removeOne`, `addOne`, `removeFromOpen`) pasaron a
+  `store/order-line-actions.ts`, igual que las de promos, para que el store no pase de 40 líneas por función.
+- El selector pasó de `max-w-md` a `max-w-lg` para que entren los tres botones en un renglón; en el celular, los
+  botones bajan debajo del nombre (`flex-wrap`), cada uno en un renglón.
+- Decisiones I-2 e I-3 en `docs/plans/sprint-5.md`.
+- Lint, typecheck, 242 tests de pedidos (fuzz de agregar y quitar) y 11 E2E de tablero, promos y prepizzas en verde.
 
 ### US-37 · Cliente en el carrito, con alta automática
 

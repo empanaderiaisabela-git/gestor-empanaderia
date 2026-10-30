@@ -41,14 +41,18 @@ describe('promos en el tablero (US-9 CA-1 y CA-2)', () => {
     expect(await screen.findByText('Todavía no hay promos activas')).toBeDefined();
   });
 
-  it('pide los gustos de cada producto de la promo, sin precio propio, y pasa al siguiente', async () => {
+  it('pide los gustos de cada producto de la promo, sin precio propio; "Siguiente" pasa al otro y "Listo" cierra (US-39)', async () => {
     act(() => store().startPromo(MEDIA_Y_COCA));
     render(<FlavorPicker board={board} />);
-    expect(screen.getByText('Media + Coca · Empanadas · ½ docena (1 de 2)')).toBeDefined();
+    expect(['Media + Coca', 'Empanadas · ½ docena', '(1 de 2)'].every((text) => screen.getByText(text))).toBe(true);
     expect(within(rowOf('Carne')).getByText('En la promo · stock 50')).toBeDefined();
+    expect(screen.getByRole('button', { name: 'Siguiente' }).hasAttribute('disabled')).toBe(true);
     fireEvent.click(within(rowOf('Carne')).getByRole('button', { name: 'Completar' }));
-    await waitFor(() => expect(screen.getByText('Media + Coca · Coca-Cola · 1 unidad (2 de 2)')).toBeDefined());
+    fireEvent.click(screen.getByRole('button', { name: 'Siguiente' }));
+    await waitFor(() => expect(screen.getByText('(2 de 2)')).toBeDefined());
+    expect(screen.getByText('Coca-Cola · 1 unidad')).toBeDefined();
     fireEvent.click(within(rowOf('Coca-Cola 1,5 L')).getByRole('button', { name: 'Agregar' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Listo' }));
     expect(store().openPromo).toBeNull();
   });
 

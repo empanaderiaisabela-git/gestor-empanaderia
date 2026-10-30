@@ -1,10 +1,12 @@
 import { create } from 'zustand';
 import type { MenuGroup } from '@/features/menu/domain/menu-groups';
 import { type AddMode, addFlavor, isComplete, mergeLine, type OrderLine } from '@/features/order/domain/order-line';
+import { type LineEditActions, lineEditActions } from './order-line-actions';
 import { type PromoActions, promoActions, type PromoState } from './order-promos';
 
 type OrderState = PromoState &
-  PromoActions & {
+  PromoActions &
+  LineEditActions & {
     lines: OrderLine[];
     openLineId: string | null;
     buyerName: string;
@@ -12,8 +14,6 @@ type OrderState = PromoState &
     add: (menuItemId: string, mode: AddMode) => boolean;
     close: () => void;
     remove: (lineId: string) => void;
-    removeOne: (lineId: string) => void;
-    addOne: (lineId: string) => void;
     clear: () => void;
     setBuyerName: (buyerName: string) => void;
   };
@@ -28,6 +28,7 @@ export const useOrderStore = create<OrderState>((set, get) => ({
   promos: [],
   openPromo: null,
   ...promoActions(set, get),
+  ...lineEditActions(set, get),
   start: (group, presentationKey) => {
     const line = newLine(group, presentationKey);
     set({ lines: [...withoutEmpty(get().lines), line], openLineId: line.id, openPromo: null });
@@ -47,12 +48,6 @@ export const useOrderStore = create<OrderState>((set, get) => ({
   },
   close: () => set({ lines: withoutEmpty(get().lines), openLineId: null, openPromo: null }),
   remove: (lineId) => set({ lines: get().lines.filter((line) => line.id !== lineId), openLineId: get().openLineId === lineId ? null : get().openLineId }),
-  removeOne: (lineId) => {
-    const line = get().lines.find((candidate) => candidate.id === lineId);
-    if (!line || line.quantity <= 1) return get().remove(lineId);
-    set({ lines: get().lines.map((candidate) => (candidate.id === lineId ? { ...line, quantity: line.quantity - 1 } : candidate)) });
-  },
-  addOne: (lineId) => set({ lines: get().lines.map((line) => (line.id === lineId ? { ...line, quantity: line.quantity + 1 } : line)) }),
   clear: () => set({ lines: [], openLineId: null, buyerName: '', promos: [], openPromo: null }),
   setBuyerName: (buyerName) => set({ buyerName }),
 }));
