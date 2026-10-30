@@ -129,9 +129,8 @@ Hacer preguntas de más es mejor que inventar.
       D-16 al ordenar Stock, los gustos sin stock propio van al final; D-17 el precio de una pizza desde "Ingresar
       stock" no trae la casilla "Aplicar a todos".
   - Las migraciones 0018 a 0021 son del Sprint 4. La base de Supabase la migra el dev; la local, `npm run db:migrate`.
-- **Sprint 5 implementado** ("Cierre de la primera entrega": T-23, BUG-26, US-36 a US-39 y T-24) en `develop`, a la
-  espera de la revisión del dev y del merge a `main` con el tag `sprint-5`. Plan, decisiones y resumen en
-  [`sprint-5.md`](plans/sprint-5.md).
+- **Sprint 5 cerrado** ("Cierre de la primera entrega": T-23, BUG-26, BUG-27, US-36 a US-42 y T-24): en `main` con el
+  tag `sprint-5` desde el 2026-10-30. Plan, decisiones y resumen en [`sprint-5.md`](plans/sprint-5.md).
   - Qué cambió:
     - El carrito: columnas separadas, el 45 % del ancho desde `lg` y un slide de 450 ms (BUG-26). La regla global
       de transiciones pasó a `@layer base`: sin capa anulaba todas las clases `transition-*` de Tailwind v4.
@@ -141,8 +140,11 @@ Hacer preguntas de más es mejor que inventar.
     - El cliente en el carrito, con nombre obligatorio, teléfono y domicilio, sugerencias de Clientes y alta
       automática al cobrar (US-37).
     - Datos frescos al entrar a cada pantalla, sin botones "Sincronizar" (US-38, `useFreshDataOnEnter`).
+    - De la revisión del dev: los botones del selector alineados con nombres largos (BUG-27); en Estadísticas, los
+      calendarios a la derecha del título (US-40, `PageHeader` acepta `actions`), el fondo suave de cada tarjeta
+      (US-41) y los cuadros de abajo con scroll propio desde la sexta fila (US-42).
   - Decisiones: las del dev (D-1 a D-4), las provisorias P-1 a P-8 y las tomadas durante la implementación (I-1 a
-    I-5) esperan su confirmación en [`sprint-5.md`](plans/sprint-5.md).
+    I-5) en [`sprint-5.md`](plans/sprint-5.md). El dev revisó el sprint y dio el OK al merge el 2026-10-30.
   - La migración 0022 es del Sprint 5 (quedan 23). La base de Supabase la migra el dev.
   - Ningún ítem nuevo se arranca sin el OK del dev.
 - Git: `main` recibe un merge de `develop` al cierre de cada sprint. El trabajo nuevo sale de `develop`. El repo de GitHub

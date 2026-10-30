@@ -117,7 +117,11 @@ textuales en `docs/requerimientos/specs.md`, en "Pedido del cliente para cerrar 
 | 3 | US-39 | Promos: selector prolijo, "Quitar uno" y "Siguiente" | 2 | 2 h |
 | 4 | US-37 | Cliente en el carrito, con alta automática | 3 | 4 h |
 | 5 | US-38 | Datos al día sin "Sincronizar" | 2, con los E2E completos | 2 h 30 min |
-| 6 | T-24 | Cierre del Sprint 5 | 3 | 1 h |
+| 6 | BUG-27 | Selector: los botones de un gusto con nombre largo se desalinean (revisión del dev) | 1 | 20 min |
+| 7 | US-40 | Estadísticas: calendarios a la derecha del título (revisión del dev) | 1 | 15 min |
+| 8 | US-41 | Estadísticas: fondo suave del color de cada tarjeta (revisión del dev) | 1 | 15 min |
+| 9 | US-42 | Estadísticas: los cuadros de abajo scrollean por dentro (revisión del dev) | 1 | 15 min |
+| 10 | T-24 | Cierre del Sprint 5 | 3 | 1 h |
 
 ## Trazabilidad: `specs.md` → ítems
 
@@ -189,8 +193,8 @@ Se anotan acá, con la misma forma (pregunta, situación, elegido y qué cambia 
 <summary>Qué se hizo, en lenguaje simple</summary>
 
 El agente hizo el sprint solo, entre el 2026-10-29 y el 2026-10-30, con permiso para commitear, integrar a `develop`
-y hacer push de cada ítem. Todo está en `develop`. **No** se pasó nada a `main` ni se puso la etiqueta `sprint-5`:
-eso espera tu OK.
+y hacer push de cada ítem. Después, el 2026-10-30, revisaste el sprint y pediste cuatro arreglos (BUG-27 y US-40 a
+US-42), que entraron con tu OK a cada commit. Con tu OK, el sprint pasó a `main` con la etiqueta `sprint-5`.
 
 | Ítem | Commit | Qué cambió |
 |---|---|---|
@@ -200,6 +204,10 @@ eso espera tu OK.
 | US-39 | `5088e58` | La ventana de gustos de una promo: título en tres renglones, botones en un renglón, "Quitar uno" en rojo y "Siguiente" |
 | US-37 | `9c2727b` | El carrito pide el nombre del cliente (obligatorio), el teléfono y el domicilio; sugiere clientes y da de alta a los nuevos |
 | US-38 | `ad0b673` | Cada pantalla trae los datos al día al entrar; ya no hay botones "Sincronizar" |
+| BUG-27 | `0fed3ac` | En la ventana de gustos, los botones quedan alineados aunque el gusto tenga un nombre largo; en el celular no se salen de la ventana |
+| US-40 | `30a4bee` | Estadísticas: las fechas van a la derecha del título, con "Fecha de inicio" y "Fecha de fin" en letra chica |
+| US-41 | `f0558b6` | Estadísticas: cada tarjeta con marco de color tiene un fondo muy suave de ese color |
+| US-42 | `ce767dd` | Estadísticas: los cuadros de Vendedores y Ventas muestran 5 filas y, con más, scrollean por dentro |
 
 Un hallazgo: el carrito no se deslizaba porque una regla global anulaba **todas** las animaciones de la app. Se
 corrigió esa regla (I-1), así que ahora se ven también otras transiciones que el código ya pedía.
@@ -208,9 +216,10 @@ corrigió esa regla (I-1), así que ahora se ven también otras transiciones que
 
 ### Para revisar
 
-- **Supabase**: falta correr la migración 0022 (quedan 23). Tu base local ya está migrada.
+- **Supabase**: si todavía no la corriste, falta la migración 0022 (quedan 23). Los arreglos de la revisión no traen
+  migraciones. Tu base local ya está migrada.
 - **Decisiones**: P-1 a P-8 e I-1 a I-5, arriba, cada una con su pregunta.
 - **Lo que no se miró en el navegador** (el panel del navegador integrado estaba oculto y mostraba estilos viejos):
   el slide del carrito, la ventana de la promo y las sugerencias de clientes. Lo cubren los E2E, que miden la
   duración del slide, el ancho del carrito y el flujo completo de cada pantalla.
-- **Merge**: `develop → main` con el tag `sprint-5`, cuando des el OK.
+- **Merge**: hecho el 2026-10-30 con tu OK, `develop → main` con el tag `sprint-5`.

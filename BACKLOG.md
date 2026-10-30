@@ -3725,7 +3725,7 @@ trazabilidad de cada punto del pedido en `specs.md` a su ítem.
 | 7   | [US-40](#us-40--estadísticas-calendarios-a-la-derecha-del-título) | Estadísticas: calendarios a la derecha del título | En revisión | US-32 | 15 min |
 | 8   | [US-41](#us-41--estadísticas-fondo-suave-del-color-de-cada-tarjeta) | Estadísticas: fondo suave del color de cada tarjeta | En revisión | US-21 | 15 min |
 | 9   | [US-42](#us-42--estadísticas-los-cuadros-de-abajo-scrollean-por-dentro) | Estadísticas: los cuadros de abajo scrollean por dentro | En revisión | US-13 | 15 min |
-| 10  | [T-24](#t-24--cierre-del-sprint-5) | Cierre del Sprint 5 | En progreso | todos | 1 h |
+| 10  | [T-24](#t-24--cierre-del-sprint-5) | Cierre del Sprint 5 | En revisión | todos | 1 h |
 |     |    | **Total del sprint** | | | **12 h 50 min** |
 
 ### T-23 · Backlog del Sprint 5
@@ -4082,13 +4082,13 @@ scroll, de forma que con más ventas no se estire toda la página.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | En progreso |
+| Estado       | En revisión |
 | Dueño        | Agente    |
 | Inicio       | 2026-10-30 |
 | Tamaño       | S         |
 | Depende de   | todos      |
 | Plan         | [`docs/plans/sprint-5.md`](docs/plans/sprint-5.md) |
-| Merge        | —         |
+| Merge        | `chore(release): sprint 5` en `main`, tag `sprint-5` |
 | Horas reales | —         |
 
 **Historia**: Como dev quiero el Sprint 5 verificado completo y en `main`, de forma que la primera entrega muestre lo
@@ -4098,7 +4098,7 @@ que se probó.
 
 - [x] **CA-1** · `npm run verify` completo y todos los E2E en verde sobre `develop` · Estimación: 30 min · Completado: 2026-10-30 01:45
 
-- [ ] **CA-2** · README, `docs/architecture.md` y `docs/initial_prompt.md` al día. Con el OK del dev, merge local `develop → main` con el tag `sprint-5` · Estimación: 30 min · Completado: —
+- [x] **CA-2** · README, `docs/architecture.md` y `docs/initial_prompt.md` al día. Con el OK del dev, merge local `develop → main` con el tag `sprint-5` · Estimación: 30 min · Completado: 2026-10-30 12:30
 
 **Notas**
 
@@ -4108,3 +4108,8 @@ que se probó.
   al final de `docs/plans/sprint-5.md`. Falta el merge local `develop → main` con el tag `sprint-5`, que espera el OK
   del dev.
 - Antes de usar `main` contra Supabase, el dev corre la migración 0022 (quedan 23).
+- Revisión del dev del 2026-10-30: pidió BUG-27, US-40, US-41 y US-42, todos de nivel 1 y sin migraciones. Entraron
+  a `develop` con su OK a cada commit.
+- Después de la revisión, sobre `develop` en `ce767dd`: `npm run verify` en verde (unit, contrato, fuzz, componentes,
+  cobertura, integración, mutación 89,82 y build) y los 76 E2E en verde.
+- El dev dio el OK al merge a `main` el 2026-10-30.
