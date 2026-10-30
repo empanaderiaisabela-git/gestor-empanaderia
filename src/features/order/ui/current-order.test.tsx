@@ -27,6 +27,14 @@ describe('pedido actual (US-5 CA-5 y CA-6)', () => {
     expect(screen.getByText('1 unidad')).toBeDefined();
   });
 
+  it('"Sumar uno" agrega una unidad y se apaga sin stock (US-36)', () => {
+    build('empanadas', 'u1', [['pollo', 'one'], ['pollo', 'one']]);
+    render(<CurrentOrder board={board} onCheckout={vi.fn()} />);
+    fireEvent.click(screen.getByTitle('Sumar uno'));
+    expect(screen.getByText('1 unidad × 3')).toBeDefined();
+    expect(screen.getByTitle('Sumar uno').hasAttribute('disabled')).toBe(true);
+  });
+
   it('vacío: lo dice y no se puede cobrar', () => {
     render(<CurrentOrder board={board} onCheckout={vi.fn()} />);
     expect(screen.getByText('No hay productos en el pedido')).toBeDefined();

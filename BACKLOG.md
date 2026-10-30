@@ -3717,7 +3717,7 @@ trazabilidad de cada punto del pedido en `specs.md` a su ítem.
 | --- | -- | ------ | ------ | ---------- | ---------- |
 | 0   | [T-23](#t-23--backlog-del-sprint-5) | Backlog del Sprint 5 | En revisión | T-22 | 30 min |
 | 1   | [BUG-26](#bug-26--carrito-columnas-separadas-más-ancho-y-slide-suave) | Carrito: columnas separadas, más ancho y slide suave | En revisión | T-23 | 45 min |
-| 2   | [US-36](#us-36--carrito--para-sumar-uno) | Carrito: "+" para sumar uno | Por hacer | BUG-26 | 1 h |
+| 2   | [US-36](#us-36--carrito--para-sumar-uno) | Carrito: "+" para sumar uno | En revisión | BUG-26 | 1 h |
 | 3   | [US-39](#us-39--promos-selector-prolijo-quitar-uno-y-siguiente) | Promos: selector prolijo, "Quitar uno" y "Siguiente" | Por hacer | T-23 | 2 h |
 | 4   | [US-37](#us-37--cliente-en-el-carrito-con-alta-automática) | Cliente en el carrito, con alta automática | Por hacer | US-36 | 4 h |
 | 5   | [US-38](#us-38--datos-al-día-sin-sincronizar) | Datos al día sin "Sincronizar" | Por hacer | T-23 | 2 h 30 min |
@@ -3797,27 +3797,32 @@ cada cambio tenga su criterio, su estimación y su rama.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Por hacer |
+| Estado       | En revisión |
 | Dueño        | Agente    |
-| Inicio       | — |
+| Inicio       | 2026-10-29 |
 | Tamaño       | S         |
 | Depende de   | BUG-26      |
 | Plan         | [`docs/plans/sprint-5.md`](docs/plans/sprint-5.md) |
 | Merge        | —         |
-| Horas reales | —         |
+| Horas reales | 30 min |
 
 **Historia**: Como vendedor quiero sumar uno a un renglón del carrito, igual que ya puedo restar uno, de forma que no
 tenga que volver al tablero para vender una unidad más.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · Cada renglón común del carrito tiene un "+" ("Sumar uno") al lado del "−" que suma una unidad del mismo renglón. Las promos no lo tienen (P-1) · Estimación: 30 min · Completado: —
+- [x] **CA-1** · Cada renglón común del carrito tiene un "+" ("Sumar uno") al lado del "−" que suma una unidad del mismo renglón. Las promos no lo tienen (P-1) · Estimación: 30 min · Completado: 2026-10-30 00:09
 
-- [ ] **CA-2** · El "+" se deshabilita si el stock no alcanza para una unidad más (`availableStock`). Lo cubren tests de store, de componente y E2E · Estimación: 30 min · Completado: —
+- [x] **CA-2** · El "+" se deshabilita si el stock no alcanza para una unidad más (`availableStock`). Lo cubren tests de store, de componente y E2E · Estimación: 30 min · Completado: 2026-10-30 00:09
 
 **Notas**
 
 - Nivel 2.
+- `canAddOne` (`src/features/order/domain/order-usage.ts`) usa `availableStock`: suma lo que pediría una unidad más
+  del renglón (una mitad y mitad pide una prepizza entera) y lo compara con lo que queda, contando las promos del
+  pedido. El tablero suma `itemOf` a su modelo, y el store, `addOne`.
+- Las filas del carrito reciben sus acciones agrupadas (`LineRowActions`), igual que las promos.
+- Lint, typecheck, 237 tests de pedidos (con fuzz) y 9 E2E de tablero en verde.
 
 ### US-39 · Promos: selector prolijo, "Quitar uno" y "Siguiente"
 

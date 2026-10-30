@@ -1,4 +1,4 @@
-import { Minus, Trash2 } from 'lucide-react';
+import { Minus, Plus, Trash2 } from 'lucide-react';
 import type { JSX } from 'react';
 import { GROUPS } from '@/features/menu/domain/menu-groups';
 import { describeFlavors, missingLabel } from '@/features/order/domain/order-describe';
@@ -7,9 +7,12 @@ import { linePrice } from '@/features/order/domain/order-pricing';
 import { formatMoney } from '@/lib/format-money';
 import type { OrderBoardModel } from './use-order-board';
 
-type OrderLineRowProps = { line: OrderLine; board: OrderBoardModel; onRemove: (lineId: string) => void; onRemoveOne: (lineId: string) => void };
+export type LineRowActions = { onRemove: (lineId: string) => void; onRemoveOne: (lineId: string) => void; onAddOne: (lineId: string) => void; canAddOne: (line: OrderLine) => boolean };
+type OrderLineRowProps = { line: OrderLine; board: OrderBoardModel; actions: LineRowActions };
 
-export function OrderLineRow({ line, board, onRemove, onRemoveOne }: OrderLineRowProps): JSX.Element {
+const iconButton = 'p-1.5 rounded-lg text-zinc-800 hover:bg-zinc-100 dark:text-zinc-100 dark:hover:bg-zinc-800 disabled:opacity-40 disabled:cursor-not-allowed';
+
+export function OrderLineRow({ line, board, actions }: OrderLineRowProps): JSX.Element {
   const missing = missingLabel(line);
   const price = linePrice(line, board.book);
   const quantity = `${presentationOf(line)?.label ?? ''}${line.quantity > 1 ? ` × ${line.quantity}` : ''}`;
@@ -24,10 +27,13 @@ export function OrderLineRow({ line, board, onRemove, onRemoveOne }: OrderLineRo
       <td className='py-2 px-3 text-sm whitespace-nowrap'>{(unitsIn(line) * line.quantity).toLocaleString('es-AR')}</td>
       <td className='py-2 px-3 text-right font-semibold whitespace-nowrap'>{price === null ? '—' : formatMoney(price)}</td>
       <td className='py-2 text-right whitespace-nowrap'>
-        <button onClick={() => onRemoveOne(line.id)} title='Quitar uno' className='p-1.5 rounded-lg text-zinc-800 hover:bg-zinc-100 dark:text-zinc-100 dark:hover:bg-zinc-800'>
+        <button onClick={() => actions.onRemoveOne(line.id)} title='Quitar uno' className={iconButton}>
           <Minus className='w-4 h-4' />
         </button>
-        <button onClick={() => onRemove(line.id)} title='Quitar del pedido' className='p-1.5 rounded-lg text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-500/10'>
+        <button onClick={() => actions.onAddOne(line.id)} disabled={!actions.canAddOne(line)} title='Sumar uno' className={iconButton}>
+          <Plus className='w-4 h-4' />
+        </button>
+        <button onClick={() => actions.onRemove(line.id)} title='Quitar del pedido' className='p-1.5 rounded-lg text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-500/10'>
           <Trash2 className='w-4 h-4' />
         </button>
       </td>

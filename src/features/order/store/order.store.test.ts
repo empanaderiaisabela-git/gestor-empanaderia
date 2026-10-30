@@ -19,6 +19,14 @@ describe('pedido actual (US-5)', () => {
     expect(summary()).toEqual(['u6×1:2 carne+4 pollo']);
   });
 
+  it('sumar uno agrega una unidad igual a la línea (US-36)', () => {
+    state().start('pizzas', 'pizza_1');
+    state().add('muzza', 'one');
+    state().close();
+    state().addOne(state().lines[0].id);
+    expect(summary()).toEqual(['pizza_1×2:1 muzza']);
+  });
+
   it('quitar uno resta una unidad, y con una sola quita la línea (US-22, D-2)', () => {
     state().start('empanadas', 'u1');
     ['carne', 'carne', 'carne', 'carne'].forEach((id) => state().add(id, 'one'));

@@ -5,6 +5,7 @@ export type Usage = Map<string, number>;
 export type BaseOf = (group: MenuGroup) => string | null;
 type Stocked = { id: string; stock: number };
 export type StockedBaseOf = (group: MenuGroup) => Stocked | null;
+type StockBook = { itemOf: (menuItemId: string) => (Stocked & { group: MenuGroup }) | undefined; baseOf: StockedBaseOf };
 
 export function lineUsage(line: OrderLine): Usage {
   return new Map(line.flavors.map((flavor) => [flavor.menuItemId, flavor.units * line.quantity]));
@@ -29,6 +30,14 @@ export function orderUsage(lines: OrderLine[]): Usage {
 export function availableStock(item: Stocked & { group: MenuGroup }, lines: OrderLine[], baseOf: StockedBaseOf = () => null): number {
   const stocked = baseOf(item.group) ?? item;
   return stocked.stock - (stockUsage(lines, (group) => baseOf(group)?.id ?? null).get(stocked.id) ?? 0);
+}
+
+export function canAddOne(line: OrderLine, lines: OrderLine[], { itemOf, baseOf }: StockBook): boolean {
+  const needed = stockUsage([{ ...line, quantity: 1 }], (group) => baseOf(group)?.id ?? null);
+  return line.flavors.every(({ menuItemId }) => {
+    const item = itemOf(menuItemId);
+    return item !== undefined && availableStock(item, lines, baseOf) >= (needed.get(baseOf(item.group)?.id ?? item.id) ?? 0);
+  });
 }
 
 export function lineCost(line: OrderLine, costOf: (menuItemId: string) => number): number {
