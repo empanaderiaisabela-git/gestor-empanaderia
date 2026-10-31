@@ -1,5 +1,6 @@
 import type { JSX } from 'react';
 import { FormField, inputClass } from '@/components/ui/form-field';
+import { SALE_PRICE_TERM } from '@/features/menu/domain/menu-terms';
 import type { ProviderDef } from '@/features/provider/domain/provider.schema';
 import type { EntryValues, FormErrors } from './stock-forms';
 
@@ -9,6 +10,14 @@ export function MinStockField({ values, errors, onChange }: Omit<OptionalFieldsP
   return (
     <FormField label='Stock mínimo (opcional)' error={errors.minStock}>
       <input inputMode='numeric' value={values.minStock} onChange={(event) => onChange({ ...values, minStock: event.target.value })} placeholder='Sin mínimo' className={inputClass(Boolean(errors.minStock))} />
+    </FormField>
+  );
+}
+
+export function HamPriceField({ values, errors, onChange }: Omit<OptionalFieldsProps, 'providers'>): JSX.Element {
+  return (
+    <FormField label={SALE_PRICE_TERM} error={errors.price}>
+      <input inputMode='decimal' value={values.price1} onChange={(event) => onChange({ ...values, price1: event.target.value })} placeholder='Ej: 1500' className={inputClass(Boolean(errors.price))} />
     </FormField>
   );
 }

@@ -15,23 +15,30 @@ export type CheckoutService = {
   checkout(caller: Caller, input: CheckoutData): Promise<CheckoutResult>;
 };
 
+async function hamPriceOf(scope: CheckoutScope, sold: OrderLine[]): Promise<number | null> {
+  const row = await scope.extras.findHam();
+  if (sold.some((line) => line.ham) && !row) throw new AppError('MISSING_PRICE');
+  return row ? Number(row.price) : null;
+}
+
 async function checkout(scope: CheckoutScope, caller: Caller, input: CheckoutData): Promise<CheckoutResult> {
   const lines: OrderLine[] = input.lines.map((line, index) => ({ ...line, id: String(index + 1) }));
   const promos = await resolvePromos(scope, input.promos ?? []);
   const sold = [...lines, ...promos.flatMap((promo) => promo.parts)];
   const items = await lockFlavors(scope, sold);
   assertSellable(sold, items);
-  const book = priceBookOf(items);
+  const ham = await hamPriceOf(scope, sold);
+  const book = priceBookOf(items, ham);
   const priced = lines.map((line) => priceLine(line, book));
   const { discountAmount, discountPercentage, buyer, payments } = input;
-  const subtotal = round2([...priced.map((line) => line.subtotal), ...promos.map(promoSubtotal)].reduce((sum, value) => sum + value, 0));
+  const subtotal = round2([...priced.map((line) => line.subtotal), ...promos.map((promo) => promoSubtotal(promo, ham))].reduce((sum, value) => sum + value, 0));
   const total = applyDiscount(subtotal, { percentage: discountPercentage, amount: discountAmount });
   if (total < 0 || !paymentsCover(total, payments)) throw new AppError('VALIDATION');
   const charged = await chargePayments(scope, payments);
   await consumeStock(scope, items, sold);
   const customerId = await customerFor(scope, caller.id, buyer);
   const saleId = await scope.sales.insertSale({ vendorId: caller.id, customerId, buyerName: buyer.name, buyerPhone: buyer.phone || null, buyerAddress: buyer.address || null, total, discountAmount, discountPercentage });
-  const saleLines = [...priced.map((line) => saleLineOf(line, items)), ...promos.map((promo) => promoSaleLineOf(promo, items))];
+  const saleLines = [...priced.map((line) => saleLineOf(line, items)), ...promos.map((promo) => promoSaleLineOf(promo, items, ham))];
   for (const [position, line] of saleLines.entries()) await scope.sales.insertLine(saleId, { ...line, position });
   await scope.sales.insertPayments(saleId, charged);
   await scope.audit({ userId: caller.id, action: 'CREAR', entity: 'SALE', entityId: saleId, detail: { total, buyerName: buyer.name, lines: saleLines.length, payments: charged } });

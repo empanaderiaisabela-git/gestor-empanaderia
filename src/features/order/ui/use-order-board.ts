@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { fetchHamPrice } from '@/features/menu/actions/fetch-ham-price';
 import { fetchMenuItems } from '@/features/menu/actions/fetch-menu-items';
 import { hasBase, type MenuGroup } from '@/features/menu/domain/menu-groups';
 import type { MenuItemDef } from '@/features/menu/domain/menu-item.schema';
@@ -14,7 +15,7 @@ export type OrderBoardModel = {
   baseOf: (group: MenuGroup) => MenuItemDef | null;
 };
 
-export function boardModelOf(items: MenuItemDef[], loading = false): OrderBoardModel {
+export function boardModelOf(items: MenuItemDef[], loading = false, ham: number | null = null): OrderBoardModel {
   const baseOf = (group: MenuGroup): MenuItemDef | null => items.find((item) => item.isBase && item.group === group) ?? null;
   const inStock = (item: MenuItemDef): boolean => (hasBase(item.group) ? item.price1 !== null && (baseOf(item.group)?.stock ?? 0) >= 1 : item.stock > 0);
   const active = items.filter((item) => item.isActive && !item.isBase && inStock(item));
@@ -22,7 +23,7 @@ export function boardModelOf(items: MenuItemDef[], loading = false): OrderBoardM
   return {
     loading,
     itemsOf: (group) => active.filter((item) => item.group === group),
-    book: { item: (id) => byId.get(id) },
+    book: { item: (id) => byId.get(id), ham },
     nameOf: (id) => byId.get(id)?.name ?? 'Producto',
     itemOf: (id) => byId.get(id),
     baseOf,
@@ -32,6 +33,11 @@ export function boardModelOf(items: MenuItemDef[], loading = false): OrderBoardM
 export function useOrderBoard(): OrderBoardModel {
   const { items, isLoaded, setItems } = useMenuStore();
   const [loading, setLoading] = useState(!isLoaded);
+  const [ham, setHam] = useState<number | null>(null);
+
+  useEffect(() => {
+    fetchHamPrice().then(({ price }) => setHam(price));
+  }, []);
 
   useEffect(() => {
     if (isLoaded) return setLoading(false);
@@ -40,5 +46,5 @@ export function useOrderBoard(): OrderBoardModel {
       .finally(() => setLoading(false));
   }, [isLoaded, setItems]);
 
-  return useMemo(() => boardModelOf(items, loading), [items, loading]);
+  return useMemo(() => boardModelOf(items, loading, ham), [items, loading, ham]);
 }

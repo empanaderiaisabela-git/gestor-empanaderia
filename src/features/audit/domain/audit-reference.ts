@@ -13,6 +13,7 @@ export const ENTITY_LABELS: Readonly<Record<string, string>> = {
   PROMOTION: 'PROMOCIÓN',
   CARD: 'TARJETA',
   EXPENSE: 'GASTO',
+  PIZZA_EXTRA: 'JAMÓN EXTRA',
 };
 
 function detailName(detail: unknown): string | null {

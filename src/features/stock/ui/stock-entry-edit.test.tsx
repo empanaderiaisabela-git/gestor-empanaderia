@@ -16,7 +16,7 @@ const ENTRY: StockEntryDef = { id: '44444444-4444-4444-8444-444444444444', menuI
 
 function model(overrides: Partial<StockPanelModel>): StockPanelModel {
   const noop = vi.fn(async () => null);
-  return { loading: false, items: [], activeItems: [CARNE, POLLO], providers: [PROVIDER], search: '', setSearch: vi.fn(), categoryFilter: 'todos', setCategoryFilter: vi.fn(), stockOrder: 'categoria', setStockOrder: vi.fn(), dialog: null, setDialog: vi.fn(), message: null, submitEntry: noop, submitLoss: noop, submitPricing: noop, submitEntryUpdate: noop, ...overrides };
+  return { loading: false, items: [], activeItems: [CARNE, POLLO], providers: [PROVIDER], search: '', setSearch: vi.fn(), categoryFilter: 'todos', setCategoryFilter: vi.fn(), stockOrder: 'categoria', setStockOrder: vi.fn(), dialog: null, setDialog: vi.fn(), message: null, submitEntry: noop, submitLoss: noop, submitPricing: noop, submitEntryUpdate: noop, ham: { price: null, version: 0 }, submitHamPrice: noop, ...overrides };
 }
 
 describe('editar un ingreso de stock (US-46 CA-2)', () => {

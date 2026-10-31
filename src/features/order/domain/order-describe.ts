@@ -1,7 +1,13 @@
 import { GROUPS } from '@/features/menu/domain/menu-groups';
+import { HAM_LABEL } from '@/features/menu/domain/pizza-extra.schema';
 import { isHalfAndHalf, isComplete, type OrderLine, presentationOf, remaining } from './order-line';
 
 export function describeFlavors(line: OrderLine, nameOf: (menuItemId: string) => string): string {
+  const flavors = flavorsText(line, nameOf);
+  return line.ham ? `${flavors} + ${HAM_LABEL}` : flavors;
+}
+
+function flavorsText(line: OrderLine, nameOf: (menuItemId: string) => string): string {
   const presentation = presentationOf(line);
   if (presentation && isHalfAndHalf(presentation)) return line.flavors.map((flavor) => nameOf(flavor.menuItemId)).join(' / ');
   if (line.flavors.length === 1 && isComplete(line)) return nameOf(line.flavors[0].menuItemId);

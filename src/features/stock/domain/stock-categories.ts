@@ -17,6 +17,8 @@ export const CATEGORY_LABELS: Readonly<Record<StockCategory, string>> = {
   pepsi: GROUPS.pepsi.label,
 };
 
+export const HAM_CATEGORY = 'jamon_extra';
+
 export const hasOwnStock = (item: Categorized): boolean => item.isBase || !hasBase(item.group);
 
 export const STOCKED_CATEGORIES: readonly StockCategory[] = STOCK_CATEGORIES.filter((category) => category !== 'pizzas' && category !== 'ciabattas');

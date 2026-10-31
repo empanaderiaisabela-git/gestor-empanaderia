@@ -7,7 +7,7 @@ import type { OrderBoardModel } from './use-order-board';
 
 type OrderTableProps = { lines: OrderLine[]; promos?: PromoLine[]; board: OrderBoardModel; lineActions: LineRowActions; promoActions?: PromoRowActions };
 
-const NO_PROMO_ACTIONS: PromoRowActions = { onRemove: () => undefined, onReopen: () => undefined };
+const NO_PROMO_ACTIONS: PromoRowActions = { onRemove: () => undefined, onReopen: () => undefined, onToggleHam: () => undefined };
 
 export function OrderTable({ lines, promos = [], board, lineActions, promoActions = NO_PROMO_ACTIONS }: OrderTableProps): JSX.Element {
   if (lines.length === 0 && promos.length === 0) return <p className='py-6 text-center text-sm font-semibold uppercase text-zinc-600 dark:text-zinc-300'>No hay productos en el pedido</p>;

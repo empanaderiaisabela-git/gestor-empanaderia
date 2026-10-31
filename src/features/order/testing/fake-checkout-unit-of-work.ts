@@ -2,6 +2,7 @@ import type { CheckoutUnitOfWork, SaleAuditEntry } from '@/features/order/reposi
 import type { CheckoutCustomers, NewCustomer } from '@/features/order/repository/checkout-customers.repository';
 import type { NewPayment, NewSale, NewSaleLine, SaleWriter } from '@/features/order/repository/sale-writer.repository';
 import { createFakeCardUnitOfWork, type FakeCardUnitOfWork } from '@/features/card/testing/fake-card-unit-of-work';
+import { createFakePizzaExtraUnitOfWork, type FakePizzaExtraUnitOfWork } from '@/features/menu/testing/fake-pizza-extra-unit-of-work';
 import { createFakePromotionUnitOfWork, type FakePromotionUnitOfWork } from '@/features/promotion/testing/fake-promotion-unit-of-work';
 import { createFakeStockUnitOfWork, type FakeStockUnitOfWork } from '@/features/stock/testing/fake-stock-unit-of-work';
 
@@ -12,6 +13,7 @@ export type FakeCheckoutUnitOfWork = CheckoutUnitOfWork & {
   stock: FakeStockUnitOfWork;
   promotions: FakePromotionUnitOfWork;
   cards: FakeCardUnitOfWork;
+  extras: FakePizzaExtraUnitOfWork;
   sales: FakeSale[];
   customers: FakeCustomer[];
   audits: SaleAuditEntry[];
@@ -57,6 +59,7 @@ export function createFakeCheckoutUnitOfWork(): FakeCheckoutUnitOfWork {
     stock: createFakeStockUnitOfWork(),
     promotions: createFakePromotionUnitOfWork(),
     cards: createFakeCardUnitOfWork(),
+    extras: createFakePizzaExtraUnitOfWork(),
     sales: [],
     customers: [],
     audits: [],
@@ -65,6 +68,7 @@ export function createFakeCheckoutUnitOfWork(): FakeCheckoutUnitOfWork {
         stock: fake.stock.read,
         promotions: fake.promotions.read,
         cards: fake.cards.read,
+        extras: fake.extras.read,
         sales: fakeSaleWriter(fake.sales),
         customers: fakeCustomers(fake.customers),
         audit: async (entry) => void fake.audits.push(entry),
@@ -73,6 +77,7 @@ export function createFakeCheckoutUnitOfWork(): FakeCheckoutUnitOfWork {
       fake.stock.reset();
       fake.promotions.reset();
       fake.cards.reset();
+      fake.extras.reset();
       fake.sales.length = 0;
       fake.customers.length = 0;
       fake.audits.length = 0;

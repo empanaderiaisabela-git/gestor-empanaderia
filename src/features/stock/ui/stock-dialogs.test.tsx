@@ -15,7 +15,7 @@ const EMPANADA: MenuItemDef = { ...PREPIZZA, isBase: false, id: '22222222-2222-4
 
 function model(overrides: Partial<StockPanelModel>): StockPanelModel {
   const noop = vi.fn(async () => null);
-  return { loading: false, items: [], activeItems: [], providers: [], search: '', setSearch: vi.fn(), categoryFilter: 'todos', setCategoryFilter: vi.fn(), stockOrder: 'categoria', setStockOrder: vi.fn(), dialog: null, setDialog: vi.fn(), message: null, submitEntry: noop, submitLoss: noop, submitPricing: noop, submitEntryUpdate: noop, ...overrides };
+  return { loading: false, items: [], activeItems: [], providers: [], search: '', setSearch: vi.fn(), categoryFilter: 'todos', setCategoryFilter: vi.fn(), stockOrder: 'categoria', setStockOrder: vi.fn(), dialog: null, setDialog: vi.fn(), message: null, submitEntry: noop, submitLoss: noop, submitPricing: noop, submitEntryUpdate: noop, ham: { price: null, version: 0 }, submitHamPrice: noop, ...overrides };
 }
 
 describe('Costo y precio (US-28 CA-5)', () => {

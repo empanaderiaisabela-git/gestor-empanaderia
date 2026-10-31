@@ -275,6 +275,36 @@ Cada una dice de dónde salió la pregunta. Se eligió siempre lo que no borra d
   que tiene, como en un ingreso nuevo. El mínimo se precarga con el del gusto nuevo.
 - **Si el dev responde otra cosa**: se precargan los precios del gusto nuevo. Nivel 1.
 
+#### I-10 · Dónde vive el precio del jamón (US-47)
+
+- **Pregunta**: ¿el precio del jamón es un gusto más, o un dato aparte?
+- **De dónde sale**: US-47 CA-1 (tabla nueva `pizza_extras`) y CA-2 (no aparece en la tabla de Stock ni en Alta).
+- **Elegido**: una fila de `pizza_extras` con la clave `jamon`, en el feature `menu`. La lee cualquier usuario con
+  sesión, porque el vendedor necesita el precio en el carrito; la guarda sólo el admin. La categoría "Jamón extra
+  para pizza" de "Ingresar stock" es una opción del formulario, no una categoría de la tabla.
+- **Si el dev responde otra cosa**: no aplica; es cómo se implementó lo que pidió el cliente.
+
+#### I-11 · Cómo queda el jamón en la venta (US-47)
+
+- **Pregunta**: ¿la venta guarda el jamón en una columna propia?
+- **De dónde sale**: US-47 CA-5 (el comprobante y el historial muestran "+ Jamón extra") y D-5 (migraciones
+  mínimas y aditivas).
+- **Elegido**: no hace falta columna nueva. El jamón suma al precio unitario de la línea (o de la promo) y su
+  descripción dice "+ Jamón extra", así que el comprobante, el historial y Estadísticas lo ven sin cambios. Ejemplo:
+  2 Muzzas a $9.000 con jamón a $1.500 quedan como una línea de $10.500 × 2 = $21.000, "Muzza + Jamón extra".
+- **Si el dev responde otra cosa**: si algún día se quiere contar cuántos jamones se vendieron, se suma una columna
+  `ham` a `sale_lines` (aditiva). Nivel 3.
+
+#### I-12 · Si el precio del jamón cambia con un carrito abierto (US-47)
+
+- **Pregunta**: el vendedor entra a Ventas con el jamón a $1.500 y, mientras arma el pedido, el admin lo sube a
+  $1.800. ¿Qué cobra?
+- **De dónde sale**: US-47 CA-5 ("al cobrar, el servidor recalcula el jamón").
+- **Elegido**: el carrito usa el precio que leyó al entrar a Ventas; el servidor cobra el actual. Si no coinciden, el
+  cobro no cierra (los pagos no cubren el total) y el vendedor vuelve a entrar a Ventas, como pasa hoy con cualquier
+  precio que cambia (US-38).
+- **Si el dev responde otra cosa**: el carrito vuelve a leer el precio antes de cobrar. Nivel 2.
+
 ## Resumen para el dev
 
 Lo que entró en cada commit, en lenguaje simple. Todo va a `develop` en el GitHub público. Nunca entran secretos,
@@ -318,3 +348,17 @@ sin commitear.
 4. **Dos personas a la vez**: si dos editan el mismo ingreso, la segunda recibe el aviso de que los datos cambiaron.
 5. **Base de datos**: se agregó una columna nueva a los ingresos. No borra ni cambia nada; tu base local ya la tiene.
 6. **Pruebas y documentos**: pruebas de cada parte, una que edita en la pantalla real, y el documento de Stock.
+
+### US-47 · Jamón extra para pizza
+
+1. **Precio del jamón**: en "Ingresar stock" hay una categoría nueva, "Jamón extra para pizza", que pide sólo el
+   precio. No aparece en la tabla de Stock ni en Alta de productos.
+2. **Botón en el carrito**: cada pizza del pedido (también mitad y mitad) tiene un botón deslizable "Jamón extra",
+   apagado al entrar. Prendido, suma el precio del jamón a cada pizza de ese renglón.
+3. **Promos**: cada pizza de una promo también tiene su botón, y el jamón suma al precio de la promo.
+4. **Sin precio cargado**: el botón aparece apagado y no se puede tocar hasta que el admin cargue el precio.
+5. **Cobro**: el sistema vuelve a calcular el jamón al cobrar; el comprobante y el historial dicen "+ Jamón extra",
+   y Estadísticas lo suma a Pizzas (o a Promos), sin costo.
+6. **Base de datos**: una tabla nueva y vacía para el precio. No toca nada de lo que hay; tu base local ya la tiene.
+7. **Pruebas y documentos**: pruebas de cada parte, también la de prepizzas en la pantalla real, y los documentos de
+   Ventas, Alta y Stock.

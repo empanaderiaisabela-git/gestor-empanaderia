@@ -102,6 +102,21 @@ tarjeta, con su recargo). El total a cobrar es el precio original: el recargo lo
 - El comprobante muestra cada pago como "Crédito · Visa · 3 cuotas" por su monto, sin el recargo; el historial, la
   misma etiqueta. Una tarjeta ya usada en un cobro no se puede borrar (FK sin cascada).
 
+## Jamón extra (US-47)
+
+- Cada renglón de pizza del carrito, también las mitad y mitad, tiene el switch **"Jamón extra"**, apagado al entrar.
+  Prendido, suma el precio del jamón a cada pizza del renglón (D-1): 3 Muzzas a $10.000 con jamón a $1.500 son
+  $34.500. El renglón dice "Muzza + Jamón extra".
+- Una pizza nueva no se junta con un renglón que tiene el jamón prendido (`mergeLine` compara también `ham`), y apagarlo
+  no junta renglones (P-9).
+- Cada pizza de una promo tiene su switch ("Jamón extra (pizza N)" si hay más de una), que suma al precio de la promo
+  (D-2).
+- Sin precio cargado (`pizza_extras` vacía), el switch está deshabilitado (P-2). El precio se lee al entrar a Ventas
+  (`fetchHamPrice`); el servidor lo vuelve a leer al cobrar.
+- Al cobrar, `ham` viaja en cada línea o parte de promo. El servidor suma el jamón al `unit_price` de la línea y anota
+  "+ Jamón extra" en la descripción, que ven el comprobante y el historial. No descuenta stock ni tiene costo (P-3):
+  Estadísticas lo cuenta en Pizzas (o en Promos) y entero en Ganancia.
+
 ## Promos en el tablero (US-9)
 
 La subdivisión **Promos** del tablero lista las promos activas (US-8) con su precio de venta. Una promo con un
@@ -156,6 +171,8 @@ borre.
 |---|---|---|---|
 | Sin sesión | `UNAUTHENTICATED` | No autorizado (Token faltante) | `checkout.contract.test.ts` |
 | Entrada mal formada o con precios, costos o total | `VALIDATION` | Los datos proporcionados no son válidos. | `checkout.contract.test.ts` |
+| Jamón extra en algo que no es pizza, o `ham` que no es sí o no (US-47) | `VALIDATION` | Los datos proporcionados no son válidos. | `services/checkout-ham.test.ts`, `actions/checkout-ham.contract.test.ts` |
+| Jamón extra sin precio cargado (US-47, P-2) | `MISSING_PRICE` | Falta el precio de venta. | `checkout-ham.test.ts`, `checkout-ham.contract.test.ts`, `checkout-ham.int.test.ts` |
 | Línea incompleta, gusto de otro grupo o dado de baja, gusto sin precio, descuento mayor al total o pagos que no suman | `VALIDATION` | idem | `checkout-errors.test.ts` |
 | Un gusto que ya no existe | `NOT_FOUND` | El producto ya no existe. | `checkout-errors.test.ts` |
 | Un gusto no alcanza | `INSUFFICIENT_STOCK` | No hay stock suficiente de {gusto}. | `checkout-errors.test.ts` y `checkout.service.int.test.ts` |

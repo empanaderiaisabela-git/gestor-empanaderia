@@ -9,7 +9,7 @@ export type Discount = { percentage: number; amount: number };
 
 export function isValidLine(line: OrderLine): boolean {
   const presentation = presentationOf(line);
-  if (!presentation || line.flavors.length === 0) return false;
+  if (!presentation || line.flavors.length === 0 || (line.ham && line.group !== 'pizzas')) return false;
   const ids = new Set(line.flavors.map((flavor) => flavor.menuItemId));
   if (ids.size !== line.flavors.length) return false;
   const stepOk = isHalfAndHalf(presentation)

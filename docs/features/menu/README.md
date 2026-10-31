@@ -62,6 +62,8 @@ varias presentaciones), sus fotos y si hay stock.
 | Action | Acceso | Entrada (schema) | Respuesta |
 |---|---|---|---|
 | `fetchMenuItems()` | Cualquier usuario activo | — | `MenuItemDef[]` (vacía ante cualquier error) |
+| `fetchHamPrice()` | Cualquier usuario activo | — | `HamPriceDef` (`{ price, version }`; `{ null, 0 }` sin precio o ante error) |
+| `setHamPriceAction(input)` | admin | `hamPriceSchema`: `{ price, version }` (`version` 0 si todavía no hay precio) | `ActionResult<HamPriceDef>` |
 | `createMenuItemAction(input)` | admin | `menuItemCreateSchema` | `ActionResult<MenuItemDef>` |
 | `updateMenuItemAction(id, input)` | admin | `menuItemUpdateSchema` (nombre y versión) | `ActionResult<MenuItemDef>` |
 | `toggleMenuItemActiveAction(input)` | admin | `menuItemToggleSchema` | `ActionResult` |
@@ -78,6 +80,11 @@ precio, ingresos y mermas de stock, cobros y anulaciones) llama a `afterCatalogC
 T-11).
 
 ## Datos
+
+- `pizza_extras` (US-47, migración `0025_jamon-extra`): `code` (clave, sólo `'jamon'` por check), `price` (`> 0`),
+  `version` y `updated_at`. Arranca sin filas: el primer guardado inserta la versión 1 y los siguientes filtran por
+  versión (`STALE_VERSION`). Lo carga el admin desde "Ingresar stock" (categoría "Jamón extra para pizza") y audita
+  `ACTUALIZAR` / `PIZZA_EXTRA`.
 
 - `menu_items`: grupo (enum `menu_group`), nombre (`varchar(60)`), costo unitario, stock (`numeric(10,1)`), precios
   `price_1`, `price_3`, `price_6` y `price_12` (nulos según el grupo), `is_active`, `is_visible` (catálogo, por defecto
@@ -106,6 +113,9 @@ T-11).
 | Acción inválida | code | Mensaje | Test |
 |---|---|---|---|
 | Sin sesión | `UNAUTHENTICATED` | No autorizado (Token faltante) | `actions/menu-errors.contract.test.ts` |
+| El vendedor cambia el precio del jamón (US-47) | `FORBIDDEN` | Solo los administradores pueden realizar esta acción | `actions/ham-price.contract.test.ts` |
+| Precio del jamón en 0 o sin versión | `VALIDATION` | Los datos proporcionados no son válidos. | `ham-price.contract.test.ts`, `domain/pizza-extra.schema.test.ts` |
+| Otro cambió el precio del jamón antes | `STALE_VERSION` | Los datos en el servidor han cambiado… | `ham-price.contract.test.ts`, `repository/pizza-extra.repository.int.test.ts` |
 | Un vendedor crea, edita, activa o borra | `FORBIDDEN` | Solo los administradores pueden realizar esta acción | `menu-errors.contract.test.ts` |
 | Nombre vacío o de más de 60 | `VALIDATION` | Los datos proporcionados no son válidos. | `menu-errors.contract.test.ts`, `domain/*.schema.test.ts` |
 | Nombre repetido en el grupo | `DUPLICATE` | Ya existe un registro con esos datos (DNI, nombre o código duplicado). | `menu-errors.contract.test.ts` |

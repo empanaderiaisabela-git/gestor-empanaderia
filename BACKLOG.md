@@ -4141,7 +4141,7 @@ provisorias P-1 a P-10, cómo se cuidan las migraciones, el orden y la trazabili
 | 2   | [BUG-28](#bug-28--stock-la-categoría-en-un-solo-renglón) | Stock: la categoría en un solo renglón | En revisión | US-44 | 20 min |
 | 3   | [US-45](#us-45--stock-mínimo-opcional-con-aviso-amarillo) | Stock mínimo opcional con aviso amarillo | En revisión | T-25 | 3 h |
 | 4   | [US-46](#us-46--editar-un-ingreso-de-stock) | Editar un ingreso de stock | En revisión | US-45 | 4 h |
-| 5   | [US-47](#us-47--jamón-extra-para-pizza) | Jamón extra para pizza | Pendiente | US-46 | 5 h |
+| 5   | [US-47](#us-47--jamón-extra-para-pizza) | Jamón extra para pizza | En revisión | US-46 | 5 h |
 | 6   | [T-26](#t-26--cierre-del-sprint-6) | Cierre del Sprint 6 | Pendiente | todos | 1 h 30 min |
 |     |    | **Total del sprint** | | | **15 h 5 min** |
 
@@ -4287,9 +4287,9 @@ pueda corregir una cantidad, un costo o un gusto equivocados, o sumarle el prove
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
-| Dueño        | —         |
-| Inicio       | —         |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-31 |
 | Tamaño       | L         |
 | Depende de   | US-46     |
 | Plan         | [`docs/plans/sprint-6.md`](docs/plans/sprint-6.md) |
@@ -4301,20 +4301,21 @@ pidió el cliente sin cargar otra pizza. Como administrador quiero cargar el pre
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · Migración 0025, aditiva: la tabla nueva `pizza_extras`, sin filas. Un test de integración la prueba · Estimación: 30 min · Completado: —
+- [x] **CA-1** · Migración 0025, aditiva: la tabla nueva `pizza_extras`, sin filas. Un test de integración la prueba · Estimación: 30 min · Completado: 2026-10-31 01:51
 
-- [ ] **CA-2** · En "Ingresar stock", la categoría "Jamón extra para pizza" muestra sólo "Precio de venta", con el precio actual, y "Guardar". No aparece en la tabla de Stock ni en Alta de productos. Sólo el admin lo guarda, y queda en Auditoría · Estimación: 1 h 15 min · Completado: —
+- [x] **CA-2** · En "Ingresar stock", la categoría "Jamón extra para pizza" muestra sólo "Precio de venta", con el precio actual, y "Guardar". No aparece en la tabla de Stock ni en Alta de productos. Sólo el admin lo guarda, y queda en Auditoría · Estimación: 1 h 15 min · Completado: 2026-10-31 01:51
 
-- [ ] **CA-3** · Cada renglón de pizza del carrito, también las mitad y mitad, tiene el switch "Jamón extra", apagado al entrar. Prendido, suma el precio del jamón a cada pizza del renglón (D-1). Una pizza nueva no se junta con un renglón prendido. Sin precio cargado, el switch está deshabilitado (P-2) · Estimación: 1 h 15 min · Completado: —
+- [x] **CA-3** · Cada renglón de pizza del carrito, también las mitad y mitad, tiene el switch "Jamón extra", apagado al entrar. Prendido, suma el precio del jamón a cada pizza del renglón (D-1). Una pizza nueva no se junta con un renglón prendido. Sin precio cargado, el switch está deshabilitado (P-2) · Estimación: 1 h 15 min · Completado: 2026-10-31 01:51
 
-- [ ] **CA-4** · Cada pizza de una promo en el carrito tiene su switch, que suma el precio del jamón al de la promo (D-2) · Estimación: 45 min · Completado: —
+- [x] **CA-4** · Cada pizza de una promo en el carrito tiene su switch, que suma el precio del jamón al de la promo (D-2) · Estimación: 45 min · Completado: 2026-10-31 01:51
 
-- [ ] **CA-5** · Al cobrar, el servidor recalcula el jamón. El total, el comprobante y el historial muestran "+ Jamón extra". Estadísticas lo cuentan en Pizzas o en Promos, y en Ganancia sin costo (P-3). Jamón en algo que no es pizza da `VALIDATION`, y sin precio, `MISSING_PRICE`. Lo cubren tests de dominio, contrato e integración y el E2E de prepizzas · Estimación: 1 h 15 min · Completado: —
+- [x] **CA-5** · Al cobrar, el servidor recalcula el jamón. El total, el comprobante y el historial muestran "+ Jamón extra". Estadísticas lo cuentan en Pizzas o en Promos, y en Ganancia sin costo (P-3). Jamón en algo que no es pizza da `VALIDATION`, y sin precio, `MISSING_PRICE`. Lo cubren tests de dominio, contrato e integración y el E2E de prepizzas · Estimación: 1 h 15 min · Completado: 2026-10-31 01:51
 
 **Notas**
 
 - Nivel 3: schema, migración y precios del cobro.
 - El jamón no descuenta stock ni tiene costo (P-3).
+- Decisiones de la implementación (detalle en `sprint-6.md`): I-10, el precio vive en `pizza_extras` (feature `menu`) y lo lee cualquier usuario con sesión; I-11, la venta guarda el jamón en el precio y la descripción de la línea, sin columna nueva; I-12, si el precio cambia con un carrito abierto, cobra el servidor con el actual.
 
 ### T-26 · Cierre del Sprint 6
 

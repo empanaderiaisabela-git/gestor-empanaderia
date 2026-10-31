@@ -5,7 +5,7 @@ import type { StockPanelModel } from './use-stock-panel';
 
 function renderFilters(setStockOrder = vi.fn()): typeof setStockOrder {
   const noop = vi.fn(async () => null);
-  const model: StockPanelModel = { loading: false, items: [], activeItems: [], providers: [], search: '', setSearch: vi.fn(), categoryFilter: 'todos', setCategoryFilter: vi.fn(), stockOrder: 'categoria', setStockOrder, dialog: null, setDialog: vi.fn(), message: null, submitEntry: noop, submitLoss: noop, submitPricing: noop, submitEntryUpdate: noop };
+  const model: StockPanelModel = { loading: false, items: [], activeItems: [], providers: [], search: '', setSearch: vi.fn(), categoryFilter: 'todos', setCategoryFilter: vi.fn(), stockOrder: 'categoria', setStockOrder, dialog: null, setDialog: vi.fn(), message: null, submitEntry: noop, submitLoss: noop, submitPricing: noop, submitEntryUpdate: noop, ham: { price: null, version: 0 }, submitHamPrice: noop };
   render(<div data-testid='filtros'><StockFilters model={model} isAdmin /></div>);
   return setStockOrder;
 }

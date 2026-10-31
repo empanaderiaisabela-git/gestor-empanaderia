@@ -4,9 +4,9 @@ import { PackagePlus } from 'lucide-react';
 import { type FormEvent, type JSX, useEffect, useState } from 'react';
 import { ErrorAlert } from '@/components/ui/alert';
 import { ResponsiveModal } from '@/components/ui/responsive-modal';
-import { categoryOf, isPriceOnlyCategory } from '@/features/stock/domain/stock-categories';
+import { categoryOf, HAM_CATEGORY, isPriceOnlyCategory } from '@/features/stock/domain/stock-categories';
 import { StockEntryFields } from './stock-entry-fields';
-import { type EntryValues, type FormErrors, type Parsed, parseEntry, parsePricing, textOf } from './stock-forms';
+import { type EntryValues, type FormErrors, type Parsed, parseEntry, parseHamPrice, parsePricing, textOf } from './stock-forms';
 import type { StockPanelModel } from './use-stock-panel';
 
 type Setters = { setErrors: (errors: FormErrors) => void; setServerError: (error: string | null) => void; setPending: (pending: boolean) => void };
@@ -42,18 +42,20 @@ export function StockEntryModal({ model }: { model: StockPanelModel }): JSX.Elem
   }, [isOpen, preselected, preselectedCategory, preselectedMin]);
 
   const priceOnly = isPriceOnlyCategory(values.category);
+  const isHam = values.category === HAM_CATEGORY;
   const setters = { setErrors, setServerError, setPending };
   const submit = async (event: FormEvent): Promise<void> => {
     event.preventDefault();
+    if (isHam) return run(parseHamPrice(values.price1, model.ham.version), model.submitHamPrice, setters);
     if (!priceOnly) return run(parseEntry(values), model.submitEntry, setters);
     const item = model.activeItems.find((candidate) => candidate.id === values.menuItemId);
     return run(item ? parsePricing(item, { ...values, applyToGroup: false }) : NO_FLAVOR, model.submitPricing, setters);
   };
 
   return (
-    <ResponsiveModal isOpen={isOpen} onClose={() => model.setDialog(null)} title='Ingresar stock' icon={<PackagePlus className='w-5 h-5 text-brand-500' />} width='md' onSubmit={submit} submitLabel={priceOnly ? 'Guardar' : 'Ingresar'} isPending={pending}>
+    <ResponsiveModal isOpen={isOpen} onClose={() => model.setDialog(null)} title='Ingresar stock' icon={<PackagePlus className='w-5 h-5 text-brand-500' />} width='md' onSubmit={submit} submitLabel={priceOnly || isHam ? 'Guardar' : 'Ingresar'} isPending={pending}>
       <ErrorAlert error={serverError} />
-      <StockEntryFields values={values} errors={errors} items={model.activeItems} providers={model.providers} onChange={setValues} />
+      <StockEntryFields values={values} errors={errors} items={model.activeItems} providers={model.providers} onChange={setValues} ham={model.ham} />
     </ResponsiveModal>
   );
 }

@@ -56,6 +56,9 @@ Muestra el stock de cada gusto y bebida activos, agrupados por grupo, y permite:
     reciente (P-6, I-7). El gusto viejo conserva su costo (I-6).
   - Los precios de venta y el mínimo son del gusto: lo que se guarda queda como actual. Las ventas ya hechas no cambian.
   - Filtra por `id` y `version` del ingreso: si otro lo editó antes, `STALE_VERSION`.
+- **Jamón extra para pizza (US-47)**: es una categoría más de "Ingresar stock" que pide sólo el "Precio de venta",
+  precargado con el actual, y guarda con "Guardar" (`setHamPriceAction`). No es un gusto: no aparece en la tabla de
+  Stock, en los filtros ni en Alta de productos. Detalle en `docs/features/menu/README.md`.
 - **Stock es sólo del administrador** (dev, 2026-10-26, US-16): el vendedor no ve la sección ni puede ingresar
   stock, registrar mermas o leer el historial.
 - Cada movimiento sube la `version` del gusto: si alguien lo estaba editando en Alta de productos, recibe

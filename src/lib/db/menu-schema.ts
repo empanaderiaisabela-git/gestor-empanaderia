@@ -62,3 +62,14 @@ export const menuItemImages = pgTable(
   },
   (table) => [index('menu_item_images_menu_item_id_idx').on(table.menuItemId)]
 );
+
+export const pizzaExtras = pgTable(
+  'pizza_extras',
+  {
+    code: varchar('code', { length: 20 }).primaryKey(),
+    price: money('price').notNull(),
+    version: integer('version').default(1).notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().notNull(),
+  },
+  (table) => [check('pizza_extras_code_check', sql`${table.code} = 'jamon'`), check('pizza_extras_price_check', sql`${table.price} > 0`)]
+);

@@ -18,12 +18,13 @@ const presentationKey = z.string('Elegí una presentación').max(10, 'Elegí una
 const flavors = z.array(flavorSchema).min(1, 'Elegí al menos un gusto').max(MAX_UNITS, 'Demasiados gustos');
 const quantity = z.number('Ingresá una cantidad').int('La cantidad tiene que ser un número entero').positive('La cantidad debe ser mayor a 0').max(99, 'La cantidad es demasiado grande');
 
-const lineSchema = z.strictObject({ group, presentationKey, flavors, quantity });
+const ham = z.boolean('Elegí si lleva jamón extra').optional();
+const lineSchema = z.strictObject({ group, presentationKey, flavors, quantity, ham });
 
 const promoLineSchema = z.strictObject({
   promotionId: z.uuid('Elegí una promo válida'),
   quantity,
-  parts: z.array(z.strictObject({ group, presentationKey, flavors })).min(1, 'La promo no tiene productos').max(MAX_PROMO_PARTS, 'La promo tiene demasiados productos'),
+  parts: z.array(z.strictObject({ group, presentationKey, flavors, ham })).min(1, 'La promo no tiene productos').max(MAX_PROMO_PARTS, 'La promo tiene demasiados productos'),
 });
 
 const money = z.number('Ingresá un monto').max(MAX_AMOUNT, 'El monto es demasiado grande');
