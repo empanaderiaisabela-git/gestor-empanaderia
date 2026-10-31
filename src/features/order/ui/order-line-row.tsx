@@ -5,9 +5,10 @@ import { describeFlavors, missingLabel } from '@/features/order/domain/order-des
 import { type OrderLine, presentationOf, unitsIn } from '@/features/order/domain/order-line';
 import { linePrice } from '@/features/order/domain/order-pricing';
 import { formatMoney } from '@/lib/format-money';
+import { HamSwitch } from './ham-switch';
 import type { OrderBoardModel } from './use-order-board';
 
-export type LineRowActions = { onRemove: (lineId: string) => void; onRemoveOne: (lineId: string) => void; onAddOne: (lineId: string) => void; canAddOne: (line: OrderLine) => boolean };
+export type LineRowActions = { onRemove: (lineId: string) => void; onRemoveOne: (lineId: string) => void; onAddOne: (lineId: string) => void; canAddOne: (line: OrderLine) => boolean; onToggleHam: (lineId: string) => void };
 type OrderLineRowProps = { line: OrderLine; board: OrderBoardModel; actions: LineRowActions };
 
 const iconButton = 'p-1.5 rounded-lg text-zinc-800 hover:bg-zinc-100 dark:text-zinc-100 dark:hover:bg-zinc-800 disabled:opacity-40 disabled:cursor-not-allowed';
@@ -21,6 +22,7 @@ export function OrderLineRow({ line, board, actions }: OrderLineRowProps): JSX.E
       <td className='py-2 pr-3'>
         <span className='font-semibold text-zinc-900 dark:text-zinc-50'>{GROUPS[line.group].label}</span>
         <span className='block text-sm text-zinc-700 dark:text-zinc-200'>{describeFlavors(line, board.nameOf)}</span>
+        {line.group === 'pizzas' && <HamSwitch checked={Boolean(line.ham)} price={board.book.ham ?? null} onToggle={() => actions.onToggleHam(line.id)} />}
         {missing && <span className='inline-block mt-1 px-2 py-0.5 rounded-full text-xs font-bold bg-amber-50 text-amber-800 dark:bg-amber-500/10 dark:text-amber-300'>{missing}</span>}
       </td>
       <td className='py-2 px-3 text-sm whitespace-nowrap'>{quantity}</td>

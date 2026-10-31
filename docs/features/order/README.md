@@ -10,10 +10,10 @@
 
 ## Qué hace
 
-El vendedor arma el pedido en un tablero con una subdivisión por grupo (Empanadas, Pizzas, Sanguches, Ciabattas,
-Coca-Cola y Pepsi). Cada subdivisión tiene un botón por presentación. Al tocarlo se abre la lista de gustos:
+El vendedor arma el pedido en un tablero con una subdivisión por grupo (Empanadas, Pizzas, Sándwich de miga, Ciabattas,
+Coca-Cola y Quilmes). Cada subdivisión tiene un botón por presentación. Al tocarlo se abre la lista de gustos:
 
-- **Empanadas y Sanguches** (1, 3, 6 y 12): cada gusto tiene **"Agregar uno"** (+1 de ese gusto) y
+- **Empanadas y Sándwich de miga** (1, 3, 6 y 12): cada gusto tiene **"Agregar uno"** (+1 de ese gusto) y
   **"Completar"** (llena lo que falta con ese gusto). Así se arman las surtidas dentro de la misma presentación.
   A la izquierda, **"Quitar uno"** (rojo) resta una unidad de ese gusto; está apagado si el gusto no tiene unidades
   (US-39). También está en las pizzas de 2 sabores y en todas las filas de las promos.
@@ -31,7 +31,7 @@ se puede cobrar. Cada renglón común tiene "−" y "+" (US-36): el "+" se apaga
 |---|---|
 | En una presentación de más de 1 unidad, un gusto con "Completar" se carga para toda la cantidad que falta | `specs.md` (EMPANADAS, SANDWICH y AGREGADO) |
 | Surtidas con "Agregar uno" y "Completar" dentro de la misma presentación | `specs.md` (AGREGADO) |
-| Precio por gusto en todos los grupos (US-28). Una surtida de Empanadas o de Sanguches: Σ (unidades del gusto ÷ unidades de la presentación × precio de esa presentación del gusto), redondeado a 2 decimales. Con todos los gustos al mismo precio da exactamente el precio de la presentación (7 + 5 a $32.000 la docena = $32.000) | dev, 2026-10-25; D-4 de `sprint-4.md` |
+| Precio por gusto en todos los grupos (US-28). Una surtida de Empanadas o de Sándwich de miga: Σ (unidades del gusto ÷ unidades de la presentación × precio de esa presentación del gusto), redondeado a 2 decimales. Con todos los gustos al mismo precio da exactamente el precio de la presentación (7 + 5 a $32.000 la docena = $32.000) | dev, 2026-10-25; D-4 de `sprint-4.md` |
 | Cómo se cobra una docena surtida cuando los gustos tengan precios distintos: **pregunta abierta** de US-28 (lo pacta el cliente ese día). Hoy rige la regla proporcional; cambiarla toca sólo `unitLinePrice` | D-4 de `sprint-4.md` |
 | Ciabatta: el precio de unidad de su gusto, como una pizza de 1 sabor | US-28 |
 | Pizza de 2 sabores: el precio del sabor más caro | `specs.md` y dev |
@@ -102,6 +102,21 @@ tarjeta, con su recargo). El total a cobrar es el precio original: el recargo lo
 - El comprobante muestra cada pago como "Crédito · Visa · 3 cuotas" por su monto, sin el recargo; el historial, la
   misma etiqueta. Una tarjeta ya usada en un cobro no se puede borrar (FK sin cascada).
 
+## Jamón extra (US-47)
+
+- Cada renglón de pizza del carrito, también las mitad y mitad, tiene el switch **"Jamón extra"**, apagado al entrar.
+  Prendido, suma el precio del jamón a cada pizza del renglón (D-1): 3 Muzzas a $10.000 con jamón a $1.500 son
+  $34.500. El renglón dice "Muzza + Jamón extra".
+- Una pizza nueva no se junta con un renglón que tiene el jamón prendido (`mergeLine` compara también `ham`), y apagarlo
+  no junta renglones (P-9).
+- Cada pizza de una promo tiene su switch ("Jamón extra (pizza N)" si hay más de una), que suma al precio de la promo
+  (D-2).
+- Sin precio cargado (`pizza_extras` vacía), el switch está deshabilitado (P-2). El precio se lee al entrar a Ventas
+  (`fetchHamPrice`); el servidor lo vuelve a leer al cobrar.
+- Al cobrar, `ham` viaja en cada línea o parte de promo. El servidor suma el jamón al `unit_price` de la línea y anota
+  "+ Jamón extra" en la descripción, que ven el comprobante y el historial. No descuenta stock ni tiene costo (P-3):
+  Estadísticas lo cuenta en Pizzas (o en Promos) y entero en Ganancia.
+
 ## Promos en el tablero (US-9)
 
 La subdivisión **Promos** del tablero lista las promos activas (US-8) con su precio de venta. Una promo con un
@@ -156,6 +171,8 @@ borre.
 |---|---|---|---|
 | Sin sesión | `UNAUTHENTICATED` | No autorizado (Token faltante) | `checkout.contract.test.ts` |
 | Entrada mal formada o con precios, costos o total | `VALIDATION` | Los datos proporcionados no son válidos. | `checkout.contract.test.ts` |
+| Jamón extra en algo que no es pizza, o `ham` que no es sí o no (US-47) | `VALIDATION` | Los datos proporcionados no son válidos. | `services/checkout-ham.test.ts`, `actions/checkout-ham.contract.test.ts` |
+| Jamón extra sin precio cargado (US-47, P-2) | `MISSING_PRICE` | Falta el precio de venta. | `checkout-ham.test.ts`, `checkout-ham.contract.test.ts`, `checkout-ham.int.test.ts` |
 | Línea incompleta, gusto de otro grupo o dado de baja, gusto sin precio, descuento mayor al total o pagos que no suman | `VALIDATION` | idem | `checkout-errors.test.ts` |
 | Un gusto que ya no existe | `NOT_FOUND` | El producto ya no existe. | `checkout-errors.test.ts` |
 | Un gusto no alcanza | `INSUFFICIENT_STOCK` | No hay stock suficiente de {gusto}. | `checkout-errors.test.ts` y `checkout.service.int.test.ts` |

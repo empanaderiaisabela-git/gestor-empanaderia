@@ -277,10 +277,11 @@ Casos especiales:
   tiene costo. El costo congelado de la venta es el del gusto.
 - **Precios por gusto** (US-28). Todos los grupos guardan sus precios en el gusto (`price_1`, `price_3`, `price_6` y
   `price_12`), cargados en Stock con "Costo y precio" (con una casilla para copiarlos a todo el grupo, en la misma
-  transacción) o en "Ingresar stock". La docena surtida de empanadas se cobra como la de Sanguches: Σ (unidades del
+  transacción) o en "Ingresar stock". La docena surtida de empanadas se cobra como la de Sándwich de miga: Σ (unidades del
   gusto ÷ 12 × precio de la docena del gusto).
-- **Tablas append-only** (`sales`, `sale_lines`, `sale_line_items`, `sale_payments`, `stock_entries`,
-  `stock_losses`, `menu_item_images`, `audit_logs`). No llevan `version`: se insertan y, a lo sumo, se borran enteras.
+- **Tablas append-only** (`sales`, `sale_lines`, `sale_line_items`, `sale_payments`, `stock_losses`,
+  `menu_item_images`, `audit_logs`). No llevan `version`: se insertan y, a lo sumo, se borran enteras. `stock_entries`
+  dejó de serlo en US-46: un ingreso se edita y lleva `version` (migración 0024).
 - **Componentes de una promo y planes de una tarjeta** (`promotion_components`, `card_plans`). No llevan `version`:
   se reemplazan enteros al editar la promo o la tarjeta, que sí la lleva y la controla en la misma transacción.
 - **Bajas.** Si una entidad participó de una venta, no se borra: se desactiva (`is_active = false`). Las FKs
@@ -309,9 +310,10 @@ Casos especiales:
 | `sales`, `sale_payments` | Venta: vendedor, comprador opcional, descuentos y total; pagos en `efectivo`, `transferencia`, `debito` o `credito` (hasta 2 por venta). El crédito guarda tarjeta, cuotas, % y monto del recargo (US-11), y el recargo es de la tarjeta, no del local (BUG-20): el total de la venta y los pagos quedan al precio original y el recargo sólo se guarda como dato | No | Anulación (borrado y reposición de stock) |
 | `sale_lines`, `sale_line_items` (`order-schema.ts`) | Cada línea del pedido con lo cobrado, su orden y la descripción de sus gustos; lo que consumió de cada gusto con el costo congelado (US-6). Una línea de promo lleva `promotion_id` en vez de grupo y presentación (US-9) | No | En cascada con la venta |
 | `audit_logs` | Bitácora de operaciones | No | — |
-| `menu_items` (`src/lib/db/menu-schema.ts`) | Gustos y bebidas (US-3): grupo, nombre, costo y precios (se cargan en el primer ingreso de stock: `MISSING_COST` y `MISSING_PRICE`, US-17), precios por gusto en todos los grupos (US-28: `menu_group_prices` se borró en la migración 0020) y visibilidad en el catálogo ([ADR 0005](adr/0005-grupos-fijos-y-precio-del-grupo-o-por-gusto.md)). El stock de los gustos de Pizzas y Ciabattas no se cuenta: lo llevan sus bases (US-29). `is_base` marca las dos bases fijas, "Prepizza" y "Pan de ciabatta": una por grupo, sin costo ni precios, con stock entero y sin vender solas (migración 0021) | Sí | Lógica; física si no tiene movimientos; las bases no se borran |
+| `menu_items` (`src/lib/db/menu-schema.ts`) | Gustos y bebidas (US-3): grupo, nombre, costo y precios (se cargan en el primer ingreso de stock: `MISSING_COST` y `MISSING_PRICE`, US-17), precios por gusto en todos los grupos (US-28: `menu_group_prices` se borró en la migración 0020) y visibilidad en el catálogo ([ADR 0005](adr/0005-grupos-fijos-y-precio-del-grupo-o-por-gusto.md)). El stock de los gustos de Pizzas y Ciabattas no se cuenta: lo llevan sus bases (US-29). `is_base` marca las dos bases fijas, "Prepizza" y "Pan de ciabatta": una por grupo, sin costo ni precios, con stock entero y sin vender solas (migración 0021). `min_stock` es el mínimo opcional que pinta el stock de amarillo (US-45, migración 0023) | Sí | Lógica; física si no tiene movimientos; las bases no se borran |
 | `menu_item_images` | Fotos de cada gusto en Cloudinary (T-12) | No | Física; en cascada con el gusto |
-| `stock_entries` (`src/lib/db/stock-schema.ts`) | Ingresos de stock (US-4): gusto, cantidad entera, costo unitario, proveedor opcional y usuario | No | — |
+| `stock_entries` (`src/lib/db/stock-schema.ts`) | Ingresos de stock (US-4): gusto, cantidad entera, costo unitario, proveedor opcional y usuario. Se editan desde el Historial (US-46) | Sí (migración 0024) | — |
+| `pizza_extras` (`menu-schema.ts`) | Precio del jamón extra para pizza (US-47): una fila, clave `jamon`, que arranca vacía (migración 0025) | Sí | — |
 | `stock_losses` | Mermas: cantidad (entera desde US-29; las anteriores pueden traer media pizza), costo unitario del momento, motivo y usuario | No | — |
 | `promotions`, `promotion_components` (`promotion-schema.ts`) | Promociones con su precio de venta y las presentaciones que llevan (US-8) | Sí (la promo) | Lógica; física si nunca se vendió (D-1) |
 | `cards`, `card_plans` (`card-schema.ts`) | Tarjetas aceptadas y sus planes de 1, 3, 6 o 12 cuotas con el % de recargo (US-10) | Sí (la tarjeta) | Lógica; física si nunca se usó en un cobro |

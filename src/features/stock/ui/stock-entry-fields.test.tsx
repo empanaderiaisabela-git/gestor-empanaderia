@@ -4,10 +4,10 @@ import type { MenuItemDef } from '@/features/menu/domain/menu-item.schema';
 import { StockEntryFields } from './stock-entry-fields';
 import type { EntryValues } from './stock-forms';
 
-const item = (id: string, group: MenuItemDef['group'], name: string): MenuItemDef => ({ id, group, name, unitCost: 100, stock: 3, price1: 1000, price3: null, price6: null, price12: null, isActive: true, isVisible: false, isBase: false, version: 1, createdAt: '', updatedAt: '' });
+const item = (id: string, group: MenuItemDef['group'], name: string): MenuItemDef => ({ id, group, name, unitCost: 100, stock: 3, price1: 1000, price3: null, price6: null, price12: null, isActive: true, isVisible: false, isBase: false, minStock: null, version: 1, createdAt: '', updatedAt: '' });
 const PREPIZZA: MenuItemDef = { ...item('e', 'pizzas', 'Prepizza'), unitCost: null, price1: null, isBase: true };
-const ITEMS = [item('a', 'sanguches', 'Primavera'), item('b', 'sanguches', 'Jamón y queso'), item('c', 'pepsi', 'Pepsi 1,5 L'), item('d', 'pizzas', 'Muzza'), PREPIZZA];
-const BLANK: EntryValues = { category: '', menuItemId: '', quantity: '', unitCost: '', providerId: '', price1: '', price3: '', price6: '', price12: '' };
+const ITEMS = [item('a', 'sanguches', 'Primavera'), item('b', 'sanguches', 'Jamón y queso'), item('c', 'pepsi', 'Quilmes 1,5 L'), item('d', 'pizzas', 'Muzza'), PREPIZZA];
+const BLANK: EntryValues = { category: '', menuItemId: '', quantity: '', unitCost: '', providerId: '', minStock: '', price1: '', price3: '', price6: '', price12: '' };
 
 function renderFields(values: EntryValues, onChange = vi.fn()): typeof onChange {
   render(<StockEntryFields values={values} errors={{}} items={ITEMS} providers={[]} onChange={onChange} />);
@@ -36,7 +36,7 @@ describe('Ingresar stock: primero la categoría, después el gusto (US-18)', () 
   it('la categoría ofrece las bases y también Pizzas y Ciabattas, éstas sólo para costo y precio (BUG-23, BUG-25)', () => {
     renderFields(BLANK);
     const options = within(screen.getByLabelText('Categoría')).getAllByRole('option').map((option) => option.textContent);
-    expect(options).toEqual(['Elegí una categoría', 'Empanadas', 'Prepizza', 'Pizzas', 'Sanguches', 'Pan de ciabatta', 'Ciabattas', 'Coca-Cola', 'Pepsi']);
+    expect(options).toEqual(['Elegí una categoría', 'Empanadas', 'Prepizza', 'Pizzas', 'Sándwich de miga', 'Pan de ciabatta', 'Ciabattas', 'Coca-Cola', 'Quilmes']);
   });
 
   it('en Pizzas se elige el gusto, sin la Prepizza, y no se pide cantidad ni proveedor (BUG-25)', () => {

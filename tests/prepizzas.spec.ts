@@ -14,8 +14,8 @@ async function agregarPizza(page: Page, presentacion: RegExp, gustos: string[]):
   await page.getByRole('button', { name: 'Listo' }).click();
 }
 
-test.describe('prepizzas (US-29, BUG-23)', () => {
-  test('se ingresan 2 prepizzas, se venden una mitad y mitad y una Muzza, y los gustos de pizza desaparecen de Ventas', async ({ page }) => {
+test.describe('prepizzas (US-29, BUG-23) y jamón extra (US-47)', () => {
+  test('se ingresan 2 prepizzas, se venden una mitad y mitad con jamón y una Muzza, y los gustos de pizza desaparecen de Ventas', async ({ page }) => {
     await page.goto('/stock');
     await page.getByLabel('Filtrar Stock').selectOption({ label: 'Prepizza' });
     await expect(page.getByRole('row').nth(1)).toContainText('Prepizza');
@@ -26,6 +26,11 @@ test.describe('prepizzas (US-29, BUG-23)', () => {
     await page.getByLabel('Cantidad que entra').fill('2');
     await page.getByRole('button', { name: 'Ingresar', exact: true }).click();
     await expect(page.getByText('Stock ingresado: Prepizza queda con 2')).toBeVisible();
+    await page.getByRole('button').filter({ hasText: 'Ingresar stock' }).click();
+    await page.getByLabel('Categoría').selectOption({ label: 'Jamón extra para pizza' });
+    await page.getByLabel('Precio de venta').fill('1500');
+    await page.getByRole('button', { name: 'Guardar', exact: true }).click();
+    await expect(page.getByText('Jamón extra: $1.500')).toBeVisible();
 
     await page.goto('/ventas/nueva');
     await agregarPizza(page, /2 sabores/, ['Muzza', 'Napolitana']);
@@ -33,10 +38,12 @@ test.describe('prepizzas (US-29, BUG-23)', () => {
     await page.getByRole('button', { name: /^Ver pedido/ }).click();
     const pedido = page.getByRole('region', { name: 'Pedido actual' });
     await expect(pedido.getByText('Muzza / Napolitana')).toBeVisible();
+    await pedido.getByRole('row').filter({ hasText: 'Muzza / Napolitana' }).getByRole('switch', { name: 'Jamón extra' }).click();
+    await expect(pedido.getByText('Muzza / Napolitana + Jamón extra')).toBeVisible();
     await pedido.getByLabel('Nombre del cliente').fill('Cliente pizzas');
-    await pedido.getByRole('button', { name: 'Cobrar $23.000' }).click();
-    await page.getByRole('button', { name: 'Confirmar $23.000' }).click();
-    await expect(page.getByText('Venta registrada por $23.000')).toBeVisible();
+    await pedido.getByRole('button', { name: 'Cobrar $24.500' }).click();
+    await page.getByRole('button', { name: 'Confirmar $24.500' }).click();
+    await expect(page.getByText('Venta registrada por $24.500')).toBeVisible();
 
     await expect(grupo(page, 'Pizzas').getByText('Sin stock de Prepizza')).toBeVisible();
     await expect(grupo(page, 'Pizzas').getByRole('button', { name: /2 sabores/ })).toBeDisabled();

@@ -162,6 +162,27 @@
       "when": 1793330664512,
       "tag": "0022_cliente-en-la-venta",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1793418276108,
+      "tag": "0023_stock-minimo",
+      "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1793420289698,
+      "tag": "0024_editar-ingreso",
+      "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1793421419693,
+      "tag": "0025_jamon-extra",
+      "breakpoints": true
     }
   ]
 }

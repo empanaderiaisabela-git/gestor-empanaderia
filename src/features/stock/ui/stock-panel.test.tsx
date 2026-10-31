@@ -14,7 +14,7 @@ vi.mock('@/features/stock/actions/register-stock-loss', () => ({ registerStockLo
 vi.mock('@/features/stock/actions/set-stock-pricing', () => ({ setStockPricingAction: vi.fn() }));
 vi.mock('@/features/stock/actions/fetch-stock-entries', () => ({ fetchStockEntries: vi.fn(async () => []) }));
 
-const ITEM: MenuItemDef = { id: '11111111-1111-4111-8111-111111111111', group: 'empanadas', name: 'Humita', unitCost: null, stock: 5, price1: null, price3: null, price6: null, price12: null, isActive: true, isVisible: false, isBase: false, version: 1, createdAt: '', updatedAt: '' };
+const ITEM: MenuItemDef = { id: '11111111-1111-4111-8111-111111111111', group: 'empanadas', name: 'Humita', unitCost: null, stock: 5, price1: null, price3: null, price6: null, price12: null, isActive: true, isVisible: false, isBase: false, minStock: null, version: 1, createdAt: '', updatedAt: '' };
 const COCA: MenuItemDef = { ...ITEM, id: '22222222-2222-4222-8222-222222222222', group: 'coca_cola', name: 'Coca 500', price1: 3500 };
 const MUZZA: MenuItemDef = { ...ITEM, id: '33333333-3333-4333-8333-333333333333', group: 'pizzas', name: 'Muzza', stock: 0, price1: 11000 };
 const PREPIZZA: MenuItemDef = { ...ITEM, id: '44444444-4444-4444-8444-444444444444', group: 'pizzas', name: 'Prepizza', stock: 0, isBase: true };
@@ -46,7 +46,7 @@ describe('pantalla de Stock (US-4)', () => {
     fireEvent.change(screen.getByLabelText('Costo para el local, por unidad'), { target: { value: '460' } });
     fireEvent.change(screen.getByLabelText('Proveedor (opcional)'), { target: { value: '' } });
     fireEvent.click(screen.getByRole('button', { name: 'Ingresar' }));
-    await waitFor(() => expect(actions.entry).toHaveBeenCalledWith({ menuItemId: ITEM.id, quantity: 12, unitCost: 460, providerId: null }), { timeout: 5000 });
+    await waitFor(() => expect(actions.entry).toHaveBeenCalledWith({ menuItemId: ITEM.id, quantity: 12, unitCost: 460, providerId: null, minStock: null }), { timeout: 5000 });
   });
 
   it('la categoría Prepizza pide sólo la cantidad, sin gusto, costo ni precio (BUG-23)', async () => {
@@ -59,7 +59,7 @@ describe('pantalla de Stock (US-4)', () => {
     expect(screen.queryByLabelText(/Costo para el local/)).toBeNull();
     fireEvent.change(screen.getByLabelText('Cantidad que entra'), { target: { value: '2' } });
     fireEvent.click(screen.getByRole('button', { name: 'Ingresar' }));
-    await waitFor(() => expect(actions.entry).toHaveBeenCalledWith({ menuItemId: PREPIZZA.id, quantity: 2, providerId: null }));
+    await waitFor(() => expect(actions.entry).toHaveBeenCalledWith({ menuItemId: PREPIZZA.id, quantity: 2, providerId: null, minStock: null }));
   });
 
   it('el admin carga el precio de venta y el servidor puede rechazar el ingreso', async () => {
@@ -73,7 +73,7 @@ describe('pantalla de Stock (US-4)', () => {
     fireEvent.change(screen.getByLabelText('Cantidad que entra'), { target: { value: '5' } });
     fireEvent.change(screen.getByLabelText('Precio de venta, 1 unidad'), { target: { value: '4000' } });
     fireEvent.click(screen.getByRole('button', { name: 'Ingresar' }));
-    await waitFor(() => expect(actions.entry).toHaveBeenCalledWith({ menuItemId: COCA.id, quantity: 5, providerId: null, prices: { price1: 4000 } }));
+    await waitFor(() => expect(actions.entry).toHaveBeenCalledWith({ menuItemId: COCA.id, quantity: 5, providerId: null, minStock: null, prices: { price1: 4000 } }));
     expect(await screen.findByText('Falta el costo para el local.')).toBeDefined();
   });
 

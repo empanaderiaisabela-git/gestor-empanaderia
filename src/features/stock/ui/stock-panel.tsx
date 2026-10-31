@@ -13,6 +13,7 @@ import { useAuthStore } from '@/features/auth/store/auth.store';
 import type { MenuItemDef } from '@/features/menu/domain/menu-item.schema';
 import { CATEGORY_LABELS, categoryOf, hasOwnStock } from '@/features/stock/domain/stock-categories';
 import { getStockColumns, getStockViewColumns, StockBadge, StockButtons, type StockRowActions } from './stock-columns';
+import { StockEntryEditModal } from './stock-entry-edit-modal';
 import { StockEntryModal } from './stock-entry-modal';
 import { StockFilters } from './stock-filters';
 import { StockHistoryModal } from './stock-history-modal';
@@ -32,6 +33,7 @@ export function StockPanel(): JSX.Element {
   const isAdmin = useAuthStore((state) => state.user?.role) === 'admin';
   if (model.loading) return <TableSkeleton />;
   const actions: StockRowActions | null = isAdmin ? { open: model.setDialog } : null;
+  const editing = model.dialog?.kind === 'entry' && model.dialog.item && model.dialog.entry ? { item: model.dialog.item, entry: model.dialog.entry } : null;
   const addButton = (
     <Button variant='primary' onClick={() => model.setDialog({ kind: 'entry', item: null })} leftIcon={<PackagePlus className='w-5 h-5' />} className='h-11 w-full sm:w-auto shrink-0' data-testid={TEST_IDS.general.btnAgregar}>
       Ingresar stock
@@ -46,6 +48,7 @@ export function StockPanel(): JSX.Element {
       <StockLossModal model={model} />
       <StockPricingModal model={model} />
       <StockHistoryModal model={model} />
+      {editing && <StockEntryEditModal key={editing.entry.id} model={model} item={editing.item} entry={editing.entry} />}
     </div>
   );
 }

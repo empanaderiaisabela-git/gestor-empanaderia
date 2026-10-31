@@ -9,13 +9,13 @@ import type { StockPanelModel } from './use-stock-panel';
 const history = vi.hoisted(() => vi.fn());
 vi.mock('@/features/stock/actions/fetch-stock-entries', () => ({ fetchStockEntries: history }));
 
-const PREPIZZA: MenuItemDef = { id: '11111111-1111-4111-8111-111111111111', group: 'pizzas', name: 'Prepizza', unitCost: null, stock: 3, price1: null, price3: null, price6: null, price12: null, isActive: true, isVisible: false, isBase: true, version: 1, createdAt: '', updatedAt: '' };
+const PREPIZZA: MenuItemDef = { id: '11111111-1111-4111-8111-111111111111', group: 'pizzas', name: 'Prepizza', unitCost: null, stock: 3, price1: null, price3: null, price6: null, price12: null, isActive: true, isVisible: false, isBase: true, minStock: null, version: 1, createdAt: '', updatedAt: '' };
 
 const EMPANADA: MenuItemDef = { ...PREPIZZA, isBase: false, id: '22222222-2222-4222-8222-222222222222', group: 'empanadas', name: 'Carne', unitCost: 400, stock: 10, price1: 1200, price3: 3400, price6: 6500, price12: 12000, version: 3 };
 
 function model(overrides: Partial<StockPanelModel>): StockPanelModel {
   const noop = vi.fn(async () => null);
-  return { loading: false, items: [], activeItems: [], providers: [], search: '', setSearch: vi.fn(), categoryFilter: 'todos', setCategoryFilter: vi.fn(), stockOrder: 'categoria', setStockOrder: vi.fn(), dialog: null, setDialog: vi.fn(), message: null, submitEntry: noop, submitLoss: noop, submitPricing: noop, ...overrides };
+  return { loading: false, items: [], activeItems: [], providers: [], search: '', setSearch: vi.fn(), categoryFilter: 'todos', setCategoryFilter: vi.fn(), stockOrder: 'categoria', setStockOrder: vi.fn(), dialog: null, setDialog: vi.fn(), message: null, submitEntry: noop, submitLoss: noop, submitPricing: noop, submitEntryUpdate: noop, ham: { price: null, version: 0 }, submitHamPrice: noop, ...overrides };
 }
 
 describe('Costo y precio (US-28 CA-5)', () => {

@@ -42,6 +42,13 @@ export function describeStockRepository(label: string, setup: () => Promise<Stoc
       expect(await harness.repository.saveItem({ id: harness.itemId, version: 1 }, { unitCost: 3100, prices: { price1: 12500 } })).toMatchObject({ stock: '2.5', unitCost: '3100.00', price1: '12500.00', version: 2 });
     });
 
+    it('guarda el stock mínimo, lo conserva si no viene y lo borra con null (US-45)', async () => {
+      const { repository, itemId } = harness;
+      expect(await repository.saveItem({ id: itemId, version: 1 }, { stock: 3, minStock: 5 })).toMatchObject({ minStock: 5, version: 2 });
+      expect(await repository.saveItem({ id: itemId, version: 2 }, { stock: 4 })).toMatchObject({ minStock: 5 });
+      expect(await repository.saveItem({ id: itemId, version: 3 }, { minStock: null })).toMatchObject({ minStock: null, stock: '4.0' });
+    });
+
     it('sin costo nuevo, conserva el costo', async () => {
       const before = await harness.repository.lockItem(harness.itemId);
       expect(await harness.repository.saveItem({ id: harness.itemId, version: 1 }, { stock: 3 })).toMatchObject({ unitCost: before?.unitCost });
@@ -56,6 +63,17 @@ export function describeStockRepository(label: string, setup: () => Promise<Stoc
         { quantity: 6, unitCost: '420.00', providerName: null, username: 'admin' },
         { quantity: 12, unitCost: '400.00', providerName: 'Molino del Sur', username: 'admin' },
       ]);
+    });
+
+    it('bloquea, edita por versión y encuentra el ingreso más reciente de un gusto (US-46)', async () => {
+      const { repository, itemId, siblingId, userId, providerId } = harness;
+      const first = await repository.insertEntry({ menuItemId: itemId, quantity: 12, unitCost: 400, providerId: null, userId });
+      await new Promise((resolve) => setTimeout(resolve, 5));
+      const second = await repository.insertEntry({ menuItemId: itemId, quantity: 6, unitCost: 420, providerId: null, userId });
+      expect([await repository.lockEntry(first.id), await repository.latestEntryId(itemId)]).toMatchObject([{ quantity: 12, version: 1 }, second.id]);
+      expect(await repository.updateEntry(first, { menuItemId: siblingId, quantity: 10, unitCost: 410, providerId })).toMatchObject({ menuItemId: siblingId, quantity: 10, unitCost: '410.00', providerId, version: 2 });
+      expect(await repository.updateEntry(first, { menuItemId: itemId, quantity: 1, unitCost: 1, providerId: null })).toBeNull();
+      expect(await repository.latestEntryId(siblingId)).toBe(first.id);
     });
 
     it('registra una merma con media unidad y el costo del momento', async () => {

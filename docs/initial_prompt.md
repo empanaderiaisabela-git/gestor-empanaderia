@@ -1,7 +1,7 @@
 # Prompt inicial: contexto completo de gestor-empanaderia
 
 > **Uso.** Al empezar una sesión nueva de Claude Code: `Leé @docs/initial_prompt.md y seguilo.`
-> Foto del proyecto al **2026-10-28**. Se adapta en cada avance significativo
+> Foto del proyecto al **2026-10-31**. Se adapta en cada avance significativo
 > ([criterios](how-to-document.md#mantener-al-día-docsinitial_promptmd)). Si algo de acá contradice a
 > [`AGENTS.md`](../AGENTS.md) o a los docs que enlaza, **ganan ellos**: avisale al dev que este archivo quedó
 > desactualizado.
@@ -12,7 +12,7 @@
 
 Sos el agente de ingeniería de software del repo **gestor-empanaderia**. Trabajás con **el Tomás**: la única
 persona que programa, decide y aprueba. El **cliente** es **Empanadería Isabela**: vende empanadas, pizzas,
-sándwiches de miga, ciabattas y bebidas de Coca-Cola y Pepsi. Con el cliente no hablás vos: sus pedidos te llegan a
+sándwiches de miga, ciabattas y bebidas de Coca-Cola y Quilmes. Con el cliente no hablás vos: sus pedidos te llegan a
 través del dev.
 
 - Idioma: **docs, commits, UI y tus respuestas en español** (rioplatense neutro). **Código en inglés.**
@@ -49,6 +49,9 @@ Funciones que ya existen (Sprints 1 a 4):
 - Anotador de gastos con número de factura único y el proveedor que emitió la factura, filtrado entre dos fechas con el mes en curso por defecto, que no cambia las Estadísticas (US-14, US-27, US-33).
 - ABM de clientes (sólo el nombre es obligatorio, US-26), proveedores y usuarios, y auditoría de toda operación.
 - Catálogo público que se regenera a demanda.
+- Desde el Sprint 6: los grupos se ven como "Quilmes" y "Sándwich de miga" (US-44); stock mínimo opcional con aviso
+  amarillo (US-45); editar un ingreso de stock desde el Historial (US-46); el switch "Jamón extra" en cada pizza del
+  carrito, con su precio en "Ingresar stock" (US-47).
 
 ## 3. Origen: código heredado en remodelación
 
@@ -62,14 +65,15 @@ en `eslint-legacy.json`.
 |---|---|
 | `src/lib/contact/contact.config.ts` | Vacío: el cliente no los necesita por ahora porque la web no se usa pronto; sin datos, el catálogo no muestra botones de contacto |
 | Nombres en inglés del modelo: `menu_items` (gustos y bebidas), `sale_lines` (líneas del pedido), `stock_losses` (mermas) | Ver el [glosario](#12-glosario) |
+| Las claves de grupo `pepsi` y `sanguches` | Se muestran "Quilmes" y "Sándwich de miga" (US-44). La clave quedó igual en la base y en el código para no tocar el enum de Postgres (P-1 de `sprint-6.md`) |
 
 **Las reglas de venta del rubro ya están definidas** (dev, 2026-10-25) en las
 [decisiones del Sprint 1](plans/sprint-1.md#decisiones-del-dev-2026-10-25). En resumen:
 
-- Grupos fijos: Empanadas, Pizzas, Sanguches, Ciabattas, Coca-Cola y Pepsi.
+- Grupos fijos: Empanadas, Pizzas, Sándwich de miga, Ciabattas, Coca-Cola y Quilmes.
 - Presentaciones fijas, con precio por gusto y presentación.
 - Pizza de 2 sabores al precio del más caro.
-- Surtidas dentro de la misma presentación ("Agregar uno" y "Completar"), con precio proporcional en Sanguches.
+- Surtidas dentro de la misma presentación ("Agregar uno" y "Completar"), con precio proporcional en Sándwich de miga.
 - Stock por gusto, salvo Pizzas y Ciabattas, que descuentan una prepizza o un pan (Sprint 4).
 - Promos con los gustos elegidos al vender.
 
@@ -147,6 +151,14 @@ Hacer preguntas de más es mejor que inventar.
     I-5) en [`sprint-5.md`](plans/sprint-5.md). El dev revisó el sprint y dio el OK al merge el 2026-10-30.
   - La migración 0022 es del Sprint 5 (quedan 23). La base de Supabase la migra el dev.
   - Ningún ítem nuevo se arranca sin el OK del dev.
+- **Sprint 6 cerrado** ("Revisión del cliente en producción": T-25, US-44, BUG-28, US-45 a US-47 y T-26): en `main`
+  con el tag `sprint-6` desde el 2026-10-31. Plan, decisiones y
+  resumen en [`sprint-6.md`](plans/sprint-6.md).
+  - Lo hizo el agente solo (2026-10-31), con permiso del dev para commitear y pushear a `develop`. Las decisiones del
+    dev (D-1 a D-5), las provisorias P-1 a P-10 (confirmadas por el dev el 2026-10-31) y las de la implementación (I-1
+    a I-12) están en el plan, cada una con la pregunta que la originó.
+  - Las migraciones 0023 a 0025 son del Sprint 6 y **sólo aditivas** (`src/lib/db/additive-migrations.test.ts` lo
+    controla desde la 0023). Supabase está en **26** (la migró el dev el 2026-10-31).
 - **US-43** (sin sprint asignado): la web pública (`/home`, `/product`, `/api/public`) está **apagada salvo
   `PUBLIC_CATALOG=true`**, y sin sesión se entra por `/login`. Para prenderla se carga la variable en Vercel y se
   redespliega. Plan en [`US-43-sin-web-publica.md`](plans/US-43-sin-web-publica.md).
@@ -154,7 +166,7 @@ Hacer preguntas de más es mejor que inventar.
   es **público**: todo lo que se pushea queda publicado.
 - **No existe todavía**: `docs/conventions/`.
 - **Sí existen**:
-  - `BACKLOG.md`, con los Sprints 0 a 5 en orden de ejecución.
+  - `BACKLOG.md`, con los Sprints 0 a 6 en orden de ejecución.
   - Los planes de cada sprint en `docs/plans/sprint-0.md`, `sprint-1.md`, `sprint-2.md`, `sprint-3.md`, `sprint-4.md` y `sprint-5.md`: orden, decisiones del
     dev y enfoque de cada ítem.
   - Las plantillas en `docs/templates/` (`plan.md`, `feature.md`, `adr.md`), los planes en `docs/plans/` y los
@@ -188,7 +200,7 @@ Hacer preguntas de más es mejor que inventar.
   - lefthook: `pre-commit` bloquea los `.env` reales y corre ESLint, el tope de los `.css` y el typecheck;
     `commit-msg` corre commitlint; `pre-push` corre `test:coverage` y `skills:check`.
 - CI: `.github/workflows/ci.yml` en cada push a `develop` y `main` (lint, lista legacy, typecheck, skills,
-  cobertura, mutación, integración, build y E2E contra `db-test`), más `keep-alive.yml`, que hace un ping diario a Supabase.
+  cobertura, mutación, integración y build contra `db-test`), más `keep-alive.yml`, que hace un ping diario a Supabase.
 - `README.md` en español con el setup real (T-7).
 - Skills: la fuente es `.agents/skills/`. Se copian a `.claude/skills/` con `npm run skills:sync`, y
   `npm run skills:check` verifica que estén iguales. **Nunca edites `.claude/skills/` directo.**
@@ -427,7 +439,7 @@ las cuentas reales y se borran esas.
 | Brecha | Código heredado que no cumple las reglas actuales. |
 | Habilitador | Trabajo técnico sin valor directo para el usuario, como instalar Vitest o crear `db-test`. |
 | Gusto | Cada variedad que se vende de un grupo (Carne, Muzza, Coca-Cola 500 ml). En el código, `menu_items`. |
-| Grupo y presentación | Grupo fijo (Empanadas, Pizzas, Sanguches, Ciabattas, Coca-Cola, Pepsi) y cantidad en que se vende (1, 3, 6, 12 u; pizza de 1 o 2 sabores). |
+| Grupo y presentación | Grupo fijo (Empanadas, Pizzas, Sándwich de miga, Ciabattas, Coca-Cola, Quilmes) y cantidad en que se vende (1, 3, 6, 12 u; pizza de 1 o 2 sabores). |
 | Línea del pedido | Una presentación con sus gustos y su cantidad. En el código, `sale_lines` y `sale_line_items`. |
 | Surtida | Una presentación de varias unidades con gustos distintos, armada con "Agregar uno" y "Completar". |
 | Costo para el local | Lo que le cuesta al local hacer o comprar una unidad (en la pizza, la pizza entera). Va por gusto y sirve para la ganancia. En el código, `unitCost`. Los campos, columnas y títulos nunca dicen "costo" a secas. |

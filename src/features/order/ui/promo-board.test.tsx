@@ -66,7 +66,7 @@ describe('promos en el tablero (US-9 CA-1 y CA-2)', () => {
     render(<CurrentOrder board={board} onCheckout={vi.fn()} />);
     expect(screen.getByText('Promo · Media + Coca')).toBeDefined();
     expect(screen.getByRole('button', { name: 'Cobrar $9.000' }).hasAttribute('disabled')).toBe(true);
-    fireEvent.click(screen.getByRole('button', { name: 'faltan gustos · elegir' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Faltan gustos · Elegir' }));
     expect(store().openPromo).toMatchObject({ part: 1 });
     act(() => {
       store().addToOpenPromo('coca', 'one');

@@ -9,7 +9,7 @@
 
 ## Qué hace
 
-El admin da de alta los gustos de cada comida y las bebidas de Coca-Cola y Pepsi con **sólo el grupo y el nombre**.
+El admin da de alta los gustos de cada comida y las bebidas de Coca-Cola y Quilmes con **sólo el grupo y el nombre**.
 El nombre es lo único que se edita después. El **costo para el local** y los **precios de venta** se cargan al
 ingresar stock (US-17) o con "Costo y precio" (US-28), los dos en [Stock](../stock/README.md). Desde US-28 **todos
 los gustos tienen su propio precio**, también los de Empanadas y Ciabattas: Alta ya no tiene tarjetas de precio por
@@ -30,10 +30,10 @@ varias presentaciones), sus fotos y si hay stock.
   | Grupo | Presentaciones | Precio | Stock |
   |---|---|---|---|
   | Empanadas | 1, 3, 6 (½ docena) y 12 (1 docena) u | Por gusto (US-28) | Unidades |
-  | Sanguches (de miga) | 1, 3, 6 y 12 u | Por gusto | Unidades |
+  | Sándwich de miga | 1, 3, 6 y 12 u | Por gusto | Unidades |
   | Pizzas | Entera, de 1 o 2 sabores | Por gusto (la entera) | De la Prepizza (US-29): 1 por pizza |
   | Ciabattas | Unidad | Por gusto (US-28) | Del Pan de ciabatta (US-29): 1 por ciabatta |
-  | Coca-Cola, Pepsi | Unidad | Por bebida | Unidades |
+  | Coca-Cola, Quilmes | Unidad | Por bebida | Unidades |
 
 - El precio de cada gusto lleva todas las presentaciones de su grupo; ninguna de más. Fuente: "Aclaración de
   precios" de `specs.md`.
@@ -62,6 +62,8 @@ varias presentaciones), sus fotos y si hay stock.
 | Action | Acceso | Entrada (schema) | Respuesta |
 |---|---|---|---|
 | `fetchMenuItems()` | Cualquier usuario activo | — | `MenuItemDef[]` (vacía ante cualquier error) |
+| `fetchHamPrice()` | Cualquier usuario activo | — | `HamPriceDef` (`{ price, version }`; `{ null, 0 }` sin precio o ante error) |
+| `setHamPriceAction(input)` | admin | `hamPriceSchema`: `{ price, version }` (`version` 0 si todavía no hay precio) | `ActionResult<HamPriceDef>` |
 | `createMenuItemAction(input)` | admin | `menuItemCreateSchema` | `ActionResult<MenuItemDef>` |
 | `updateMenuItemAction(id, input)` | admin | `menuItemUpdateSchema` (nombre y versión) | `ActionResult<MenuItemDef>` |
 | `toggleMenuItemActiveAction(input)` | admin | `menuItemToggleSchema` | `ActionResult` |
@@ -79,12 +81,17 @@ T-11).
 
 ## Datos
 
+- `pizza_extras` (US-47, migración `0025_jamon-extra`): `code` (clave, sólo `'jamon'` por check), `price` (`> 0`),
+  `version` y `updated_at`. Arranca sin filas: el primer guardado inserta la versión 1 y los siguientes filtran por
+  versión (`STALE_VERSION`). Lo carga el admin desde "Ingresar stock" (categoría "Jamón extra para pizza") y audita
+  `ACTUALIZAR` / `PIZZA_EXTRA`.
+
 - `menu_items`: grupo (enum `menu_group`), nombre (`varchar(60)`), costo unitario, stock (`numeric(10,1)`), precios
   `price_1`, `price_3`, `price_6` y `price_12` (nulos según el grupo), `is_active`, `is_visible` (catálogo, por defecto
   `false`), `is_base` (US-29, por defecto `false`), `version`.
   - `unique(menu_group, name)`.
   - `CHECK`: costo ≥ 0; stock ≥ 0 y en medias; sólo Pizzas admite medias. Precios (`menu_items_prices_check`,
-    US-28): Empanadas y Sanguches, los cuatro nulos o los cuatro > 0; Pizzas, Ciabattas y bebidas, `price_1` nulo o
+    US-28): Empanadas y Sándwich de miga, los cuatro nulos o los cuatro > 0; Pizzas, Ciabattas y bebidas, `price_1` nulo o
     > 0 y los demás nulos.
   - Bases (US-29, migración `0021_prepizzas-y-panes`): índice único parcial `menu_items_one_base_per_group` (una
     por grupo) y `menu_items_base_check` (sin costo ni precios, sólo en Pizzas o Ciabattas y con stock entero). La
@@ -106,6 +113,9 @@ T-11).
 | Acción inválida | code | Mensaje | Test |
 |---|---|---|---|
 | Sin sesión | `UNAUTHENTICATED` | No autorizado (Token faltante) | `actions/menu-errors.contract.test.ts` |
+| El vendedor cambia el precio del jamón (US-47) | `FORBIDDEN` | Solo los administradores pueden realizar esta acción | `actions/ham-price.contract.test.ts` |
+| Precio del jamón en 0 o sin versión | `VALIDATION` | Los datos proporcionados no son válidos. | `ham-price.contract.test.ts`, `domain/pizza-extra.schema.test.ts` |
+| Otro cambió el precio del jamón antes | `STALE_VERSION` | Los datos en el servidor han cambiado… | `ham-price.contract.test.ts`, `repository/pizza-extra.repository.int.test.ts` |
 | Un vendedor crea, edita, activa o borra | `FORBIDDEN` | Solo los administradores pueden realizar esta acción | `menu-errors.contract.test.ts` |
 | Nombre vacío o de más de 60 | `VALIDATION` | Los datos proporcionados no son válidos. | `menu-errors.contract.test.ts`, `domain/*.schema.test.ts` |
 | Nombre repetido en el grupo | `DUPLICATE` | Ya existe un registro con esos datos (DNI, nombre o código duplicado). | `menu-errors.contract.test.ts` |

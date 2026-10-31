@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { fetchMenuItems } from '@/features/menu/actions/fetch-menu-items';
+import { setHamPriceAction } from '@/features/menu/actions/set-ham-price';
+import type { HamPriceDef, HamPriceInput } from '@/features/menu/domain/pizza-extra.schema';
 import type { MenuItemDef } from '@/features/menu/domain/menu-item.schema';
 import { useMenuStore } from '@/features/menu/store/menu.store';
 import { fetchProviders } from '@/features/provider/actions/fetch-providers';
@@ -9,10 +11,12 @@ import { registerStockLossAction } from '@/features/stock/actions/register-stock
 import { setStockPricingAction } from '@/features/stock/actions/set-stock-pricing';
 import { categoryOf, type StockCategory } from '@/features/stock/domain/stock-categories';
 import { orderStock, type StockOrder } from '@/features/stock/domain/stock-order';
-import type { StockEntryInput, StockLossInput, StockPricingInput } from '@/features/stock/domain/stock.schema';
+import { updateStockEntryAction } from '@/features/stock/actions/update-stock-entry';
+import type { StockEntryDef, StockEntryInput, StockEntryUpdateInput, StockLossInput, StockPricingInput } from '@/features/stock/domain/stock.schema';
 import { normalizeForSearch } from '@/lib/utils';
+import { useHamPrice } from './use-ham-price';
 
-export type StockDialog = { kind: 'entry' | 'loss' | 'pricing' | 'history'; item: MenuItemDef | null } | null;
+export type StockDialog = { kind: 'entry' | 'loss' | 'pricing' | 'history'; item: MenuItemDef | null; entry?: StockEntryDef } | null;
 type Message = { type: 'success' | 'error'; text: string } | null;
 
 export type StockPanelModel = {
@@ -32,6 +36,9 @@ export type StockPanelModel = {
   submitEntry: (input: StockEntryInput) => Promise<string | null>;
   submitLoss: (input: StockLossInput) => Promise<string | null>;
   submitPricing: (input: StockPricingInput) => Promise<string | null>;
+  submitEntryUpdate: (input: StockEntryUpdateInput) => Promise<string | null>;
+  ham: HamPriceDef;
+  submitHamPrice: (input: HamPriceInput) => Promise<string | null>;
 };
 
 function useStockData(): { loading: boolean; providers: ProviderDef[]; reload: () => Promise<void> } {
@@ -52,6 +59,7 @@ function useStockData(): { loading: boolean; providers: ProviderDef[]; reload: (
 export function useStockPanel(): StockPanelModel {
   const allItems = useMenuStore((state) => state.items);
   const { loading, providers, reload } = useStockData();
+  const { ham, setHam } = useHamPrice();
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<StockCategory | 'todos'>('todos');
   const [stockOrder, setStockOrder] = useState<StockOrder>('categoria');
@@ -74,5 +82,11 @@ export function useStockPanel(): StockPanelModel {
   const submitEntry = (input: StockEntryInput): Promise<string | null> => submit(registerStockEntryAction(input));
   const submitLoss = (input: StockLossInput): Promise<string | null> => submit(registerStockLossAction(input));
   const submitPricing = (input: StockPricingInput): Promise<string | null> => submit(setStockPricingAction(input));
-  return { loading, items, activeItems, providers, search, setSearch, categoryFilter, setCategoryFilter, stockOrder, setStockOrder, dialog, setDialog, message, submitEntry, submitLoss, submitPricing };
+  const submitEntryUpdate = (input: StockEntryUpdateInput): Promise<string | null> => submit(updateStockEntryAction(input));
+  const submitHamPrice = async (input: HamPriceInput): Promise<string | null> => {
+    const result = await setHamPriceAction(input);
+    if (result.success) setHam(result.data);
+    return submit(Promise.resolve(result));
+  };
+  return { loading, items, activeItems, providers, search, setSearch, categoryFilter, setCategoryFilter, stockOrder, setStockOrder, dialog, setDialog, message, submitEntry, submitLoss, submitPricing, submitEntryUpdate, ham, submitHamPrice };
 }

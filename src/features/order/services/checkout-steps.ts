@@ -45,12 +45,13 @@ export function assertSellable(lines: OrderLine[], items: LockedItems): void {
   if (!lines.every((line) => isValidLine(line) && line.flavors.every(({ menuItemId }) => ofGroup(line, menuItemId)))) throw new AppError('VALIDATION');
 }
 
-export function priceBookOf(items: LockedItems): PriceBook {
+export function priceBookOf(items: LockedItems, ham: number | null): PriceBook {
   return {
     item: (id) => {
       const row = items.get(id);
       return row && pricesOf(row);
     },
+    ham,
   };
 }
 

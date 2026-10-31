@@ -19,22 +19,33 @@ export function fakeStockRepository(state: FakeState): StockRepository {
     lockItem: async (id) => state.items.find((item) => item.id === id) ?? null,
     lockGroup: async (group) => state.items.filter((item) => item.group === group && !item.isBase).sort((a, b) => (a.id < b.id ? -1 : 1)),
     lockBase: async (group) => state.items.find((item) => item.group === group && item.isBase) ?? null,
-    saveItem: async ({ id, version }, { stock, unitCost, prices }) => {
+    saveItem: async ({ id, version }, { stock, unitCost, prices, minStock }) => {
       const item = state.items.find((row) => row.id === id && row.version === version);
       if (!item) return null;
-      Object.assign(item, { version: version + 1 }, stock === undefined ? {} : { stock: stock.toFixed(1) }, unitCost === undefined ? {} : { unitCost: unitCost.toFixed(2) }, prices ? priceColumns(prices) : {});
+      Object.assign(item, { version: version + 1 }, stock === undefined ? {} : { stock: stock.toFixed(1) }, unitCost === undefined ? {} : { unitCost: unitCost.toFixed(2) }, prices ? priceColumns(prices) : {}, minStock === undefined ? {} : { minStock });
       return { ...item };
     },
     insertEntry: async ({ unitCost, ...entry }) => {
-      const row: StockEntry = { id: crypto.randomUUID(), ...entry, unitCost: unitCost.toFixed(2), createdAt: tick(state) };
+      const row: StockEntry = { id: crypto.randomUUID(), ...entry, unitCost: unitCost.toFixed(2), version: 1, createdAt: tick(state) };
       state.entries.push(row);
-      return row;
+      return { ...row };
     },
     insertLoss: async ({ unitCost, quantity, ...loss }) => {
       const row: StockLoss = { id: crypto.randomUUID(), ...loss, quantity: quantity.toFixed(1), unitCost: unitCost.toFixed(2), createdAt: tick(state) };
       state.losses.push(row);
       return row;
     },
+    lockEntry: async (id) => {
+      const entry = state.entries.find((row) => row.id === id);
+      return entry ? { ...entry } : null;
+    },
+    updateEntry: async ({ id, version }, { unitCost, ...change }) => {
+      const entry = state.entries.find((row) => row.id === id && row.version === version);
+      if (!entry) return null;
+      Object.assign(entry, change, { unitCost: unitCost.toFixed(2), version: version + 1 });
+      return { ...entry };
+    },
+    latestEntryId: async (menuItemId) => state.entries.filter((entry) => entry.menuItemId === menuItemId).sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())[0]?.id ?? null,
     entriesOf: async (menuItemId) =>
       state.entries
         .filter((entry) => entry.menuItemId === menuItemId)

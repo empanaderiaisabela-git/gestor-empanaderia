@@ -1,7 +1,7 @@
 import type { MenuGroup } from '@/features/menu/domain/menu-groups';
 import { describeFlavors } from './order-describe';
 import { type AddMode, addFlavor, isComplete, type OrderLine, removeFlavor } from './order-line';
-import { orderTotal, type PriceBook, round2 } from './order-pricing';
+import { hamPrice, orderTotal, type PriceBook, round2 } from './order-pricing';
 
 type PartKey = { group: MenuGroup; presentationKey: string };
 type Component = PartKey & { quantity: number };
@@ -37,11 +37,18 @@ export function removeFromPromo(promo: PromoLine, part: number, menuItemId: stri
   return next ? { ...promo, parts: promo.parts.map((existing, index) => (index === part ? next : existing)) } : null;
 }
 
+export const togglePartHam = (promo: PromoLine, part: number): PromoLine => ({ ...promo, parts: promo.parts.map((existing, index) => (index === part ? { ...existing, ham: !existing.ham } : existing)) });
+
 export const promoUsageLines = (promos: readonly PromoLine[]): OrderLine[] => promos.flatMap((promo) => promo.parts);
 
+export function promoPrice(promo: Pick<PromoLine, 'price' | 'parts'>, book: PriceBook): number | null {
+  const hams = promo.parts.map((part) => hamPrice(part, book));
+  return hams.every((ham): ham is number => ham !== null) ? round2(hams.reduce((sum, ham) => sum + ham, promo.price)) : null;
+}
+
 export function orderSubtotal(lines: OrderLine[], promos: readonly PromoLine[], book: PriceBook): number | null {
-  const linesTotal = orderTotal(lines, book);
-  return linesTotal === null ? null : round2(promos.reduce((sum, promo) => sum + promo.price, linesTotal));
+  const prices = [orderTotal(lines, book), ...promos.map((promo) => promoPrice(promo, book))];
+  return prices.every((price): price is number => price !== null) ? round2(prices.reduce((sum, price) => sum + price, 0)) : null;
 }
 
 export function describePromoFlavors(promo: PromoLine, nameOf: (menuItemId: string) => string): string {

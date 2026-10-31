@@ -16,7 +16,7 @@ describe('tablero de ventas (US-5 CA-1)', () => {
   it('carga los gustos y muestra una subdivisión por grupo y el pedido actual', async () => {
     render(<OrderBoard />);
     expect(await screen.findByRole('region', { name: 'Empanadas' })).toBeDefined();
-    expect(['Pizzas', 'Sanguches', 'Ciabattas', 'Coca-Cola', 'Pepsi'].map((name) => screen.getByRole('region', { name }).getAttribute('aria-label'))).toHaveLength(5);
+    expect(['Pizzas', 'Sándwich de miga', 'Ciabattas', 'Coca-Cola', 'Quilmes'].map((name) => screen.getByRole('region', { name }).getAttribute('aria-label'))).toHaveLength(5);
     fireEvent.click(screen.getByRole('button', { name: 'Ver pedido' }));
     expect(screen.getByRole('region', { name: 'Pedido actual' })).toBeDefined();
   });

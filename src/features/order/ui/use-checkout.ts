@@ -22,8 +22,8 @@ async function submit({ discount, payments }: CheckoutDraft): ReturnType<typeof 
   const filled = lines.filter((line) => line.flavors.length > 0);
   return checkoutAction({
     buyer,
-    lines: filled.map(({ group, presentationKey, flavors, quantity }) => ({ group, presentationKey, flavors, quantity })),
-    promos: promos.map(({ promotionId, parts }) => ({ promotionId, quantity: 1, parts: parts.map(({ group, presentationKey, flavors }) => ({ group, presentationKey, flavors })) })),
+    lines: filled.map(({ group, presentationKey, flavors, quantity, ham }) => ({ group, presentationKey, flavors, quantity, ...(ham ? { ham } : {}) })),
+    promos: promos.map(({ promotionId, parts }) => ({ promotionId, quantity: 1, parts: parts.map(({ group, presentationKey, flavors, ham }) => ({ group, presentationKey, flavors, ...(ham ? { ham } : {}) })) })),
     discountPercentage: discount.percentage,
     discountAmount: discount.amount,
     payments,

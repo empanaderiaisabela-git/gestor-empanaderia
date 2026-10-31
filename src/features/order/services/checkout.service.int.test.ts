@@ -82,7 +82,7 @@ describe('cobro contra Postgres (US-6 CA-3 y CA-4)', () => {
   });
 
   it('si un gusto no alcanza, el otro no se descuenta y no queda venta a medias', async () => {
-    const pepsi = await insertItem({ group: 'pepsi', name: 'Pepsi 500', unitCost: '1000.00', stock: '5', price1: '2000.00' });
+    const pepsi = await insertItem({ group: 'pepsi', name: 'Quilmes 500', unitCost: '1000.00', stock: '5', price1: '2000.00' });
     const both = { ...order([line(coca, 2)], 7000), lines: [{ ...line(pepsi), group: 'pepsi' as const }, line(coca, 2)] };
     await expect(checkoutService.checkout(CALLER, both)).rejects.toMatchObject({ code: 'INSUFFICIENT_STOCK' });
     expect([await stockOf(pepsi), await stockOf(coca)]).toEqual([5, 1]);

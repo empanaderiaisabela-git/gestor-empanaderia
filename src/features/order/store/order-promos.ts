@@ -1,5 +1,5 @@
 import type { AddMode } from '@/features/order/domain/order-line';
-import { addToPromo, firstOpenPart, newPromoLine, type PromoLine, type PromoSource, removeFromPromo } from '@/features/order/domain/promo-line';
+import { addToPromo, firstOpenPart, newPromoLine, type PromoLine, type PromoSource, removeFromPromo, togglePartHam } from '@/features/order/domain/promo-line';
 
 export type PromoOpen = { promoId: string; part: number };
 export type PromoState = { promos: PromoLine[]; openPromo: PromoOpen | null };
@@ -11,6 +11,7 @@ export type PromoActions = {
   nextPromoPart: () => void;
   reopenPromo: (promoId: string) => void;
   removePromo: (promoId: string) => void;
+  togglePromoHam: (promoId: string, part: number) => void;
 };
 
 type Setter = (partial: Partial<PromoState> & { openLineId?: string | null }) => void;
@@ -51,6 +52,7 @@ export function promoActions(set: Setter, get: () => PromoState): PromoActions {
       const promo = get().promos.find((candidate) => candidate.id === promoId);
       set({ openPromo: promo ? openAt(promo) : null, openLineId: null });
     },
+    togglePromoHam: (promoId, part) => set({ promos: get().promos.map((promo) => (promo.id === promoId ? togglePartHam(promo, part) : promo)) }),
     removePromo: (promoId) => {
       const { promos, openPromo } = get();
       set({ promos: promos.filter((promo) => promo.id !== promoId), openPromo: openPromo?.promoId === promoId ? null : openPromo });

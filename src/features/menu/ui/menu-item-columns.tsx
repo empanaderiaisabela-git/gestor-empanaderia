@@ -48,9 +48,9 @@ export function MenuItemRowButtons({ item, actions }: { item: MenuItemDef; actio
 
 export function getMenuItemColumns(actions: MenuItemRowActions): ColumnDef<MenuItemDef>[] {
   return [
-    { header: 'Grupo', headerClassName: 'w-32', cellClassName: 'text-zinc-700 dark:text-zinc-200', cell: (item) => GROUPS[item.group].label },
+    { header: 'Grupo', headerClassName: 'w-52', cellClassName: 'whitespace-nowrap text-zinc-700 dark:text-zinc-200', cell: (item) => GROUPS[item.group].label },
     { header: 'Gusto / bebida', cell: (item) => <NameCell item={item} /> },
-    { header: 'Stock', cellClassName: 'text-zinc-700 dark:text-zinc-200', cell: (item) => (hasBase(item.group) ? '—' : item.stock.toLocaleString('es-AR')) },
+    { header: 'Stock', headerClassName: 'w-28', cellClassName: 'text-zinc-700 dark:text-zinc-200', cell: (item) => (hasBase(item.group) ? '—' : item.stock.toLocaleString('es-AR')) },
     { header: 'Acciones', headerClassName: 'w-44 text-right', cellClassName: 'flex gap-1 justify-end', cell: (item) => <MenuItemRowButtons item={item} actions={actions} /> },
   ];
 }

@@ -28,8 +28,8 @@ const DRINKS: [Group, string, number][] = [
   ['coca_cola', 'Coca-Cola 1,5 L', 3500],
   ['coca_cola', 'Sprite 1,5 L', 3200],
   ['coca_cola', 'Fanta 1,5 L', 3200],
-  ['pepsi', 'Pepsi 500 ml', 1600],
-  ['pepsi', 'Pepsi 1,5 L', 3200],
+  ['pepsi', 'Quilmes 500 ml', 1600],
+  ['pepsi', 'Quilmes 1,5 L', 3200],
   ['pepsi', '7up 1,5 L', 3000],
   ['pepsi', 'Mirinda 1,5 L', 3000],
 ];

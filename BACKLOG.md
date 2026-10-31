@@ -13,6 +13,7 @@
 - [Sprint 3 · Aclaraciones del dev](#sprint-3--aclaraciones-del-dev)
 - [Sprint 4 · Pedido del cliente tras la demo](#sprint-4--pedido-del-cliente-tras-la-demo)
 - [Sprint 5 · Cierre de la primera entrega](#sprint-5--cierre-de-la-primera-entrega)
+- [Sprint 6 · Revisión del cliente en producción](#sprint-6--revisión-del-cliente-en-producción)
 - [Sin sprint asignado](#sin-sprint-asignado)
 
 ## Convenciones
@@ -4115,6 +4116,236 @@ que se probó.
 - Después de la revisión, sobre `develop` en `ce767dd`: `npm run verify` en verde (unit, contrato, fuzz, componentes,
   cobertura, integración, mutación 89,82 y build) y los 76 E2E en verde.
 - El dev dio el OK al merge a `main` el 2026-10-30.
+
+## Sprint 6 · Revisión del cliente en producción
+
+------------------------------------------------------------------------------------------------------------------------
+
+**Objetivo**: lo que pidió el dueño del local después de probar el sistema en producción (2026-10-30):
+
+- En el carrito: un botón "Jamón extra" en cada pizza, también en las promos, con su precio cargado en Stock.
+- En los grupos: Quilmes en lugar de Pepsi y "Sándwich de miga" en lugar de "Sanguches".
+- En Stock: un mínimo opcional con aviso amarillo, editar un ingreso ya cargado y la categoría en un solo renglón.
+
+**Restricción**: el sistema ya está en producción. Las migraciones son sólo aditivas y seguras para Supabase (D-5).
+
+**Plan del sprint**: [`docs/plans/sprint-6.md`](docs/plans/sprint-6.md). Tiene las decisiones del dev (2026-10-30), las
+provisorias P-1 a P-10, cómo se cuidan las migraciones, el orden y la trazabilidad de `specs.md`.
+
+### Resumen del Sprint 6
+
+| #   | ID | Título | Estado | Depende de | Estimación |
+| --- | -- | ------ | ------ | ---------- | ---------- |
+| 0   | [T-25](#t-25--backlog-del-sprint-6) | Backlog del Sprint 6 | En revisión | T-24 | 30 min |
+| 1   | [US-44](#us-44--grupos-quilmes-y-sándwich-de-miga) | Grupos: "Quilmes" y "Sándwich de miga" | En revisión | T-25 | 45 min |
+| 2   | [BUG-28](#bug-28--stock-la-categoría-en-un-solo-renglón) | Stock: la categoría en un solo renglón | En revisión | US-44 | 20 min |
+| 3   | [US-45](#us-45--stock-mínimo-opcional-con-aviso-amarillo) | Stock mínimo opcional con aviso amarillo | En revisión | T-25 | 3 h |
+| 4   | [US-46](#us-46--editar-un-ingreso-de-stock) | Editar un ingreso de stock | En revisión | US-45 | 4 h |
+| 5   | [US-47](#us-47--jamón-extra-para-pizza) | Jamón extra para pizza | En revisión | US-46 | 5 h |
+| 6   | [T-26](#t-26--cierre-del-sprint-6) | Cierre del Sprint 6 | En revisión | todos | 1 h 30 min |
+|     |    | **Total del sprint** | | | **15 h 5 min** |
+
+### T-25 · Backlog del Sprint 6
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-30 |
+| Tamaño       | S         |
+| Depende de   | T-24      |
+| Plan         | [`docs/plans/sprint-6.md`](docs/plans/sprint-6.md) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como dev quiero el pedido del cliente tras probar el sistema en producción cargado como ítems, de forma
+que cada cambio tenga su criterio, su estimación y su rama.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · `BACKLOG.md` tiene el Sprint 6. Cada ítem lleva historia, CA medibles con estimación, dependencias y nivel de tests. `docs/plans/sprint-6.md` tiene las decisiones del dev, las provisorias, las reglas de las migraciones, el orden y la trazabilidad de `specs.md` · Estimación: 25 min · Completado: 2026-10-30 21:55
+
+- [x] **CA-2** · `specs.md` tiene el pedido del cliente, textual, tal como lo pasó el dev · Estimación: 5 min · Completado: 2026-10-30 21:55
+
+### US-44 · Grupos: "Quilmes" y "Sándwich de miga"
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-31 |
+| Tamaño       | S         |
+| Depende de   | T-25      |
+| Plan         | [`docs/plans/sprint-6.md`](docs/plans/sprint-6.md) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como dueño del local quiero que el sistema llame "Quilmes" a lo que hoy es Pepsi y "Sándwich de miga"
+a los sanguches, de forma que los nombres coincidan con lo que vende el local.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · En todo el sistema el grupo Pepsi se llama "Quilmes": tablero, Stock, Alta de productos, promos, Estadísticas, historial y comprobante. La base no cambia (P-1). Lo cubren los tests del dominio y los E2E que buscan el grupo · Estimación: 20 min · Completado: 2026-10-31 00:25
+
+- [x] **CA-2** · En todo el sistema el grupo Sanguches se llama "Sándwich de miga". El encabezado del tablero y la columna Grupo de Alta no se desacomodan: se mira en el navegador · Estimación: 25 min · Completado: 2026-10-31 00:25
+
+**Notas**
+
+- Nivel 1: sólo etiquetas. La clave interna `pepsi` queda en la base y en el código (P-1).
+- Los gustos que el cliente cargó en producción con "Pepsi" en el nombre los renombra el cliente en Alta de productos.
+- Decisiones de la implementación (detalle en `sprint-6.md`): I-1, el seed dice "Quilmes 500 ml" y "Quilmes 1,5 L"; I-2, las ventas ya hechas conservan el nombre viejo en su descripción; I-3, en Alta la columna Grupo pasa a `w-52` sin cortar y la de Stock a `w-28`.
+
+### BUG-28 · Stock: la categoría en un solo renglón
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-31 |
+| Tamaño       | S         |
+| Depende de   | US-44     |
+| Plan         | [`docs/plans/sprint-6.md`](docs/plans/sprint-6.md) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Esperado**: en la tabla de Stock, la categoría se lee en un renglón: "Coca-Cola", no "Coca-" arriba y "Cola" abajo.
+
+**Actual**: la tabla reparte el ancho en partes iguales y la columna Categoría no tiene ancho propio ni
+`whitespace-nowrap` (`stock-columns.tsx`), así que el navegador corta después del guion.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · A 1280 px y a 1400 px, la categoría se lee en un renglón ("Coca-Cola", "Sándwich de miga", "Pan de ciabatta") y las otras columnas no se rompen (P-10). Lo cubren un test de componente y una mirada en el navegador · Estimación: 20 min · Completado: 2026-10-31 00:36
+
+**Notas**
+
+- Nivel 1. Va después de US-44 porque "Sándwich de miga" es la categoría más larga.
+- I-4 (`sprint-6.md`): también Stock, Precio de venta y Acciones tienen ancho fijo; sin eso, los precios pisaban el costo a 1280 px.
+
+### US-45 · Stock mínimo opcional con aviso amarillo
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-31 |
+| Tamaño       | M         |
+| Depende de   | T-25      |
+| Plan         | [`docs/plans/sprint-6.md`](docs/plans/sprint-6.md) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como administrador quiero anotar, si quiero, el stock mínimo que tolero de cada producto, de forma que
+el stock se vea en amarillo cuando baja de ese mínimo y sepa que tengo que reponer.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · Migración 0023, aditiva: `menu_items.min_stock` (entero, opcional) con su check. El test `additive-migrations.test.ts` falla si una migración desde la 0023 borra, renombra o cambia datos. Un test de integración prueba que los datos de hoy pasan la migración · Estimación: 40 min · Completado: 2026-10-31 01:00
+
+- [x] **CA-2** · "Ingresar stock" tiene el campo opcional "Stock mínimo" en las categorías con cantidad (empanadas, sándwiches, bebidas, prepizzas y panes de ciabatta). Arranca con el mínimo actual del gusto y vacío es "sin mínimo" (P-5). Acepta enteros de 1 a 100.000. Lo cubren tests de schema, service, contrato y componente · Estimación: 1 h 20 min · Completado: 2026-10-31 01:00
+
+- [x] **CA-3** · El stock se ve amarillo cuando es menor al mínimo, rojo sin stock y verde en el resto (P-4), en la tabla y en la tarjeta del celular, también para el vendedor. Lo cubren tests de dominio y de componente y un E2E · Estimación: 1 h · Completado: 2026-10-31 01:00
+
+**Notas**
+
+- Nivel 3: schema y migración.
+- I-5 (`sprint-6.md`): el número del stock lleva el título "Mínimo: N" cuando el gusto tiene mínimo, para no depender sólo del color.
+
+### US-46 · Editar un ingreso de stock
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-31 |
+| Tamaño       | M         |
+| Depende de   | US-45     |
+| Plan         | [`docs/plans/sprint-6.md`](docs/plans/sprint-6.md) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como administrador quiero editar un ingreso de stock que ya cargué, con todo precargado, de forma que
+pueda corregir una cantidad, un costo o un gusto equivocados, o sumarle el proveedor que me olvidé.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · Migración 0024, aditiva: `stock_entries.version` con default 1. Un test de integración prueba que los ingresos de hoy pasan la migración · Estimación: 20 min · Completado: 2026-10-31 01:26
+
+- [x] **CA-2** · Cada ingreso del Historial tiene "Editar" (sólo el admin), que abre el formulario con todo precargado: categoría, gusto, cantidad, costo, proveedor, precios de venta y mínimo. Prepizza y Pan de ciabatta también tienen Historial (P-8). Lo cubren tests de componente · Estimación: 1 h 15 min · Completado: 2026-10-31 01:26
+
+- [x] **CA-3** · Guardar actualiza el ingreso y el stock. Si cambia la cantidad, el gusto sube o baja la diferencia; si cambia el gusto, las unidades pasan del viejo al nuevo (D-3). El stock nunca queda negativo (`INSUFFICIENT_STOCK`, P-7). El costo pasa al gusto sólo si es su ingreso más reciente (P-6). Queda en Auditoría. Lo cubren tests de service e integración · Estimación: 1 h 45 min · Completado: 2026-10-31 01:26
+
+- [x] **CA-4** · Si dos personas editan el mismo ingreso a la vez, la segunda recibe `STALE_VERSION`. El vendedor recibe `FORBIDDEN`. Lo cubren tests de contrato y un E2E que edita un ingreso y lo cambia de gusto · Estimación: 40 min · Completado: 2026-10-31 01:26
+
+**Notas**
+
+- Nivel 3: schema, migración y un cambio que cruza capas.
+- Las ventas ya hechas no cambian: su costo quedó guardado al vender.
+- Decisiones de la implementación (detalle en `sprint-6.md`): I-6, el gusto viejo conserva su costo al mover un ingreso; I-7, el costo pasa al gusto sólo si cambió y es su ingreso más reciente; I-8, la edición no ofrece Pizzas ni Ciabattas; I-9, al cambiar el gusto, los precios del viejo no pasan al nuevo.
+
+### US-47 · Jamón extra para pizza
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-31 |
+| Tamaño       | L         |
+| Depende de   | US-46     |
+| Plan         | [`docs/plans/sprint-6.md`](docs/plans/sprint-6.md) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como vendedor quiero prender "Jamón extra" en una pizza del carrito, de forma que se cobre el jamón que
+pidió el cliente sin cargar otra pizza. Como administrador quiero cargar el precio del jamón desde Stock.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · Migración 0025, aditiva: la tabla nueva `pizza_extras`, sin filas. Un test de integración la prueba · Estimación: 30 min · Completado: 2026-10-31 01:51
+
+- [x] **CA-2** · En "Ingresar stock", la categoría "Jamón extra para pizza" muestra sólo "Precio de venta", con el precio actual, y "Guardar". No aparece en la tabla de Stock ni en Alta de productos. Sólo el admin lo guarda, y queda en Auditoría · Estimación: 1 h 15 min · Completado: 2026-10-31 01:51
+
+- [x] **CA-3** · Cada renglón de pizza del carrito, también las mitad y mitad, tiene el switch "Jamón extra", apagado al entrar. Prendido, suma el precio del jamón a cada pizza del renglón (D-1). Una pizza nueva no se junta con un renglón prendido. Sin precio cargado, el switch está deshabilitado (P-2) · Estimación: 1 h 15 min · Completado: 2026-10-31 01:51
+
+- [x] **CA-4** · Cada pizza de una promo en el carrito tiene su switch, que suma el precio del jamón al de la promo (D-2) · Estimación: 45 min · Completado: 2026-10-31 01:51
+
+- [x] **CA-5** · Al cobrar, el servidor recalcula el jamón. El total, el comprobante y el historial muestran "+ Jamón extra". Estadísticas lo cuentan en Pizzas o en Promos, y en Ganancia sin costo (P-3). Jamón en algo que no es pizza da `VALIDATION`, y sin precio, `MISSING_PRICE`. Lo cubren tests de dominio, contrato e integración y el E2E de prepizzas · Estimación: 1 h 15 min · Completado: 2026-10-31 01:51
+
+**Notas**
+
+- Nivel 3: schema, migración y precios del cobro.
+- El jamón no descuenta stock ni tiene costo (P-3).
+- Decisiones de la implementación (detalle en `sprint-6.md`): I-10, el precio vive en `pizza_extras` (feature `menu`) y lo lee cualquier usuario con sesión; I-11, la venta guarda el jamón en el precio y la descripción de la línea, sin columna nueva; I-12, si el precio cambia con un carrito abierto, cobra el servidor con el actual.
+
+### T-26 · Cierre del Sprint 6
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-31 |
+| Tamaño       | S         |
+| Depende de   | todos     |
+| Plan         | [`docs/plans/sprint-6.md`](docs/plans/sprint-6.md) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como dev quiero el Sprint 6 verificado completo y en `main`, con las instrucciones para migrar Supabase,
+de forma que la versión que use el cliente sea la que se probó.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · `npm run verify` completo y todos los E2E en verde sobre `develop` · Estimación: 40 min · Completado: 2026-10-31 02:09
+
+- [x] **CA-2** · README, `docs/architecture.md`, `docs/initial_prompt.md` y los docs de `stock`, `order` y `menu` al día. Con el OK del dev, merge local `develop → main` con el tag `sprint-6` · Estimación: 40 min · Completado: 2026-10-31 09:14
+
+- [x] **CA-3** · El dev migra Supabase antes de desplegar y comprueba que quedan 26 migraciones · Estimación: 10 min · Completado: 2026-10-31 09:14
+
+**Notas**
+
+- CA-1: `npm run verify` verde en cada ítem (el último, US-47: 1107 tests unit y de componente, 121 de integración, cobertura 96,4 / 90,2, mutación 89,1 y build) y los 78 E2E en verde sobre `develop` (2026-10-31).
+- CA-2: docs al día. El dev dio el OK al merge a `main` con el tag `sprint-6` el 2026-10-31, junto con sus ajustes de la revisión y el CI sin el job E2E, que fallaba al instalar Chromium en `ubuntu-latest` (Ubuntu 26).
+- CA-3: el dev migró Supabase el 2026-10-31 y la consulta da 26.
 
 ## Sin sprint asignado
 

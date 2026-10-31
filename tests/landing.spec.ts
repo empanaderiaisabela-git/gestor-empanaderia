@@ -1,7 +1,7 @@
 import { expect, type Page, test } from '@playwright/test';
 import { LandingPage } from './pages/LandingPage';
 
-const GUSTO = 'Pepsi 500 ml';
+const GUSTO = 'Quilmes 500 ml';
 
 async function alternarEnAlta(page: Page, boton: 'Ocultar del catálogo' | 'Mostrar en el catálogo'): Promise<void> {
   await page.goto('/alta-de-productos');

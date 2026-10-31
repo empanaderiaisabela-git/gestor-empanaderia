@@ -14,7 +14,7 @@ import type { OrderBoardModel } from './use-order-board';
 type CurrentOrderProps = { board: OrderBoardModel; onCheckout?: () => void };
 
 export function CurrentOrder({ board, onCheckout }: CurrentOrderProps): JSX.Element {
-  const { lines, promos, buyer, remove, removeOne, addOne, clear, removePromo, reopenPromo } = useOrderStore();
+  const { lines, promos, buyer, remove, removeOne, addOne, toggleHam, clear, removePromo, reopenPromo, togglePromoHam } = useOrderStore();
   const visible = lines.filter((line) => line.flavors.length > 0);
   const usage = [...visible, ...promoUsageLines(promos)];
   const total = orderSubtotal(visible, promos, board.book);
@@ -29,7 +29,7 @@ export function CurrentOrder({ board, onCheckout }: CurrentOrderProps): JSX.Elem
         </p>
       </div>
       <CustomerFields />
-      <OrderTable lines={visible} promos={promos} board={board} lineActions={{ onRemove: remove, onRemoveOne: removeOne, onAddOne: addOne, canAddOne: (line) => canAddOne(line, usage, board) }} promoActions={{ onRemove: removePromo, onReopen: reopenPromo }} />
+      <OrderTable lines={visible} promos={promos} board={board} lineActions={{ onRemove: remove, onRemoveOne: removeOne, onAddOne: addOne, canAddOne: (line) => canAddOne(line, usage, board), onToggleHam: toggleHam }} promoActions={{ onRemove: removePromo, onReopen: reopenPromo, onToggleHam: togglePromoHam }} />
       <div className='flex justify-end gap-2'>
         <button onClick={clear} className='inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-zinc-300 dark:border-zinc-700'>
           <Trash2 className='w-4 h-4' /> Vaciar

@@ -4,6 +4,7 @@ export type LineEditActions = {
   removeOne: (lineId: string) => void;
   addOne: (lineId: string) => void;
   removeFromOpen: (menuItemId: string) => void;
+  toggleHam: (lineId: string) => void;
 };
 
 type LineEditState = { lines: OrderLine[]; openLineId: string | null; remove: (lineId: string) => void; removeFromOpenPromo: (menuItemId: string) => void };
@@ -19,6 +20,7 @@ export function lineEditActions(set: Setter, get: () => LineEditState): LineEdit
       set({ lines: withQuantity(get().lines, lineId, -1) });
     },
     addOne: (lineId) => set({ lines: withQuantity(get().lines, lineId, 1) }),
+    toggleHam: (lineId) => set({ lines: get().lines.map((line) => (line.id === lineId ? { ...line, ham: !line.ham } : line)) }),
     removeFromOpen: (menuItemId) => {
       const { lines, openLineId, removeFromOpenPromo } = get();
       const open = lines.find((line) => line.id === openLineId);

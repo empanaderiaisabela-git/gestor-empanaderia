@@ -7,8 +7,8 @@ const montoDe = async (cuadro: Locator): Promise<number> => Number((await cuadro
 test.describe('Estadísticas de la jornada (US-12)', () => {
   test('una venta de hoy suma en su comida, en las ventas registradas y en su medio de pago', async ({ page }) => {
     await page.goto('/ventas/nueva');
-    await grupo(page, 'Pepsi').getByRole('button', { name: /1 unidad/ }).click();
-    await gusto(page, 'Pepsi 1,5 L').getByRole('button', { name: 'Agregar' }).click();
+    await grupo(page, 'Quilmes').getByRole('button', { name: /1 unidad/ }).click();
+    await gusto(page, 'Quilmes 1,5 L').getByRole('button', { name: 'Agregar' }).click();
     await page.getByRole('button', { name: 'Listo' }).click();
     await page.getByRole('button', { name: /^Ver pedido/ }).click();
     await page.getByRole('region', { name: 'Pedido actual' }).getByLabel('Nombre del cliente').fill('Cliente estadísticas');
@@ -21,7 +21,7 @@ test.describe('Estadísticas de la jornada (US-12)', () => {
     await page.goto('/');
     await expect(page.getByLabel('Desde')).toHaveValue(/^\d{4}-\d{2}-\d{2}$/);
     await expect(page.getByLabel('Hasta')).toHaveValue(await page.getByLabel('Desde').inputValue());
-    const pepsi = page.getByRole('region', { name: 'Pepsi', exact: true });
+    const pepsi = page.getByRole('region', { name: 'Quilmes', exact: true });
     await expect(pepsi).toBeVisible();
     expect(await montoDe(pepsi)).toBeGreaterThanOrEqual(3200);
     expect(await montoDe(page.getByRole('region', { name: 'Transferencia', exact: true }))).toBeGreaterThanOrEqual(3200);
@@ -43,8 +43,8 @@ test.describe('Estadísticas de la jornada (US-12)', () => {
     await expect(page.getByRole('button', { name: 'Sincronizar' })).toHaveCount(0);
     await page.getByRole('navigation').getByRole('link', { name: 'Ventas/Pedidos' }).click();
     await page.getByRole('link', { name: 'Nuevo pedido' }).click();
-    await grupo(page, 'Pepsi').getByRole('button', { name: /1 unidad/ }).click();
-    await gusto(page, 'Pepsi 1,5 L').getByRole('button', { name: 'Agregar' }).click();
+    await grupo(page, 'Quilmes').getByRole('button', { name: /1 unidad/ }).click();
+    await gusto(page, 'Quilmes 1,5 L').getByRole('button', { name: 'Agregar' }).click();
     await page.getByRole('button', { name: 'Listo' }).click();
     await page.getByRole('button', { name: /^Ver pedido/ }).click();
     await page.getByRole('region', { name: 'Pedido actual' }).getByLabel('Nombre del cliente').fill('Cliente al día');

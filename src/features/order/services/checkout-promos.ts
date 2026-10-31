@@ -4,7 +4,7 @@ import { describeFlavors } from '@/features/order/domain/order-describe';
 import type { OrderLine } from '@/features/order/domain/order-line';
 import { round2 } from '@/features/order/domain/order-pricing';
 import { orderUsage } from '@/features/order/domain/order-usage';
-import { expandComponents } from '@/features/order/domain/promo-line';
+import { expandComponents, promoPrice } from '@/features/order/domain/promo-line';
 import type { CheckoutScope } from '@/features/order/repository/checkout-unit-of-work';
 import type { NewSaleLine } from '@/features/order/repository/sale-writer.repository';
 import type { Promotion } from '@/features/promotion/repository/promotion.repository';
@@ -29,11 +29,17 @@ export async function resolvePromos(scope: CheckoutScope, promos: readonly Check
   return resolved;
 }
 
-export const promoSubtotal = ({ promotion, quantity }: ResolvedPromo): number => round2(Number(promotion.price) * quantity);
+function promoUnitPrice({ promotion, parts }: ResolvedPromo, ham: number | null): number {
+  const price = promoPrice({ price: Number(promotion.price), parts }, { item: () => undefined, ham });
+  if (price === null) throw new AppError('MISSING_PRICE');
+  return price;
+}
 
-export function promoSaleLineOf(promo: ResolvedPromo, items: LockedItems): Omit<NewSaleLine, 'position'> {
+export const promoSubtotal = (promo: ResolvedPromo, ham: number | null): number => round2(promoUnitPrice(promo, ham) * promo.quantity);
+
+export function promoSaleLineOf(promo: ResolvedPromo, items: LockedItems, ham: number | null): Omit<NewSaleLine, 'position'> {
   const saleItems = [...orderUsage(promo.parts)].map(([menuItemId, units]) => ({ menuItemId, units, unitCost: Number(itemOf(items, menuItemId).unitCost) }));
   const flavors = promo.parts.map((part) => describeFlavors(part, (id) => itemOf(items, id).name)).join(' · ');
   const description = `${promo.promotion.name}: ${flavors}`.slice(0, 255);
-  return { group: null, presentationKey: null, promotionId: promo.promotion.id, quantity: promo.quantity, unitPrice: Number(promo.promotion.price), subtotal: promoSubtotal(promo), description, items: saleItems };
+  return { group: null, presentationKey: null, promotionId: promo.promotion.id, quantity: promo.quantity, unitPrice: promoUnitPrice(promo, ham), subtotal: promoSubtotal(promo, ham), description, items: saleItems };
 }

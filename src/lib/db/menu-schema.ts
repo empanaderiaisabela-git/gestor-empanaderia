@@ -22,6 +22,7 @@ export const menuItems = pgTable(
     isActive: boolean('is_active').default(true).notNull(),
     isVisible: boolean('is_visible').default(false).notNull(),
     isBase: boolean('is_base').default(false).notNull(),
+    minStock: integer('min_stock'),
     version: integer('version').default(1).notNull(),
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
@@ -30,6 +31,7 @@ export const menuItems = pgTable(
     unique('menu_items_group_name_unique').on(table.group, table.name),
     uniqueIndex('menu_items_one_base_per_group').on(table.group).where(sql`${table.isBase}`),
     check('menu_items_unit_cost_check', sql`${table.unitCost} is null or ${table.unitCost} >= 0`),
+    check('menu_items_min_stock_check', sql`${table.minStock} is null or ${table.minStock} between 1 and 100000`),
     check('menu_items_stock_check', sql`${table.stock} >= 0 and ${table.stock} * 2 = trunc(${table.stock} * 2)`),
     check('menu_items_whole_stock_check', sql`${table.group} = 'pizzas' or ${table.stock} = trunc(${table.stock})`),
     check(
@@ -59,4 +61,15 @@ export const menuItemImages = pgTable(
     createdAt: timestamp('created_at').defaultNow().notNull(),
   },
   (table) => [index('menu_item_images_menu_item_id_idx').on(table.menuItemId)]
+);
+
+export const pizzaExtras = pgTable(
+  'pizza_extras',
+  {
+    code: varchar('code', { length: 20 }).primaryKey(),
+    price: money('price').notNull(),
+    version: integer('version').default(1).notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().notNull(),
+  },
+  (table) => [check('pizza_extras_code_check', sql`${table.code} = 'jamon'`), check('pizza_extras_price_check', sql`${table.price} > 0`)]
 );

@@ -20,6 +20,7 @@ export const stockEntries = pgTable(
     userId: uuid('user_id')
       .notNull()
       .references(() => users.id),
+    version: integer('version').default(1).notNull(),
     createdAt: timestamp('created_at').defaultNow().notNull(),
   },
   (table) => [

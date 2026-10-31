@@ -16,7 +16,7 @@ test.describe('cobrar el pedido (US-6)', () => {
     await gusto(page, 'Bondiola barbacoa').getByRole('button', { name: 'Agregar uno' }).click();
     await gusto(page, 'Pollo a mostaza').getByRole('button', { name: 'Completar' }).click();
     await page.getByRole('button', { name: 'Listo' }).click();
-    await grupo(page, 'Sanguches').getByRole('button', { name: /6 unidades/ }).click();
+    await grupo(page, 'Sándwich de miga').getByRole('button', { name: /6 unidades/ }).click();
     await gusto(page, 'Primavera').getByRole('button', { name: 'Completar' }).click();
     await page.getByRole('button', { name: 'Listo' }).click();
 

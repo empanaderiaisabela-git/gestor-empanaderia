@@ -1,7 +1,7 @@
 import { GROUPS, type MenuGroup, type Presentation } from '@/features/menu/domain/menu-groups';
 
 export type LineFlavor = { menuItemId: string; units: number };
-export type OrderLine = { id: string; group: MenuGroup; presentationKey: string; flavors: LineFlavor[]; quantity: number };
+export type OrderLine = { id: string; group: MenuGroup; presentationKey: string; flavors: LineFlavor[]; quantity: number; ham?: boolean };
 export type AddMode = 'one' | 'rest';
 
 export function presentationOf(line: Pick<OrderLine, 'group' | 'presentationKey'>): Presentation | null {
@@ -51,7 +51,7 @@ export function removeFlavor(line: OrderLine, menuItemId: string): OrderLine | n
 }
 
 const signature = (line: OrderLine): string =>
-  [line.group, line.presentationKey, ...[...line.flavors].sort((a, b) => a.menuItemId.localeCompare(b.menuItemId)).map((flavor) => `${flavor.menuItemId}:${flavor.units}`)].join('|');
+  [line.group, line.presentationKey, line.ham ? 'ham' : '', ...[...line.flavors].sort((a, b) => a.menuItemId.localeCompare(b.menuItemId)).map((flavor) => `${flavor.menuItemId}:${flavor.units}`)].join('|');
 
 export function mergeLine(lines: OrderLine[], line: OrderLine): OrderLine[] {
   const twin = lines.find((existing) => existing.id !== line.id && isComplete(existing) && signature(existing) === signature(line));

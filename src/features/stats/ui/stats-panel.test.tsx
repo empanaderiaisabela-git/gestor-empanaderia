@@ -49,7 +49,7 @@ describe('pantalla de Estadísticas (US-12 CA-1 a CA-5)', () => {
   it('muestra las comidas en filas de 4 y 3, después ventas y ganancia, y los medios de pago; sin Total facturado (US-21)', async () => {
     render(<StatsPanel />);
     await screen.findByRole('region', { name: 'Empanadas' });
-    expect(screen.getAllByRole('region').map((region) => region.getAttribute('aria-label'))).toEqual(['Empanadas', 'Pizzas', 'Sanguches', 'Ciabattas', 'Coca-Cola', 'Pepsi', 'Promos', 'Ventas registradas', 'Ganancia', 'Efectivo', 'Transferencia', 'Débito', 'Crédito']);
+    expect(screen.getAllByRole('region').map((region) => region.getAttribute('aria-label'))).toEqual(['Empanadas', 'Pizzas', 'Sándwich de miga', 'Ciabattas', 'Coca-Cola', 'Quilmes', 'Promos', 'Ventas registradas', 'Ganancia', 'Efectivo', 'Transferencia', 'Débito', 'Crédito']);
     expect(screen.queryByText('Dinero generado por comida')).toBeNull();
     expect(screen.queryByRole('region', { name: 'Total facturado' })).toBeNull();
   });

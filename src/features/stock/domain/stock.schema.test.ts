@@ -28,6 +28,14 @@ describe('ingresar stock (US-4 CA-2)', () => {
     expect(first(stockEntrySchema.safeParse(input))).toBe(message);
   });
 
+  it('acepta un stock mínimo opcional de 1 a 100.000, y null es "sin mínimo" (US-45 CA-2)', () => {
+    expect(stockEntrySchema.parse({ menuItemId: ITEM, quantity: 1, minStock: 5 })).toMatchObject({ minStock: 5 });
+    expect(stockEntrySchema.parse({ menuItemId: ITEM, quantity: 1, minStock: null })).toMatchObject({ minStock: null });
+    expect(first(stockEntrySchema.safeParse({ menuItemId: ITEM, quantity: 1, minStock: 0 }))).toBe('El stock mínimo debe ser mayor a 0');
+    expect(first(stockEntrySchema.safeParse({ menuItemId: ITEM, quantity: 1, minStock: 2.5 }))).toBe('El stock mínimo tiene que ser un número entero');
+    expect(first(stockEntrySchema.safeParse({ menuItemId: ITEM, quantity: 1, minStock: 100_001 }))).toBe('El stock mínimo es demasiado grande');
+  });
+
   it('rechaza campos de más (strictObject) y nunca lanza (fuzz)', () => {
     expect(stockEntrySchema.safeParse({ menuItemId: ITEM, quantity: 1, stock: 99 }).success).toBe(false);
     fc.assert(fc.property(fc.anything(), (input) => typeof stockEntrySchema.safeParse(input).success === 'boolean'));
@@ -71,7 +79,7 @@ describe('costo y precio de un gusto (US-28 CA-5)', () => {
 
 describe('fila del historial', () => {
   it('convierte el costo y admite que venga oculto', () => {
-    const row = { id: ITEM, menuItemId: ITEM, quantity: 12, unitCost: '450.00', providerName: null, username: 'admin', createdAt: new Date(0) };
+    const row = { id: ITEM, menuItemId: ITEM, quantity: 12, unitCost: '450.00', providerId: null, providerName: null, username: 'admin', version: 1, createdAt: new Date(0) };
     expect(stockEntryRowSchema.parse(row)).toMatchObject({ unitCost: 450 });
     expect(stockEntryRowSchema.parse({ ...row, unitCost: null })).toMatchObject({ unitCost: null });
   });
