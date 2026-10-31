@@ -2,7 +2,7 @@ import type { JSX } from 'react';
 import { FormField, inputClass } from '@/components/ui/form-field';
 import type { MenuItemDef } from '@/features/menu/domain/menu-item.schema';
 import { costLabelOf } from '@/features/menu/domain/menu-terms';
-import { CATEGORY_LABELS, categoryOf, isBaseCategory, isPriceOnlyCategory, STOCK_CATEGORIES } from '@/features/stock/domain/stock-categories';
+import { CATEGORY_LABELS, categoryOf, isBaseCategory, isPriceOnlyCategory, STOCK_CATEGORIES, type StockCategory } from '@/features/stock/domain/stock-categories';
 import { formatMoney } from '@/lib/format-money';
 import type { ProviderDef } from '@/features/provider/domain/provider.schema';
 import { MinStockField, ProviderField } from './stock-entry-optional-fields';
@@ -15,15 +15,18 @@ type StockEntryFieldsProps = {
   items: MenuItemDef[];
   providers: ProviderDef[];
   onChange: (values: EntryValues) => void;
+  categories?: readonly StockCategory[];
 };
 
-function ItemSelects({ values, errors, items, onChange }: Pick<StockEntryFieldsProps, 'values' | 'errors' | 'items' | 'onChange'>): JSX.Element {
+const NO_PRICES = { price1: '', price3: '', price6: '', price12: '' };
+
+function ItemSelects({ values, errors, items, onChange, categories = STOCK_CATEGORIES }: Omit<StockEntryFieldsProps, 'providers'>): JSX.Element {
   const inCategory = items.filter((item) => categoryOf(item) === values.category);
   const isBase = isBaseCategory(values.category);
   const pick = (menuItemId: string): void => {
     const item = items.find((candidate) => candidate.id === menuItemId);
     if (!item) return onChange({ ...values, menuItemId });
-    onChange(isPriceOnlyCategory(values.category) ? { ...values, ...pricingValuesOf(item), menuItemId } : { ...values, menuItemId, minStock: textOf(item.minStock) });
+    onChange(isPriceOnlyCategory(values.category) ? { ...values, ...pricingValuesOf(item), menuItemId } : { ...values, ...NO_PRICES, menuItemId, minStock: textOf(item.minStock) });
   };
   const choose = (category: string): void => {
     const base = isBaseCategory(category) ? items.find((item) => categoryOf(item) === category) : undefined;
@@ -34,7 +37,7 @@ function ItemSelects({ values, errors, items, onChange }: Pick<StockEntryFieldsP
       <FormField label='Categoría' error={isBase ? errors.menuItemId : undefined}>
         <select value={values.category} onChange={(event) => choose(event.target.value)} className={inputClass(isBase && Boolean(errors.menuItemId))}>
           <option value=''>Elegí una categoría</option>
-          {STOCK_CATEGORIES.map((category) => <option key={category} value={category}>{CATEGORY_LABELS[category]}</option>)}
+          {categories.map((category) => <option key={category} value={category}>{CATEGORY_LABELS[category]}</option>)}
         </select>
       </FormField>
       {!isBase && (
@@ -70,10 +73,10 @@ function CostFields({ values, errors, items, providers, onChange }: StockEntryFi
 }
 
 export function StockEntryFields(props: StockEntryFieldsProps): JSX.Element {
-  const { values, errors, items, onChange } = props;
+  const { values, errors, items, onChange, categories } = props;
   return (
     <div className='space-y-4'>
-      <ItemSelects values={values} errors={errors} items={items} onChange={onChange} />
+      <ItemSelects values={values} errors={errors} items={items} onChange={onChange} categories={categories} />
       {!isPriceOnlyCategory(values.category) && (
         <FormField label='Cantidad que entra' error={errors.quantity}>
           <input inputMode='numeric' value={values.quantity} onChange={(event) => onChange({ ...values, quantity: event.target.value })} placeholder='Ej: 24' className={inputClass(Boolean(errors.quantity))} />

@@ -1,0 +1,1 @@
+ALTER TABLE "stock_entries" ADD COLUMN "version" integer DEFAULT 1 NOT NULL;

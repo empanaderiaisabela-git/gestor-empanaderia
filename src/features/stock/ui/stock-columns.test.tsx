@@ -60,12 +60,12 @@ describe('grilla de Stock (US-4 CA-1)', () => {
     expect(open.mock.calls).toEqual([[{ kind: 'entry', item: ITEM }], [{ kind: 'loss', item: ITEM }], [{ kind: 'pricing', item: ITEM }], [{ kind: 'history', item: ITEM }]]);
   });
 
-  it('la base es una categoría con su contador y sólo Ingresar stock y Registrar pérdida, sin gusto, precio ni costo (BUG-23)', () => {
+  it('la base es una categoría con su contador y sólo Ingresar stock, Registrar pérdida e Historial, sin gusto, precio ni costo (BUG-23, P-8)', () => {
     const base: MenuItemDef = { ...ITEM, id: 'p', group: 'pizzas', name: 'Prepizza', unitCost: null, stock: 3, price1: null, price3: null, price6: null, price12: null, isBase: true };
     render(<div>{getStockColumns({ open: vi.fn() }).map((column, index) => <span key={index}>{column.cell(base)}</span>)}</div>);
     expect([screen.getByText('Prepizza'), screen.getByText('3')]).toHaveLength(2);
     expect(screen.getAllByText('—')).toHaveLength(3);
-    expect(screen.getAllByRole('button').map((button) => button.title)).toEqual(['Ingresar stock', 'Registrar pérdida']);
+    expect(screen.getAllByRole('button').map((button) => button.title)).toEqual(['Ingresar stock', 'Registrar pérdida', 'Historial de ingresos']);
   });
 
   it('un gusto de pizza o ciabatta muestra "—" en Stock y sólo "Costo y precio" (US-29 CA-2)', () => {

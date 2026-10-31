@@ -1,9 +1,11 @@
 import { AppError } from '@/lib/errors';
 import { hasBase } from '@/features/menu/domain/menu-groups';
-import type { StockEntryInput, StockLossInput, StockPricingInput } from '@/features/stock/domain/stock.schema';
+import type { StockEntryInput, StockEntryUpdateInput, StockLossInput, StockPricingInput } from '@/features/stock/domain/stock.schema';
 import type { EntryView, StockEntry, StockItem, StockLoss } from '@/features/stock/repository/stock.repository';
 import { drizzleStockUnitOfWork, type StockScope, type StockUnitOfWork } from '@/features/stock/repository/stock-unit-of-work';
+import { updateEntry } from './stock-entry-edit';
 import { planEntry } from './stock-entry-plan';
+import { lockedItem, saved } from './stock-locks';
 import { type PricingResult, setPricing } from './stock-pricing';
 
 type Caller = { id: string };
@@ -12,21 +14,11 @@ export type LossResult = { item: StockItem; loss: StockLoss };
 
 export type StockService = {
   registerEntry(caller: Caller, input: StockEntryInput): Promise<EntryResult>;
+  updateEntry(caller: Caller, input: StockEntryUpdateInput): Promise<EntryResult>;
   registerLoss(caller: Caller, input: StockLossInput): Promise<LossResult>;
   setPricing(caller: Caller, input: StockPricingInput): Promise<PricingResult>;
   entriesOf(menuItemId: string): Promise<EntryView[]>;
 };
-
-async function lockedItem({ stock }: StockScope, id: string): Promise<StockItem> {
-  const item = await stock.lockItem(id);
-  if (!item) throw new AppError('NOT_FOUND', { entity: 'el producto' });
-  return item;
-}
-
-function saved(item: StockItem | null): StockItem {
-  if (!item) throw new AppError('STALE_VERSION');
-  return item;
-}
 
 async function registerEntry(scope: StockScope, caller: Caller, input: StockEntryInput): Promise<EntryResult> {
   const current = await lockedItem(scope, input.menuItemId);
@@ -55,6 +47,7 @@ async function registerLoss(scope: StockScope, caller: Caller, input: StockLossI
 export function createStockService({ unitOfWork }: { unitOfWork: StockUnitOfWork }): StockService {
   return {
     registerEntry: (caller, input) => unitOfWork.run((scope) => registerEntry(scope, caller, input)),
+    updateEntry: (caller, input) => unitOfWork.run((scope) => updateEntry(scope, caller, input)),
     registerLoss: (caller, input) => unitOfWork.run((scope) => registerLoss(scope, caller, input)),
     setPricing: (caller, input) => unitOfWork.run((scope) => setPricing(scope, caller, input)),
     entriesOf: (menuItemId) => unitOfWork.read.entriesOf(menuItemId),

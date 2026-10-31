@@ -20,7 +20,7 @@ const BUTTONS: Record<DialogKind, { title: string; tone: string; Icon: LucideIco
 };
 
 function kindsOf(item: MenuItemDef): DialogKind[] {
-  if (item.isBase) return ['entry', 'loss'];
+  if (item.isBase) return ['entry', 'loss', 'history'];
   return hasOwnStock(item) ? ['entry', 'loss', 'pricing', 'history'] : ['pricing'];
 }
 

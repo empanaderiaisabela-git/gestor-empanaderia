@@ -79,7 +79,7 @@ describe('costo y precio de un gusto (US-28 CA-5)', () => {
 
 describe('fila del historial', () => {
   it('convierte el costo y admite que venga oculto', () => {
-    const row = { id: ITEM, menuItemId: ITEM, quantity: 12, unitCost: '450.00', providerName: null, username: 'admin', createdAt: new Date(0) };
+    const row = { id: ITEM, menuItemId: ITEM, quantity: 12, unitCost: '450.00', providerId: null, providerName: null, username: 'admin', version: 1, createdAt: new Date(0) };
     expect(stockEntryRowSchema.parse(row)).toMatchObject({ unitCost: 450 });
     expect(stockEntryRowSchema.parse({ ...row, unitCost: null })).toMatchObject({ unitCost: null });
   });

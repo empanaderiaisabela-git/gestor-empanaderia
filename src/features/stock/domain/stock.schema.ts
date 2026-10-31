@@ -17,6 +17,9 @@ export const stockEntrySchema = z.strictObject({
 });
 export type StockEntryInput = z.infer<typeof stockEntrySchema>;
 
+export const stockEntryUpdateSchema = stockEntrySchema.extend({ id: z.uuid(), version: z.number().int().min(1) });
+export type StockEntryUpdateInput = z.infer<typeof stockEntryUpdateSchema>;
+
 export const stockLossSchema = z.strictObject({
   menuItemId,
   quantity: z.number('Ingresá una cantidad').int('La cantidad tiene que ser un número entero').positive('La cantidad debe ser mayor a 0').max(MAX_QUANTITY, 'La cantidad es demasiado grande'),
@@ -40,8 +43,10 @@ export const stockEntryRowSchema = z.object({
   menuItemId: z.uuid(),
   quantity: z.number(),
   unitCost: amount.nullable(),
+  providerId: z.uuid().nullable(),
   providerName: z.string().nullable(),
   username: z.string(),
+  version: z.number(),
   createdAt: z.union([z.date(), z.string()]),
 });
 export type StockEntryDef = z.output<typeof stockEntryRowSchema>;

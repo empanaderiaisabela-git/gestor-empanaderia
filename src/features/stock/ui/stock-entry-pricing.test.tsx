@@ -9,7 +9,7 @@ const PREPIZZA: MenuItemDef = { ...MUZZA, id: '44444444-4444-4444-8444-444444444
 
 function renderModal(submitPricing: StockPanelModel['submitPricing']): StockPanelModel['submitEntry'] {
   const submitEntry = vi.fn(async () => null);
-  const model: StockPanelModel = { loading: false, items: [], activeItems: [PREPIZZA, MUZZA], providers: [], search: '', setSearch: vi.fn(), categoryFilter: 'todos', setCategoryFilter: vi.fn(), stockOrder: 'categoria', setStockOrder: vi.fn(), dialog: { kind: 'entry', item: null }, setDialog: vi.fn(), message: null, submitEntry, submitLoss: submitEntry, submitPricing };
+  const model: StockPanelModel = { loading: false, items: [], activeItems: [PREPIZZA, MUZZA], providers: [], search: '', setSearch: vi.fn(), categoryFilter: 'todos', setCategoryFilter: vi.fn(), stockOrder: 'categoria', setStockOrder: vi.fn(), dialog: { kind: 'entry', item: null }, setDialog: vi.fn(), message: null, submitEntry, submitLoss: submitEntry, submitPricing, submitEntryUpdate: submitEntry };
   render(<StockEntryModal model={model} />);
   return submitEntry;
 }

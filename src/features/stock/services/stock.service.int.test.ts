@@ -64,6 +64,16 @@ describe('ingresos y mermas simultáneos sobre el mismo gusto (US-4 CA-2)', () =
     await expect(stockService.setPricing(CALLER, { menuItemId: pollo.id, version: 1, unitCost: 1, prices, applyToGroup: false })).rejects.toMatchObject({ code: 'STALE_VERSION' });
   });
 
+  it('editar un ingreso lo pasa a otro gusto en una transacción, y si no alcanza no cambia nada (US-46 CA-3)', async () => {
+    const [pollo] = await db.insert(menuItems).values({ group: 'empanadas', name: 'Pollo', unitCost: '350.00', stock: '2', ...DOZEN }).returning({ id: menuItems.id });
+    const { entry } = await stockService.registerEntry(CALLER, { menuItemId: itemId, quantity: 6 });
+    await stockService.updateEntry(CALLER, { id: entry.id, version: 1, menuItemId: pollo.id, quantity: 6 });
+    expect([await stockOf(itemId), await stockOf(pollo.id)]).toEqual([10, 8]);
+    await stockService.registerLoss(CALLER, { menuItemId: pollo.id, quantity: 5, reason: 'Se cayó' });
+    await expect(stockService.updateEntry(CALLER, { id: entry.id, version: 2, menuItemId: itemId, quantity: 6 })).rejects.toMatchObject({ code: 'INSUFFICIENT_STOCK' });
+    expect([await stockOf(itemId), await stockOf(pollo.id), (await db.select().from(stockEntries))[0].version]).toEqual([10, 3, 2]);
+  });
+
   it('si la merma no alcanza, no se registra nada', async () => {
     await expect(stockService.registerLoss(CALLER, { menuItemId: itemId, quantity: 11, reason: 'x' })).rejects.toMatchObject({ code: 'INSUFFICIENT_STOCK' });
     expect(await stockOf(itemId)).toBe(10);

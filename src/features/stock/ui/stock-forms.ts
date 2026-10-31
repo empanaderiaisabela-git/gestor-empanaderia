@@ -1,6 +1,7 @@
 import { PRICE_FIELDS, type PriceField, priceFieldsOf } from '@/features/menu/domain/menu-groups';
 import type { MenuItemDef } from '@/features/menu/domain/menu-item.schema';
-import { type StockEntryInput, stockEntrySchema, type StockLossInput, stockLossSchema, type StockPricingInput, stockPricingSchema } from '@/features/stock/domain/stock.schema';
+import { categoryOf } from '@/features/stock/domain/stock-categories';
+import { type StockEntryDef, type StockEntryInput, stockEntrySchema, type StockLossInput, stockLossSchema, type StockPricingInput, stockPricingSchema } from '@/features/stock/domain/stock.schema';
 
 export type PriceTexts = Record<PriceField, string>;
 export type EntryValues = PriceTexts & { category: string; menuItemId: string; quantity: string; unitCost: string; providerId: string; minStock: string };
@@ -33,6 +34,12 @@ export function parseEntry(values: EntryValues): Parsed<StockEntryInput> {
   const minStock = values.minStock.trim() === '' ? null : toNumber(values.minStock);
   const result = stockEntrySchema.safeParse({ menuItemId: values.menuItemId, quantity: toNumber(values.quantity), ...costs, minStock });
   return result.success ? { ok: true, input: result.data } : { ok: false, errors: errorsOf(result.error.issues) };
+}
+
+export function entryValuesOf(item: MenuItemDef, entry: StockEntryDef): EntryValues {
+  const prices = { price1: textOf(item.price1), price3: textOf(item.price3), price6: textOf(item.price6), price12: textOf(item.price12) };
+  const unitCost = item.isBase ? '' : textOf(entry.unitCost);
+  return { category: categoryOf(item), menuItemId: item.id, quantity: String(entry.quantity), unitCost, providerId: entry.providerId ?? '', minStock: textOf(item.minStock), ...prices };
 }
 
 export function parseLoss(menuItemId: string, values: LossValues): Parsed<StockLossInput> {

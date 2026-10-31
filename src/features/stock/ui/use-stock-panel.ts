@@ -9,10 +9,11 @@ import { registerStockLossAction } from '@/features/stock/actions/register-stock
 import { setStockPricingAction } from '@/features/stock/actions/set-stock-pricing';
 import { categoryOf, type StockCategory } from '@/features/stock/domain/stock-categories';
 import { orderStock, type StockOrder } from '@/features/stock/domain/stock-order';
-import type { StockEntryInput, StockLossInput, StockPricingInput } from '@/features/stock/domain/stock.schema';
+import { updateStockEntryAction } from '@/features/stock/actions/update-stock-entry';
+import type { StockEntryDef, StockEntryInput, StockEntryUpdateInput, StockLossInput, StockPricingInput } from '@/features/stock/domain/stock.schema';
 import { normalizeForSearch } from '@/lib/utils';
 
-export type StockDialog = { kind: 'entry' | 'loss' | 'pricing' | 'history'; item: MenuItemDef | null } | null;
+export type StockDialog = { kind: 'entry' | 'loss' | 'pricing' | 'history'; item: MenuItemDef | null; entry?: StockEntryDef } | null;
 type Message = { type: 'success' | 'error'; text: string } | null;
 
 export type StockPanelModel = {
@@ -32,6 +33,7 @@ export type StockPanelModel = {
   submitEntry: (input: StockEntryInput) => Promise<string | null>;
   submitLoss: (input: StockLossInput) => Promise<string | null>;
   submitPricing: (input: StockPricingInput) => Promise<string | null>;
+  submitEntryUpdate: (input: StockEntryUpdateInput) => Promise<string | null>;
 };
 
 function useStockData(): { loading: boolean; providers: ProviderDef[]; reload: () => Promise<void> } {
@@ -74,5 +76,6 @@ export function useStockPanel(): StockPanelModel {
   const submitEntry = (input: StockEntryInput): Promise<string | null> => submit(registerStockEntryAction(input));
   const submitLoss = (input: StockLossInput): Promise<string | null> => submit(registerStockLossAction(input));
   const submitPricing = (input: StockPricingInput): Promise<string | null> => submit(setStockPricingAction(input));
-  return { loading, items, activeItems, providers, search, setSearch, categoryFilter, setCategoryFilter, stockOrder, setStockOrder, dialog, setDialog, message, submitEntry, submitLoss, submitPricing };
+  const submitEntryUpdate = (input: StockEntryUpdateInput): Promise<string | null> => submit(updateStockEntryAction(input));
+  return { loading, items, activeItems, providers, search, setSearch, categoryFilter, setCategoryFilter, stockOrder, setStockOrder, dialog, setDialog, message, submitEntry, submitLoss, submitPricing, submitEntryUpdate };
 }

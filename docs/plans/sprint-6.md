@@ -238,6 +238,43 @@ Cada una dice de dónde salió la pregunta. Se eligió siempre lo que no borra d
   mínimo. El vendedor recibe el mínimo para ver el mismo color; no es un dato sensible como el costo.
 - **Si el dev responde otra cosa**: se saca el título. Nivel 1.
 
+#### I-6 · Mover un ingreso no cambia el costo del gusto viejo (US-46)
+
+- **Pregunta**: si un ingreso de Carne a $800 se pasa a Pollo, ¿Carne vuelve al costo de su ingreso anterior?
+- **De dónde sale**: D-3 permite cambiar el gusto, y P-6 sólo dice qué pasa con el costo del gusto que recibe el
+  ingreso.
+- **Elegido**: el gusto viejo conserva el costo que tiene. Su costo pudo venir también de "Costo y precio", y
+  volver atrás sin que nadie lo pida cambiaría la ganancia de las ventas siguientes.
+- **Si el dev responde otra cosa**: el gusto viejo toma el costo de su ingreso más reciente que quede. Nivel 2.
+
+#### I-7 · El costo pasa al gusto sólo si se cambió (US-46)
+
+- **Pregunta**: el ingreso más reciente de Carne fue a $900, después el admin puso $950 en "Costo y precio", y ahora
+  edita ese ingreso sólo para sumarle el proveedor. ¿Carne vuelve a $900?
+- **De dónde sale**: P-6 ("el costo del ingreso pasa al gusto sólo si es su ingreso más reciente") y su ejemplo, que
+  edita un ingreso para ponerle proveedor.
+- **Elegido**: el costo pasa al gusto sólo si es su ingreso más reciente **y** el costo cambió (o el ingreso cambió
+  de gusto). En el ejemplo, Carne sigue a $950.
+- **Si el dev responde otra cosa**: el costo pasa siempre que sea el ingreso más reciente. Nivel 1.
+
+#### I-8 · La edición no ofrece Pizzas ni Ciabattas (US-46)
+
+- **Pregunta**: ¿se puede pasar un ingreso a la categoría Pizzas o Ciabattas?
+- **De dónde sale**: D-3 ("también la categoría") y US-29: los gustos de pizza y ciabatta no reciben ingresos; su
+  stock es el de la base.
+- **Elegido**: el desplegable de categoría de la edición lista sólo lo que se stockea por cantidad. Prepizza y Pan de
+  ciabatta sí están.
+- **Si el dev responde otra cosa**: no aplica mientras las pizzas no tengan stock propio.
+
+#### I-9 · Al cambiar el gusto, los precios del viejo no pasan al nuevo (US-46)
+
+- **Pregunta**: la edición precarga los precios de venta de Carne. Si el admin cambia el gusto a Pollo, ¿Pollo queda
+  con los precios de Carne?
+- **De dónde sale**: US-46 CA-2 (precios precargados) y D-3 (cambiar el gusto).
+- **Elegido**: al elegir otro gusto, los precios quedan vacíos con los del gusto nuevo como guía: vacío conserva los
+  que tiene, como en un ingreso nuevo. El mínimo se precarga con el del gusto nuevo.
+- **Si el dev responde otra cosa**: se precargan los precios del gusto nuevo. Nivel 1.
+
 ## Resumen para el dev
 
 Lo que entró en cada commit, en lenguaje simple. Todo va a `develop` en el GitHub público. Nunca entran secretos,
@@ -270,3 +307,14 @@ sin commitear.
 4. **Protección de migraciones**: una prueba automática nueva avisa si una migración futura intenta borrar,
    renombrar o modificar datos.
 5. **Pruebas y documentos**: pruebas de cada parte (también una que usa la pantalla real) y el documento de Stock.
+
+### US-46 · Editar un ingreso de stock
+
+1. **Editar**: en el historial de cada producto, cada ingreso tiene un lápiz "Editar ingreso" que abre el formulario
+   con todo como estaba: producto, cantidad, costo, proveedor, precios y mínimo.
+2. **El stock se corrige solo**: si se cambia la cantidad, el stock sube o baja la diferencia. Si se cambia el
+   producto, las unidades pasan del viejo al nuevo. Nunca queda en negativo: si ya se vendió, avisa.
+3. **Prepizzas y panes**: ahora también tienen historial, para poder editar sus ingresos.
+4. **Dos personas a la vez**: si dos editan el mismo ingreso, la segunda recibe el aviso de que los datos cambiaron.
+5. **Base de datos**: se agregó una columna nueva a los ingresos. No borra ni cambia nada; tu base local ya la tiene.
+6. **Pruebas y documentos**: pruebas de cada parte, una que edita en la pantalla real, y el documento de Stock.

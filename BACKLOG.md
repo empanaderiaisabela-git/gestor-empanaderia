@@ -4140,7 +4140,7 @@ provisorias P-1 a P-10, cómo se cuidan las migraciones, el orden y la trazabili
 | 1   | [US-44](#us-44--grupos-quilmes-y-sándwich-de-miga) | Grupos: "Quilmes" y "Sándwich de miga" | En revisión | T-25 | 45 min |
 | 2   | [BUG-28](#bug-28--stock-la-categoría-en-un-solo-renglón) | Stock: la categoría en un solo renglón | En revisión | US-44 | 20 min |
 | 3   | [US-45](#us-45--stock-mínimo-opcional-con-aviso-amarillo) | Stock mínimo opcional con aviso amarillo | En revisión | T-25 | 3 h |
-| 4   | [US-46](#us-46--editar-un-ingreso-de-stock) | Editar un ingreso de stock | Pendiente | US-45 | 4 h |
+| 4   | [US-46](#us-46--editar-un-ingreso-de-stock) | Editar un ingreso de stock | En revisión | US-45 | 4 h |
 | 5   | [US-47](#us-47--jamón-extra-para-pizza) | Jamón extra para pizza | Pendiente | US-46 | 5 h |
 | 6   | [T-26](#t-26--cierre-del-sprint-6) | Cierre del Sprint 6 | Pendiente | todos | 1 h 30 min |
 |     |    | **Total del sprint** | | | **15 h 5 min** |
@@ -4255,9 +4255,9 @@ el stock se vea en amarillo cuando baja de ese mínimo y sepa que tengo que repo
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
-| Dueño        | —         |
-| Inicio       | —         |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-31 |
 | Tamaño       | M         |
 | Depende de   | US-45     |
 | Plan         | [`docs/plans/sprint-6.md`](docs/plans/sprint-6.md) |
@@ -4269,18 +4269,19 @@ pueda corregir una cantidad, un costo o un gusto equivocados, o sumarle el prove
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · Migración 0024, aditiva: `stock_entries.version` con default 1. Un test de integración prueba que los ingresos de hoy pasan la migración · Estimación: 20 min · Completado: —
+- [x] **CA-1** · Migración 0024, aditiva: `stock_entries.version` con default 1. Un test de integración prueba que los ingresos de hoy pasan la migración · Estimación: 20 min · Completado: 2026-10-31 01:26
 
-- [ ] **CA-2** · Cada ingreso del Historial tiene "Editar" (sólo el admin), que abre el formulario con todo precargado: categoría, gusto, cantidad, costo, proveedor, precios de venta y mínimo. Prepizza y Pan de ciabatta también tienen Historial (P-8). Lo cubren tests de componente · Estimación: 1 h 15 min · Completado: —
+- [x] **CA-2** · Cada ingreso del Historial tiene "Editar" (sólo el admin), que abre el formulario con todo precargado: categoría, gusto, cantidad, costo, proveedor, precios de venta y mínimo. Prepizza y Pan de ciabatta también tienen Historial (P-8). Lo cubren tests de componente · Estimación: 1 h 15 min · Completado: 2026-10-31 01:26
 
-- [ ] **CA-3** · Guardar actualiza el ingreso y el stock. Si cambia la cantidad, el gusto sube o baja la diferencia; si cambia el gusto, las unidades pasan del viejo al nuevo (D-3). El stock nunca queda negativo (`INSUFFICIENT_STOCK`, P-7). El costo pasa al gusto sólo si es su ingreso más reciente (P-6). Queda en Auditoría. Lo cubren tests de service e integración · Estimación: 1 h 45 min · Completado: —
+- [x] **CA-3** · Guardar actualiza el ingreso y el stock. Si cambia la cantidad, el gusto sube o baja la diferencia; si cambia el gusto, las unidades pasan del viejo al nuevo (D-3). El stock nunca queda negativo (`INSUFFICIENT_STOCK`, P-7). El costo pasa al gusto sólo si es su ingreso más reciente (P-6). Queda en Auditoría. Lo cubren tests de service e integración · Estimación: 1 h 45 min · Completado: 2026-10-31 01:26
 
-- [ ] **CA-4** · Si dos personas editan el mismo ingreso a la vez, la segunda recibe `STALE_VERSION`. El vendedor recibe `FORBIDDEN`. Lo cubren tests de contrato y un E2E que edita un ingreso y lo cambia de gusto · Estimación: 40 min · Completado: —
+- [x] **CA-4** · Si dos personas editan el mismo ingreso a la vez, la segunda recibe `STALE_VERSION`. El vendedor recibe `FORBIDDEN`. Lo cubren tests de contrato y un E2E que edita un ingreso y lo cambia de gusto · Estimación: 40 min · Completado: 2026-10-31 01:26
 
 **Notas**
 
 - Nivel 3: schema, migración y un cambio que cruza capas.
 - Las ventas ya hechas no cambian: su costo quedó guardado al vender.
+- Decisiones de la implementación (detalle en `sprint-6.md`): I-6, el gusto viejo conserva su costo al mover un ingreso; I-7, el costo pasa al gusto sólo si cambió y es su ingreso más reciente; I-8, la edición no ofrece Pizzas ni Ciabattas; I-9, al cambiar el gusto, los precios del viejo no pasan al nuevo.
 
 ### US-47 · Jamón extra para pizza
 
