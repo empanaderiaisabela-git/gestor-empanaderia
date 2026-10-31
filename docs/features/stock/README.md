@@ -47,7 +47,8 @@ Muestra el stock de cada gusto y bebida activos, agrupados por grupo, y permite:
   lo que se stockea por cantidad (no en Pizzas ni Ciabattas). El campo arranca con el mínimo actual; vacío es "sin
   mínimo" (P-5). El stock se ve amarillo cuando es **menor** al mínimo, rojo sin stock y verde en el resto (P-4),
   también para el vendedor.
-- **Editar un ingreso (US-46)**: desde el Historial, "Editar ingreso" abre el formulario con todo precargado
+- **Editar un ingreso (US-46)**: desde el lápiz "Editar último ingreso", el primero de las acciones de la fila (US-48),
+  o desde el Historial, "Editar ingreso" abre el formulario con todo precargado
   (categoría, gusto, cantidad, costo, proveedor, precios de venta y mínimo). Todo se puede cambiar, también el gusto
   (D-3), pero no hacia Pizzas o Ciabattas, que no reciben ingresos. Al guardar:
   - Si cambia la cantidad, el gusto sube o baja la diferencia. Si cambia el gusto, las unidades salen del viejo y

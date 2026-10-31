@@ -7,11 +7,11 @@ const ITEM: MenuItemDef = { id: 'a', group: 'sanguches', name: 'Primavera', unit
 
 describe('grilla de Stock (US-4 CA-1)', () => {
   it('muestra el costo para el local (US-16)', () => {
-    expect(getStockColumns({ open: vi.fn() }).map((column) => column.header)).toEqual(['Categoría', 'Gusto / bebida', 'Stock', 'Precio de venta', 'Costo para el local', 'Acciones']);
+    expect(getStockColumns({ open: vi.fn(), editLast: vi.fn() }).map((column) => column.header)).toEqual(['Categoría', 'Gusto / bebida', 'Stock', 'Precio de venta', 'Costo para el local', 'Acciones']);
   });
 
   it('cada celda muestra grupo, gusto, stock, precio y costo', () => {
-    const columns = getStockColumns({ open: vi.fn() });
+    const columns = getStockColumns({ open: vi.fn(), editLast: vi.fn() });
     render(<div>{columns.slice(0, 5).map((column, index) => <span key={index}>{column.cell(ITEM)}</span>)}</div>);
     ['Sándwich de miga', 'Primavera', '24', '$650'].forEach((text) => expect(screen.getByText(text)).toBeDefined());
     expect(screen.getByText(/1 unidad: \$1\.600/)).toBeDefined();
@@ -20,14 +20,14 @@ describe('grilla de Stock (US-4 CA-1)', () => {
   });
 
   it('regression BUG-28: la categoría tiene ancho propio y no se parte en dos renglones', () => {
-    const [category] = getStockColumns({ open: vi.fn() });
+    const [category] = getStockColumns({ open: vi.fn(), editLast: vi.fn() });
     expect(category.headerClassName).toBe('w-48');
     expect(category.cellClassName).toContain('whitespace-nowrap');
   });
 
   it('avisa cuando falta el precio o el costo', () => {
     const sin: MenuItemDef = { ...ITEM, unitCost: null, price1: null, price3: null, price6: null, price12: null };
-    const columns = getStockColumns({ open: vi.fn() });
+    const columns = getStockColumns({ open: vi.fn(), editLast: vi.fn() });
     render(<div>{columns.slice(3, 5).map((column, index) => <span key={index}>{column.cell(sin)}</span>)}</div>);
     expect(screen.getByText('Sin precio')).toBeDefined();
     expect(screen.getByText('Sin costo')).toBeDefined();
@@ -35,7 +35,7 @@ describe('grilla de Stock (US-4 CA-1)', () => {
 
   it('muestra los precios del gusto de Empanadas, uno por renglón (US-28, BUG-22)', () => {
     const empanada: MenuItemDef = { ...ITEM, group: 'empanadas', price1: 2000, price3: 5500, price6: 10000, price12: 32000 };
-    render(<div>{getStockColumns({ open: vi.fn() })[3].cell(empanada)}</div>);
+    render(<div>{getStockColumns({ open: vi.fn(), editLast: vi.fn() })[3].cell(empanada)}</div>);
     expect(screen.getAllByRole('listitem').map((row) => row.textContent)).toEqual(['1 unidad: $2.000', '3 unidades: $5.500', '½ docena: $10.000', '1 docena: $32.000']);
   });
 
@@ -52,7 +52,7 @@ describe('grilla de Stock (US-4 CA-1)', () => {
 
   it('el admin ingresa, registra mermas, cambia costo y precio y ve el historial (US-16, US-28)', () => {
     const open = vi.fn();
-    render(<StockButtons item={ITEM} actions={{ open }} />);
+    render(<StockButtons item={ITEM} actions={{ open, editLast: vi.fn() }} />);
     fireEvent.click(screen.getByTitle('Ingresar stock'));
     fireEvent.click(screen.getByTitle('Registrar pérdida'));
     fireEvent.click(screen.getByTitle('Costo y precio'));
@@ -62,16 +62,24 @@ describe('grilla de Stock (US-4 CA-1)', () => {
 
   it('la base es una categoría con su contador y sólo Ingresar stock, Registrar pérdida e Historial, sin gusto, precio ni costo (BUG-23, P-8)', () => {
     const base: MenuItemDef = { ...ITEM, id: 'p', group: 'pizzas', name: 'Prepizza', unitCost: null, stock: 3, price1: null, price3: null, price6: null, price12: null, isBase: true };
-    render(<div>{getStockColumns({ open: vi.fn() }).map((column, index) => <span key={index}>{column.cell(base)}</span>)}</div>);
+    render(<div>{getStockColumns({ open: vi.fn(), editLast: vi.fn() }).map((column, index) => <span key={index}>{column.cell(base)}</span>)}</div>);
     expect([screen.getByText('Prepizza'), screen.getByText('3')]).toHaveLength(2);
     expect(screen.getAllByText('—')).toHaveLength(3);
-    expect(screen.getAllByRole('button').map((button) => button.title)).toEqual(['Ingresar stock', 'Registrar pérdida', 'Historial de ingresos']);
+    expect(screen.getAllByRole('button').map((button) => button.title)).toEqual(['Editar último ingreso', 'Ingresar stock', 'Registrar pérdida', 'Historial de ingresos']);
+  });
+
+  it('el lápiz de la fila, primero a la izquierda, edita el último ingreso (US-48)', () => {
+    const editLast = vi.fn();
+    render(<StockButtons item={ITEM} actions={{ open: vi.fn(), editLast }} />);
+    expect(screen.getAllByRole('button')[0].title).toBe('Editar último ingreso');
+    fireEvent.click(screen.getByTitle('Editar último ingreso'));
+    expect(editLast).toHaveBeenCalledWith(ITEM);
   });
 
   it('un gusto de pizza o ciabatta muestra "—" en Stock y sólo "Costo y precio" (US-29 CA-2)', () => {
     const open = vi.fn();
     const muzza: MenuItemDef = { ...ITEM, group: 'pizzas', name: 'Muzza', stock: 0, price1: 11000, price3: null, price6: null, price12: null };
-    render(<div><StockBadge item={muzza} /><StockButtons item={muzza} actions={{ open }} /></div>);
+    render(<div><StockBadge item={muzza} /><StockButtons item={muzza} actions={{ open, editLast: vi.fn() }} /></div>);
     expect(screen.getByText('—')).toBeDefined();
     fireEvent.click(screen.getByRole('button'));
     expect(open).toHaveBeenCalledWith({ kind: 'pricing', item: muzza });

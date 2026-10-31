@@ -12,6 +12,7 @@ import { TEST_IDS } from '@/constants/test-ids';
 import { useAuthStore } from '@/features/auth/store/auth.store';
 import type { MenuItemDef } from '@/features/menu/domain/menu-item.schema';
 import { CATEGORY_LABELS, categoryOf, hasOwnStock } from '@/features/stock/domain/stock-categories';
+import { openLastEntry } from './open-last-entry';
 import { getStockColumns, getStockViewColumns, StockBadge, StockButtons, type StockRowActions } from './stock-columns';
 import { StockEntryEditModal } from './stock-entry-edit-modal';
 import { StockEntryModal } from './stock-entry-modal';
@@ -32,7 +33,8 @@ export function StockPanel(): JSX.Element {
   const model = useStockPanel();
   const isAdmin = useAuthStore((state) => state.user?.role) === 'admin';
   if (model.loading) return <TableSkeleton />;
-  const actions: StockRowActions | null = isAdmin ? { open: model.setDialog } : null;
+  const editLast = (item: MenuItemDef): void => void openLastEntry(item, model.setDialog);
+  const actions: StockRowActions | null = isAdmin ? { open: model.setDialog, editLast } : null;
   const editing = model.dialog?.kind === 'entry' && model.dialog.item && model.dialog.entry ? { item: model.dialog.item, entry: model.dialog.entry } : null;
   const addButton = (
     <Button variant='primary' onClick={() => model.setDialog({ kind: 'entry', item: null })} leftIcon={<PackagePlus className='w-5 h-5' />} className='h-11 w-full sm:w-auto shrink-0' data-testid={TEST_IDS.general.btnAgregar}>

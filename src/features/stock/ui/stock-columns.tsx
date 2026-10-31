@@ -1,4 +1,4 @@
-import { History, type LucideIcon, PackageMinus, PackagePlus, Tags } from 'lucide-react';
+import { History, type LucideIcon, PackageMinus, PackagePlus, Pencil, Tags } from 'lucide-react';
 import type { JSX } from 'react';
 import type { ColumnDef } from '@/components/ui/virtualized-data-table';
 import type { MenuItemDef } from '@/features/menu/domain/menu-item.schema';
@@ -9,7 +9,7 @@ import { type StockLevel, stockLevel } from '@/features/stock/domain/stock-level
 import { formatMoney } from '@/lib/format-money';
 import type { StockDialog } from './use-stock-panel';
 
-export type StockRowActions = { open: (dialog: StockDialog) => void };
+export type StockRowActions = { open: (dialog: StockDialog) => void; editLast: (item: MenuItemDef) => void };
 type DialogKind = NonNullable<StockDialog>['kind'];
 
 const BUTTONS: Record<DialogKind, { title: string; tone: string; Icon: LucideIcon }> = {
@@ -40,6 +40,11 @@ export function StockBadge({ item }: { item: MenuItemDef }): JSX.Element {
 export function StockButtons({ item, actions }: { item: MenuItemDef; actions: StockRowActions }): JSX.Element {
   return (
     <>
+      {kindsOf(item).includes('history') && (
+        <button onClick={() => actions.editLast(item)} className='p-1.5 rounded-lg transition hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-200' title='Editar último ingreso'>
+          <Pencil className='w-4 h-4' />
+        </button>
+      )}
       {kindsOf(item).map((kind) => {
         const { title, tone, Icon } = BUTTONS[kind];
         return (
