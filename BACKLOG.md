@@ -4337,15 +4337,15 @@ de forma que la versión que use el cliente sea la que se probó.
 
 - [x] **CA-1** · `npm run verify` completo y todos los E2E en verde sobre `develop` · Estimación: 40 min · Completado: 2026-10-31 02:09
 
-- [ ] **CA-2** · README, `docs/architecture.md`, `docs/initial_prompt.md` y los docs de `stock`, `order` y `menu` al día. Con el OK del dev, merge local `develop → main` con el tag `sprint-6` · Estimación: 40 min · Completado: —
+- [x] **CA-2** · README, `docs/architecture.md`, `docs/initial_prompt.md` y los docs de `stock`, `order` y `menu` al día. Con el OK del dev, merge local `develop → main` con el tag `sprint-6` · Estimación: 40 min · Completado: 2026-10-31 09:14
 
-- [ ] **CA-3** · El dev migra Supabase antes de desplegar y comprueba que quedan 26 migraciones · Estimación: 10 min · Completado: —
+- [x] **CA-3** · El dev migra Supabase antes de desplegar y comprueba que quedan 26 migraciones · Estimación: 10 min · Completado: 2026-10-31 09:14
 
 **Notas**
 
 - CA-1: `npm run verify` verde en cada ítem (el último, US-47: 1107 tests unit y de componente, 121 de integración, cobertura 96,4 / 90,2, mutación 89,1 y build) y los 78 E2E en verde sobre `develop` (2026-10-31).
-- CA-2: los docs están al día; el merge a `main` y el tag `sprint-6` esperan el OK del dev, que pidió sólo `develop` (pregunta 3 de `sprint-6.md`).
-- CA-3: las instrucciones están en "Para el dev al volver" de `sprint-6.md`.
+- CA-2: docs al día. El dev dio el OK al merge a `main` con el tag `sprint-6` el 2026-10-31, junto con sus ajustes de la revisión y el CI sin el job E2E, que fallaba al instalar Chromium en `ubuntu-latest` (Ubuntu 26).
+- CA-3: el dev migró Supabase el 2026-10-31 y la consulta da 26.
 
 ## Sin sprint asignado
 

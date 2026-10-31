@@ -73,7 +73,7 @@ export function getStockViewColumns(): ColumnDef<MenuItemDef>[] {
   return [
     { header: 'Categoría', headerClassName: 'w-48', cellClassName: 'whitespace-nowrap text-zinc-700 dark:text-zinc-200', cell: (item) => CATEGORY_LABELS[categoryOf(item)] },
     { header: 'Gusto / bebida', cellClassName: 'font-bold text-zinc-900 dark:text-zinc-50', cell: (item) => (item.isBase ? '—' : item.name) },
-    { header: 'Stock', headerClassName: 'w-20', cell: (item) => <StockBadge item={item} /> },
+    { header: 'Stock', headerClassName: 'w-45', cell: (item) => <StockBadge item={item} /> },
   ];
 }
 

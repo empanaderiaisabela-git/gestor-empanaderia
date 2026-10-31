@@ -126,7 +126,7 @@ Reglas:
 | Si tocaste un flujo cubierto por E2E | `npm run test:e2e` | Playwright en Chromium |
 | Antes de integrar a `develop` | Lo que pide el nivel del ítem ([abajo](#nivel-de-tests-de-cada-ítem)) | En nivel 3, `npm run verify`: lint, tipos, cobertura, integración, mutación y `next build` |
 | Cierre del sprint | `npm run verify` y `npm run test:e2e` | Todo, siempre, sin importar el nivel de los ítems |
-| Push a `develop` o `main` | GitHub Actions | Lo mismo que `verify` más E2E, en jobs paralelos |
+| Push a `develop` o `main` | GitHub Actions | Lo mismo que `verify`, en jobs paralelos. Sin E2E: se corren a mano |
 
 ## Nivel de tests de cada ítem
 
@@ -163,7 +163,7 @@ Scripts de `package.json`:
 |---|---|---|
 | Unit, tipos, contrato y fuzz | < 30 s | Sin red ni base: fakes en memoria. Fuzz con 100 corridas por propiedad. |
 | Integración | < 2 min | `db-test` en `tmpfs`, migraciones una sola vez en `globalSetup`, `TRUNCATE` entre tests, archivos en serie. |
-| E2E | < 5 min en Chromium | Datos efímeros en vez de resetear la base, login una sola vez (`storageState`). Los tres navegadores sólo en el CI de `main`. |
+| E2E | < 5 min en Chromium | Datos efímeros en vez de resetear la base, login una sola vez (`storageState`). Los tres navegadores con `npm run test:e2e:all`. |
 | Mutación | < 10 min | Sólo `domain/`, `services/` y `lib/` puro, con el modo incremental de Stryker. |
 
 Reintentos (desde T-6): 0 en local y 1 en el CI. Un test que pasa al segundo intento es un test inestable y se

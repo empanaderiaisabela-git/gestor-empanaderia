@@ -86,7 +86,7 @@ npm run verify                        # todo lo anterior salvo E2E, más el buil
 - **Tests por nivel** ([`docs/testing.md`](docs/testing.md#nivel-de-tests-de-cada-ítem)): 1 texto o estilo, 2 lógica acotada, 3 profundo con `npm run verify`; el verify completo se corre al cerrar el sprint.
 - **Hooks** (lefthook): `pre-commit` bloquea `.env` reales y corre ESLint y tipos; `commit-msg` corre commitlint;
   `pre-push` corre la cobertura y `skills:check`.
-- **CI** (GitHub Actions, en cada push a `develop` y `main`): calidad, unit, mutación, integración, build y E2E.
+- **CI** (GitHub Actions, en cada push a `develop` y `main`): calidad, unit, mutación, integración y build. Los E2E se corren a mano (`npm run test:e2e`).
   Firefox y WebKit sólo en `main`.
 - **Reglas duras** (ESLint): 100 líneas por archivo, funciones de 40 líneas y 3 parámetros, cero comentarios
   (salvo `Por qué:`), sin `any`/`!`/`as`, capas `ui → actions → services → repository → db` y sin SQL plano. Los

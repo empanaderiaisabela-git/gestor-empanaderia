@@ -18,3 +18,4 @@ export async function setHamPriceAction(input: HamPriceInput): Promise<ActionRes
     return toActionFailure(error, 'el jamón extra');
   }
 }
+ 

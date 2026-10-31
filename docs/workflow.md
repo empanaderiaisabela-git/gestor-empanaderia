@@ -87,7 +87,7 @@ Ciclo por comportamiento: test que falla → código mínimo → refactor. Detal
 | `git push` | unit + contrato + fuzz + cobertura | lefthook |
 | Antes de integrar a `develop` | los tests del nivel del ítem ([`testing.md`](testing.md#nivel-de-tests-de-cada-ítem)); en nivel 3, `npm run verify` | manual, **obligatorio** |
 | Cierre del sprint | `npm run verify` (todo + integración + mutación + build) + E2E | manual, **obligatorio** |
-| Push a `develop` o `main` | lo mismo que `npm run verify` + E2E, en jobs paralelos | GitHub Actions |
+| Push a `develop` o `main` | lo mismo que `npm run verify`, en jobs paralelos (sin E2E: se corren a mano) | GitHub Actions |
 
 Nunca `--no-verify`. Si un gate falla, se arregla la causa.
 

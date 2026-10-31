@@ -23,11 +23,11 @@ export function PromoLineRow({ promo, board, actions }: PromoLineRowProps): JSX.
         ))}
         {!isPromoComplete(promo) && (
           <button onClick={() => actions.onReopen(promo.id)} className='inline-block mt-1 px-2 py-0.5 rounded-full text-xs font-bold bg-amber-50 text-amber-800 dark:bg-amber-500/10 dark:text-amber-300'>
-            faltan gustos · elegir
+            Faltan gustos · Elegir
           </button>
         )}
       </td>
-      <td className='py-2 px-3 text-sm whitespace-nowrap'>1 promo</td>
+      <td className='py-2 px-3 text-sm whitespace-nowrap'>1 Promo</td>
       <td className='py-2 px-3 text-sm whitespace-nowrap'>{units.toLocaleString('es-AR')}</td>
       <td className='py-2 px-3 text-right font-semibold whitespace-nowrap'>{formatMoney(promoPrice(promo, board.book) ?? promo.price)}</td>
       <td className='py-2 text-right'>

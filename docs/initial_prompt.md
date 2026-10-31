@@ -151,14 +151,14 @@ Hacer preguntas de más es mejor que inventar.
     I-5) en [`sprint-5.md`](plans/sprint-5.md). El dev revisó el sprint y dio el OK al merge el 2026-10-30.
   - La migración 0022 es del Sprint 5 (quedan 23). La base de Supabase la migra el dev.
   - Ningún ítem nuevo se arranca sin el OK del dev.
-- **Sprint 6 implementado** ("Revisión del cliente en producción": T-25, US-44, BUG-28, US-45 a US-47 y T-26) en
-  `develop`, a la espera de la revisión del dev y del merge a `main` con el tag `sprint-6`. Plan, decisiones y
+- **Sprint 6 cerrado** ("Revisión del cliente en producción": T-25, US-44, BUG-28, US-45 a US-47 y T-26): en `main`
+  con el tag `sprint-6` desde el 2026-10-31. Plan, decisiones y
   resumen en [`sprint-6.md`](plans/sprint-6.md).
   - Lo hizo el agente solo (2026-10-31), con permiso del dev para commitear y pushear a `develop`. Las decisiones del
     dev (D-1 a D-5), las provisorias P-1 a P-10 (confirmadas por el dev el 2026-10-31) y las de la implementación (I-1
     a I-12) están en el plan, cada una con la pregunta que la originó.
   - Las migraciones 0023 a 0025 son del Sprint 6 y **sólo aditivas** (`src/lib/db/additive-migrations.test.ts` lo
-    controla desde la 0023). Supabase tiene que quedar con **26**; la migra el dev antes de desplegar.
+    controla desde la 0023). Supabase está en **26** (la migró el dev el 2026-10-31).
 - **US-43** (sin sprint asignado): la web pública (`/home`, `/product`, `/api/public`) está **apagada salvo
   `PUBLIC_CATALOG=true`**, y sin sesión se entra por `/login`. Para prenderla se carga la variable en Vercel y se
   redespliega. Plan en [`US-43-sin-web-publica.md`](plans/US-43-sin-web-publica.md).
@@ -200,7 +200,7 @@ Hacer preguntas de más es mejor que inventar.
   - lefthook: `pre-commit` bloquea los `.env` reales y corre ESLint, el tope de los `.css` y el typecheck;
     `commit-msg` corre commitlint; `pre-push` corre `test:coverage` y `skills:check`.
 - CI: `.github/workflows/ci.yml` en cada push a `develop` y `main` (lint, lista legacy, typecheck, skills,
-  cobertura, mutación, integración, build y E2E contra `db-test`), más `keep-alive.yml`, que hace un ping diario a Supabase.
+  cobertura, mutación, integración y build contra `db-test`), más `keep-alive.yml`, que hace un ping diario a Supabase.
 - `README.md` en español con el setup real (T-7).
 - Skills: la fuente es `.agents/skills/`. Se copian a `.claude/skills/` con `npm run skills:sync`, y
   `npm run skills:check` verifica que estén iguales. **Nunca edites `.claude/skills/` directo.**
