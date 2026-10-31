@@ -4436,6 +4436,25 @@ productos de una categoría, de forma que no tenga que cambiarlos uno por uno.
 
 - Nivel 3. Sin migración. Provisorias P-1 y P-2 en el plan.
 
+### BUG-29 · Editar una bebida vieja en Alta abre el formulario en blanco
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-31 |
+| Tamaño       | XS        |
+| Depende de   | US-49     |
+| Plan         | Hotfix pedido por el dev: directo a `develop` y `main` |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Esperado**: "Editar" en una bebida cargada antes de US-49 abre Bebida, Litros y Sabor precargados.
+
+**Actual**: esas bebidas no tienen los tres campos guardados, así que el formulario abría en blanco.
+
+- [x] **CA-1** · El formulario los toma del nombre: "Aquarius 1,5 L Manzana" da Aquarius, 1.5 y Manzana; "Coca-Cola 500 ml", 0.5 L; sin litros, el nombre entero queda en Bebida. Lo cubre `menu-item-form.test.ts` · Estimación: 15 min · Completado: 2026-10-31 19:27
+
 ### US-43 · Sin web pública por ahora: se entra por `/login`
 
 | Campo        | Valor     |

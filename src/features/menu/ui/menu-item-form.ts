@@ -11,10 +11,21 @@ export type FormResult<T> = { ok: true; input: T } | { ok: false; errors: MenuIt
 type Issue = { path: PropertyKey[]; message: string };
 type Parsed<T> = { success: true; data: T } | { success: false; error: { issues: readonly Issue[] } };
 
+const LEGACY_LITERS = /^(.*?)\s*(\d+(?:[.,]\d+)?)\s*(ml|l)\b\s*(.*)$/i;
+
+function legacyDrink(name: string): Pick<MenuItemFormValues, 'drinkName' | 'liters' | 'flavor'> {
+  const match = LEGACY_LITERS.exec(name);
+  if (!match) return { drinkName: name, liters: '', flavor: '' };
+  const [, drink, amount, unit, flavor] = match;
+  const liters = parseLiters(amount) / (unit.toLowerCase() === 'ml' ? 1000 : 1);
+  return { drinkName: drink.trim(), liters: String(liters), flavor: flavor.trim() };
+}
+
 const isFormKey = (key: PropertyKey | undefined): key is FormKey => FORM_KEYS.some((formKey) => formKey === key);
 
 export function initialValues(item: MenuItemDef | null): MenuItemFormValues {
   if (!item) return { group: 'empanadas', name: '', drinkName: '', liters: '', flavor: '' };
+  if (isDrinkGroup(item.group) && item.drinkName === null) return { group: item.group, name: item.name, ...legacyDrink(item.name) };
   return { group: item.group, name: item.name, drinkName: item.drinkName ?? '', liters: item.liters === null ? '' : String(item.liters), flavor: item.flavor ?? '' };
 }
 
