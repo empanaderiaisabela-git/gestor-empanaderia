@@ -4142,7 +4142,7 @@ provisorias P-1 a P-10, cómo se cuidan las migraciones, el orden y la trazabili
 | 3   | [US-45](#us-45--stock-mínimo-opcional-con-aviso-amarillo) | Stock mínimo opcional con aviso amarillo | En revisión | T-25 | 3 h |
 | 4   | [US-46](#us-46--editar-un-ingreso-de-stock) | Editar un ingreso de stock | En revisión | US-45 | 4 h |
 | 5   | [US-47](#us-47--jamón-extra-para-pizza) | Jamón extra para pizza | En revisión | US-46 | 5 h |
-| 6   | [T-26](#t-26--cierre-del-sprint-6) | Cierre del Sprint 6 | Pendiente | todos | 1 h 30 min |
+| 6   | [T-26](#t-26--cierre-del-sprint-6) | Cierre del Sprint 6 | En revisión | todos | 1 h 30 min |
 |     |    | **Total del sprint** | | | **15 h 5 min** |
 
 ### T-25 · Backlog del Sprint 6
@@ -4321,9 +4321,9 @@ pidió el cliente sin cargar otra pizza. Como administrador quiero cargar el pre
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
-| Dueño        | —         |
-| Inicio       | —         |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-31 |
 | Tamaño       | S         |
 | Depende de   | todos     |
 | Plan         | [`docs/plans/sprint-6.md`](docs/plans/sprint-6.md) |
@@ -4335,11 +4335,17 @@ de forma que la versión que use el cliente sea la que se probó.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · `npm run verify` completo y todos los E2E en verde sobre `develop` · Estimación: 40 min · Completado: —
+- [x] **CA-1** · `npm run verify` completo y todos los E2E en verde sobre `develop` · Estimación: 40 min · Completado: 2026-10-31 02:09
 
 - [ ] **CA-2** · README, `docs/architecture.md`, `docs/initial_prompt.md` y los docs de `stock`, `order` y `menu` al día. Con el OK del dev, merge local `develop → main` con el tag `sprint-6` · Estimación: 40 min · Completado: —
 
 - [ ] **CA-3** · El dev migra Supabase antes de desplegar y comprueba que quedan 26 migraciones · Estimación: 10 min · Completado: —
+
+**Notas**
+
+- CA-1: `npm run verify` verde en cada ítem (el último, US-47: 1107 tests unit y de componente, 121 de integración, cobertura 96,4 / 90,2, mutación 89,1 y build) y los 78 E2E en verde sobre `develop` (2026-10-31).
+- CA-2: los docs están al día; el merge a `main` y el tag `sprint-6` esperan el OK del dev, que pidió sólo `develop` (pregunta 3 de `sprint-6.md`).
+- CA-3: las instrucciones están en "Para el dev al volver" de `sprint-6.md`.
 
 ## Sin sprint asignado
 

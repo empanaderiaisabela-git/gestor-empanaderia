@@ -362,3 +362,34 @@ sin commitear.
 6. **Base de datos**: una tabla nueva y vacía para el precio. No toca nada de lo que hay; tu base local ya la tiene.
 7. **Pruebas y documentos**: pruebas de cada parte, también la de prepizzas en la pantalla real, y los documentos de
    Ventas, Alta y Stock.
+
+### T-26 · Cierre del Sprint 6
+
+1. **Revisión completa**: se corrieron todas las pruebas del sistema, también las que usan la pantalla real.
+2. **Documentos al día**: el README, la arquitectura y el contexto inicial cuentan lo nuevo del sprint.
+3. **Falta tu parte**: `main` y el tag `sprint-6` esperan tu revisión, y la base de Supabase la migrás vos (abajo).
+
+## Para el dev al volver
+
+- **Qué hay en `develop`**: un commit por ítem (US-44, BUG-28, US-45, US-46, US-47) y el de cierre (T-26). Todos
+  pasaron `npm run verify` (cobertura, integración, mutación y build) y el CI corre en cada push.
+- **Revisar**: las decisiones I-1 a I-12 de arriba; cada una dice qué cambia si respondés otra cosa.
+- **Base local**: quedó migrada hasta la 0025 (26 migraciones), sólo con agregados: no se borró ni cambió ningún dato.
+- **Supabase** (T-26 CA-3), **antes** de desplegar, porque la app nueva lee las columnas nuevas. En PowerShell:
+
+  ```powershell
+  $env:APP_ENV="production"; npm run db:migrate; Remove-Item Env:APP_ENV
+  ```
+
+  `drizzle-kit` no muestra el OK: se confirma con `$LASTEXITCODE` en 0 y, en el SQL Editor de Supabase,
+  `select count(*) from drizzle.__drizzle_migrations;` tiene que dar **26**. Las tres migraciones nuevas sólo agregan
+  (`ADD COLUMN`, `ADD CONSTRAINT` sobre una columna nueva y `CREATE TABLE`): la app vieja sigue andando con ellas.
+- **Después de migrar**: cargar el precio del jamón en "Ingresar stock" → "Jamón extra para pizza"; hasta entonces el
+  switch del carrito aparece deshabilitado (P-2). Los gustos de producción que digan "Pepsi" se renombran en Alta de
+  productos (P-1).
+- **`main` y el tag `sprint-6`** (T-26 CA-2): no se hicieron, como pediste. Con tu OK: `git switch main && git pull`,
+  `git merge --no-ff develop -m "chore(release): sprint 6"`, `git tag -a sprint-6 -m "Demo sprint 6"` y
+  `git push && git push --tags`.
+- **Tu `.gitignore` local**: tiene sin commitear el borrado de `!.env.example` y `!.env.test`. No lo toqué. Si lo
+  commiteás, esos dos archivos siguen versionados (git ya los sigue), pero un `.env.*` nuevo quedaría ignorado.
+- **Horas reales** de cada ítem: las cargás vos en `BACKLOG.md`.

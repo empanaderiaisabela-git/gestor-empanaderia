@@ -1,7 +1,7 @@
 # Prompt inicial: contexto completo de gestor-empanaderia
 
 > **Uso.** Al empezar una sesión nueva de Claude Code: `Leé @docs/initial_prompt.md y seguilo.`
-> Foto del proyecto al **2026-10-28**. Se adapta en cada avance significativo
+> Foto del proyecto al **2026-10-31**. Se adapta en cada avance significativo
 > ([criterios](how-to-document.md#mantener-al-día-docsinitial_promptmd)). Si algo de acá contradice a
 > [`AGENTS.md`](../AGENTS.md) o a los docs que enlaza, **ganan ellos**: avisale al dev que este archivo quedó
 > desactualizado.
@@ -49,6 +49,9 @@ Funciones que ya existen (Sprints 1 a 4):
 - Anotador de gastos con número de factura único y el proveedor que emitió la factura, filtrado entre dos fechas con el mes en curso por defecto, que no cambia las Estadísticas (US-14, US-27, US-33).
 - ABM de clientes (sólo el nombre es obligatorio, US-26), proveedores y usuarios, y auditoría de toda operación.
 - Catálogo público que se regenera a demanda.
+- Desde el Sprint 6: los grupos se ven como "Quilmes" y "Sándwich de miga" (US-44); stock mínimo opcional con aviso
+  amarillo (US-45); editar un ingreso de stock desde el Historial (US-46); el switch "Jamón extra" en cada pizza del
+  carrito, con su precio en "Ingresar stock" (US-47).
 
 ## 3. Origen: código heredado en remodelación
 
@@ -148,6 +151,14 @@ Hacer preguntas de más es mejor que inventar.
     I-5) en [`sprint-5.md`](plans/sprint-5.md). El dev revisó el sprint y dio el OK al merge el 2026-10-30.
   - La migración 0022 es del Sprint 5 (quedan 23). La base de Supabase la migra el dev.
   - Ningún ítem nuevo se arranca sin el OK del dev.
+- **Sprint 6 implementado** ("Revisión del cliente en producción": T-25, US-44, BUG-28, US-45 a US-47 y T-26) en
+  `develop`, a la espera de la revisión del dev y del merge a `main` con el tag `sprint-6`. Plan, decisiones y
+  resumen en [`sprint-6.md`](plans/sprint-6.md).
+  - Lo hizo el agente solo (2026-10-31), con permiso del dev para commitear y pushear a `develop`. Las decisiones del
+    dev (D-1 a D-5), las provisorias P-1 a P-10 (confirmadas por el dev el 2026-10-31) y las de la implementación (I-1
+    a I-12) están en el plan, cada una con la pregunta que la originó.
+  - Las migraciones 0023 a 0025 son del Sprint 6 y **sólo aditivas** (`src/lib/db/additive-migrations.test.ts` lo
+    controla desde la 0023). Supabase tiene que quedar con **26**; la migra el dev antes de desplegar.
 - **US-43** (sin sprint asignado): la web pública (`/home`, `/product`, `/api/public`) está **apagada salvo
   `PUBLIC_CATALOG=true`**, y sin sesión se entra por `/login`. Para prenderla se carga la variable en Vercel y se
   redespliega. Plan en [`US-43-sin-web-publica.md`](plans/US-43-sin-web-publica.md).
@@ -155,7 +166,7 @@ Hacer preguntas de más es mejor que inventar.
   es **público**: todo lo que se pushea queda publicado.
 - **No existe todavía**: `docs/conventions/`.
 - **Sí existen**:
-  - `BACKLOG.md`, con los Sprints 0 a 5 en orden de ejecución.
+  - `BACKLOG.md`, con los Sprints 0 a 6 en orden de ejecución.
   - Los planes de cada sprint en `docs/plans/sprint-0.md`, `sprint-1.md`, `sprint-2.md`, `sprint-3.md`, `sprint-4.md` y `sprint-5.md`: orden, decisiones del
     dev y enfoque de cada ítem.
   - Las plantillas en `docs/templates/` (`plan.md`, `feature.md`, `adr.md`), los planes en `docs/plans/` y los
