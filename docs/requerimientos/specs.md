@@ -272,3 +272,29 @@ A la izquierda del botón de agregar uno, todos deberian tener tambien un "Quita
 
 En ventas: ver wireframe pedido-actual-ventas: fijate que "cantidad" y "unidades" están pegados practicamente, muy feo para la vista tambien. Deben estar claramente separadas las columnas. Para arreglar esto, puedes agrandar el espacio que ocupa el slide del carrito hacia la izquierda sin problema, asi ganas mas espacio en direccion hacia el centro de la pantalla, pero importante que no ocupe la totalidad de la pantalla, ni tampoco ocupe mas de la mitad; un poco menos de la mitad está bien.
 Extra: el carrito deberia tener un slide suave hacia la izquierda y un slide suave al guardarse hacia la derecha.
+
+---------------------------------------------------------------------------
+
+Pedido del cliente tras probar el sistema en producción (2026-10-30):
+
+nuevo plan pequeño una vez revisada la pagina por mi cliente dueño del local:
+
+- un slide button en cada pedido de registrado como pizza anotado en la orden de compra para añadir una capa de jamon extra, se llamará "Jamón extra" y le suma un monto adicional a la pizza la cual se le prendió el botón de jamón adicional. Este monto adicional se especificará en "Agregar stock", donde estará como nueva categoría la cual SOLAMENTE PEDIRÁ UN FORM DE PRECIO, NADA MAS, es decir, al seleccionar la categoria en agregar stock "Jamón extra para pizza", solo muestra un reglon de form que es el costo que añade a la pizza. No se da de alta en alta de productos, y solo posee el nombre de la categoria y el costo. Cada ingreso de una pizza al ticket de la compra comienza apagado.
+
+- en lugar de pepsi, se cambia la categoria por Quilmes, no existe Pepsi de ahora en mas, cada aparicion de pepsi es Quilmes
+
+- sandwich de miga como nombre completo en lugar de sandwich solo
+
+- Mi cliente manejará un mínimo de stock, es decir, cuando el ingresa el stock que tiene de los productos que si se stockean con cantidad, ademas se les agrega a cada uno de esos productos un form extra que indica la cantidad mínima que ellos toleran tener, es decir, si yo agrego que tengo 10 empanadas de carne, y le doy un mínimo de 5, el dia que tenga 4, el color del stock tiene que aparecer en amarillo a modo de advertencia. Ese minimo de stock es ingresado por el admin y advierte segun el minimo sea. El ingreso de este dato es PURAMENTE OPCIONAL.
+
+- ampliar el texto de la categoria en stock para que diga
+"coca-cola"
+
+en vez de 
+
+"coca-
+cola"
+
+pero sin perturbar el resto del contenido
+
+- Necesito que mi cliente pueda editar el stock, siendo que un stock que ya ingresó puede estar mal o haberse olvidado de darle proveedor, la edición me debe permitir poder ver todo como estaba precargado, pero con la capacidad de editarlo y guardar.
