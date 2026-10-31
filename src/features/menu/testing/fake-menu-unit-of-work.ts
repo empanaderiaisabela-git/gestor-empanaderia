@@ -1,4 +1,5 @@
-import { type MenuItem, type MenuItemData, type MenuItemRepository, priceColumns } from '@/features/menu/repository/menu-item.repository';
+import { sameFamily } from '@/features/menu/domain/drink';
+import { drinkColumns, type MenuItem, type MenuItemData, type MenuItemRepository, priceColumns } from '@/features/menu/repository/menu-item.repository';
 import type { MenuAuditEntry, MenuUnitOfWork } from '@/features/menu/repository/menu-unit-of-work';
 import { fakeMenuPhotoRepository, type FakePhotoState } from './fake-menu-photos';
 
@@ -7,11 +8,11 @@ type FakeState = FakePhotoState & { rows: MenuItem[]; withMovements: Set<string>
 const pgError = (code: string, detail: string): Error => Object.assign(new Error(`Failed query (${code})`), { cause: { code, detail } });
 const GROUP_ORDER = ['empanadas', 'pizzas', 'sanguches', 'ciabattas', 'coca_cola', 'pepsi'];
 
-function newRow(state: FakeState, { group, name, unitCost, prices }: MenuItemData): MenuItem {
+function newRow(state: FakeState, { group, name, unitCost, prices, drink }: MenuItemData): MenuItem {
   state.clock += 1;
   const at = new Date(state.clock * 1000);
-  const base = { id: crypto.randomUUID(), group, name, unitCost: unitCost === undefined ? null : unitCost.toFixed(2), stock: '0.0', isActive: true, isVisible: false, isBase: false, minStock: null, version: 1 };
-  return { ...base, ...priceColumns(prices), createdAt: at, updatedAt: at };
+  const base = { id: crypto.randomUUID(), group, name, unitCost: unitCost === undefined ? null : unitCost.toFixed(2), stock: '0.0', isActive: true, isVisible: false, isBase: false, minStock: null, drinkName: null, liters: null, flavor: null, version: 1 };
+  return { ...base, ...priceColumns(prices), ...drinkColumns(drink), createdAt: at, updatedAt: at };
 }
 
 function sorted(rows: MenuItem[]): MenuItem[] {
@@ -24,16 +25,17 @@ export function fakeMenuItemRepository(state: FakeState): MenuItemRepository {
     findAll: async () => sorted(state.rows),
     findById: async (id) => state.rows.find((row) => row.id === id) ?? null,
     findByName: async (group, name) => state.rows.find((row) => row.group === group && row.name.toLowerCase() === name.toLowerCase()) ?? null,
+    findFamily: async (group, key) => state.rows.filter((row) => sameFamily({ group, ...key }, { group: row.group, drinkName: row.drinkName, liters: row.liters === null ? null : Number(row.liters) })),
     insert: async (data) => {
       if (state.rows.some((row) => row.group === data.group && row.name === data.name)) throw pgError('23505', 'Key (menu_group, name) already exists.');
       const row = newRow(state, data);
       state.rows.push(row);
       return { ...row };
     },
-    update: async ({ id, version }, { prices, unitCost, ...rest }) => {
+    update: async ({ id, version }, { prices, unitCost, drink, ...rest }) => {
       const row = byRef(id, version);
       if (!row) return null;
-      Object.assign(row, rest, prices ? priceColumns(prices) : {}, unitCost === undefined ? {} : { unitCost: unitCost.toFixed(2) });
+      Object.assign(row, rest, drinkColumns(drink), prices ? priceColumns(prices) : {}, unitCost === undefined ? {} : { unitCost: unitCost.toFixed(2) });
       Object.assign(row, { version: version + 1, updatedAt: new Date() });
       return { ...row };
     },

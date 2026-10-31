@@ -5,7 +5,7 @@ import { openLastEntry } from './open-last-entry';
 const entries = vi.hoisted(() => vi.fn());
 vi.mock('@/features/stock/actions/fetch-stock-entries', () => ({ fetchStockEntries: entries }));
 
-const ITEM: MenuItemDef = { id: '11111111-1111-4111-8111-111111111111', group: 'empanadas', name: 'Humita', unitCost: 400, stock: 5, price1: 1200, price3: 3400, price6: 6500, price12: 12000, isActive: true, isVisible: false, isBase: false, minStock: 2, version: 1, createdAt: '', updatedAt: '' };
+const ITEM: MenuItemDef = { id: '11111111-1111-4111-8111-111111111111', group: 'empanadas', name: 'Humita', unitCost: 400, stock: 5, price1: 1200, price3: 3400, price6: 6500, price12: 12000, isActive: true, isVisible: false, isBase: false, minStock: 2, drinkName: null, liters: null, flavor: null, version: 1, createdAt: '', updatedAt: '' };
 const LAST = { id: '22222222-2222-4222-8222-222222222222', menuItemId: ITEM.id, quantity: 12, unitCost: 450, providerId: null, providerName: null, username: 'admin', version: 1, createdAt: '2026-10-31T12:00:00Z' };
 
 describe('lápiz de acceso directo en Stock (US-48)', () => {

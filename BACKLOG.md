@@ -4378,6 +4378,38 @@ la edición dentro del Historial.
 - Nivel 2. El dev no encontraba la edición de US-46, que está en Historial y después el lápiz de cada ingreso.
 - "Ingresar stock" no cambia: sigue cargando unidades nuevas.
 
+### US-49 · Bebidas con bebida, litros y sabor
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-31 |
+| Tamaño       | L         |
+| Depende de   | US-48     |
+| Plan         | [`docs/plans/US-49-bebidas-por-litros.md`](docs/plans/US-49-bebidas-por-litros.md) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como dueño del local quiero cargar cada bebida de Coca-Cola y Quilmes con su bebida, litros y sabor,
+de forma que todos los sabores de una misma bebida y litros compartan costo, precio y proveedor y sólo el primero me
+los pida.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · Migración 0026, aditiva: `menu_items.drink_name`, `liters` y `flavor`, nullable, con un check sólo sobre esas columnas. Lo cubren `additive-migrations.test.ts` y un test de integración con los datos de hoy · Estimación: 45 min · Completado: 2026-10-31 13:46
+
+- [x] **CA-2** · Alta de productos, en Coca-Cola y Quilmes, pide Bebida, Litros y Sabor (opcional) y arma el nombre ("Aquarius 1.5 L Manzana"). "Editar" completa esos campos en una bebida vieja · Estimación: 1 h 30 min · Completado: 2026-10-31 13:46
+
+- [x] **CA-3** · En "Ingresar stock", una bebida se elige con Bebida → Litros → Sabor. El primer sabor de una familia pide costo, precio y proveedor; los siguientes los traen precargados y sólo piden la cantidad · Estimación: 2 h 30 min · Completado: 2026-10-31 13:46
+
+- [x] **CA-4** · Costo y precio son de la familia: cargarlos en un ingreso o en "Costo y precio" cambia todos sus sabores. Un sabor que entra a una familia con precio toma el de la familia (P-1). Lo cubren tests de service, contrato e integración y un E2E · Estimación: 2 h 30 min · Completado: 2026-10-31 13:46
+
+**Notas**
+
+- Nivel 3. Supabase pasa a 27 migraciones; la migra el dev antes de desplegar.
+- Provisorias P-1 a P-4 en el plan, confirmadas por el dev (P-2 corregida: punto decimal). Decisiones I-1 a I-4 en el plan.
+
 ### US-43 · Sin web pública por ahora: se entra por `/login`
 
 | Campo        | Valor     |

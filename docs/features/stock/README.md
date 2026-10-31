@@ -60,6 +60,12 @@ Muestra el stock de cada gusto y bebida activos, agrupados por grupo, y permite:
 - **Jamón extra para pizza (US-47)**: es una categoría más de "Ingresar stock" que pide sólo el "Precio de venta",
   precargado con el actual, y guarda con "Guardar" (`setHamPriceAction`). No es un gusto: no aparece en la tabla de
   Stock, en los filtros ni en Alta de productos. Detalle en `docs/features/menu/README.md`.
+- **Bebidas por familia (US-49)**: en Coca-Cola y Quilmes, "Ingresar stock" elige Bebida → Litros → Sabor. Una
+  bebida cargada antes de US-49 se elige directo en Bebida. El primer sabor de una familia pide costo y precio
+  (`MISSING_COST` y `MISSING_PRICE`); los demás los traen precargados, con el proveedor del último ingreso de la
+  familia (P-4). Costo y precio son de la familia: un ingreso que los trae, "Costo y precio" (que dice "Se
+  aplica a los N sabores", sin la casilla) o la edición de un ingreso los guardan en todos sus sabores
+  (`services/stock-family.ts`, `lockFamily`). El stock y el mínimo son de cada sabor (P-3).
 - **Stock es sólo del administrador** (dev, 2026-10-26, US-16): el vendedor no ve la sección ni puede ingresar
   stock, registrar mermas o leer el historial.
 - Cada movimiento sube la `version` del gusto: si alguien lo estaba editando en Alta de productos, recibe

@@ -1,6 +1,8 @@
 import { AppError } from '@/lib/errors';
 import type { MenuItemDeleteInput, MenuItemInput, MenuItemToggleInput, MenuItemUpdateInput, MenuItemVisibilityInput } from '@/features/menu/domain/menu-item.schema';
 import type { MenuItem } from '@/features/menu/repository/menu-item.repository';
+import { isDrinkGroup } from '@/features/menu/domain/drink';
+import { familyPricing, identityOf } from './menu-item-drink';
 import { drizzleMenuUnitOfWork, type MenuAuditEntry, type MenuScope, type MenuUnitOfWork } from '@/features/menu/repository/menu-unit-of-work';
 
 type Caller = { id: string };
@@ -29,8 +31,9 @@ type AuditFacts = { action: MenuAuditEntry['action']; item: MenuItem; detail: Re
 const entry = (caller: Caller, { action, item, detail }: AuditFacts): MenuAuditEntry => ({ userId: caller.id, action, entity: 'MENU_ITEM', entityId: item.id, detail });
 
 async function createItem({ items, audit }: MenuScope, caller: Caller, input: MenuItemInput): Promise<MenuItem> {
-  if (await items.findByName(input.group, input.name)) throw new AppError('DUPLICATE');
-  const item = await items.insert(input);
+  const { name, drink } = identityOf(input);
+  if (await items.findByName(input.group, name)) throw new AppError('DUPLICATE');
+  const item = await items.insert({ group: input.group, name, drink, ...(await familyPricing(items, { group: input.group, drink })) });
   await audit(entry(caller, { action: 'CREAR', item, detail: { ...snapshotOf(item), note: 'Nuevo producto' } }));
   return item;
 }
@@ -38,9 +41,12 @@ async function createItem({ items, audit }: MenuScope, caller: Caller, input: Me
 async function updateItem({ items, audit }: MenuScope, caller: Caller, { id, input }: { id: string; input: MenuItemUpdateInput }): Promise<MenuItem> {
   const current = notBase(await items.findById(id));
   if (!current) throw new AppError('NOT_FOUND', { entity: 'el producto' });
-  const sameName = await items.findByName(current.group, input.name);
+  const { name, drink } = identityOf(input);
+  if (Boolean(drink) !== isDrinkGroup(current.group)) throw new AppError('VALIDATION');
+  const sameName = await items.findByName(current.group, name);
   if (sameName && sameName.id !== id) throw new AppError('DUPLICATE');
-  const item = orStale(await items.update({ id, version: input.version }, { name: input.name }));
+  const pricing = await familyPricing(items, { group: current.group, drink, exceptId: id });
+  const item = orStale(await items.update({ id, version: input.version }, { name, drink, ...pricing }));
   await audit(entry(caller, { action: 'ACTUALIZAR', item, detail: snapshotOf(item) }));
   return item;
 }

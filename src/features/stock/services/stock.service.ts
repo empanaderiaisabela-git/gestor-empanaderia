@@ -5,6 +5,7 @@ import type { EntryView, StockEntry, StockItem, StockLoss } from '@/features/sto
 import { drizzleStockUnitOfWork, type StockScope, type StockUnitOfWork } from '@/features/stock/repository/stock-unit-of-work';
 import { updateEntry } from './stock-entry-edit';
 import { planEntry } from './stock-entry-plan';
+import { familyOf, inherited, inheritedPrices, shareWithFamily } from './stock-family';
 import { lockedItem, saved } from './stock-locks';
 import { type PricingResult, setPricing } from './stock-pricing';
 
@@ -21,10 +22,14 @@ export type StockService = {
 };
 
 async function registerEntry(scope: StockScope, caller: Caller, input: StockEntryInput): Promise<EntryResult> {
-  const current = await lockedItem(scope, input.menuItemId);
+  const locked = await lockedItem(scope, input.menuItemId);
+  const family = await familyOf(scope, locked);
+  const current = inherited(locked, family);
   const { unitCost, itemCost, itemPrices } = planEntry(current, input);
   const stockBefore = Number(current.stock);
-  const item = saved(await scope.stock.saveItem(current, { stock: stockBefore + input.quantity, unitCost: itemCost, prices: itemPrices, minStock: input.minStock }));
+  const prices = itemPrices ?? inheritedPrices(locked, current);
+  const item = saved(await scope.stock.saveItem(current, { stock: stockBefore + input.quantity, unitCost: itemCost, prices, minStock: input.minStock }));
+  if (input.unitCost !== undefined || input.prices) await shareWithFamily(scope, family, { unitCost: itemCost, prices: itemPrices });
   const entry = await scope.stock.insertEntry({ menuItemId: current.id, quantity: input.quantity, unitCost, providerId: input.providerId ?? null, userId: caller.id });
   const detail = { name: current.name, quantity: input.quantity, unitCost, ...(input.prices ? { prices: input.prices } : {}), ...(input.minStock === undefined ? {} : { minStock: input.minStock }), stockBefore, stockAfter: Number(item.stock) };
   await scope.audit({ userId: caller.id, action: 'CREAR', entity: 'STOCK_ENTRY', entityId: entry.id, detail });

@@ -7,6 +7,7 @@ import { ResponsiveModal } from '@/components/ui/responsive-modal';
 import { categoryOf, HAM_CATEGORY, isPriceOnlyCategory } from '@/features/stock/domain/stock-categories';
 import { StockEntryFields } from './stock-entry-fields';
 import { type EntryValues, type FormErrors, type Parsed, parseEntry, parseHamPrice, parsePricing, textOf } from './stock-forms';
+import { useFamilyProvider } from './use-family-provider';
 import type { StockPanelModel } from './use-stock-panel';
 
 type Setters = { setErrors: (errors: FormErrors) => void; setServerError: (error: string | null) => void; setPending: (pending: boolean) => void };
@@ -41,6 +42,7 @@ export function StockEntryModal({ model }: { model: StockPanelModel }): JSX.Elem
     setServerError(null);
   }, [isOpen, preselected, preselectedCategory, preselectedMin]);
 
+  useFamilyProvider({ items: model.activeItems, menuItemId: values.menuItemId, setValues, enabled: isOpen });
   const priceOnly = isPriceOnlyCategory(values.category);
   const isHam = values.category === HAM_CATEGORY;
   const setters = { setErrors, setServerError, setPending };

@@ -3,11 +3,18 @@ import { priceIssues } from '@/features/menu/domain/menu-prices';
 import type { StockPricingInput } from '@/features/stock/domain/stock.schema';
 import type { StockItem } from '@/features/stock/repository/stock.repository';
 import type { StockScope } from '@/features/stock/repository/stock-unit-of-work';
+import { familyOf, shareWithFamily } from './stock-family';
 
 type Caller = { id: string };
 export type PricingResult = { item: StockItem; applied: number };
 
-async function copyToGroup({ stock }: StockScope, item: StockItem, input: StockPricingInput): Promise<number> {
+async function copyToGroup(scope: StockScope, item: StockItem, input: StockPricingInput): Promise<number> {
+  const family = await familyOf(scope, item);
+  if (family.length > 0) {
+    await shareWithFamily(scope, family, { unitCost: input.unitCost, prices: input.prices });
+    return family.length;
+  }
+  const { stock } = scope;
   if (!input.applyToGroup) return 0;
   const others = (await stock.lockGroup(item.group)).filter((other) => other.id !== item.id);
   for (const other of others) {

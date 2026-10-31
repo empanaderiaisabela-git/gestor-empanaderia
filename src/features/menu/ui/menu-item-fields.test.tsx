@@ -19,6 +19,12 @@ describe('campos del alta', () => {
 
   it('al editar no se puede cambiar el grupo', () => {
     renderFor('pepsi', true);
-    expect(screen.getByRole('combobox').hasAttribute('disabled')).toBe(true);
+    expect(screen.getByLabelText('Grupo').hasAttribute('disabled')).toBe(true);
+  });
+
+  it('en Coca-Cola y Quilmes pide bebida, litros y sabor en lugar del nombre (US-49)', () => {
+    render(<MenuItemFields values={{ ...initialValues(null), group: 'pepsi' }} errors={{}} isEditing={false} onChange={vi.fn()} drinkNames={['Quilmes']} />);
+    expect([screen.getByLabelText('Bebida'), screen.getByLabelText('Litros'), screen.getByLabelText('Sabor (opcional)')]).toHaveLength(3);
+    expect(screen.queryByLabelText('Nombre del gusto o bebida')).toBeNull();
   });
 });

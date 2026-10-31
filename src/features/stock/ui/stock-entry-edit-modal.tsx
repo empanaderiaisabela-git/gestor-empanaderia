@@ -27,7 +27,7 @@ export function StockEntryEditModal({ model, item, entry }: EditProps): JSX.Elem
   return (
     <ResponsiveModal isOpen onClose={() => model.setDialog(null)} title='Editar ingreso' icon={<Pencil className='w-5 h-5 text-brand-500' />} width='md' onSubmit={submit} submitLabel='Guardar' isPending={pending}>
       <ErrorAlert error={serverError} />
-      <StockEntryFields values={values} errors={errors} items={model.activeItems} providers={model.providers} onChange={setValues} categories={STOCKED_CATEGORIES} />
+      <StockEntryFields values={values} errors={errors} items={model.activeItems} providers={model.providers} onChange={setValues} categories={STOCKED_CATEGORIES} editing />
     </ResponsiveModal>
   );
 }

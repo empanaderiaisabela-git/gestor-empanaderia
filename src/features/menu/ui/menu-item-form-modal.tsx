@@ -4,6 +4,7 @@ import { UtensilsCrossed } from 'lucide-react';
 import { type FormEvent, type JSX, useEffect, useState } from 'react';
 import { ErrorAlert } from '@/components/ui/alert';
 import { ResponsiveModal } from '@/components/ui/responsive-modal';
+import { useMenuStore } from '@/features/menu/store/menu.store';
 import { MenuItemFields } from './menu-item-fields';
 import { initialValues, type MenuItemFormErrors, type MenuItemFormValues, parseCreate, parseUpdate } from './menu-item-form';
 import type { MenuPanelModel } from './use-menu-panel';
@@ -13,6 +14,8 @@ export function MenuItemFormModal({ model }: { model: MenuPanelModel }): JSX.Ele
   const { editingItem, isModalOpen } = manager;
   const [values, setValues] = useState<MenuItemFormValues>(initialValues(null));
   const [errors, setErrors] = useState<MenuItemFormErrors>({});
+  const items = useMenuStore((state) => state.items);
+  const drinkNames = [...new Set(items.filter((item) => item.group === values.group && item.drinkName).map((item) => item.drinkName ?? ''))];
 
   useEffect(() => {
     if (!isModalOpen) return;
@@ -40,7 +43,7 @@ export function MenuItemFormModal({ model }: { model: MenuPanelModel }): JSX.Ele
       isPending={actions.isPending}
     >
       <ErrorAlert error={manager.serverError} />
-      <MenuItemFields values={values} errors={errors} isEditing={Boolean(editingItem)} onChange={setValues} />
+      <MenuItemFields values={values} errors={errors} isEditing={Boolean(editingItem)} onChange={setValues} drinkNames={drinkNames} />
     </ResponsiveModal>
   );
 }

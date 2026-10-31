@@ -1,13 +1,13 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
-import { menuItemCreateSchema, menuItemDeleteSchema, menuItemRowSchema, menuItemToggleSchema, menuItemUpdateSchema } from './menu-item.schema';
+import { foodCreateSchema, menuItemCreateSchema, menuItemDeleteSchema, menuItemRowSchema, menuItemToggleSchema, menuItemUpdateSchema } from './menu-item.schema';
 
 const EMPANADA = { group: 'empanadas', name: 'Carne suave' };
 const PIZZA = { group: 'pizzas', name: 'Muzza' };
 const ID = '11111111-1111-4111-8111-111111111111';
 
 function messages(input: unknown): string[] {
-  const result = menuItemCreateSchema.safeParse(input);
+  const result = foodCreateSchema.safeParse(input);
   return result.success ? [] : result.error.issues.map((issue) => issue.message);
 }
 
@@ -52,7 +52,7 @@ describe('schemas de edición, activación, borrado y fila', () => {
   });
 
   it('la fila convierte a número los importes y el stock que Postgres devuelve como texto', () => {
-    const row = { id: ID, group: 'pizzas', name: 'Napolitana', unitCost: '3000.00', stock: '2.5', price1: '12000.00', price3: null, price6: null, price12: null, isActive: true, isVisible: false, isBase: false, minStock: null, version: 1, createdAt: new Date(0), updatedAt: new Date(0) };
+    const row = { id: ID, group: 'pizzas', name: 'Napolitana', unitCost: '3000.00', stock: '2.5', price1: '12000.00', price3: null, price6: null, price12: null, isActive: true, isVisible: false, isBase: false, minStock: null, drinkName: null, liters: null, flavor: null, version: 1, createdAt: new Date(0), updatedAt: new Date(0) };
     expect(menuItemRowSchema.parse(row)).toMatchObject({ unitCost: 3000, stock: 2.5, price1: 12000, price3: null });
     expect(menuItemRowSchema.parse({ ...row, group: 'empanadas', price1: null })).toMatchObject({ price1: null });
     expect(menuItemRowSchema.parse({ ...row, unitCost: null })).toMatchObject({ unitCost: null });
