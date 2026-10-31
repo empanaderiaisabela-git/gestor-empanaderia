@@ -4353,6 +4353,31 @@ de forma que la versión que use el cliente sea la que se probó.
 
 Ítems cargados que todavía no entraron a un sprint.
 
+### US-48 · Stock: lápiz de acceso directo para editar el último ingreso
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-31 |
+| Tamaño       | XS        |
+| Depende de   | US-46     |
+| Plan         | Pedido directo del dev (2026-10-31): sólo el lápiz, nada más |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como administrador quiero editar un ingreso desde la fila de Stock, de forma que no tenga que buscar
+la edición dentro del Historial.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · Cada fila con Historial (gustos con stock propio y bases) tiene primero, a la izquierda de las acciones, el lápiz "Editar último ingreso". Abre "Editar ingreso" con el ingreso más reciente del gusto, todo precargado; sin ingresos, abre el Historial vacío. Lo cubren `stock-columns.test.tsx` y `open-last-entry.test.ts`, y se miró en el navegador · Estimación: 20 min · Completado: 2026-10-31 09:55
+
+**Notas**
+
+- Nivel 2. El dev no encontraba la edición de US-46, que está en Historial y después el lápiz de cada ingreso.
+- "Ingresar stock" no cambia: sigue cargando unidades nuevas.
+
 ### US-43 · Sin web pública por ahora: se entra por `/login`
 
 | Campo        | Valor     |
