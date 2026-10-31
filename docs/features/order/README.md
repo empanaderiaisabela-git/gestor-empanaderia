@@ -10,10 +10,10 @@
 
 ## Qué hace
 
-El vendedor arma el pedido en un tablero con una subdivisión por grupo (Empanadas, Pizzas, Sanguches, Ciabattas,
-Coca-Cola y Pepsi). Cada subdivisión tiene un botón por presentación. Al tocarlo se abre la lista de gustos:
+El vendedor arma el pedido en un tablero con una subdivisión por grupo (Empanadas, Pizzas, Sándwich de miga, Ciabattas,
+Coca-Cola y Quilmes). Cada subdivisión tiene un botón por presentación. Al tocarlo se abre la lista de gustos:
 
-- **Empanadas y Sanguches** (1, 3, 6 y 12): cada gusto tiene **"Agregar uno"** (+1 de ese gusto) y
+- **Empanadas y Sándwich de miga** (1, 3, 6 y 12): cada gusto tiene **"Agregar uno"** (+1 de ese gusto) y
   **"Completar"** (llena lo que falta con ese gusto). Así se arman las surtidas dentro de la misma presentación.
   A la izquierda, **"Quitar uno"** (rojo) resta una unidad de ese gusto; está apagado si el gusto no tiene unidades
   (US-39). También está en las pizzas de 2 sabores y en todas las filas de las promos.
@@ -31,7 +31,7 @@ se puede cobrar. Cada renglón común tiene "−" y "+" (US-36): el "+" se apaga
 |---|---|
 | En una presentación de más de 1 unidad, un gusto con "Completar" se carga para toda la cantidad que falta | `specs.md` (EMPANADAS, SANDWICH y AGREGADO) |
 | Surtidas con "Agregar uno" y "Completar" dentro de la misma presentación | `specs.md` (AGREGADO) |
-| Precio por gusto en todos los grupos (US-28). Una surtida de Empanadas o de Sanguches: Σ (unidades del gusto ÷ unidades de la presentación × precio de esa presentación del gusto), redondeado a 2 decimales. Con todos los gustos al mismo precio da exactamente el precio de la presentación (7 + 5 a $32.000 la docena = $32.000) | dev, 2026-10-25; D-4 de `sprint-4.md` |
+| Precio por gusto en todos los grupos (US-28). Una surtida de Empanadas o de Sándwich de miga: Σ (unidades del gusto ÷ unidades de la presentación × precio de esa presentación del gusto), redondeado a 2 decimales. Con todos los gustos al mismo precio da exactamente el precio de la presentación (7 + 5 a $32.000 la docena = $32.000) | dev, 2026-10-25; D-4 de `sprint-4.md` |
 | Cómo se cobra una docena surtida cuando los gustos tengan precios distintos: **pregunta abierta** de US-28 (lo pacta el cliente ese día). Hoy rige la regla proporcional; cambiarla toca sólo `unitLinePrice` | D-4 de `sprint-4.md` |
 | Ciabatta: el precio de unidad de su gusto, como una pizza de 1 sabor | US-28 |
 | Pizza de 2 sabores: el precio del sabor más caro | `specs.md` y dev |

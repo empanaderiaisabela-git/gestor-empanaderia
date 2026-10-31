@@ -41,6 +41,8 @@ El agente trabaja siempre contra la base local. Supabase la migra el dev.
 
 ## Decisiones provisorias del agente
 
+**Confirmadas por el dev el 2026-10-31**, las diez tal como están escritas (pregunta 1 de la sesión, abajo).
+
 ### P-1 · Quilmes es sólo el nombre visible
 
 - **Pregunta**: ¿Pepsi cambia también en la base o sólo en pantalla?
@@ -172,4 +174,61 @@ Al cerrar el sprint, Supabase tiene que quedar con **26** migraciones.
 
 ## Decisiones tomadas durante la implementación
 
-(Se completan a medida que avanza el sprint.)
+### Respuestas del dev al arrancar la sesión (2026-10-31)
+
+El dev pidió hacer el sprint de una pasada, sin estar presente, y apagar la computadora al terminar. Antes de
+empezar, el agente le hizo cuatro preguntas en el chat:
+
+| # | Pregunta | De dónde sale | Respuesta del dev |
+|---|---|---|---|
+| 1 | ¿Confirmás las provisorias P-1 a P-10 tal como están? | Las P-1 a P-10 de este plan (T-25) esperaban su confirmación | Sí, todas |
+| 2 | ¿Commiteo y pusheo a `develop` cada ítem sin esperar tu OK sobre la lista simple? | `AGENTS.md` (DoD): sin el OK del dev sobre la lista simple no se commitea; el dev pidió "aceptarte los cambios y pushear a develop" | Sí. La lista simple de cada ítem queda en "Resumen para el dev", al final |
+| 3 | ¿Hago también el merge `develop → main` con el tag `sprint-6`? | T-26 CA-2 | No: sólo `develop`. `main` y el tag esperan su revisión |
+| 4 | Si un gate falla y no lo puedo arreglar, ¿qué hago antes de apagar? | El pedido de apagar al terminar, y la regla de nunca `--no-verify` (`docs/git.md`) | No se pushea lo roto: queda en su rama local, con nota acá. Se apaga igual |
+
+### Decisiones del agente durante la implementación
+
+Cada una dice de dónde salió la pregunta. Se eligió siempre lo que no borra datos y se puede deshacer.
+
+#### I-1 · Los gustos del seed pasan a "Quilmes" (US-44)
+
+- **Pregunta**: el seed trae "Pepsi 500 ml" y "Pepsi 1,5 L" en el grupo que ahora se llama Quilmes. ¿Se renombran?
+- **De dónde sale**: `specs.md` dice "cada aparición de pepsi es Quilmes", y P-1 sólo habla de los gustos cargados
+  en producción.
+- **Elegido**: en `menu-seed-data.ts` pasan a "Quilmes 500 ml" y "Quilmes 1,5 L". 7up y Mirinda quedan igual. Sólo
+  afecta a una base nueva (la de los E2E o una instalación limpia): la base local y la de Supabase no se tocan.
+- **Si el dev responde otra cosa**: se vuelven a poner los nombres viejos en el seed. Nivel 1.
+
+#### I-2 · Las ventas ya hechas conservan el nombre viejo (US-44)
+
+- **Pregunta**: el historial y el comprobante de una venta de ayer dicen "Sanguches · 3 unidades" o "Pepsi 1,5 L".
+  ¿Se cambian?
+- **De dónde sale**: US-44 CA-1 pide el nombre nuevo "en el historial y el comprobante", pero cada venta guarda su
+  descripción como texto al cobrar (`sale_lines.description`), y D-5 prohíbe `UPDATE` de datos existentes.
+- **Elegido**: las ventas nuevas dicen "Sándwich de miga" y "Quilmes"; las ya hechas quedan como se cobraron.
+- **Si el dev responde otra cosa**: un script aparte, que corre el dev, reemplaza el texto en las ventas viejas.
+  Nivel 2.
+
+#### I-3 · Columnas de Alta de productos (US-44)
+
+- **Pregunta**: ¿cómo entra "Sándwich de miga" en la columna Grupo de Alta?
+- **De dónde sale**: US-44 CA-2 ("la columna Grupo de Alta no se desacomoda"). Medido en el navegador a 1280 px: en
+  los 128 px de la columna, "Sándwich de miga" se partía en dos renglones.
+- **Elegido**: la columna Grupo pasa a `w-52` sin cortar, y la de Stock (un número) a `w-28`, para que la de Gusto no
+  pierda ancho: "Carne cortada a cuchillo" sigue en un renglón.
+- **Si el dev responde otra cosa**: se ajustan los anchos. Nivel 1.
+
+## Resumen para el dev
+
+Lo que entró en cada commit, en lenguaje simple. Todo va a `develop` en el GitHub público. Nunca entran secretos,
+`.env.local` ni `node_modules`. Tu cambio local en `.gitignore` y `.claude/launch.json` tampoco: quedaron como estaban,
+sin commitear.
+
+### US-44 · Quilmes y Sándwich de miga
+
+1. **Nombres nuevos**: en todas las pantallas, el grupo Pepsi se llama "Quilmes" y Sanguches se llama "Sándwich de
+   miga". Por dentro, la base de datos sigue igual: no hubo que tocarla.
+2. **Ventas viejas**: las ventas que ya se cobraron conservan el nombre que tenían en su comprobante.
+3. **Alta de productos**: la columna Grupo es un poco más ancha para que "Sándwich de miga" entre en un renglón.
+4. **Datos de prueba**: las bebidas de ejemplo dicen "Quilmes 500 ml" y "Quilmes 1,5 L". No toca tus datos.
+5. **Pruebas y documentos**: las pruebas automáticas y los documentos usan los nombres nuevos.

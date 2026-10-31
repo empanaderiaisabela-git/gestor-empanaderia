@@ -18,7 +18,7 @@
 Muestra los números de un rango de **jornadas** del local, "Desde" y "Hasta", por defecto la de hoy en las dos (US-32). El orden
 sigue el panel de referencia (US-21), en filas que se apilan en pantallas chicas:
 
-- **Comidas** (fila de 4): Empanadas, Pizzas, Sanguches y Ciabattas. **Fila de 3**: Coca-Cola, Pepsi y **Promos**.
+- **Comidas** (fila de 4): Empanadas, Pizzas, Sándwich de miga y Ciabattas. **Fila de 3**: Coca-Cola, Quilmes y **Promos**.
   Cada tarjeta lleva borde del color de su grupo, fondo neutro y el ícono de lucide en un cuadrito del mismo color.
 - **Fila de 2**: **Ventas registradas** (borde azul, maletín) y **Ganancia** (borde verde, billete): lo facturado
   menos el costo para el local de lo vendido y las mermas.

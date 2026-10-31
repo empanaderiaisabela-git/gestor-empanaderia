@@ -30,7 +30,7 @@ Muestra el stock de cada gusto y bebida activos, agrupados por grupo, y permite:
 - Una merma no puede superar el stock (`INSUFFICIENT_STOCK`).
 - **Primer ingreso de un gusto (US-17, US-28)**: costo y precios de venta son obligatorios en todos los grupos
   (`MISSING_COST`, `MISSING_PRICE`). Los precios tienen que ser los de las presentaciones del grupo: los cuatro en
-  Empanadas y Sanguches, sólo el de unidad en el resto (`VALIDATION`). En los ingresos siguientes son opcionales:
+  Empanadas y Sándwich de miga, sólo el de unidad en el resto (`VALIDATION`). En los ingresos siguientes son opcionales:
   vacío conserva el valor actual, que se muestra como placeholder.
 - **Costo y precio** pide siempre el costo y todos los precios del grupo, precargados con los actuales. Filtra por
   `id` y `version` del gusto que se abrió: si alguien lo cambió en el medio, `STALE_VERSION` y no se guarda nada.

@@ -12,7 +12,7 @@
 
 Sos el agente de ingeniería de software del repo **gestor-empanaderia**. Trabajás con **el Tomás**: la única
 persona que programa, decide y aprueba. El **cliente** es **Empanadería Isabela**: vende empanadas, pizzas,
-sándwiches de miga, ciabattas y bebidas de Coca-Cola y Pepsi. Con el cliente no hablás vos: sus pedidos te llegan a
+sándwiches de miga, ciabattas y bebidas de Coca-Cola y Quilmes. Con el cliente no hablás vos: sus pedidos te llegan a
 través del dev.
 
 - Idioma: **docs, commits, UI y tus respuestas en español** (rioplatense neutro). **Código en inglés.**
@@ -62,14 +62,15 @@ en `eslint-legacy.json`.
 |---|---|
 | `src/lib/contact/contact.config.ts` | Vacío: el cliente no los necesita por ahora porque la web no se usa pronto; sin datos, el catálogo no muestra botones de contacto |
 | Nombres en inglés del modelo: `menu_items` (gustos y bebidas), `sale_lines` (líneas del pedido), `stock_losses` (mermas) | Ver el [glosario](#12-glosario) |
+| Las claves de grupo `pepsi` y `sanguches` | Se muestran "Quilmes" y "Sándwich de miga" (US-44). La clave quedó igual en la base y en el código para no tocar el enum de Postgres (P-1 de `sprint-6.md`) |
 
 **Las reglas de venta del rubro ya están definidas** (dev, 2026-10-25) en las
 [decisiones del Sprint 1](plans/sprint-1.md#decisiones-del-dev-2026-10-25). En resumen:
 
-- Grupos fijos: Empanadas, Pizzas, Sanguches, Ciabattas, Coca-Cola y Pepsi.
+- Grupos fijos: Empanadas, Pizzas, Sándwich de miga, Ciabattas, Coca-Cola y Quilmes.
 - Presentaciones fijas, con precio por gusto y presentación.
 - Pizza de 2 sabores al precio del más caro.
-- Surtidas dentro de la misma presentación ("Agregar uno" y "Completar"), con precio proporcional en Sanguches.
+- Surtidas dentro de la misma presentación ("Agregar uno" y "Completar"), con precio proporcional en Sándwich de miga.
 - Stock por gusto, salvo Pizzas y Ciabattas, que descuentan una prepizza o un pan (Sprint 4).
 - Promos con los gustos elegidos al vender.
 
@@ -427,7 +428,7 @@ las cuentas reales y se borran esas.
 | Brecha | Código heredado que no cumple las reglas actuales. |
 | Habilitador | Trabajo técnico sin valor directo para el usuario, como instalar Vitest o crear `db-test`. |
 | Gusto | Cada variedad que se vende de un grupo (Carne, Muzza, Coca-Cola 500 ml). En el código, `menu_items`. |
-| Grupo y presentación | Grupo fijo (Empanadas, Pizzas, Sanguches, Ciabattas, Coca-Cola, Pepsi) y cantidad en que se vende (1, 3, 6, 12 u; pizza de 1 o 2 sabores). |
+| Grupo y presentación | Grupo fijo (Empanadas, Pizzas, Sándwich de miga, Ciabattas, Coca-Cola, Quilmes) y cantidad en que se vende (1, 3, 6, 12 u; pizza de 1 o 2 sabores). |
 | Línea del pedido | Una presentación con sus gustos y su cantidad. En el código, `sale_lines` y `sale_line_items`. |
 | Surtida | Una presentación de varias unidades con gustos distintos, armada con "Agregar uno" y "Completar". |
 | Costo para el local | Lo que le cuesta al local hacer o comprar una unidad (en la pizza, la pizza entera). Va por gusto y sirve para la ganancia. En el código, `unitCost`. Los campos, columnas y títulos nunca dicen "costo" a secas. |

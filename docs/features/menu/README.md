@@ -9,7 +9,7 @@
 
 ## Qué hace
 
-El admin da de alta los gustos de cada comida y las bebidas de Coca-Cola y Pepsi con **sólo el grupo y el nombre**.
+El admin da de alta los gustos de cada comida y las bebidas de Coca-Cola y Quilmes con **sólo el grupo y el nombre**.
 El nombre es lo único que se edita después. El **costo para el local** y los **precios de venta** se cargan al
 ingresar stock (US-17) o con "Costo y precio" (US-28), los dos en [Stock](../stock/README.md). Desde US-28 **todos
 los gustos tienen su propio precio**, también los de Empanadas y Ciabattas: Alta ya no tiene tarjetas de precio por
@@ -30,10 +30,10 @@ varias presentaciones), sus fotos y si hay stock.
   | Grupo | Presentaciones | Precio | Stock |
   |---|---|---|---|
   | Empanadas | 1, 3, 6 (½ docena) y 12 (1 docena) u | Por gusto (US-28) | Unidades |
-  | Sanguches (de miga) | 1, 3, 6 y 12 u | Por gusto | Unidades |
+  | Sándwich de miga | 1, 3, 6 y 12 u | Por gusto | Unidades |
   | Pizzas | Entera, de 1 o 2 sabores | Por gusto (la entera) | De la Prepizza (US-29): 1 por pizza |
   | Ciabattas | Unidad | Por gusto (US-28) | Del Pan de ciabatta (US-29): 1 por ciabatta |
-  | Coca-Cola, Pepsi | Unidad | Por bebida | Unidades |
+  | Coca-Cola, Quilmes | Unidad | Por bebida | Unidades |
 
 - El precio de cada gusto lleva todas las presentaciones de su grupo; ninguna de más. Fuente: "Aclaración de
   precios" de `specs.md`.
@@ -84,7 +84,7 @@ T-11).
   `false`), `is_base` (US-29, por defecto `false`), `version`.
   - `unique(menu_group, name)`.
   - `CHECK`: costo ≥ 0; stock ≥ 0 y en medias; sólo Pizzas admite medias. Precios (`menu_items_prices_check`,
-    US-28): Empanadas y Sanguches, los cuatro nulos o los cuatro > 0; Pizzas, Ciabattas y bebidas, `price_1` nulo o
+    US-28): Empanadas y Sándwich de miga, los cuatro nulos o los cuatro > 0; Pizzas, Ciabattas y bebidas, `price_1` nulo o
     > 0 y los demás nulos.
   - Bases (US-29, migración `0021_prepizzas-y-panes`): índice único parcial `menu_items_one_base_per_group` (una
     por grupo) y `menu_items_base_check` (sin costo ni precios, sólo en Pizzas o Ciabattas y con stock entero). La

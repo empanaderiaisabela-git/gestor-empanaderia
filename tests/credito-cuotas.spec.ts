@@ -19,7 +19,7 @@ test.describe('cobrar con crédito en cuotas (US-11)', () => {
     await crearTarjeta(page, tarjeta);
 
     await page.goto('/ventas/nueva');
-    await grupo(page, 'Pepsi').getByRole('button', { name: /1 unidad/ }).click();
+    await grupo(page, 'Quilmes').getByRole('button', { name: /1 unidad/ }).click();
     await gusto(page, '7up 1,5 L').getByRole('button', { name: 'Agregar' }).click();
     await page.getByRole('button', { name: 'Listo' }).click();
 

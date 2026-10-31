@@ -82,7 +82,7 @@ test.describe('tablero de ventas (US-5)', () => {
 
   test('cada grupo se pinta con su color y lleva su ícono (US-20)', async ({ page }) => {
     await page.goto('/ventas/nueva');
-    const colores = { Empanadas: 'rgb(255, 237, 213)', Pizzas: 'rgb(253, 244, 200)', Sanguches: 'rgb(226, 241, 223)', Ciabattas: 'rgb(242, 230, 215)', 'Coca-Cola': 'rgb(253, 227, 227)', Pepsi: 'rgb(223, 233, 251)' };
+    const colores = { Empanadas: 'rgb(255, 237, 213)', Pizzas: 'rgb(253, 244, 200)', 'Sándwich de miga': 'rgb(226, 241, 223)', Ciabattas: 'rgb(242, 230, 215)', 'Coca-Cola': 'rgb(253, 227, 227)', Quilmes: 'rgb(223, 233, 251)' };
     for (const [nombre, fondo] of Object.entries(colores)) {
       await expect(grupo(page, nombre)).toHaveCSS('background-color', fondo);
       await expect(grupo(page, nombre).locator('svg.lucide').first()).toBeVisible();

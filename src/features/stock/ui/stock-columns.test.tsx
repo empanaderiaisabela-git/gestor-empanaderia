@@ -13,7 +13,7 @@ describe('grilla de Stock (US-4 CA-1)', () => {
   it('cada celda muestra grupo, gusto, stock, precio y costo', () => {
     const columns = getStockColumns({ open: vi.fn() });
     render(<div>{columns.slice(0, 5).map((column, index) => <span key={index}>{column.cell(ITEM)}</span>)}</div>);
-    ['Sanguches', 'Primavera', '24', '$650'].forEach((text) => expect(screen.getByText(text)).toBeDefined());
+    ['Sándwich de miga', 'Primavera', '24', '$650'].forEach((text) => expect(screen.getByText(text)).toBeDefined());
     expect(screen.getByText(/1 unidad: \$1\.600/)).toBeDefined();
     render(<div>{columns[5].cell(ITEM)}</div>);
     expect(screen.getAllByTitle('Ingresar stock')).toHaveLength(1);

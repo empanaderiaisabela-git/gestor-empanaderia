@@ -14,7 +14,7 @@ async function cobrarPedidoDeRocio(page: Page): Promise<void> {
   await grupo(page, 'Empanadas').getByRole('button', { name: /½ docena/ }).click();
   await gusto(page, 'Carne picante').getByRole('button', { name: 'Completar' }).click();
   await page.getByRole('button', { name: 'Listo' }).click();
-  await grupo(page, 'Sanguches').getByRole('button', { name: /3 unidades/ }).click();
+  await grupo(page, 'Sándwich de miga').getByRole('button', { name: /3 unidades/ }).click();
   await gusto(page, 'Jamón y queso').getByRole('button', { name: 'Completar' }).click();
   await page.getByRole('button', { name: 'Listo' }).click();
   await page.getByRole('button', { name: /^Ver pedido/ }).click();
@@ -34,7 +34,7 @@ test.describe('Ventas/Pedidos (US-7)', () => {
     const fila = page.getByRole('row').filter({ hasText: 'Rocío' });
     await expect(fila).toContainText('$10.500');
     await expect(fila).toContainText('Efectivo');
-    await expect(fila).toContainText('Sanguches · 3 unidades: Jamón y queso');
+    await expect(fila).toContainText('Sándwich de miga · 3 unidades: Jamón y queso');
 
     await fila.getByTitle('Ver comprobante').click();
     const comprobante = page.getByRole('article', { name: 'Comprobante' });

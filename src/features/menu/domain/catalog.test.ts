@@ -21,7 +21,7 @@ describe('ficha de catálogo de un gusto (T-12 CA-4)', () => {
   });
 
   it('textos del catálogo: grupos, precio desde y resumen', () => {
-    expect(CATALOG_GROUPS.map((group) => group.name)).toEqual(['Empanadas', 'Pizzas', 'Sanguches', 'Ciabattas', 'Coca-Cola', 'Pepsi']);
+    expect(CATALOG_GROUPS.map((group) => group.name)).toEqual(['Empanadas', 'Pizzas', 'Sándwich de miga', 'Ciabattas', 'Coca-Cola', 'Quilmes']);
     const prices = [{ field: 'price1' as const, label: '1 unidad', value: 1200 }, { field: 'price6' as const, label: '½ docena', value: 6500 }];
     expect([catalogPriceLabel({ prices }), catalogPriceLabel({ prices: prices.slice(0, 1) }), catalogPriceLabel({ prices: [] })]).toEqual(['desde $1.200', '$1.200', 'Consultar precio']);
     expect(catalogPriceSummary({ prices })).toBe('1 unidad: $1.200 · ½ docena: $6.500');

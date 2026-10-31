@@ -4137,7 +4137,7 @@ provisorias P-1 a P-10, cómo se cuidan las migraciones, el orden y la trazabili
 | #   | ID | Título | Estado | Depende de | Estimación |
 | --- | -- | ------ | ------ | ---------- | ---------- |
 | 0   | [T-25](#t-25--backlog-del-sprint-6) | Backlog del Sprint 6 | En revisión | T-24 | 30 min |
-| 1   | [US-44](#us-44--grupos-quilmes-y-sándwich-de-miga) | Grupos: "Quilmes" y "Sándwich de miga" | Pendiente | T-25 | 45 min |
+| 1   | [US-44](#us-44--grupos-quilmes-y-sándwich-de-miga) | Grupos: "Quilmes" y "Sándwich de miga" | En revisión | T-25 | 45 min |
 | 2   | [BUG-28](#bug-28--stock-la-categoría-en-un-solo-renglón) | Stock: la categoría en un solo renglón | Pendiente | US-44 | 20 min |
 | 3   | [US-45](#us-45--stock-mínimo-opcional-con-aviso-amarillo) | Stock mínimo opcional con aviso amarillo | Pendiente | T-25 | 3 h |
 | 4   | [US-46](#us-46--editar-un-ingreso-de-stock) | Editar un ingreso de stock | Pendiente | US-45 | 4 h |
@@ -4171,9 +4171,9 @@ que cada cambio tenga su criterio, su estimación y su rama.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
-| Dueño        | —         |
-| Inicio       | —         |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-31 |
 | Tamaño       | S         |
 | Depende de   | T-25      |
 | Plan         | [`docs/plans/sprint-6.md`](docs/plans/sprint-6.md) |
@@ -4185,14 +4185,15 @@ a los sanguches, de forma que los nombres coincidan con lo que vende el local.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · En todo el sistema el grupo Pepsi se llama "Quilmes": tablero, Stock, Alta de productos, promos, Estadísticas, historial y comprobante. La base no cambia (P-1). Lo cubren los tests del dominio y los E2E que buscan el grupo · Estimación: 20 min · Completado: —
+- [x] **CA-1** · En todo el sistema el grupo Pepsi se llama "Quilmes": tablero, Stock, Alta de productos, promos, Estadísticas, historial y comprobante. La base no cambia (P-1). Lo cubren los tests del dominio y los E2E que buscan el grupo · Estimación: 20 min · Completado: 2026-10-31 00:25
 
-- [ ] **CA-2** · En todo el sistema el grupo Sanguches se llama "Sándwich de miga". El encabezado del tablero y la columna Grupo de Alta no se desacomodan: se mira en el navegador · Estimación: 25 min · Completado: —
+- [x] **CA-2** · En todo el sistema el grupo Sanguches se llama "Sándwich de miga". El encabezado del tablero y la columna Grupo de Alta no se desacomodan: se mira en el navegador · Estimación: 25 min · Completado: 2026-10-31 00:25
 
 **Notas**
 
 - Nivel 1: sólo etiquetas. La clave interna `pepsi` queda en la base y en el código (P-1).
 - Los gustos que el cliente cargó en producción con "Pepsi" en el nombre los renombra el cliente en Alta de productos.
+- Decisiones de la implementación (detalle en `sprint-6.md`): I-1, el seed dice "Quilmes 500 ml" y "Quilmes 1,5 L"; I-2, las ventas ya hechas conservan el nombre viejo en su descripción; I-3, en Alta la columna Grupo pasa a `w-52` sin cortar y la de Stock a `w-28`.
 
 ### BUG-28 · Stock: la categoría en un solo renglón
 

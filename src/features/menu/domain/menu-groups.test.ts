@@ -3,7 +3,7 @@ import { GROUPS, hasBase, MENU_GROUPS, priceFieldsOf, priceLabelOf } from './men
 
 describe('grupos y presentaciones fijos (US-3)', () => {
   it('son los seis grupos del local, en el orden del tablero', () => {
-    expect(MENU_GROUPS.map((group) => GROUPS[group].label)).toEqual(['Empanadas', 'Pizzas', 'Sanguches', 'Ciabattas', 'Coca-Cola', 'Pepsi']);
+    expect(MENU_GROUPS.map((group) => GROUPS[group].label)).toEqual(['Empanadas', 'Pizzas', 'Sándwich de miga', 'Ciabattas', 'Coca-Cola', 'Quilmes']);
   });
 
   it.each([
@@ -43,7 +43,7 @@ describe('grupos y presentaciones fijos (US-3)', () => {
     expect(MENU_GROUPS.filter(hasBase)).toEqual(['pizzas', 'ciabattas']);
   });
 
-  it('las bebidas son de Coca-Cola y de Pepsi; el resto es comida', () => {
+  it('las bebidas son de Coca-Cola y de Quilmes; el resto es comida', () => {
     expect(MENU_GROUPS.filter((group) => GROUPS[group].kind === 'bebida')).toEqual(['coca_cola', 'pepsi']);
   });
 });

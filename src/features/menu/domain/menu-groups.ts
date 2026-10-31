@@ -20,10 +20,10 @@ export const GROUPS: Readonly<Record<MenuGroup, GroupInfo>> = {
       { key: 'pizza_2', label: '2 sabores', units: 1, priceField: 'price1', flavors: 2 },
     ],
   },
-  sanguches: { label: 'Sanguches', kind: 'comida', presentations: [single('1 unidad'), pack(3, '3 unidades'), pack(6, '6 unidades'), pack(12, '12 unidades')] },
+  sanguches: { label: 'Sándwich de miga', kind: 'comida', presentations: [single('1 unidad'), pack(3, '3 unidades'), pack(6, '6 unidades'), pack(12, '12 unidades')] },
   ciabattas: { label: 'Ciabattas', kind: 'comida', presentations: [single('1 unidad')] },
   coca_cola: { label: 'Coca-Cola', kind: 'bebida', presentations: [single('1 unidad')] },
-  pepsi: { label: 'Pepsi', kind: 'bebida', presentations: [single('1 unidad')] },
+  pepsi: { label: 'Quilmes', kind: 'bebida', presentations: [single('1 unidad')] },
 };
 
 export function priceFieldsOf(group: MenuGroup): PriceField[] {

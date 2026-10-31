@@ -277,7 +277,7 @@ Casos especiales:
   tiene costo. El costo congelado de la venta es el del gusto.
 - **Precios por gusto** (US-28). Todos los grupos guardan sus precios en el gusto (`price_1`, `price_3`, `price_6` y
   `price_12`), cargados en Stock con "Costo y precio" (con una casilla para copiarlos a todo el grupo, en la misma
-  transacción) o en "Ingresar stock". La docena surtida de empanadas se cobra como la de Sanguches: Σ (unidades del
+  transacción) o en "Ingresar stock". La docena surtida de empanadas se cobra como la de Sándwich de miga: Σ (unidades del
   gusto ÷ 12 × precio de la docena del gusto).
 - **Tablas append-only** (`sales`, `sale_lines`, `sale_line_items`, `sale_payments`, `stock_entries`,
   `stock_losses`, `menu_item_images`, `audit_logs`). No llevan `version`: se insertan y, a lo sumo, se borran enteras.
