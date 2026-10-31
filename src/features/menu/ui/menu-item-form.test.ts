@@ -4,6 +4,7 @@ import { initialValues, parseCreate, parseUpdate } from './menu-item-form';
 
 const BLANK = initialValues(null);
 const NO_DRINK = { drinkName: '', liters: '', flavor: '' };
+const BEBIDA: MenuItemDef = { id: 'x', group: 'coca_cola', name: '', unitCost: null, stock: 0, price1: null, price3: null, price6: null, price12: null, isActive: true, isVisible: false, isBase: false, minStock: null, drinkName: null, liters: null, flavor: null, version: 1, createdAt: '', updatedAt: '' };
 
 describe('formulario de Alta de productos', () => {
   it('arranca vacío, en Empanadas', () => {
@@ -33,5 +34,12 @@ describe('formulario de Alta de productos', () => {
     expect(parseCreate(values)).toEqual({ ok: true, input: { group: 'coca_cola', drinkName: 'Aquarius', liters: 1.5, flavor: null } });
     expect(parseUpdate({ ...values, flavor: 'Pera' }, 3)).toEqual({ ok: true, input: { drinkName: 'Aquarius', liters: 1.5, flavor: 'Pera', version: 3 } });
     expect(parseCreate({ ...values, drinkName: '', liters: '0' })).toEqual({ ok: false, errors: { drinkName: 'La bebida es obligatoria', liters: 'Los litros deben ser mayores a 0' } });
+  });
+  it('regression BUG-29: una bebida vieja se edita precargada desde su nombre', () => {
+    const vieja = (name: string): MenuItemDef => ({ ...BEBIDA, name });
+    expect(initialValues(vieja('Aquarius 1,5 L Manzana'))).toMatchObject({ drinkName: 'Aquarius', liters: '1.5', flavor: 'Manzana' });
+    expect(initialValues(vieja('Coca-Cola 500 ml'))).toMatchObject({ drinkName: 'Coca-Cola', liters: '0.5', flavor: '' });
+    expect(initialValues(vieja('7up 1,5L'))).toMatchObject({ drinkName: '7up', liters: '1.5', flavor: '' });
+    expect(initialValues(vieja('Agua saborizada'))).toMatchObject({ drinkName: 'Agua saborizada', liters: '', flavor: '' });
   });
 });
