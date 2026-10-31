@@ -67,7 +67,7 @@ Muestra el stock de cada gusto y bebida activos, agrupados por grupo, y permite:
 | `setStockPricingAction(input)` | admin | `stockPricingSchema`: `{ menuItemId, version, unitCost, prices, applyToGroup }` (`strictObject`); los precios se validan contra el grupo con `priceIssues` | `ActionResult<MenuItemDef>` (validada con `menuItemRowSchema`) |
 | `fetchStockEntries(menuItemId)` | admin | id del gusto | `StockEntryDef[]` (los últimos 50; vacío ante error) |
 
-La grilla lee los gustos con `fetchMenuItems` del feature `menu`.
+La grilla lee los gustos con `fetchMenuItems` del feature `menu`. La tabla (desde 1280 px) tiene anchos fijos en Categoría, Stock, Precio de venta y Acciones, y la categoría no se parte en dos renglones (BUG-28).
 
 ## Datos
 

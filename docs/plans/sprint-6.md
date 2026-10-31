@@ -218,6 +218,17 @@ Cada una dice de dónde salió la pregunta. Se eligió siempre lo que no borra d
   pierda ancho: "Carne cortada a cuchillo" sigue en un renglón.
 - **Si el dev responde otra cosa**: se ajustan los anchos. Nivel 1.
 
+#### I-4 · Anchos de toda la tabla de Stock (BUG-28)
+
+- **Pregunta**: ¿alcanza con ensanchar la columna Categoría?
+- **De dónde sale**: BUG-28 CA-1 ("las otras columnas no se rompen") y P-10. Medido en el navegador a 1280 px: con
+  sólo Categoría más ancha, los precios de venta de las empanadas pisaban la columna del costo. Ya los pisaban antes
+  del cambio, porque la tabla repartía el ancho en partes iguales.
+- **Elegido**: anchos fijos en Categoría (`w-48`), Stock (`w-20`), Precio de venta (`w-48`) y Acciones (`w-36`).
+  Gusto y Costo se reparten el resto. A 1280 y 1400 px ninguna celda se desborda; el nombre largo de un gusto puede
+  ir en dos renglones, como ya pasaba.
+- **Si el dev responde otra cosa**: se ajustan los anchos. Nivel 1.
+
 ## Resumen para el dev
 
 Lo que entró en cada commit, en lenguaje simple. Todo va a `develop` en el GitHub público. Nunca entran secretos,
@@ -232,3 +243,9 @@ sin commitear.
 3. **Alta de productos**: la columna Grupo es un poco más ancha para que "Sándwich de miga" entre en un renglón.
 4. **Datos de prueba**: las bebidas de ejemplo dicen "Quilmes 500 ml" y "Quilmes 1,5 L". No toca tus datos.
 5. **Pruebas y documentos**: las pruebas automáticas y los documentos usan los nombres nuevos.
+
+### BUG-28 · La categoría de Stock en un renglón
+
+1. **Stock más prolijo**: "Coca-Cola", "Sándwich de miga" y "Pan de ciabatta" se leen en un solo renglón.
+2. **Columnas ordenadas**: cada columna de la tabla tiene su ancho, así los precios ya no se montan sobre el costo.
+3. **Pruebas y documentos**: una prueba automática nueva cuida que la categoría no se vuelva a cortar.

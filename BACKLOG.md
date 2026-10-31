@@ -4138,7 +4138,7 @@ provisorias P-1 a P-10, cómo se cuidan las migraciones, el orden y la trazabili
 | --- | -- | ------ | ------ | ---------- | ---------- |
 | 0   | [T-25](#t-25--backlog-del-sprint-6) | Backlog del Sprint 6 | En revisión | T-24 | 30 min |
 | 1   | [US-44](#us-44--grupos-quilmes-y-sándwich-de-miga) | Grupos: "Quilmes" y "Sándwich de miga" | En revisión | T-25 | 45 min |
-| 2   | [BUG-28](#bug-28--stock-la-categoría-en-un-solo-renglón) | Stock: la categoría en un solo renglón | Pendiente | US-44 | 20 min |
+| 2   | [BUG-28](#bug-28--stock-la-categoría-en-un-solo-renglón) | Stock: la categoría en un solo renglón | En revisión | US-44 | 20 min |
 | 3   | [US-45](#us-45--stock-mínimo-opcional-con-aviso-amarillo) | Stock mínimo opcional con aviso amarillo | Pendiente | T-25 | 3 h |
 | 4   | [US-46](#us-46--editar-un-ingreso-de-stock) | Editar un ingreso de stock | Pendiente | US-45 | 4 h |
 | 5   | [US-47](#us-47--jamón-extra-para-pizza) | Jamón extra para pizza | Pendiente | US-46 | 5 h |
@@ -4199,9 +4199,9 @@ a los sanguches, de forma que los nombres coincidan con lo que vende el local.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
-| Dueño        | —         |
-| Inicio       | —         |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-31 |
 | Tamaño       | S         |
 | Depende de   | US-44     |
 | Plan         | [`docs/plans/sprint-6.md`](docs/plans/sprint-6.md) |
@@ -4215,11 +4215,12 @@ a los sanguches, de forma que los nombres coincidan con lo que vende el local.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · A 1280 px y a 1400 px, la categoría se lee en un renglón ("Coca-Cola", "Sándwich de miga", "Pan de ciabatta") y las otras columnas no se rompen (P-10). Lo cubren un test de componente y una mirada en el navegador · Estimación: 20 min · Completado: —
+- [x] **CA-1** · A 1280 px y a 1400 px, la categoría se lee en un renglón ("Coca-Cola", "Sándwich de miga", "Pan de ciabatta") y las otras columnas no se rompen (P-10). Lo cubren un test de componente y una mirada en el navegador · Estimación: 20 min · Completado: 2026-10-31 00:36
 
 **Notas**
 
 - Nivel 1. Va después de US-44 porque "Sándwich de miga" es la categoría más larga.
+- I-4 (`sprint-6.md`): también Stock, Precio de venta y Acciones tienen ancho fijo; sin eso, los precios pisaban el costo a 1280 px.
 
 ### US-45 · Stock mínimo opcional con aviso amarillo
 

@@ -19,6 +19,12 @@ describe('grilla de Stock (US-4 CA-1)', () => {
     expect(screen.getAllByTitle('Ingresar stock')).toHaveLength(1);
   });
 
+  it('regression BUG-28: la categoría tiene ancho propio y no se parte en dos renglones', () => {
+    const [category] = getStockColumns({ open: vi.fn() });
+    expect(category.headerClassName).toBe('w-48');
+    expect(category.cellClassName).toContain('whitespace-nowrap');
+  });
+
   it('avisa cuando falta el precio o el costo', () => {
     const sin: MenuItemDef = { ...ITEM, unitCost: null, price1: null, price3: null, price6: null, price12: null };
     const columns = getStockColumns({ open: vi.fn() });
