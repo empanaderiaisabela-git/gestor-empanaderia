@@ -1,14 +1,22 @@
 import { z } from 'zod';
+import { DRINK_GROUPS, drinkName, flavor, liters } from './drink';
 import { MENU_GROUPS } from './menu-groups';
 
 const name = z.string('El nombre es obligatorio').trim().min(1, 'El nombre es obligatorio').max(60, 'El nombre no puede superar los 60 caracteres');
 const version = z.number().int().min(1);
 
-export const menuItemCreateSchema = z.strictObject({ group: z.enum(MENU_GROUPS, 'Elegí un grupo válido'), name });
-export type MenuItemInput = z.infer<typeof menuItemCreateSchema>;
+const FOOD_GROUPS = MENU_GROUPS.filter((group) => !DRINK_GROUPS.some((drink) => drink === group));
+const drinkFields = { drinkName, liters, flavor: flavor.optional() };
 
-export const menuItemUpdateSchema = z.strictObject({ name, version });
-export type MenuItemUpdateInput = z.infer<typeof menuItemUpdateSchema>;
+export const foodCreateSchema = z.strictObject({ group: z.enum(FOOD_GROUPS, 'Elegí un grupo válido'), name });
+export const drinkCreateSchema = z.strictObject({ group: z.enum(DRINK_GROUPS, 'Elegí un grupo válido'), ...drinkFields });
+export const menuItemCreateSchema = z.union([foodCreateSchema, drinkCreateSchema]);
+export type MenuItemInput = z.output<typeof menuItemCreateSchema>;
+
+export const foodUpdateSchema = z.strictObject({ name, version });
+export const drinkUpdateSchema = z.strictObject({ ...drinkFields, version });
+export const menuItemUpdateSchema = z.union([foodUpdateSchema, drinkUpdateSchema]);
+export type MenuItemUpdateInput = z.output<typeof menuItemUpdateSchema>;
 
 export const menuItemToggleSchema = z.strictObject({ id: z.uuid(), isActive: z.boolean(), version });
 export type MenuItemToggleInput = z.infer<typeof menuItemToggleSchema>;
@@ -36,6 +44,9 @@ export const menuItemRowSchema = z.object({
   isVisible: z.boolean(),
   isBase: z.boolean(),
   minStock: z.number().int().nullable(),
+  drinkName: z.string().nullable(),
+  liters: amountSchema.nullable(),
+  flavor: z.string().nullable(),
   version: z.number(),
   createdAt: timestampSchema,
   updatedAt: timestampSchema,

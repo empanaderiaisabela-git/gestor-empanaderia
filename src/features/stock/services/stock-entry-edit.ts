@@ -3,6 +3,7 @@ import type { StockEntryUpdateInput } from '@/features/stock/domain/stock.schema
 import type { StockEntry, StockItem } from '@/features/stock/repository/stock.repository';
 import type { StockScope } from '@/features/stock/repository/stock-unit-of-work';
 import { planEntry } from './stock-entry-plan';
+import { familyOf, inherited, shareWithFamily } from './stock-family';
 import { lockedItem, saved } from './stock-locks';
 
 type Caller = { id: string };
@@ -36,7 +37,8 @@ const sideOf = (item: StockItem, entry: StockEntry): Record<string, unknown> => 
 export async function updateEntry(scope: StockScope, caller: Caller, input: StockEntryUpdateInput): Promise<EntryEditResult> {
   const before = await lockedEntry(scope, input);
   const [from, to] = await lockBoth(scope, before.menuItemId, input.menuItemId);
-  const plan = planEntry(to, input);
+  const family = await familyOf(scope, to);
+  const plan = planEntry(inherited(to, family), input);
   const moved = from.id !== to.id;
   const fromStock = moved ? stockAfter(from, -before.quantity) : null;
   const toStock = stockAfter(to, moved ? input.quantity : input.quantity - before.quantity);
@@ -44,7 +46,9 @@ export async function updateEntry(scope: StockScope, caller: Caller, input: Stoc
   const costChanged = moved || plan.unitCost !== Number(before.unitCost);
   const isLatest = (await scope.stock.latestEntryId(to.id)) === entry.id;
   if (fromStock !== null) saved(await scope.stock.saveItem(from, { stock: fromStock }));
-  const item = saved(await scope.stock.saveItem(to, { stock: toStock, unitCost: costChanged && isLatest ? plan.itemCost : undefined, prices: plan.itemPrices, minStock: input.minStock }));
+  const itemCost = costChanged && isLatest ? plan.itemCost : undefined;
+  const item = saved(await scope.stock.saveItem(to, { stock: toStock, unitCost: itemCost, prices: plan.itemPrices, minStock: input.minStock }));
+  await shareWithFamily(scope, await familyOf(scope, item), { unitCost: itemCost, prices: plan.itemPrices });
   const detail = { before: sideOf(from, before), after: sideOf(to, entry), stockAfter: Number(item.stock) };
   await scope.audit({ userId: caller.id, action: 'ACTUALIZAR', entity: 'STOCK_ENTRY', entityId: entry.id, detail });
   return { item, entry };

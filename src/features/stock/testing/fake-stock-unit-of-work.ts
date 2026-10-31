@@ -1,5 +1,6 @@
+import { sameFamily } from '@/features/menu/domain/drink';
 import { priceColumns } from '@/features/menu/repository/menu-item.repository';
-import type { EntryView, StockEntry, StockItem, StockLoss, StockRepository } from '@/features/stock/repository/stock.repository';
+import type { EntryView, FamilyRef, StockEntry, StockItem, StockLoss, StockRepository } from '@/features/stock/repository/stock.repository';
 import type { StockAuditEntry, StockUnitOfWork } from '@/features/stock/repository/stock-unit-of-work';
 
 type FakeState = { items: StockItem[]; entries: StockEntry[]; losses: StockLoss[]; audits: StockAuditEntry[]; providerNames: Map<string, string>; usernames: Map<string, string>; clock: number };
@@ -14,11 +15,15 @@ function viewOf(state: FakeState, entry: StockEntry): EntryView {
   return { ...entry, providerName, username: state.usernames.get(entry.userId) ?? '?' };
 }
 
+const familyKeyOf = (item: FamilyRef) => ({ group: item.group, drinkName: item.drinkName, liters: item.liters === null ? null : Number(item.liters) });
+const familyIn = (state: FakeState, ref: FamilyRef): StockItem[] => state.items.filter((item) => !item.isBase && sameFamily(familyKeyOf(ref), familyKeyOf(item))).sort((a, b) => (a.id < b.id ? -1 : 1));
+
 export function fakeStockRepository(state: FakeState): StockRepository {
   return {
     lockItem: async (id) => state.items.find((item) => item.id === id) ?? null,
     lockGroup: async (group) => state.items.filter((item) => item.group === group && !item.isBase).sort((a, b) => (a.id < b.id ? -1 : 1)),
     lockBase: async (group) => state.items.find((item) => item.group === group && item.isBase) ?? null,
+    lockFamily: async (ref) => familyIn(state, ref),
     saveItem: async ({ id, version }, { stock, unitCost, prices, minStock }) => {
       const item = state.items.find((row) => row.id === id && row.version === version);
       if (!item) return null;

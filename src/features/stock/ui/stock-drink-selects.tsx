@@ -1,0 +1,58 @@
+import { type JSX, useState } from 'react';
+import { FormField, inputClass } from '@/components/ui/form-field';
+import { litersText } from '@/features/menu/domain/drink';
+import type { MenuItemDef } from '@/features/menu/domain/menu-item.schema';
+
+type DrinkSelectsProps = { items: MenuItemDef[]; menuItemId: string; error?: string; onPick: (menuItemId: string) => void };
+
+const LEGACY = 'legacy:';
+const drinkKeyOf = (item: MenuItemDef): string => (item.drinkName ? item.drinkName.toLocaleLowerCase('es') : `${LEGACY}${item.id}`);
+const uniqueBy = <T,>(values: T[], key: (value: T) => string): T[] => values.filter((value, index) => values.findIndex((other) => key(other) === key(value)) === index);
+
+function FlavorSelect({ flavors, menuItemId, error, onPick }: Omit<DrinkSelectsProps, 'items'> & { flavors: MenuItemDef[] }): JSX.Element {
+  return (
+    <FormField label='Sabor' error={error}>
+      <select value={menuItemId} onChange={(event) => onPick(event.target.value)} className={inputClass(Boolean(error))}>
+        <option value=''>Elegí un sabor</option>
+        {flavors.map((item) => <option key={item.id} value={item.id}>{`${item.flavor ?? 'Sin sabor'} (stock ${item.stock.toLocaleString('es-AR')})`}</option>)}
+      </select>
+    </FormField>
+  );
+}
+
+export function DrinkSelects({ items, menuItemId, error, onPick }: DrinkSelectsProps): JSX.Element {
+  const current = items.find((item) => item.id === menuItemId);
+  const [drink, setDrink] = useState(current ? drinkKeyOf(current) : '');
+  const [liters, setLiters] = useState(current?.liters == null ? '' : String(current.liters));
+  const ofDrink = items.filter((item) => drinkKeyOf(item) === drink);
+  const flavors = ofDrink.filter((item) => String(item.liters) === liters);
+  const chooseDrink = (key: string): void => {
+    setDrink(key);
+    setLiters('');
+    onPick(key.startsWith(LEGACY) ? key.slice(LEGACY.length) : '');
+  };
+  const chooseLiters = (value: string): void => {
+    setLiters(value);
+    const options = ofDrink.filter((item) => String(item.liters) === value);
+    onPick(options.length === 1 ? options[0].id : '');
+  };
+  return (
+    <>
+      <FormField label='Bebida' error={drink.startsWith(LEGACY) ? error : undefined}>
+        <select value={drink} onChange={(event) => chooseDrink(event.target.value)} className={inputClass(false)}>
+          <option value=''>Elegí una bebida</option>
+          {uniqueBy(items, drinkKeyOf).map((item) => <option key={item.id} value={drinkKeyOf(item)}>{item.drinkName ?? `${item.name} (stock ${item.stock.toLocaleString('es-AR')})`}</option>)}
+        </select>
+      </FormField>
+      {drink !== '' && !drink.startsWith(LEGACY) && (
+        <FormField label='Litros'>
+          <select value={liters} onChange={(event) => chooseLiters(event.target.value)} className={inputClass(false)}>
+            <option value=''>Elegí los litros</option>
+            {uniqueBy(ofDrink, (item) => String(item.liters)).sort((a, b) => Number(a.liters) - Number(b.liters)).map((item) => <option key={item.id} value={String(item.liters)}>{litersText(Number(item.liters))}</option>)}
+          </select>
+        </FormField>
+      )}
+      {liters !== '' && <FlavorSelect flavors={flavors} menuItemId={menuItemId} error={error} onPick={onPick} />}
+    </>
+  );
+}

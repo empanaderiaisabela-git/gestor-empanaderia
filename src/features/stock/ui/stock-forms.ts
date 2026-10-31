@@ -2,6 +2,7 @@ import { PRICE_FIELDS, type PriceField, priceFieldsOf } from '@/features/menu/do
 import type { MenuItemDef } from '@/features/menu/domain/menu-item.schema';
 import { type HamPriceInput, hamPriceSchema } from '@/features/menu/domain/pizza-extra.schema';
 import { categoryOf } from '@/features/stock/domain/stock-categories';
+import { type PriceIncreaseInput, priceIncreaseSchema } from '@/features/stock/domain/stock-increase';
 import { type StockEntryDef, type StockEntryInput, stockEntrySchema, type StockLossInput, stockLossSchema, type StockPricingInput, stockPricingSchema } from '@/features/stock/domain/stock.schema';
 
 export type PriceTexts = Record<PriceField, string>;
@@ -46,6 +47,14 @@ export function entryValuesOf(item: MenuItemDef, entry: StockEntryDef): EntryVal
 
 export function parseHamPrice(text: string, version: number): Parsed<HamPriceInput> {
   const result = hamPriceSchema.safeParse({ price: toNumber(text), version });
+  return result.success ? { ok: true, input: result.data } : { ok: false, errors: errorsOf(result.error.issues) };
+}
+
+export type IncreaseTexts = { ids: string[]; cost: string; price: string };
+const percentOf = (text: string): number | null => (text.trim() === '' ? null : toNumber(text));
+
+export function parseIncrease({ ids, cost, price }: IncreaseTexts): Parsed<PriceIncreaseInput> {
+  const result = priceIncreaseSchema.safeParse({ menuItemIds: ids, costPercent: percentOf(cost), pricePercent: percentOf(price) });
   return result.success ? { ok: true, input: result.data } : { ok: false, errors: errorsOf(result.error.issues) };
 }
 

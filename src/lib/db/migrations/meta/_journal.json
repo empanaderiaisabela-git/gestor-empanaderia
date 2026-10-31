@@ -183,6 +183,13 @@
       "when": 1793421419693,
       "tag": "0025_jamon-extra",
       "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1793463934313,
+      "tag": "0026_bebidas-por-litros",
+      "breakpoints": true
     }
   ]
 }

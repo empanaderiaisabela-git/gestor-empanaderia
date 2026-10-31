@@ -11,7 +11,9 @@ import { registerStockLossAction } from '@/features/stock/actions/register-stock
 import { setStockPricingAction } from '@/features/stock/actions/set-stock-pricing';
 import { categoryOf, type StockCategory } from '@/features/stock/domain/stock-categories';
 import { orderStock, type StockOrder } from '@/features/stock/domain/stock-order';
+import { applyPriceIncreaseAction } from '@/features/stock/actions/apply-price-increase';
 import { updateStockEntryAction } from '@/features/stock/actions/update-stock-entry';
+import type { PriceIncreaseInput } from '@/features/stock/domain/stock-increase';
 import type { StockEntryDef, StockEntryInput, StockEntryUpdateInput, StockLossInput, StockPricingInput } from '@/features/stock/domain/stock.schema';
 import { normalizeForSearch } from '@/lib/utils';
 import { useHamPrice } from './use-ham-price';
@@ -39,6 +41,7 @@ export type StockPanelModel = {
   submitEntryUpdate: (input: StockEntryUpdateInput) => Promise<string | null>;
   ham: HamPriceDef;
   submitHamPrice: (input: HamPriceInput) => Promise<string | null>;
+  submitIncrease: (input: PriceIncreaseInput) => Promise<string | null>;
 };
 
 function useStockData(): { loading: boolean; providers: ProviderDef[]; reload: () => Promise<void> } {
@@ -88,5 +91,5 @@ export function useStockPanel(): StockPanelModel {
     if (result.success) setHam(result.data);
     return submit(Promise.resolve(result));
   };
-  return { loading, items, activeItems, providers, search, setSearch, categoryFilter, setCategoryFilter, stockOrder, setStockOrder, dialog, setDialog, message, submitEntry, submitLoss, submitPricing, submitEntryUpdate, ham, submitHamPrice };
+  return { loading, items, activeItems, providers, search, setSearch, categoryFilter, setCategoryFilter, stockOrder, setStockOrder, dialog, setDialog, message, submitEntry, submitLoss, submitPricing, submitEntryUpdate, ham, submitHamPrice, submitIncrease: (input) => submit(applyPriceIncreaseAction(input)) };
 }
