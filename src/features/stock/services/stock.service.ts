@@ -1,10 +1,12 @@
 import { AppError } from '@/lib/errors';
 import { hasBase } from '@/features/menu/domain/menu-groups';
+import type { PriceIncreaseInput } from '@/features/stock/domain/stock-increase';
 import type { StockEntryInput, StockEntryUpdateInput, StockLossInput, StockPricingInput } from '@/features/stock/domain/stock.schema';
 import type { EntryView, StockEntry, StockItem, StockLoss } from '@/features/stock/repository/stock.repository';
 import { drizzleStockUnitOfWork, type StockScope, type StockUnitOfWork } from '@/features/stock/repository/stock-unit-of-work';
 import { updateEntry } from './stock-entry-edit';
 import { planEntry } from './stock-entry-plan';
+import { applyIncrease, type IncreaseResult } from './stock-increase';
 import { familyOf, inherited, inheritedPrices, shareWithFamily } from './stock-family';
 import { lockedItem, saved } from './stock-locks';
 import { type PricingResult, setPricing } from './stock-pricing';
@@ -18,6 +20,7 @@ export type StockService = {
   updateEntry(caller: Caller, input: StockEntryUpdateInput): Promise<EntryResult>;
   registerLoss(caller: Caller, input: StockLossInput): Promise<LossResult>;
   setPricing(caller: Caller, input: StockPricingInput): Promise<PricingResult>;
+  applyIncrease(caller: Caller, input: PriceIncreaseInput): Promise<IncreaseResult>;
   entriesOf(menuItemId: string): Promise<EntryView[]>;
 };
 
@@ -55,6 +58,7 @@ export function createStockService({ unitOfWork }: { unitOfWork: StockUnitOfWork
     updateEntry: (caller, input) => unitOfWork.run((scope) => updateEntry(scope, caller, input)),
     registerLoss: (caller, input) => unitOfWork.run((scope) => registerLoss(scope, caller, input)),
     setPricing: (caller, input) => unitOfWork.run((scope) => setPricing(scope, caller, input)),
+    applyIncrease: (caller, input) => unitOfWork.run((scope) => applyIncrease(scope, caller, input)),
     entriesOf: (menuItemId) => unitOfWork.read.entriesOf(menuItemId),
   };
 }

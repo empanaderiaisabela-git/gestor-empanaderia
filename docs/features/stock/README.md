@@ -66,6 +66,11 @@ Muestra el stock de cada gusto y bebida activos, agrupados por grupo, y permite:
   familia (P-4). Costo y precio son de la familia: un ingreso que los trae, "Costo y precio" (que dice "Se
   aplica a los N sabores", sin la casilla) o la edición de un ingreso los guardan en todos sus sabores
   (`services/stock-family.ts`, `lockFamily`). El stock y el mínimo son de cada sabor (P-3).
+- **Registrar aumento (US-50)**: el botón "Registrar aumento", arriba de "Ingresar stock", abre Categoría (sin Prepizza ni
+  Pan de ciabatta), sus productos activos tildados (en bebidas, una fila por familia) y los porcentajes de costo y de
+  precio de venta. Al menos uno, de más de 0 a 500 (P-1). Sube costo y todos los precios de lo tildado al centavo,
+  sin redondeo ($2.750 + 10 % = $3.025). Lo nulo queda nulo (P-2), y una bebida arrastra su familia
+  (`services/stock-increase.ts`). Audita `ACTUALIZAR` / `MENU_ITEM` por producto, con antes y después.
 - **Stock es sólo del administrador** (dev, 2026-10-26, US-16): el vendedor no ve la sección ni puede ingresar
   stock, registrar mermas o leer el historial.
 - Cada movimiento sube la `version` del gusto: si alguien lo estaba editando en Alta de productos, recibe

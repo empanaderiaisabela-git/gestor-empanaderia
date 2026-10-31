@@ -4410,6 +4410,32 @@ los pida.
 - Nivel 3. Supabase pasa a 27 migraciones; la migra el dev antes de desplegar.
 - Provisorias P-1 a P-4 en el plan, confirmadas por el dev (P-2 corregida: punto decimal). Decisiones I-1 a I-4 en el plan.
 
+### US-50 · Stock: "Registrar aumento" por porcentaje
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-31 |
+| Tamaño       | M         |
+| Depende de   | US-49     |
+| Plan         | [`docs/plans/US-50-registrar-aumento.md`](docs/plans/US-50-registrar-aumento.md) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como administrador quiero aumentar de una vez, por porcentaje, el costo y el precio de venta de los
+productos de una categoría, de forma que no tenga que cambiarlos uno por uno.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · En Stock, arriba de "Ingresar stock", el botón "Registrar aumento" (sólo el admin) abre un formulario: Categoría, sus productos activos con un tilde cada uno (todos prendidos; en bebidas, una fila por familia) y los porcentajes de costo y de precio de venta. Lo cubren tests de componente · Estimación: 1 h 30 min · Completado: 2026-10-31 15:45
+
+- [x] **CA-2** · "Aplicar aumento" sube costo y precios de lo tildado, al centavo y sin redondeo ($2.750 + 10 % = $3.025). Uno de los porcentajes puede quedar vacío, pero no los dos, y van de más de 0 a 500. Lo nulo queda nulo, y una bebida arrastra su familia. Queda en Auditoría. Lo cubren tests de dominio, service, contrato e integración y un E2E · Estimación: 2 h · Completado: 2026-10-31 15:45
+
+**Notas**
+
+- Nivel 3. Sin migración. Provisorias P-1 y P-2 en el plan.
+
 ### US-43 · Sin web pública por ahora: se entra por `/login`
 
 | Campo        | Valor     |

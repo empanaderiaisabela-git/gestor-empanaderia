@@ -52,7 +52,8 @@ Funciones que ya existen (Sprints 1 a 4):
 - Desde el Sprint 6: los grupos se ven como "Quilmes" y "Sándwich de miga" (US-44); stock mínimo opcional con aviso
   amarillo (US-45); editar un ingreso de stock desde el Historial (US-46); el switch "Jamón extra" en cada pizza del
   carrito, con su precio en "Ingresar stock" (US-47); el lápiz de acceso directo para editar el último ingreso
-  (US-48); bebidas con Bebida, Litros y Sabor, cuyos sabores comparten costo y precio por familia (US-49).
+  (US-48); bebidas con Bebida, Litros y Sabor, cuyos sabores comparten costo y precio por familia (US-49); "Registrar
+  aumento" de costo y precio por porcentaje en una categoría (US-50).
 
 ## 3. Origen: código heredado en remodelación
 
