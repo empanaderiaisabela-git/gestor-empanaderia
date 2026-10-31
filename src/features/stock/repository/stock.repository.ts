@@ -15,7 +15,7 @@ export type NewEntry = { menuItemId: string; quantity: number; unitCost: number;
 export type NewLoss = { menuItemId: string; quantity: number; unitCost: number; reason: string; userId: string };
 export type EntryView = { id: string; menuItemId: string; quantity: number; unitCost: string; providerName: string | null; username: string; createdAt: Date };
 export type ItemRef = { id: string; version: number };
-export type StockChange = { stock?: number; unitCost?: number; prices?: MenuPrices };
+export type StockChange = { stock?: number; unitCost?: number; prices?: MenuPrices; minStock?: number | null };
 
 export type StockRepository = {
   lockItem(id: string): Promise<StockItem | null>;
@@ -36,12 +36,12 @@ export function drizzleStockRepository(executor: Executor = db): StockRepository
     lockItem: async (id) => (await executor.select().from(menuItems).where(eq(menuItems.id, id)).for('update'))[0] ?? null,
     lockGroup: (group) => executor.select().from(menuItems).where(and(eq(menuItems.group, group), eq(menuItems.isBase, false))).orderBy(asc(menuItems.id)).for('update'),
     lockBase: async (group) => (await executor.select().from(menuItems).where(and(eq(menuItems.group, group), eq(menuItems.isBase, true))).for('update'))[0] ?? null,
-    saveItem: async ({ id, version }, { stock, unitCost, prices }) => {
+    saveItem: async ({ id, version }, { stock, unitCost, prices, minStock }) => {
       const cost = unitCost === undefined ? {} : { unitCost: unitCost.toFixed(2) };
       const amount = stock === undefined ? {} : { stock: stock.toFixed(1) };
       const rows = await executor
         .update(menuItems)
-        .set({ ...amount, ...cost, ...(prices ? priceColumns(prices) : {}), version: version + 1, updatedAt: new Date() })
+        .set({ ...amount, ...cost, ...(prices ? priceColumns(prices) : {}), ...(minStock === undefined ? {} : { minStock }), version: version + 1, updatedAt: new Date() })
         .where(and(eq(menuItems.id, id), eq(menuItems.version, version)))
         .returning();
       return rows[0] ?? null;

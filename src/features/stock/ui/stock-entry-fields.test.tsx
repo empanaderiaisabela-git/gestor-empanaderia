@@ -4,10 +4,10 @@ import type { MenuItemDef } from '@/features/menu/domain/menu-item.schema';
 import { StockEntryFields } from './stock-entry-fields';
 import type { EntryValues } from './stock-forms';
 
-const item = (id: string, group: MenuItemDef['group'], name: string): MenuItemDef => ({ id, group, name, unitCost: 100, stock: 3, price1: 1000, price3: null, price6: null, price12: null, isActive: true, isVisible: false, isBase: false, version: 1, createdAt: '', updatedAt: '' });
+const item = (id: string, group: MenuItemDef['group'], name: string): MenuItemDef => ({ id, group, name, unitCost: 100, stock: 3, price1: 1000, price3: null, price6: null, price12: null, isActive: true, isVisible: false, isBase: false, minStock: null, version: 1, createdAt: '', updatedAt: '' });
 const PREPIZZA: MenuItemDef = { ...item('e', 'pizzas', 'Prepizza'), unitCost: null, price1: null, isBase: true };
 const ITEMS = [item('a', 'sanguches', 'Primavera'), item('b', 'sanguches', 'Jamón y queso'), item('c', 'pepsi', 'Quilmes 1,5 L'), item('d', 'pizzas', 'Muzza'), PREPIZZA];
-const BLANK: EntryValues = { category: '', menuItemId: '', quantity: '', unitCost: '', providerId: '', price1: '', price3: '', price6: '', price12: '' };
+const BLANK: EntryValues = { category: '', menuItemId: '', quantity: '', unitCost: '', providerId: '', minStock: '', price1: '', price3: '', price6: '', price12: '' };
 
 function renderFields(values: EntryValues, onChange = vi.fn()): typeof onChange {
   render(<StockEntryFields values={values} errors={{}} items={ITEMS} providers={[]} onChange={onChange} />);

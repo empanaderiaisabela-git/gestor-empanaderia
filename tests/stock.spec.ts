@@ -28,6 +28,19 @@ test.describe('Stock (US-4, US-34)', () => {
     await expect(page.getByText(/Costo para el local \$450 · Sin proveedor · admin/)).toBeVisible();
   });
 
+  test('con un mínimo mayor al stock, el stock se ve amarillo (US-45)', async ({ page }) => {
+    await page.goto('/stock');
+    await page.getByPlaceholder('Buscar gusto o bebida...').filter({ visible: true }).fill('Muzza y pepperoni');
+    await page.getByRole('row', { name: /Muzza y pepperoni/ }).getByTitle('Ingresar stock').click();
+    await page.getByLabel('Cantidad que entra').fill('1');
+    await page.getByLabel('Stock mínimo (opcional)').fill('100');
+    await page.getByRole('button', { name: 'Ingresar', exact: true }).click();
+    await expect(page.getByText('Stock ingresado: Muzza y pepperoni queda con 49')).toBeVisible();
+    const badge = page.getByRole('row', { name: /Muzza y pepperoni/ }).getByTitle('Mínimo: 100');
+    await expect(badge).toHaveText('49');
+    await expect(badge).toHaveClass(/bg-amber-100/);
+  });
+
   test('"Solo sin stock" muestra lo que falta y "Quitar sin stock" lo saca (US-34)', async ({ page }) => {
     await page.goto('/stock');
     const filas = page.getByRole('row').filter({ has: page.getByRole('cell') });

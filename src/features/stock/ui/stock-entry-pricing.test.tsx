@@ -4,7 +4,7 @@ import type { MenuItemDef } from '@/features/menu/domain/menu-item.schema';
 import { StockEntryModal } from './stock-entry-modal';
 import type { StockPanelModel } from './use-stock-panel';
 
-const MUZZA: MenuItemDef = { id: '33333333-3333-4333-8333-333333333333', group: 'pizzas', name: 'Muzza', unitCost: 3000, stock: 0, price1: 11000, price3: null, price6: null, price12: null, isActive: true, isVisible: true, isBase: false, version: 4, createdAt: '', updatedAt: '' };
+const MUZZA: MenuItemDef = { id: '33333333-3333-4333-8333-333333333333', group: 'pizzas', name: 'Muzza', unitCost: 3000, stock: 0, price1: 11000, price3: null, price6: null, price12: null, isActive: true, isVisible: true, isBase: false, minStock: null, version: 4, createdAt: '', updatedAt: '' };
 const PREPIZZA: MenuItemDef = { ...MUZZA, id: '44444444-4444-4444-8444-444444444444', name: 'Prepizza', unitCost: null, price1: null, isBase: true };
 
 function renderModal(submitPricing: StockPanelModel['submitPricing']): StockPanelModel['submitEntry'] {

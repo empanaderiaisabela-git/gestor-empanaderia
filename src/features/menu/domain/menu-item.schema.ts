@@ -35,6 +35,7 @@ export const menuItemRowSchema = z.object({
   isActive: z.boolean(),
   isVisible: z.boolean(),
   isBase: z.boolean(),
+  minStock: z.number().int().nullable(),
   version: z.number(),
   createdAt: timestampSchema,
   updatedAt: timestampSchema,

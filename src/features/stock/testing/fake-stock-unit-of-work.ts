@@ -19,10 +19,10 @@ export function fakeStockRepository(state: FakeState): StockRepository {
     lockItem: async (id) => state.items.find((item) => item.id === id) ?? null,
     lockGroup: async (group) => state.items.filter((item) => item.group === group && !item.isBase).sort((a, b) => (a.id < b.id ? -1 : 1)),
     lockBase: async (group) => state.items.find((item) => item.group === group && item.isBase) ?? null,
-    saveItem: async ({ id, version }, { stock, unitCost, prices }) => {
+    saveItem: async ({ id, version }, { stock, unitCost, prices, minStock }) => {
       const item = state.items.find((row) => row.id === id && row.version === version);
       if (!item) return null;
-      Object.assign(item, { version: version + 1 }, stock === undefined ? {} : { stock: stock.toFixed(1) }, unitCost === undefined ? {} : { unitCost: unitCost.toFixed(2) }, prices ? priceColumns(prices) : {});
+      Object.assign(item, { version: version + 1 }, stock === undefined ? {} : { stock: stock.toFixed(1) }, unitCost === undefined ? {} : { unitCost: unitCost.toFixed(2) }, prices ? priceColumns(prices) : {}, minStock === undefined ? {} : { minStock });
       return { ...item };
     },
     insertEntry: async ({ unitCost, ...entry }) => {

@@ -4139,7 +4139,7 @@ provisorias P-1 a P-10, cómo se cuidan las migraciones, el orden y la trazabili
 | 0   | [T-25](#t-25--backlog-del-sprint-6) | Backlog del Sprint 6 | En revisión | T-24 | 30 min |
 | 1   | [US-44](#us-44--grupos-quilmes-y-sándwich-de-miga) | Grupos: "Quilmes" y "Sándwich de miga" | En revisión | T-25 | 45 min |
 | 2   | [BUG-28](#bug-28--stock-la-categoría-en-un-solo-renglón) | Stock: la categoría en un solo renglón | En revisión | US-44 | 20 min |
-| 3   | [US-45](#us-45--stock-mínimo-opcional-con-aviso-amarillo) | Stock mínimo opcional con aviso amarillo | Pendiente | T-25 | 3 h |
+| 3   | [US-45](#us-45--stock-mínimo-opcional-con-aviso-amarillo) | Stock mínimo opcional con aviso amarillo | En revisión | T-25 | 3 h |
 | 4   | [US-46](#us-46--editar-un-ingreso-de-stock) | Editar un ingreso de stock | Pendiente | US-45 | 4 h |
 | 5   | [US-47](#us-47--jamón-extra-para-pizza) | Jamón extra para pizza | Pendiente | US-46 | 5 h |
 | 6   | [T-26](#t-26--cierre-del-sprint-6) | Cierre del Sprint 6 | Pendiente | todos | 1 h 30 min |
@@ -4226,9 +4226,9 @@ a los sanguches, de forma que los nombres coincidan con lo que vende el local.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
-| Dueño        | —         |
-| Inicio       | —         |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-31 |
 | Tamaño       | M         |
 | Depende de   | T-25      |
 | Plan         | [`docs/plans/sprint-6.md`](docs/plans/sprint-6.md) |
@@ -4240,15 +4240,16 @@ el stock se vea en amarillo cuando baja de ese mínimo y sepa que tengo que repo
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · Migración 0023, aditiva: `menu_items.min_stock` (entero, opcional) con su check. El test `additive-migrations.test.ts` falla si una migración desde la 0023 borra, renombra o cambia datos. Un test de integración prueba que los datos de hoy pasan la migración · Estimación: 40 min · Completado: —
+- [x] **CA-1** · Migración 0023, aditiva: `menu_items.min_stock` (entero, opcional) con su check. El test `additive-migrations.test.ts` falla si una migración desde la 0023 borra, renombra o cambia datos. Un test de integración prueba que los datos de hoy pasan la migración · Estimación: 40 min · Completado: 2026-10-31 01:00
 
-- [ ] **CA-2** · "Ingresar stock" tiene el campo opcional "Stock mínimo" en las categorías con cantidad (empanadas, sándwiches, bebidas, prepizzas y panes de ciabatta). Arranca con el mínimo actual del gusto y vacío es "sin mínimo" (P-5). Acepta enteros de 1 a 100.000. Lo cubren tests de schema, service, contrato y componente · Estimación: 1 h 20 min · Completado: —
+- [x] **CA-2** · "Ingresar stock" tiene el campo opcional "Stock mínimo" en las categorías con cantidad (empanadas, sándwiches, bebidas, prepizzas y panes de ciabatta). Arranca con el mínimo actual del gusto y vacío es "sin mínimo" (P-5). Acepta enteros de 1 a 100.000. Lo cubren tests de schema, service, contrato y componente · Estimación: 1 h 20 min · Completado: 2026-10-31 01:00
 
-- [ ] **CA-3** · El stock se ve amarillo cuando es menor al mínimo, rojo sin stock y verde en el resto (P-4), en la tabla y en la tarjeta del celular, también para el vendedor. Lo cubren tests de dominio y de componente y un E2E · Estimación: 1 h · Completado: —
+- [x] **CA-3** · El stock se ve amarillo cuando es menor al mínimo, rojo sin stock y verde en el resto (P-4), en la tabla y en la tarjeta del celular, también para el vendedor. Lo cubren tests de dominio y de componente y un E2E · Estimación: 1 h · Completado: 2026-10-31 01:00
 
 **Notas**
 
 - Nivel 3: schema y migración.
+- I-5 (`sprint-6.md`): el número del stock lleva el título "Mínimo: N" cuando el gusto tiene mínimo, para no depender sólo del color.
 
 ### US-46 · Editar un ingreso de stock
 

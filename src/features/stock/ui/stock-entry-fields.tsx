@@ -5,7 +5,8 @@ import { costLabelOf } from '@/features/menu/domain/menu-terms';
 import { CATEGORY_LABELS, categoryOf, isBaseCategory, isPriceOnlyCategory, STOCK_CATEGORIES } from '@/features/stock/domain/stock-categories';
 import { formatMoney } from '@/lib/format-money';
 import type { ProviderDef } from '@/features/provider/domain/provider.schema';
-import { type EntryValues, type FormErrors, pricingValuesOf } from './stock-forms';
+import { MinStockField, ProviderField } from './stock-entry-optional-fields';
+import { type EntryValues, type FormErrors, pricingValuesOf, textOf } from './stock-forms';
 import { StockPriceFields } from './stock-price-fields';
 
 type StockEntryFieldsProps = {
@@ -20,10 +21,14 @@ function ItemSelects({ values, errors, items, onChange }: Pick<StockEntryFieldsP
   const inCategory = items.filter((item) => categoryOf(item) === values.category);
   const isBase = isBaseCategory(values.category);
   const pick = (menuItemId: string): void => {
-    const item = isPriceOnlyCategory(values.category) ? items.find((candidate) => candidate.id === menuItemId) : undefined;
-    onChange(item ? { ...values, ...pricingValuesOf(item), menuItemId } : { ...values, menuItemId });
+    const item = items.find((candidate) => candidate.id === menuItemId);
+    if (!item) return onChange({ ...values, menuItemId });
+    onChange(isPriceOnlyCategory(values.category) ? { ...values, ...pricingValuesOf(item), menuItemId } : { ...values, menuItemId, minStock: textOf(item.minStock) });
   };
-  const choose = (category: string): void => onChange({ ...values, category, menuItemId: isBaseCategory(category) ? (items.find((item) => categoryOf(item) === category)?.id ?? '') : '' });
+  const choose = (category: string): void => {
+    const base = isBaseCategory(category) ? items.find((item) => categoryOf(item) === category) : undefined;
+    onChange({ ...values, category, menuItemId: base?.id ?? '', minStock: textOf(base?.minStock) });
+  };
   return (
     <>
       <FormField label='Categoría' error={isBase ? errors.menuItemId : undefined}>
@@ -58,23 +63,9 @@ function CostFields({ values, errors, items, providers, onChange }: StockEntryFi
         </FormField>
       )}
       {item && !item.isBase && <StockPriceFields item={item} values={values} errors={errors} onChange={onChange} />}
+      {!isPriceOnlyCategory(values.category) && values.category !== '' && <MinStockField values={values} errors={errors} onChange={onChange} />}
       {!isPriceOnlyCategory(values.category) && <ProviderField values={values} errors={errors} providers={providers} onChange={onChange} />}
     </>
-  );
-}
-
-function ProviderField({ values, errors, providers, onChange }: Omit<StockEntryFieldsProps, 'items'>): JSX.Element {
-  return (
-    <FormField label='Proveedor (opcional)' error={errors.providerId}>
-      <select value={values.providerId} onChange={(event) => onChange({ ...values, providerId: event.target.value })} className={inputClass(Boolean(errors.providerId))}>
-        <option value=''>Sin proveedor</option>
-        {providers.filter((provider) => provider.isActive).map((provider) => (
-          <option key={provider.id} value={provider.id}>
-            {provider.name}
-          </option>
-        ))}
-      </select>
-    </FormField>
   );
 }
 

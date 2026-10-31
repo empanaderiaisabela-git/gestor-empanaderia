@@ -162,6 +162,13 @@
       "when": 1793330664512,
       "tag": "0022_cliente-en-la-venta",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1793418276108,
+      "tag": "0023_stock-minimo",
+      "breakpoints": true
     }
   ]
 }

@@ -5,6 +5,7 @@ import type { MenuItemDef } from '@/features/menu/domain/menu-item.schema';
 import { priceList } from '@/features/menu/domain/menu-price-list';
 import { COST_TERM, SALE_PRICE_TERM } from '@/features/menu/domain/menu-terms';
 import { CATEGORY_LABELS, categoryOf, hasOwnStock } from '@/features/stock/domain/stock-categories';
+import { type StockLevel, stockLevel } from '@/features/stock/domain/stock-level';
 import { formatMoney } from '@/lib/format-money';
 import type { StockDialog } from './use-stock-panel';
 
@@ -23,11 +24,17 @@ function kindsOf(item: MenuItemDef): DialogKind[] {
   return hasOwnStock(item) ? ['entry', 'loss', 'pricing', 'history'] : ['pricing'];
 }
 
+const TONES: Record<StockLevel, string> = {
+  empty: 'bg-red-50 text-red-700 dark:bg-red-500/10 dark:text-red-400',
+  low: 'bg-amber-100 text-amber-800 dark:bg-amber-400/15 dark:text-amber-300',
+  ok: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400',
+};
+
 export function StockBadge({ item }: { item: MenuItemDef }): JSX.Element {
   if (!hasOwnStock(item)) return <>—</>;
-  const empty = item.stock <= 0;
-  const tone = empty ? 'bg-red-50 text-red-700 dark:bg-red-500/10 dark:text-red-400' : 'bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400';
-  return <span className={`px-2.5 py-0.5 rounded-full text-sm font-bold ${tone}`}>{empty ? 'Sin stock' : item.stock.toLocaleString('es-AR')}</span>;
+  const level = stockLevel(item);
+  const title = item.minStock === null ? undefined : `Mínimo: ${item.minStock.toLocaleString('es-AR')}`;
+  return <span title={title} className={`px-2.5 py-0.5 rounded-full text-sm font-bold ${TONES[level]}`}>{level === 'empty' ? 'Sin stock' : item.stock.toLocaleString('es-AR')}</span>;
 }
 
 export function StockButtons({ item, actions }: { item: MenuItemDef; actions: StockRowActions }): JSX.Element {

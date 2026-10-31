@@ -43,6 +43,10 @@ Muestra el stock de cada gusto y bebida activos, agrupados por grupo, y permite:
   cargan con "Costo y precio" de su fila o desde "Ingresar stock": las categorías Pizzas y Ciabattas piden el gusto,
   el costo y el precio (precargados), sin cantidad ni proveedor, y guardan con `setStockPricingAction` (BUG-25).
   Prepizza y Pan de ciabatta toman la base sin pedir gusto (BUG-23). "Aplicar este precio a todos los gustos" no toca la base (`lockGroup` la excluye).
+- **Stock mínimo (US-45)**: opcional, por gusto o base, entero de 1 a 100.000. Se carga en "Ingresar stock" en todo
+  lo que se stockea por cantidad (no en Pizzas ni Ciabattas). El campo arranca con el mínimo actual; vacío es "sin
+  mínimo" (P-5). El stock se ve amarillo cuando es **menor** al mínimo, rojo sin stock y verde en el resto (P-4),
+  también para el vendedor.
 - **Stock es sólo del administrador** (dev, 2026-10-26, US-16): el vendedor no ve la sección ni puede ingresar
   stock, registrar mermas o leer el historial.
 - Cada movimiento sube la `version` del gusto: si alguien lo estaba editando en Alta de productos, recibe
@@ -79,6 +83,8 @@ La grilla lee los gustos con `fetchMenuItems` del feature `menu`. La tabla (desd
   deja en 0 el stock de los gustos de Pizzas y Ciabattas). El índice único parcial `menu_items_one_base_per_group`
   permite una por grupo, y el check `menu_items_base_check` exige que no tengan costo ni precios, que estén en Pizzas
   o Ciabattas y que su stock sea entero.
+- El stock mínimo vive en `menu_items.min_stock` (`integer`, nullable, check `menu_items_min_stock_check`: nulo o de
+  1 a 100.000; migración `0023_stock-minimo`, US-45).
 - El stock vive en `menu_items.stock`. Un gusto con ingresos o mermas ya no se borra (`HAS_RELATIONS`).
 - Auditoría: `CREAR` / `STOCK_ENTRY` y `PÉRDIDA` / `STOCK_LOSS`, con el stock de antes y de después. "Costo y
   precio" audita `ACTUALIZAR` / `MENU_ITEM` con el nombre, el costo, los precios y `appliedTo` (cuántos gustos
@@ -94,6 +100,7 @@ La grilla lee los gustos con `fetchMenuItems` del feature `menu`. La tabla (desd
 | Sin sesión | `UNAUTHENTICATED` | No autorizado (Token faltante) | `actions/stock-actions.contract.test.ts` |
 | El vendedor ingresa stock o registra una merma (US-16) | `FORBIDDEN` | Solo los administradores pueden realizar esta acción | `stock-actions.contract.test.ts` |
 | Cantidad ≤ 0 o con decimales (también la merma, desde US-29); motivo vacío | `VALIDATION` | Los datos proporcionados no son válidos. | `stock-actions.contract.test.ts`, `domain/stock.schema.test.ts` |
+| Stock mínimo de 0, con decimales o mayor a 100.000 (US-45) | `VALIDATION` | Los datos proporcionados no son válidos. | `actions/stock-min-stock.contract.test.ts`, `domain/stock.schema.test.ts` |
 | Ingreso o pérdida de un gusto de Pizzas o Ciabattas (US-29) | `VALIDATION` | Los datos proporcionados no son válidos. | `stock-actions.contract.test.ts`, `services/stock-bases.test.ts` |
 | Ingreso de una base con costo o precios (US-29) | `VALIDATION` | Los datos proporcionados no son válidos. | `services/stock-bases.test.ts` |
 | "Costo y precio" de una base (US-29) | `VALIDATION` | Los datos proporcionados no son válidos. | `services/stock-bases.test.ts` |
@@ -115,11 +122,11 @@ La grilla lee los gustos con `fetchMenuItems` del feature `menu`. La tabla (desd
 - Barra con búsqueda, el desplegable "Ordenar Stock" (orden por categoría, stock creciente o decreciente, solo sin
   stock o quitar sin stock; US-34, `domain/stock-order.ts`), el filtro por categoría ("Filtrar Stock") e "Ingresar
   stock". Al ordenar, los gustos sin stock propio van al final y no cuentan como "sin stock" (D-16).
-- Grilla con categoría, gusto, stock ("Sin stock" en rojo), precio (los del gusto, uno por renglón, o "Sin precio";
+- Grilla con categoría, gusto, stock ("Sin stock" en rojo, amarillo bajo el mínimo con el título "Mínimo: N"; US-45), precio (los del gusto, uno por renglón, o "Sin precio";
   BUG-22) y costo ("Sin costo"). Las acciones de cada fila son ingresar, pérdida, "Costo y precio" (ícono `Tags`) e
   historial. La base es su propia categoría, con "—" en gusto, precio y costo y sólo ingresar y pérdida; los gustos de
   Pizzas y Ciabattas muestran "—" en Stock y sólo "Costo y precio" (US-29).
-- Modales: `StockEntryModal` (categoría, gusto, cantidad, costo, precios de venta y proveedor; en Prepizza y Pan de
+- Modales: `StockEntryModal` (categoría, gusto, cantidad, costo, precios de venta, stock mínimo y proveedor; en Prepizza y Pan de
   ciabatta, sin gusto: sólo cantidad y proveedor; en Pizzas y Ciabattas, gusto, costo y precio, y guarda como "Costo y
   precio"), `StockLossModal`,
   `StockPricingModal` (costo, precios del grupo precargados y la casilla "Aplicar este precio a todos los gustos de

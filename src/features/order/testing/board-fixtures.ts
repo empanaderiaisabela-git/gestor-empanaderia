@@ -1,7 +1,7 @@
 import type { MenuItemDef } from '@/features/menu/domain/menu-item.schema';
 
 export function menuItem(overrides: Partial<MenuItemDef> & Pick<MenuItemDef, 'id' | 'group' | 'name'>): MenuItemDef {
-  return { unitCost: 100, stock: 50, price1: null, price3: null, price6: null, price12: null, isActive: true, isVisible: false, isBase: false, version: 1, createdAt: '', updatedAt: '', ...overrides };
+  return { unitCost: 100, stock: 50, price1: null, price3: null, price6: null, price12: null, isActive: true, isVisible: false, isBase: false, minStock: null, version: 1, createdAt: '', updatedAt: '', ...overrides };
 }
 
 const EMPANADA_PRICES = { price1: 1200, price3: 3400, price6: 6500, price12: 12000 };

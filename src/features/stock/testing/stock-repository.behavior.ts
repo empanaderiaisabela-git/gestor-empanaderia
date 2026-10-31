@@ -42,6 +42,13 @@ export function describeStockRepository(label: string, setup: () => Promise<Stoc
       expect(await harness.repository.saveItem({ id: harness.itemId, version: 1 }, { unitCost: 3100, prices: { price1: 12500 } })).toMatchObject({ stock: '2.5', unitCost: '3100.00', price1: '12500.00', version: 2 });
     });
 
+    it('guarda el stock mínimo, lo conserva si no viene y lo borra con null (US-45)', async () => {
+      const { repository, itemId } = harness;
+      expect(await repository.saveItem({ id: itemId, version: 1 }, { stock: 3, minStock: 5 })).toMatchObject({ minStock: 5, version: 2 });
+      expect(await repository.saveItem({ id: itemId, version: 2 }, { stock: 4 })).toMatchObject({ minStock: 5 });
+      expect(await repository.saveItem({ id: itemId, version: 3 }, { minStock: null })).toMatchObject({ minStock: null, stock: '4.0' });
+    });
+
     it('sin costo nuevo, conserva el costo', async () => {
       const before = await harness.repository.lockItem(harness.itemId);
       expect(await harness.repository.saveItem({ id: harness.itemId, version: 1 }, { stock: 3 })).toMatchObject({ unitCost: before?.unitCost });

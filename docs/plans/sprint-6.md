@@ -229,6 +229,15 @@ Cada una dice de dónde salió la pregunta. Se eligió siempre lo que no borra d
   ir en dos renglones, como ya pasaba.
 - **Si el dev responde otra cosa**: se ajustan los anchos. Nivel 1.
 
+#### I-5 · El stock bajo el mínimo también se avisa sin color (US-45)
+
+- **Pregunta**: ¿alcanza con el amarillo para avisar que un gusto está bajo el mínimo?
+- **De dónde sale**: US-45 CA-3 pide el color; la regla de accesibilidad de no avisar sólo con color (WCAG 1.4.1)
+  y quien no distingue bien el amarillo del verde.
+- **Elegido**: el número del stock lleva el título "Mínimo: N" (se ve al pasar el mouse) cuando el gusto tiene
+  mínimo. El vendedor recibe el mínimo para ver el mismo color; no es un dato sensible como el costo.
+- **Si el dev responde otra cosa**: se saca el título. Nivel 1.
+
 ## Resumen para el dev
 
 Lo que entró en cada commit, en lenguaje simple. Todo va a `develop` en el GitHub público. Nunca entran secretos,
@@ -249,3 +258,15 @@ sin commitear.
 1. **Stock más prolijo**: "Coca-Cola", "Sándwich de miga" y "Pan de ciabatta" se leen en un solo renglón.
 2. **Columnas ordenadas**: cada columna de la tabla tiene su ancho, así los precios ya no se montan sobre el costo.
 3. **Pruebas y documentos**: una prueba automática nueva cuida que la categoría no se vuelva a cortar.
+
+### US-45 · Stock mínimo con aviso amarillo
+
+1. **Mínimo opcional**: al ingresar stock aparece "Stock mínimo (opcional)", con el mínimo que ya tenía el producto.
+   Si se deja vacío, el producto queda sin mínimo.
+2. **Aviso amarillo**: si el stock baja de ese mínimo (por ejemplo, mínimo 5 y quedan 4), el número se ve en
+   amarillo. Sin stock sigue en rojo. El vendedor ve los mismos colores.
+3. **Base de datos**: se agregó una columna nueva para guardar el mínimo. No borra ni cambia nada de lo que hay; tu
+   base local ya la tiene. Supabase la migrás vos antes de desplegar.
+4. **Protección de migraciones**: una prueba automática nueva avisa si una migración futura intenta borrar,
+   renombrar o modificar datos.
+5. **Pruebas y documentos**: pruebas de cada parte (también una que usa la pantalla real) y el documento de Stock.

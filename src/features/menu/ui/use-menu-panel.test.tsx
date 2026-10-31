@@ -12,7 +12,7 @@ vi.mock('@/features/menu/actions/delete-menu-item', () => ({ deleteMenuItemActio
 vi.mock('@/features/menu/actions/create-menu-item', () => ({ createMenuItemAction: vi.fn() }));
 vi.mock('@/features/menu/actions/update-menu-item', () => ({ updateMenuItemAction: vi.fn() }));
 
-const item = (overrides: Partial<MenuItemDef>): MenuItemDef => ({ id: 'a', group: 'empanadas', name: 'Carne', unitCost: 1, stock: 0, price1: null, price3: null, price6: null, price12: null, isActive: true, isVisible: false, isBase: false, version: 4, createdAt: '', updatedAt: '', ...overrides });
+const item = (overrides: Partial<MenuItemDef>): MenuItemDef => ({ id: 'a', group: 'empanadas', name: 'Carne', unitCost: 1, stock: 0, price1: null, price3: null, price6: null, price12: null, isActive: true, isVisible: false, isBase: false, minStock: null, version: 4, createdAt: '', updatedAt: '', ...overrides });
 const ITEMS = [item({}), item({ id: 'p', group: 'pizzas', name: 'Prepizza', isBase: true }), item({ id: 'b', group: 'pizzas', name: 'Muzza', price1: 10 }), item({ id: 'c', name: 'Humita', isActive: false })];
 
 describe('useMenuPanel', () => {

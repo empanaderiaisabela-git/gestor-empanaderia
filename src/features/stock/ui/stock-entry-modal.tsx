@@ -6,7 +6,7 @@ import { ErrorAlert } from '@/components/ui/alert';
 import { ResponsiveModal } from '@/components/ui/responsive-modal';
 import { categoryOf, isPriceOnlyCategory } from '@/features/stock/domain/stock-categories';
 import { StockEntryFields } from './stock-entry-fields';
-import { type EntryValues, type FormErrors, type Parsed, parseEntry, parsePricing } from './stock-forms';
+import { type EntryValues, type FormErrors, type Parsed, parseEntry, parsePricing, textOf } from './stock-forms';
 import type { StockPanelModel } from './use-stock-panel';
 
 type Setters = { setErrors: (errors: FormErrors) => void; setServerError: (error: string | null) => void; setPending: (pending: boolean) => void };
@@ -21,12 +21,13 @@ async function run<T>(parsed: Parsed<T>, send: (input: T) => Promise<string | nu
   setters.setPending(false);
 }
 
-const blank = (category: string, menuItemId: string): EntryValues => ({ category, menuItemId, quantity: '', unitCost: '', providerId: '', price1: '', price3: '', price6: '', price12: '' });
+const blank = (category: string, menuItemId: string, minStock = ''): EntryValues => ({ category, menuItemId, quantity: '', unitCost: '', providerId: '', minStock, price1: '', price3: '', price6: '', price12: '' });
 
 export function StockEntryModal({ model }: { model: StockPanelModel }): JSX.Element {
   const isOpen = model.dialog?.kind === 'entry';
   const preselectedItem = model.dialog?.item ?? null;
   const preselected = preselectedItem?.id ?? '';
+  const preselectedMin = textOf(preselectedItem?.minStock);
   const preselectedCategory = preselectedItem ? categoryOf(preselectedItem) : '';
   const [values, setValues] = useState<EntryValues>(blank('', ''));
   const [errors, setErrors] = useState<FormErrors>({});
@@ -35,10 +36,10 @@ export function StockEntryModal({ model }: { model: StockPanelModel }): JSX.Elem
 
   useEffect(() => {
     if (!isOpen) return;
-    setValues(blank(preselectedCategory, preselected));
+    setValues(blank(preselectedCategory, preselected, preselectedMin));
     setErrors({});
     setServerError(null);
-  }, [isOpen, preselected, preselectedCategory]);
+  }, [isOpen, preselected, preselectedCategory, preselectedMin]);
 
   const priceOnly = isPriceOnlyCategory(values.category);
   const setters = { setErrors, setServerError, setPending };

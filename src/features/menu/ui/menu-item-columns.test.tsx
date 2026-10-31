@@ -4,7 +4,7 @@ import type { MenuItemDef } from '@/features/menu/domain/menu-item.schema';
 import { renderMenuItemCard } from './menu-item-card';
 import { getMenuItemColumns, type MenuItemRowActions } from './menu-item-columns';
 
-const BASE: MenuItemDef = { id: 'x', group: 'empanadas', name: 'Carne', unitCost: 400, stock: 24, price1: null, price3: null, price6: null, price12: null, isActive: true, isVisible: false, isBase: false, version: 1, createdAt: '', updatedAt: '' };
+const BASE: MenuItemDef = { id: 'x', group: 'empanadas', name: 'Carne', unitCost: 400, stock: 24, price1: null, price3: null, price6: null, price12: null, isActive: true, isVisible: false, isBase: false, minStock: null, version: 1, createdAt: '', updatedAt: '' };
 
 function rowActions(): MenuItemRowActions {
   return { onEdit: vi.fn(), onToggleActive: vi.fn(), onDelete: vi.fn(), onToggleVisible: vi.fn(), onPhotos: vi.fn() };

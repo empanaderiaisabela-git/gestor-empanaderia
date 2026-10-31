@@ -32,9 +32,9 @@ async function registerEntry(scope: StockScope, caller: Caller, input: StockEntr
   const current = await lockedItem(scope, input.menuItemId);
   const { unitCost, itemCost, itemPrices } = planEntry(current, input);
   const stockBefore = Number(current.stock);
-  const item = saved(await scope.stock.saveItem(current, { stock: stockBefore + input.quantity, unitCost: itemCost, prices: itemPrices }));
+  const item = saved(await scope.stock.saveItem(current, { stock: stockBefore + input.quantity, unitCost: itemCost, prices: itemPrices, minStock: input.minStock }));
   const entry = await scope.stock.insertEntry({ menuItemId: current.id, quantity: input.quantity, unitCost, providerId: input.providerId ?? null, userId: caller.id });
-  const detail = { name: current.name, quantity: input.quantity, unitCost, ...(input.prices ? { prices: input.prices } : {}), stockBefore, stockAfter: Number(item.stock) };
+  const detail = { name: current.name, quantity: input.quantity, unitCost, ...(input.prices ? { prices: input.prices } : {}), ...(input.minStock === undefined ? {} : { minStock: input.minStock }), stockBefore, stockAfter: Number(item.stock) };
   await scope.audit({ userId: caller.id, action: 'CREAR', entity: 'STOCK_ENTRY', entityId: entry.id, detail });
   return { item, entry };
 }
