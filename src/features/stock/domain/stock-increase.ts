@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { litersText, sameFamily } from '@/features/menu/domain/drink';
+import { sameFamily, sizeOf } from '@/features/menu/domain/drink';
 import type { MenuItemDef } from '@/features/menu/domain/menu-item.schema';
 import { round2 } from '@/features/order/domain/order-pricing';
 
@@ -34,7 +34,7 @@ export function increaseRowsOf(items: readonly MenuItemDef[]): IncreaseRow[] {
   }
   return rows.map((row) => {
     const first = items.find((item) => item.id === row.key);
-    const named = row.ids.length > 1 && first?.drinkName && first.liters !== null;
-    return named ? { ...row, label: `${first.drinkName} ${litersText(first.liters ?? 0)} (${row.ids.length} sabores)` } : row;
+    const amount = first ? sizeOf(first) : null;
+    return row.ids.length > 1 && first?.drinkName && amount ? { ...row, label: `${first.drinkName} ${amount} (${row.ids.length} sabores)` } : row;
   });
 }

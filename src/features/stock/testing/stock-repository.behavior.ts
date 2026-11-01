@@ -44,7 +44,7 @@ export function describeStockRepository(label: string, setup: () => Promise<Stoc
 
     it('guarda el stock mínimo, lo conserva si no viene y lo borra con null (US-45)', async () => {
       const { repository, itemId } = harness;
-      expect(await repository.saveItem({ id: itemId, version: 1 }, { stock: 3, minStock: 5 })).toMatchObject({ minStock: 5, drinkName: null, liters: null, flavor: null, version: 2 });
+      expect(await repository.saveItem({ id: itemId, version: 1 }, { stock: 3, minStock: 5 })).toMatchObject({ minStock: 5, drinkName: null, liters: null, drinkSize: null, flavor: null, version: 2 });
       expect(await repository.saveItem({ id: itemId, version: 2 }, { stock: 4 })).toMatchObject({ minStock: 5 });
       expect(await repository.saveItem({ id: itemId, version: 3 }, { minStock: null })).toMatchObject({ minStock: null, stock: '4.0' });
     });

@@ -4453,7 +4453,40 @@ productos de una categoría, de forma que no tenga que cambiarlos uno por uno.
 
 **Actual**: esas bebidas no tienen los tres campos guardados, así que el formulario abría en blanco.
 
-- [x] **CA-1** · El formulario los toma del nombre: "Aquarius 1,5 L Manzana" da Aquarius, 1.5 y Manzana; "Coca-Cola 500 ml", 0.5 L; sin litros, el nombre entero queda en Bebida. Lo cubre `menu-item-form.test.ts` · Estimación: 15 min · Completado: 2026-10-31 19:27
+- [x] **CA-1** · El formulario los toma del nombre: "Aquarius 1,5 L Manzana" da Aquarius, 1.5 L y Manzana; "Coca-Cola 500 ml", 500 ml; sin litros, el nombre entero queda en Bebida. Lo cubre `menu-item-form.test.ts` · Estimación: 15 min · Completado: 2026-10-31 19:27
+
+### US-51 · Hotfix 6.1: litros como texto y el nombre arriba al editar
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Hecho     |
+| Dueño        | Agente    |
+| Inicio       | 2026-10-31 |
+| Tamaño       | M         |
+| Depende de   | US-49, BUG-29 |
+| Plan         | [`docs/plans/US-51-litros-como-texto.md`](docs/plans/US-51-litros-como-texto.md) |
+| Merge        | squash en `develop`, 2026-10-31 |
+| Horas reales | 1 h 30 min |
+
+**Historia**: Como dueño del local quiero escribir los litros de una bebida como texto libre ("500CC", "1 L", "1.5L")
+y ver el nombre completo arriba del formulario al editarla, de forma que las bebidas se carguen como las nombra el
+proveedor y no tenga que adivinar qué estoy editando.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · "Editar producto", en Alta de productos, muestra arriba del formulario el nombre completo del producto. Lo cubre `menu-item-form-modal.test.tsx` · Estimación: 20 min · Completado: 2026-10-31 21:36
+
+- [x] **CA-2** · Migración 0027, aditiva: `menu_items.drink_size varchar(10)` y el check de bebidas acepta texto o los litros viejos. Ninguna bebida se rompe. El guard de migraciones acepta recrear un check en la misma migración (DROP + ADD). Lo cubren `additive-migrations.test.ts` y `litros-como-texto.migration.int.test.ts` · Estimación: 45 min · Completado: 2026-10-31 21:36
+
+- [x] **CA-3** · Bebida, Litros o mililitros (1 a 8 caracteres, la coma queda punto) y Sabor; el nombre se arma tal cual ("Aquarius 1.5L"). La familia es grupo + bebida + litros exactos, también en Stock y en "Registrar aumento". Lo cubren tests de dominio, service, contrato y componente · Estimación: 1 h 30 min · Completado: 2026-10-31 21:36
+
+- [x] **CA-4** · Las bebidas de US-49 siguen leyéndose ("1.5 L") y se pasan al texto al editarlas. Los E2E de stock-precios y aumento cargan "1.5L" y "500CC" · Estimación: 30 min · Completado: 2026-10-31 21:36
+
+**Notas**
+
+- Nivel 3. Hotfix de Sprint 6.1 pedido por el dev: no se abre Sprint 7. Supabase quedó en 28 migraciones (la migró el dev el 2026-10-31 21:30, antes de `main`).
+- D-5 de `sprint-6.md` (migraciones sólo aditivas) se mantiene: la 0027 sólo agrega una columna y recrea un check.
+- `liters` se conserva como legado de lectura; lo nuevo se escribe en `drink_size`.
 
 ### US-43 · Sin web pública por ahora: se entra por `/login`
 

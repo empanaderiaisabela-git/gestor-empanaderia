@@ -6,7 +6,7 @@ import { createStockService, type StockService } from './stock.service';
 const CALLER = { id: '00000000-0000-4000-8000-00000000000a' };
 const CARNE = stockItem({ id: '11111111-1111-4111-8111-111111111111', name: 'Carne', unitCost: '1000.00', price1: '2750.00', price3: '7500.00', price6: '14000.00', price12: '26000.00' });
 const POLLO = stockItem({ id: '22222222-2222-4222-8222-222222222222', name: 'Pollo', unitCost: null, price1: '2500.00', price3: '7000.00', price6: '13000.00', price12: '24000.00' });
-const drink = (id: string, flavor: string) => stockItem({ id, group: 'coca_cola', name: `Aquarius 1.5 L ${flavor}`, drinkName: 'Aquarius', liters: '1.500', flavor, unitCost: '900.00', price1: '2500.00' });
+const drink = (id: string, flavor: string) => stockItem({ id, group: 'coca_cola', name: `Aquarius 1.5L ${flavor}`, drinkName: 'Aquarius', drinkSize: '1.5L', flavor, unitCost: '900.00', price1: '2500.00' });
 const [MANZANA, PERA] = [drink('33333333-3333-4333-8333-333333333333', 'Manzana'), drink('44444444-4444-4444-8444-444444444444', 'Pera')];
 
 describe('registrar aumento (US-50 CA-2)', () => {

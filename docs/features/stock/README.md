@@ -60,10 +60,11 @@ Muestra el stock de cada gusto y bebida activos, agrupados por grupo, y permite:
 - **Jamón extra para pizza (US-47)**: es una categoría más de "Ingresar stock" que pide sólo el "Precio de venta",
   precargado con el actual, y guarda con "Guardar" (`setHamPriceAction`). No es un gusto: no aparece en la tabla de
   Stock, en los filtros ni en Alta de productos. Detalle en `docs/features/menu/README.md`.
-- **Bebidas por familia (US-49)**: en Coca-Cola y Quilmes, "Ingresar stock" elige Bebida → Litros → Sabor. Una
-  bebida cargada antes de US-49 se elige directo en Bebida. El primer sabor de una familia pide costo y precio
-  (`MISSING_COST` y `MISSING_PRICE`); los demás los traen precargados, con el proveedor del último ingreso de la
-  familia (P-4). Costo y precio son de la familia: un ingreso que los trae, "Costo y precio" (que dice "Se
+- **Bebidas por familia (US-51)**: en Coca-Cola y Quilmes, "Ingresar stock" elige Bebida → Litros o mililitros →
+  Sabor. Litros es el texto que se cargó en el alta ("500CC", "1.5L") y la familia es grupo + bebida + litros
+  exactos. Una bebida cargada antes de US-49 se elige directo en Bebida. El primer sabor de una familia pide costo y
+  precio (`MISSING_COST` y `MISSING_PRICE`); los demás los traen precargados, con el proveedor del último ingreso de
+  la familia (P-4). Costo y precio son de la familia: un ingreso que los trae, "Costo y precio" (que dice "Se
   aplica a los N sabores", sin la casilla) o la edición de un ingreso los guardan en todos sus sabores
   (`services/stock-family.ts`, `lockFamily`). El stock y el mínimo son de cada sabor (P-3).
 - **Registrar aumento (US-50)**: el botón "Registrar aumento", arriba de "Ingresar stock", abre Categoría (sin Prepizza ni

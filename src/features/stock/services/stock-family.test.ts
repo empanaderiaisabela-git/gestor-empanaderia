@@ -4,8 +4,8 @@ import { stockItem } from '../testing/stock-item';
 import { createStockService, type StockService } from './stock.service';
 
 const CALLER = { id: '00000000-0000-4000-8000-00000000000a' };
-const drink = (id: string, flavor: string, liters = '1.500') => stockItem({ id, group: 'coca_cola', name: `Aquarius ${liters} L ${flavor}`, drinkName: 'Aquarius', liters, flavor, unitCost: null, stock: '0.0' });
-const [MANZANA, PERA, POMELO, UN_LITRO] = [drink('11111111-1111-4111-8111-111111111111', 'Manzana'), drink('22222222-2222-4222-8222-222222222222', 'Pera'), drink('33333333-3333-4333-8333-333333333333', 'Pomelo'), drink('44444444-4444-4444-8444-444444444444', 'Pera', '1.000')];
+const drink = (id: string, flavor: string, size = '1.5L') => stockItem({ id, group: 'coca_cola', name: `Aquarius ${size} ${flavor}`, drinkName: 'Aquarius', drinkSize: size, flavor, unitCost: null, stock: '0.0' });
+const [MANZANA, PERA, POMELO, UN_LITRO] = [drink('11111111-1111-4111-8111-111111111111', 'Manzana'), drink('22222222-2222-4222-8222-222222222222', 'Pera'), drink('33333333-3333-4333-8333-333333333333', 'Pomelo'), drink('44444444-4444-4444-8444-444444444444', 'Pera', '1L')];
 
 describe('bebidas: la familia comparte costo y precio (US-49 CA-3 y CA-4)', () => {
   let fake: FakeStockUnitOfWork;

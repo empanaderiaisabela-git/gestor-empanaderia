@@ -23,8 +23,8 @@ function DrinkFields({ values, errors, onChange, drinkNames = [] }: Omit<MenuIte
           {drinkNames.map((name) => <option key={name} value={name} />)}
         </datalist>
       </FormField>
-      <FormField label='Litros' error={errors.liters}>
-        <input inputMode='decimal' value={values.liters} onChange={(event) => onChange({ ...values, liters: event.target.value })} placeholder='Ej: 1.5' className={inputClass(Boolean(errors.liters))} />
+      <FormField label='Litros o mililitros' error={errors.size}>
+        <input value={values.size} onChange={(event) => onChange({ ...values, size: event.target.value })} placeholder='Ej: 1.5L o 500CC' className={inputClass(Boolean(errors.size))} />
       </FormField>
       <FormField label='Sabor (opcional)' error={errors.flavor}>
         <input value={values.flavor} onChange={(event) => onChange({ ...values, flavor: event.target.value })} placeholder='Ej: Manzana' className={inputClass(Boolean(errors.flavor))} />

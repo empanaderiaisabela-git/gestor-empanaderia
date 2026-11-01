@@ -1,12 +1,12 @@
 import { z } from 'zod';
-import { DRINK_GROUPS, drinkName, flavor, liters } from './drink';
+import { DRINK_GROUPS, drinkName, flavor, size } from './drink';
 import { MENU_GROUPS } from './menu-groups';
 
 const name = z.string('El nombre es obligatorio').trim().min(1, 'El nombre es obligatorio').max(60, 'El nombre no puede superar los 60 caracteres');
 const version = z.number().int().min(1);
 
 const FOOD_GROUPS = MENU_GROUPS.filter((group) => !DRINK_GROUPS.some((drink) => drink === group));
-const drinkFields = { drinkName, liters, flavor: flavor.optional() };
+const drinkFields = { drinkName, size, flavor: flavor.optional() };
 
 export const foodCreateSchema = z.strictObject({ group: z.enum(FOOD_GROUPS, 'Elegí un grupo válido'), name });
 export const drinkCreateSchema = z.strictObject({ group: z.enum(DRINK_GROUPS, 'Elegí un grupo válido'), ...drinkFields });
@@ -46,6 +46,7 @@ export const menuItemRowSchema = z.object({
   minStock: z.number().int().nullable(),
   drinkName: z.string().nullable(),
   liters: amountSchema.nullable(),
+  drinkSize: z.string().nullable(),
   flavor: z.string().nullable(),
   version: z.number(),
   createdAt: timestampSchema,

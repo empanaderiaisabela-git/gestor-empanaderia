@@ -1,4 +1,4 @@
-import { sameFamily } from '@/features/menu/domain/drink';
+import { sizeOf } from '@/features/menu/domain/drink';
 import { drinkColumns, type MenuItem, type MenuItemData, type MenuItemRepository, priceColumns } from '@/features/menu/repository/menu-item.repository';
 import type { MenuAuditEntry, MenuUnitOfWork } from '@/features/menu/repository/menu-unit-of-work';
 import { fakeMenuPhotoRepository, type FakePhotoState } from './fake-menu-photos';
@@ -11,7 +11,7 @@ const GROUP_ORDER = ['empanadas', 'pizzas', 'sanguches', 'ciabattas', 'coca_cola
 function newRow(state: FakeState, { group, name, unitCost, prices, drink }: MenuItemData): MenuItem {
   state.clock += 1;
   const at = new Date(state.clock * 1000);
-  const base = { id: crypto.randomUUID(), group, name, unitCost: unitCost === undefined ? null : unitCost.toFixed(2), stock: '0.0', isActive: true, isVisible: false, isBase: false, minStock: null, drinkName: null, liters: null, flavor: null, version: 1 };
+  const base = { id: crypto.randomUUID(), group, name, unitCost: unitCost === undefined ? null : unitCost.toFixed(2), stock: '0.0', isActive: true, isVisible: false, isBase: false, minStock: null, drinkName: null, liters: null, drinkSize: null, flavor: null, version: 1 };
   return { ...base, ...priceColumns(prices), ...drinkColumns(drink), createdAt: at, updatedAt: at };
 }
 
@@ -25,7 +25,7 @@ export function fakeMenuItemRepository(state: FakeState): MenuItemRepository {
     findAll: async () => sorted(state.rows),
     findById: async (id) => state.rows.find((row) => row.id === id) ?? null,
     findByName: async (group, name) => state.rows.find((row) => row.group === group && row.name.toLowerCase() === name.toLowerCase()) ?? null,
-    findFamily: async (group, key) => state.rows.filter((row) => sameFamily({ group, ...key }, { group: row.group, drinkName: row.drinkName, liters: row.liters === null ? null : Number(row.liters) })),
+    findFamily: async (group, key) => state.rows.filter((row) => row.group === group && row.drinkName === key.drinkName && sizeOf(row) === key.size),
     insert: async (data) => {
       if (state.rows.some((row) => row.group === data.group && row.name === data.name)) throw pgError('23505', 'Key (menu_group, name) already exists.');
       const row = newRow(state, data);

@@ -14,7 +14,7 @@ vi.mock('@/features/stock/actions/register-stock-loss', () => ({ registerStockLo
 vi.mock('@/features/stock/actions/set-stock-pricing', () => ({ setStockPricingAction: vi.fn() }));
 vi.mock('@/features/stock/actions/fetch-stock-entries', () => ({ fetchStockEntries: vi.fn(async () => []) }));
 
-const ITEM: MenuItemDef = { id: '11111111-1111-4111-8111-111111111111', group: 'empanadas', name: 'Humita', unitCost: null, stock: 5, price1: null, price3: null, price6: null, price12: null, isActive: true, isVisible: false, isBase: false, minStock: null, drinkName: null, liters: null, flavor: null, version: 1, createdAt: '', updatedAt: '' };
+const ITEM: MenuItemDef = { id: '11111111-1111-4111-8111-111111111111', group: 'empanadas', name: 'Humita', unitCost: null, stock: 5, price1: null, price3: null, price6: null, price12: null, isActive: true, isVisible: false, isBase: false, minStock: null, drinkName: null, liters: null, drinkSize: null, flavor: null, version: 1, createdAt: '', updatedAt: '' };
 const COCA: MenuItemDef = { ...ITEM, id: '22222222-2222-4222-8222-222222222222', group: 'coca_cola', name: 'Coca 500', price1: 3500 };
 const MUZZA: MenuItemDef = { ...ITEM, id: '33333333-3333-4333-8333-333333333333', group: 'pizzas', name: 'Muzza', stock: 0, price1: 11000 };
 const PREPIZZA: MenuItemDef = { ...ITEM, id: '44444444-4444-4444-8444-444444444444', group: 'pizzas', name: 'Prepizza', stock: 0, isBase: true };

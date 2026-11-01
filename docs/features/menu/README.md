@@ -26,11 +26,14 @@ varias presentaciones), sus fotos y si hay stock.
 ## Reglas de negocio
 
 - **Grupos y presentaciones fijos en el código** (`domain/menu-groups.ts`). Fuente: dev, 2026-10-25.
-- **Bebidas (US-49)**: en Coca-Cola y Quilmes, el alta pide **Bebida**, **Litros** y **Sabor** (opcional) en lugar
-  del nombre, y el servidor arma el nombre: "Aquarius 1.5 L Manzana" (`domain/drink.ts`). Los litros se escriben
-  con punto o coma y se guardan con punto (P-2). La **familia** es grupo + bebida (sin importar mayúsculas) +
-  litros: sus sabores comparten costo y precio. Un sabor que entra a una familia con precio toma el de la familia
-  (P-1). Una bebida cargada antes de US-49 sigue andando con su nombre, y "Editar" le completa los tres campos.
+- **Bebidas (US-51)**: en Coca-Cola y Quilmes, el alta pide **Bebida**, **Litros o mililitros** y **Sabor** (opcional)
+  en lugar del nombre, y el servidor arma el nombre con el texto tal cual: "Aquarius 1.5L Manzana" (`domain/drink.ts`).
+  Litros es **texto libre** de 1 a 8 caracteres ("500CC", "1 L", "1.5L"); la coma se guarda como punto y nada más se
+  normaliza. La **familia** es grupo + bebida + litros, **coincidencia exacta**: "1.5L" y "1.5 L" son familias
+  distintas, igual que "Aquarius" y "aquarius". Sus sabores comparten costo y precio, y un sabor que entra a una
+  familia con precio toma el de la familia (P-1). Las bebidas cargadas antes de US-51 se leen con sus litros
+  numéricos ("1.5 L") hasta que se editan, y "Editar" completa los tres campos. Al editar, el formulario muestra
+  arriba el nombre completo del producto.
 
   | Grupo | Presentaciones | Precio | Stock |
   |---|---|---|---|
@@ -91,9 +94,10 @@ T-11).
   versión (`STALE_VERSION`). Lo carga el admin desde "Ingresar stock" (categoría "Jamón extra para pizza") y audita
   `ACTUALIZAR` / `PIZZA_EXTRA`.
 
-- `menu_items` suma `drink_name` (`varchar(25)`), `liters` (`numeric(6,3)`) y `flavor` (`varchar(25)`), nullable,
-  con el check `menu_items_drink_check`: las tres nulas, o una bebida con bebida y litros > 0 (migración
-  `0026_bebidas-por-litros`, US-49).
+- `menu_items` suma `drink_name` (`varchar(25)`), `liters` (`numeric(6,3)`, legado de US-49 que sólo se lee),
+  `drink_size` (`varchar(10)`, el texto que se escribe desde US-51) y `flavor` (`varchar(25)`), nullable, con el check
+  `menu_items_drink_check`: las cuatro nulas, o una bebida con bebida y (`liters` > 0 o `drink_size` no nulo)
+  (migraciones `0026_bebidas-por-litros` y `0027_litros-como-texto`).
 - `menu_items`: grupo (enum `menu_group`), nombre (`varchar(60)`), costo unitario, stock (`numeric(10,1)`), precios
   `price_1`, `price_3`, `price_6` y `price_12` (nulos según el grupo), `is_active`, `is_visible` (catálogo, por defecto
   `false`), `is_base` (US-29, por defecto `false`), `version`.

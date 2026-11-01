@@ -42,6 +42,7 @@ export function MenuItemFormModal({ model }: { model: MenuPanelModel }): JSX.Ele
       submitLabel={editingItem ? 'Guardar cambios' : 'Dar de alta'}
       isPending={actions.isPending}
     >
+      {editingItem && <p className='text-lg font-bold text-zinc-900 dark:text-zinc-50'>{editingItem.name}</p>}
       <ErrorAlert error={manager.serverError} />
       <MenuItemFields values={values} errors={errors} isEditing={Boolean(editingItem)} onChange={setValues} drinkNames={drinkNames} />
     </ResponsiveModal>

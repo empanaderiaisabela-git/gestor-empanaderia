@@ -25,6 +25,7 @@ export const menuItems = pgTable(
     minStock: integer('min_stock'),
     drinkName: varchar('drink_name', { length: 25 }),
     liters: numeric('liters', { precision: 6, scale: 3 }),
+    drinkSize: varchar('drink_size', { length: 10 }),
     flavor: varchar('flavor', { length: 25 }),
     version: integer('version').default(1).notNull(),
     createdAt: timestamp('created_at').defaultNow().notNull(),
@@ -36,8 +37,8 @@ export const menuItems = pgTable(
     check('menu_items_unit_cost_check', sql`${table.unitCost} is null or ${table.unitCost} >= 0`),
     check(
       'menu_items_drink_check',
-      sql`(${table.drinkName} is null and ${table.liters} is null and ${table.flavor} is null)
-        or (${table.group} in ('coca_cola', 'pepsi') and ${table.drinkName} is not null and ${table.liters} > 0)`
+      sql`(${table.drinkName} is null and ${table.liters} is null and ${table.drinkSize} is null and ${table.flavor} is null)
+        or (${table.group} in ('coca_cola', 'pepsi') and ${table.drinkName} is not null and (${table.liters} > 0 or ${table.drinkSize} is not null))`
     ),
     check('menu_items_min_stock_check', sql`${table.minStock} is null or ${table.minStock} between 1 and 100000`),
     check('menu_items_stock_check', sql`${table.stock} >= 0 and ${table.stock} * 2 = trunc(${table.stock} * 2)`),
