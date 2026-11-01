@@ -15,7 +15,7 @@ import { applyPriceIncreaseAction } from '@/features/stock/actions/apply-price-i
 import { updateStockEntryAction } from '@/features/stock/actions/update-stock-entry';
 import type { PriceIncreaseInput } from '@/features/stock/domain/stock-increase';
 import type { StockEntryDef, StockEntryInput, StockEntryUpdateInput, StockLossInput, StockPricingInput } from '@/features/stock/domain/stock.schema';
-import { normalizeForSearch } from '@/lib/utils';
+import { matchesAllWords } from '@/lib/utils';
 import { useHamPrice } from './use-ham-price';
 
 export type StockDialog = { kind: 'entry' | 'loss' | 'pricing' | 'history'; item: MenuItemDef | null; entry?: StockEntryDef } | null;
@@ -70,8 +70,7 @@ export function useStockPanel(): StockPanelModel {
   const [message, setMessage] = useState<Message>(null);
   const activeItems = useMemo(() => allItems.filter((item) => item.isActive), [allItems]);
   const items = useMemo(() => {
-    const term = normalizeForSearch(search);
-    const matching = activeItems.filter((item) => normalizeForSearch(item.name).includes(term) && (categoryFilter === 'todos' || categoryOf(item) === categoryFilter));
+    const matching = activeItems.filter((item) => matchesAllWords(item.name, search) && (categoryFilter === 'todos' || categoryOf(item) === categoryFilter));
     return orderStock(matching, stockOrder);
   }, [activeItems, search, categoryFilter, stockOrder]);
   const submit = async (result: Promise<{ success: boolean; error?: string; message?: string }>): Promise<string | null> => {

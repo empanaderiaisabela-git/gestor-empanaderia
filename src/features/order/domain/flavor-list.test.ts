@@ -26,6 +26,15 @@ describe('lista de gustos de Ventas (US-35)', () => {
     expect(names(visibleFlavors(PIZZAS, PIZZA, search))).toEqual(['RUCULA Y JAMÓN CRUDO']);
   });
 
+  it.each(['jamon rucula', 'crudo RÚCULA', 'ruc jam'])('busca "%s" por palabras sueltas, en cualquier orden (US-52)', (search) => {
+    expect(names(visibleFlavors(PIZZAS, PIZZA, search))).toEqual(['RUCULA Y JAMÓN CRUDO']);
+  });
+
+  it('busca por palabras sin perder el orden por precio (US-52)', () => {
+    expect(names(visibleFlavors(PIZZAS, PIZZA, 'jamon pollo'))).toEqual([]);
+    expect(names(visibleFlavors(PIZZAS, PIZZA, 'u o'))).toEqual(['nuevo gusto', 'RUCULA Y JAMÓN CRUDO', 'huevo y papa']);
+  });
+
   it('sin coincidencias, la lista queda vacía', () => {
     expect(visibleFlavors(PIZZAS, PIZZA, 'fugazzeta')).toEqual([]);
   });

@@ -4488,6 +4488,32 @@ proveedor y no tenga que adivinar qué estoy editando.
 - D-5 de `sprint-6.md` (migraciones sólo aditivas) se mantiene: la 0027 sólo agrega una columna y recrea un check.
 - `liters` se conserva como legado de lectura; lo nuevo se escribe en `drink_size`.
 
+### US-52 · Búsqueda por palabras en Stock y en "Buscar gusto"
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-11-01 |
+| Tamaño       | XS        |
+| Depende de   | US-51     |
+| Plan         | [`docs/plans/US-52-busqueda-por-palabras.md`](docs/plans/US-52-busqueda-por-palabras.md) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como administrador o vendedor quiero buscar escribiendo palabras sueltas, en cualquier orden, de forma
+que "empanada carne" encuentre "Empanada de carne", como en el otro gestor que ya uso.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · El buscador de Stock muestra los productos cuyo nombre tiene **todas** las palabras escritas, en cualquier orden y con texto en el medio ("empanada carne" encuentra "Empanada de carne"; "carne empanada" también; "empanada pollo" no). Sigue sin distinguir mayúsculas ni acentos. Lo cubren tests unitarios con fuzz (`matches-all-words.test.ts`) y del hook de Stock (`stock-search.test.tsx`) · Estimación: 20 min · Completado: 2026-11-01 13:48
+
+- [x] **CA-2** · "Buscar gusto" de Ventas busca igual ("jamon rucula" encuentra "RUCULA Y JAMÓN CRUDO") y mantiene el orden por precio. Lo cubren tests de dominio con fuzz · Estimación: 15 min · Completado: 2026-11-01 13:48
+
+**Notas**
+
+- Nivel 2. Sin migración. Logs/Auditoría queda como está (decisión del dev, 2026-11-01).
+
 ### US-43 · Sin web pública por ahora: se entra por `/login`
 
 | Campo        | Valor     |

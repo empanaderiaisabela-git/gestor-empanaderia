@@ -151,7 +151,9 @@ La grilla lee los gustos con `fetchMenuItems` del feature `menu`. La tabla (desd
 
 `src/app/(main)/stock/page.tsx` → `StockPanel`:
 
-- Barra con búsqueda, el desplegable "Ordenar Stock" (orden por categoría, stock creciente o decreciente, solo sin
+- Barra con búsqueda por palabras: aparece lo que tiene en el nombre todas las palabras escritas, en cualquier
+  orden y sin distinguir mayúsculas ni acentos ("empanada carne" encuentra "Empanada de carne"; `matchesAllWords`
+  de `src/lib/utils.ts`, US-52), el desplegable "Ordenar Stock" (orden por categoría, stock creciente o decreciente, solo sin
   stock o quitar sin stock; US-34, `domain/stock-order.ts`), el filtro por categoría ("Filtrar Stock") e "Ingresar
   stock". Al ordenar, los gustos sin stock propio van al final y no cuentan como "sin stock" (D-16).
 - Grilla con categoría, gusto, stock ("Sin stock" en rojo, amarillo bajo el mínimo con el título "Mínimo: N"; US-45), precio (los del gusto, uno por renglón, o "Sin precio";
