@@ -298,3 +298,9 @@ cola"
 pero sin perturbar el resto del contenido
 
 - Necesito que mi cliente pueda editar el stock, siendo que un stock que ya ingresó puede estar mal o haberse olvidado de darle proveedor, la edición me debe permitir poder ver todo como estaba precargado, pero con la capacidad de editarlo y guardar.
+
+---------------------------------------------------------------------------
+
+Pedido del dev (2026-11-01):
+
+quiero poner esta misma practica en mi proyecto de gestor empanaderia isabela, porque allí la busqueda es exacta coincidencia lo que no le gusta a mi cliente pues su otro gestor de LAN (este mismo que tambien le pertece) lo tiene acostumbrado a buscar sin coincidencia exacta

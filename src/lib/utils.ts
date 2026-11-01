@@ -9,6 +9,11 @@ export function normalizeForSearch(str: string | null | undefined): string {
     .toLowerCase();
 }
 
+export function matchesAllWords(text: string | null | undefined, search: string): boolean {
+  const haystack = normalizeForSearch(text);
+  return normalizeForSearch(search).split(/\s+/).filter(Boolean).every((word) => haystack.includes(word));
+}
+
 /**
  * Converts a string to sentence case (First letter uppercase, rest lowercase).
  */
