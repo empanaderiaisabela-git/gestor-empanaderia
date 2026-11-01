@@ -17,6 +17,7 @@ export function stockItem(overrides: Partial<StockItem> = {}): StockItem {
     minStock: null,
     drinkName: null,
     liters: null,
+    drinkSize: null,
     flavor: null,
     version: 1,
     createdAt: new Date(0),

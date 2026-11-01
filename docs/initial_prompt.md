@@ -52,8 +52,8 @@ Funciones que ya existen (Sprints 1 a 4):
 - Desde el Sprint 6: los grupos se ven como "Quilmes" y "Sándwich de miga" (US-44); stock mínimo opcional con aviso
   amarillo (US-45); editar un ingreso de stock desde el Historial (US-46); el switch "Jamón extra" en cada pizza del
   carrito, con su precio en "Ingresar stock" (US-47); el lápiz de acceso directo para editar el último ingreso
-  (US-48); bebidas con Bebida, Litros y Sabor, cuyos sabores comparten costo y precio por familia (US-49); "Registrar
-  aumento" de costo y precio por porcentaje en una categoría (US-50).
+  (US-48); bebidas con Bebida, Litros o mililitros y Sabor, cuyos sabores comparten costo y precio por familia (US-49,
+  US-51); "Registrar aumento" de costo y precio por porcentaje en una categoría (US-50).
 
 ## 3. Origen: código heredado en remodelación
 
@@ -161,6 +161,12 @@ Hacer preguntas de más es mejor que inventar.
     a I-12) están en el plan, cada una con la pregunta que la originó.
   - Las migraciones 0023 a 0025 son del Sprint 6 y **sólo aditivas** (`src/lib/db/additive-migrations.test.ts` lo
     controla desde la 0023). Supabase está en **26** (la migró el dev el 2026-10-31).
+- **Hotfix 6.1 — US-51** (2026-10-31): las bebidas piden "Litros o mililitros" como **texto libre** ("500CC", "1.5L") en
+  lugar de un número, la coma se guarda como punto y la familia de sabores compara grupo, bebida y texto **exactos**
+  ("1.5L" ≠ "1.5 L", "Aquarius" ≠ "aquarius"); al editar, el nombre completo se ve arriba del formulario. La migración
+  **0027** agrega `drink_size` y recrea el check de bebidas; `liters` queda sólo para leer lo viejo como "1.5 L". D-5 se
+  mantiene: una restricción se puede recrear con DROP + ADD en la misma migración. Supabase pasa a **28** cuando el dev
+  la migre.
 - **US-43** (sin sprint asignado): la web pública (`/home`, `/product`, `/api/public`) está **apagada salvo
   `PUBLIC_CATALOG=true`**, y sin sesión se entra por `/login`. Para prenderla se carga la variable en Vercel y se
   redespliega. Plan en [`US-43-sin-web-publica.md`](plans/US-43-sin-web-publica.md).

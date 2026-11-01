@@ -10,7 +10,7 @@ type Joining = { group: MenuGroup; drink?: DrinkFields; exceptId?: string };
 
 export function identityOf(input: MenuItemInput | MenuItemUpdateInput): Identity {
   if (!('drinkName' in input)) return { name: input.name };
-  const drink = { drinkName: input.drinkName, liters: input.liters, flavor: input.flavor ?? null };
+  const drink = { drinkName: input.drinkName, size: input.size, flavor: input.flavor ?? null };
   return { name: drinkNameOf(drink), drink };
 }
 

@@ -10,7 +10,7 @@ const history = vi.hoisted(() => vi.fn());
 vi.mock('@/features/stock/actions/fetch-stock-entries', () => ({ fetchStockEntries: history }));
 
 const PROVIDER = { id: '22222222-2222-4222-8222-222222222222', name: 'Molino del Sur', phone: '', email: '', isActive: true, version: 1, createdAt: '', updatedAt: '' };
-const CARNE: MenuItemDef = { id: '11111111-1111-4111-8111-111111111111', group: 'empanadas', name: 'Carne', unitCost: 450, stock: 12, price1: 1200, price3: 3400, price6: 6500, price12: 12000, isActive: true, isVisible: false, isBase: false, minStock: 5, drinkName: null, liters: null, flavor: null, version: 3, createdAt: '', updatedAt: '' };
+const CARNE: MenuItemDef = { id: '11111111-1111-4111-8111-111111111111', group: 'empanadas', name: 'Carne', unitCost: 450, stock: 12, price1: 1200, price3: 3400, price6: 6500, price12: 12000, isActive: true, isVisible: false, isBase: false, minStock: 5, drinkName: null, liters: null, drinkSize: null, flavor: null, version: 3, createdAt: '', updatedAt: '' };
 const POLLO: MenuItemDef = { ...CARNE, id: '33333333-3333-4333-8333-333333333333', name: 'Pollo', minStock: null, price1: 1300 };
 const ENTRY: StockEntryDef = { id: '44444444-4444-4444-8444-444444444444', menuItemId: CARNE.id, quantity: 12, unitCost: 450, providerId: PROVIDER.id, providerName: 'Molino del Sur', username: 'admin', version: 2, createdAt: '2026-10-30T12:00:00Z' };
 

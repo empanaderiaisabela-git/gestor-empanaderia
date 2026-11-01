@@ -6,7 +6,7 @@ import { StockEntryFields } from './stock-entry-fields';
 import { type EntryValues, parseEntry } from './stock-forms';
 
 const ITEM = '11111111-1111-4111-8111-111111111111';
-const CARNE: MenuItemDef = { id: ITEM, group: 'empanadas', name: 'Carne', unitCost: 100, stock: 4, price1: 1000, price3: 3000, price6: 5000, price12: 9000, isActive: true, isVisible: false, isBase: false, minStock: 5, drinkName: null, liters: null, flavor: null, version: 1, createdAt: '', updatedAt: '' };
+const CARNE: MenuItemDef = { id: ITEM, group: 'empanadas', name: 'Carne', unitCost: 100, stock: 4, price1: 1000, price3: 3000, price6: 5000, price12: 9000, isActive: true, isVisible: false, isBase: false, minStock: 5, drinkName: null, liters: null, drinkSize: null, flavor: null, version: 1, createdAt: '', updatedAt: '' };
 const PREPIZZA: MenuItemDef = { ...CARNE, id: 'p', group: 'pizzas', name: 'Prepizza', unitCost: null, price1: null, price3: null, price6: null, price12: null, isBase: true, minStock: 2 };
 const MUZZA: MenuItemDef = { ...CARNE, id: 'm', group: 'pizzas', name: 'Muzza', price3: null, price6: null, price12: null, minStock: null };
 const BLANK: EntryValues = { category: '', menuItemId: '', quantity: '', unitCost: '', providerId: '', minStock: '', price1: '', price3: '', price6: '', price12: '' };

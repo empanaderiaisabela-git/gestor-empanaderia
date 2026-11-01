@@ -22,9 +22,9 @@ describe('campos del alta', () => {
     expect(screen.getByLabelText('Grupo').hasAttribute('disabled')).toBe(true);
   });
 
-  it('en Coca-Cola y Quilmes pide bebida, litros y sabor en lugar del nombre (US-49)', () => {
+  it('en Coca-Cola y Quilmes pide bebida, litros o mililitros y sabor en lugar del nombre (US-51)', () => {
     render(<MenuItemFields values={{ ...initialValues(null), group: 'pepsi' }} errors={{}} isEditing={false} onChange={vi.fn()} drinkNames={['Quilmes']} />);
-    expect([screen.getByLabelText('Bebida'), screen.getByLabelText('Litros'), screen.getByLabelText('Sabor (opcional)')]).toHaveLength(3);
+    expect([screen.getByLabelText('Bebida'), screen.getByLabelText('Litros o mililitros'), screen.getByLabelText('Sabor (opcional)')]).toHaveLength(3);
     expect(screen.queryByLabelText('Nombre del gusto o bebida')).toBeNull();
   });
 });

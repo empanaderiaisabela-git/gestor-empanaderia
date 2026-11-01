@@ -36,7 +36,7 @@ El agente trabaja siempre contra la base local. Supabase la migra el dev.
 | D-2 · Jamón extra en promos | Las pizzas de una promo también tienen el botón, y el jamón suma al precio de la promo. |
 | D-3 · Editar un ingreso | Todo es editable, también la categoría y el gusto. Si cambia el gusto, las unidades salen del gusto viejo y pasan al nuevo. |
 | D-4 · Grafía | "Sándwich de miga", con tilde. |
-| D-5 · Migraciones | Sólo aditivas. El agente migra la base local; Supabase la migra el dev, antes de desplegar. |
+| D-5 · Migraciones | Sólo aditivas: nada se borra ni se renombra. Se permite recrear una restricción en la misma migración (DROP + ADD del mismo nombre), como en la 0027 del hotfix 6.1. El agente migra la base local; Supabase la migra el dev, antes de desplegar. |
 | Autonomía | Cada commit espera el OK del dev sobre la lista en lenguaje simple (`AGENTS.md`). |
 
 ## Decisiones provisorias del agente

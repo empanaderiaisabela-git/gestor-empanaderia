@@ -1,12 +1,13 @@
-import { and, asc, desc, eq, ilike } from 'drizzle-orm';
+import { and, asc, desc, eq } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { menuItems } from '@/lib/db/menu-schema';
 import { providers, users } from '@/lib/db/schema';
 import { stockEntries, stockLosses } from '@/lib/db/stock-schema';
 import type { DbTransaction } from '@/lib/db/transaction';
+import { sizeOf } from '@/features/menu/domain/drink';
 import type { MenuGroup } from '@/features/menu/domain/menu-groups';
 import type { MenuPrices } from '@/features/menu/domain/menu-prices';
-import { escapeLike, priceColumns } from '@/features/menu/repository/menu-item.repository';
+import { priceColumns } from '@/features/menu/repository/menu-item.repository';
 
 export type StockItem = typeof menuItems.$inferSelect;
 export type StockEntry = typeof stockEntries.$inferSelect;
@@ -16,7 +17,7 @@ export type NewLoss = { menuItemId: string; quantity: number; unitCost: number; 
 export type EntryView = { id: string; menuItemId: string; quantity: number; unitCost: string; providerId: string | null; providerName: string | null; username: string; version: number; createdAt: Date };
 export type EntryChange = { menuItemId: string; quantity: number; unitCost: number; providerId: string | null };
 export type ItemRef = { id: string; version: number };
-export type FamilyRef = Pick<StockItem, 'group' | 'drinkName' | 'liters'>;
+export type FamilyRef = Pick<StockItem, 'group' | 'drinkName' | 'drinkSize' | 'liters'>;
 export type StockChange = { stock?: number; unitCost?: number; prices?: MenuPrices; minStock?: number | null };
 
 export type StockRepository = {
@@ -42,10 +43,12 @@ export function drizzleStockRepository(executor: Executor = db): StockRepository
     lockItem: async (id) => (await executor.select().from(menuItems).where(eq(menuItems.id, id)).for('update'))[0] ?? null,
     lockGroup: (group) => executor.select().from(menuItems).where(and(eq(menuItems.group, group), eq(menuItems.isBase, false))).orderBy(asc(menuItems.id)).for('update'),
     lockBase: async (group) => (await executor.select().from(menuItems).where(and(eq(menuItems.group, group), eq(menuItems.isBase, true))).for('update'))[0] ?? null,
-    lockFamily: async ({ group, drinkName, liters }) => {
-      if (drinkName === null || liters === null) return [];
-      const family = and(eq(menuItems.group, group), ilike(menuItems.drinkName, escapeLike(drinkName)), eq(menuItems.liters, liters), eq(menuItems.isBase, false));
-      return executor.select().from(menuItems).where(family).orderBy(asc(menuItems.id)).for('update');
+    lockFamily: async (ref) => {
+      const amount = sizeOf(ref);
+      if (ref.drinkName === null || amount === null) return [];
+      const family = and(eq(menuItems.group, ref.group), eq(menuItems.drinkName, ref.drinkName), eq(menuItems.isBase, false));
+      const rows = await executor.select().from(menuItems).where(family).orderBy(asc(menuItems.id)).for('update');
+      return rows.filter((row) => sizeOf(row) === amount);
     },
     saveItem: async ({ id, version }, { stock, unitCost, prices, minStock }) => {
       const cost = unitCost === undefined ? {} : { unitCost: unitCost.toFixed(2) };

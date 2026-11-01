@@ -7,7 +7,7 @@ test.describe('Registrar aumento (US-50)', () => {
     await page.getByRole('button').filter({ hasText: 'Nuevo gusto o bebida' }).click();
     await page.getByLabel(/^Grupo/).selectOption({ label: 'Quilmes' });
     await page.getByLabel('Bebida').fill(bebida);
-    await page.getByLabel('Litros').fill('1');
+    await page.getByLabel('Litros o mililitros').fill('500CC');
     await page.getByRole('button', { name: 'Dar de alta' }).click();
     await expect(page.getByRole('button', { name: 'Dar de alta' })).toHaveCount(0);
 
@@ -15,12 +15,12 @@ test.describe('Registrar aumento (US-50)', () => {
     await page.getByRole('button').filter({ hasText: 'Ingresar stock' }).click();
     await page.getByLabel('Categoría').selectOption({ label: 'Quilmes' });
     await page.getByRole('combobox', { name: /^Bebida/ }).selectOption({ label: bebida });
-    await page.getByLabel('Litros').selectOption({ label: '1 L' });
+    await page.getByLabel('Litros o mililitros').selectOption({ label: '500CC' });
     await page.getByLabel('Cantidad que entra').fill('3');
     await page.getByLabel(/Costo para el local/).fill('5000');
     await page.getByLabel('Precio de venta, 1 unidad').fill('11000');
     await page.getByRole('button', { name: 'Ingresar', exact: true }).click();
-    await expect(page.getByText(`Stock ingresado: ${bebida} 1 L queda con 3`)).toBeVisible();
+    await expect(page.getByText(`Stock ingresado: ${bebida} 500CC queda con 3`)).toBeVisible();
 
     await page.getByRole('button', { name: 'Registrar aumento' }).click();
     await page.getByLabel('Categoría').selectOption({ label: 'Quilmes' });

@@ -6,14 +6,14 @@ async function filaDeStock(page: Page, nombre: string): Promise<Locator> {
 }
 
 test.describe('Precios en Stock (US-17 y US-28)', () => {
-  test('una bebida nueva: el primer sabor fija costo y precio para toda su familia y el segundo sólo pide la cantidad (US-17, US-49)', async ({ page }) => {
+  test('una bebida nueva: el primer sabor fija costo y precio para toda su familia y el segundo sólo pide la cantidad (US-17, US-51)', async ({ page }) => {
     const bebida = `Aqua${Date.now() % 1_000_000}`;
     await page.goto('/alta-de-productos');
     for (const sabor of ['Manzana', 'Pera']) {
       await page.getByRole('button').filter({ hasText: 'Nuevo gusto o bebida' }).click();
       await page.getByLabel(/^Grupo/).selectOption({ label: 'Coca-Cola' });
       await page.getByLabel('Bebida').fill(bebida);
-      await page.getByLabel('Litros').fill('1,5');
+      await page.getByLabel('Litros o mililitros').fill('1.5L');
       await page.getByLabel('Sabor (opcional)').fill(sabor);
       await page.getByRole('button', { name: 'Dar de alta' }).click();
       await expect(page.getByRole('button', { name: 'Dar de alta' })).toHaveCount(0);
@@ -24,17 +24,17 @@ test.describe('Precios en Stock (US-17 y US-28)', () => {
       await page.getByRole('button').filter({ hasText: 'Ingresar stock' }).click();
       await page.getByLabel('Categoría').selectOption({ label: 'Coca-Cola' });
       await page.getByRole('combobox', { name: /^Bebida/ }).selectOption({ label: bebida });
-      await page.getByLabel('Litros').selectOption({ label: '1.5 L' });
+      await page.getByLabel('Litros o mililitros').selectOption({ label: '1.5L' });
       await page.getByLabel('Sabor').selectOption({ label: `${sabor} (stock 0)` });
       await page.getByLabel('Cantidad que entra').fill('5');
       if (costo) await page.getByLabel(/Costo para el local/).fill(costo);
       if (costo) await page.getByLabel('Precio de venta, 1 unidad').fill('11000');
       await page.getByRole('button', { name: 'Ingresar', exact: true }).click();
-      await expect(page.getByText(`Stock ingresado: ${bebida} 1.5 L ${sabor} queda con 5`)).toBeVisible();
+      await expect(page.getByText(`Stock ingresado: ${bebida} 1.5L ${sabor} queda con 5`)).toBeVisible();
     }
 
     await page.getByPlaceholder('Buscar gusto o bebida...').filter({ visible: true }).fill(bebida);
-    await expect(page.getByRole('row', { name: new RegExp(`${bebida} 1.5 L Pera`) }).getByText('1 unidad: $11.000')).toBeVisible();
+    await expect(page.getByRole('row', { name: new RegExp(`${bebida} 1.5L Pera`) }).getByText('1 unidad: $11.000')).toBeVisible();
   });
 
   test('Alta ya no tiene precios por grupo; cada ciabatta tiene el suyo en "Costo y precio" o en Ingresar stock, y el pan se ingresa sin gusto (US-28, US-29, BUG-25)', async ({ page }) => {

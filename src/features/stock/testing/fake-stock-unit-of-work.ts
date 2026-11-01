@@ -15,8 +15,7 @@ function viewOf(state: FakeState, entry: StockEntry): EntryView {
   return { ...entry, providerName, username: state.usernames.get(entry.userId) ?? '?' };
 }
 
-const familyKeyOf = (item: FamilyRef) => ({ group: item.group, drinkName: item.drinkName, liters: item.liters === null ? null : Number(item.liters) });
-const familyIn = (state: FakeState, ref: FamilyRef): StockItem[] => state.items.filter((item) => !item.isBase && sameFamily(familyKeyOf(ref), familyKeyOf(item))).sort((a, b) => (a.id < b.id ? -1 : 1));
+const familyIn = (state: FakeState, ref: FamilyRef): StockItem[] => state.items.filter((item) => !item.isBase && sameFamily(ref, item)).sort((a, b) => (a.id < b.id ? -1 : 1));
 
 export function fakeStockRepository(state: FakeState): StockRepository {
   return {
