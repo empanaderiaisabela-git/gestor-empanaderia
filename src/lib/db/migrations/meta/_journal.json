@@ -197,6 +197,13 @@
       "when": 1793490294386,
       "tag": "0027_litros-como-texto",
       "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "7",
+      "when": 1793577458972,
+      "tag": "0028_bebida-30",
+      "breakpoints": true
     }
   ]
 }

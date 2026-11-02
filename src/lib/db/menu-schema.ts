@@ -12,7 +12,7 @@ export const menuItems = pgTable(
       .primaryKey()
       .default(sql`gen_random_uuid()`),
     group: menuGroupEnum('menu_group').notNull(),
-    name: varchar('name', { length: 60 }).notNull(),
+    name: varchar('name', { length: 65 }).notNull(),
     unitCost: money('unit_cost'),
     stock: numeric('stock', { precision: 10, scale: 1 }).notNull().default('0'),
     price1: money('price_1'),
@@ -23,7 +23,7 @@ export const menuItems = pgTable(
     isVisible: boolean('is_visible').default(false).notNull(),
     isBase: boolean('is_base').default(false).notNull(),
     minStock: integer('min_stock'),
-    drinkName: varchar('drink_name', { length: 25 }),
+    drinkName: varchar('drink_name', { length: 30 }),
     liters: numeric('liters', { precision: 6, scale: 3 }),
     drinkSize: varchar('drink_size', { length: 10 }),
     flavor: varchar('flavor', { length: 25 }),
