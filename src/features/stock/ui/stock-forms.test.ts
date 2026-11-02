@@ -31,7 +31,7 @@ describe('formularios de Stock', () => {
   });
 
   it('marca los errores por campo', () => {
-    expect(parseEntry({ menuItemId: '', quantity: '0', unitCost: '', providerId: '', ...NO_PRICES })).toEqual({ ok: false, errors: { menuItemId: 'Elegí un gusto o bebida', quantity: 'La cantidad debe ser mayor a 0' } });
+    expect(parseEntry({ menuItemId: '', quantity: '-1', unitCost: '', providerId: '', ...NO_PRICES })).toEqual({ ok: false, errors: { menuItemId: 'Elegí un gusto o bebida', quantity: 'La cantidad no puede ser negativa' } });
   });
 
   it('Costo y precio manda sólo los precios del grupo, con la versión y la casilla (US-28)', () => {

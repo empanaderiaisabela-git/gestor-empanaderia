@@ -4597,6 +4597,34 @@ forma que al venderla el vendedor sólo elija la comida.
 - Nivel 3. Decisión del agente, a confirmar: borrar una bebida fijada en una promo da `HAS_RELATIONS` (ver plan).
 - Supabase tiene que llegar a 31 migraciones antes de `main`.
 
+### US-56 · Ingreso de stock en 0
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-11-02 |
+| Tamaño       | XS        |
+| Depende de   | US-46, US-48 |
+| Plan         | [`docs/plans/US-56-ingreso-en-cero.md`](docs/plans/US-56-ingreso-en-cero.md) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como administrador quiero poner en 0 un ingreso de stock que cargué por error, de forma que el stock
+vuelva a lo que había antes sin inventar una merma.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · Con el lápiz (o "Editar ingreso" del Historial), un ingreso de 24 se guarda en 0: queda en el Historial con 0 y el stock baja 24. Si ya se vendieron unidades y el stock quedaría negativo, dice "No hay stock suficiente de &lt;producto&gt;." · Estimación: 20 min · Completado: 2026-11-02 20:17
+
+- [x] **CA-2** · "Ingresar stock" también acepta 0; debajo de 0 dice "La cantidad no puede ser negativa". Las mermas siguen pidiendo más de 0 · Estimación: 10 min · Completado: 2026-11-02 20:17
+
+- [x] **CA-3** · Migración 0031: `stock_entries_quantity_check` pasa a `quantity >= 0` · Estimación: 15 min · Completado: 2026-11-02 20:17
+
+**Notas**
+
+- Nivel 3 (migración). Supabase tiene que llegar a 32 migraciones antes de `main`.
+
 ### US-43 · Sin web pública por ahora: se entra por `/login`
 
 | Campo        | Valor     |

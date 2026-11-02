@@ -25,7 +25,7 @@ export const stockEntries = pgTable(
   },
   (table) => [
     index('stock_entries_menu_item_id_idx').on(table.menuItemId),
-    check('stock_entries_quantity_check', sql`${table.quantity} > 0`),
+    check('stock_entries_quantity_check', sql`${table.quantity} >= 0`),
     check('stock_entries_unit_cost_check', sql`${table.unitCost} >= 0`),
   ]
 );

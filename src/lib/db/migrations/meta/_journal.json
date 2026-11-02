@@ -218,6 +218,13 @@
       "when": 1793658352154,
       "tag": "0030_bebida-fija-en-promos",
       "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1793660573343,
+      "tag": "0031_ingreso-en-cero",
+      "breakpoints": true
     }
   ]
 }

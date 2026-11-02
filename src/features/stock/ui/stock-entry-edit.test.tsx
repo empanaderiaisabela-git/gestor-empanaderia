@@ -38,6 +38,14 @@ describe('editar un ingreso de stock (US-46 CA-2)', () => {
     await waitFor(() => expect(submitEntryUpdate).toHaveBeenCalledWith(expect.objectContaining({ id: ENTRY.id, version: 2, menuItemId: CARNE.id, quantity: 10, unitCost: 450, providerId: PROVIDER.id, minStock: 5 })));
   });
 
+  it('el lápiz guarda un ingreso en 0 (US-56)', async () => {
+    const submitEntryUpdate = vi.fn(async () => null);
+    render(<StockEntryEditModal model={model({ submitEntryUpdate })} item={CARNE} entry={ENTRY} />);
+    fireEvent.change(screen.getByLabelText('Cantidad que entra'), { target: { value: '0' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Guardar' }));
+    await waitFor(() => expect(submitEntryUpdate).toHaveBeenCalledWith(expect.objectContaining({ id: ENTRY.id, quantity: 0 })));
+  });
+
   it('al cambiar el gusto toma el mínimo del nuevo y no le pasa los precios del viejo', async () => {
     const submitEntryUpdate = vi.fn(async () => null);
     render(<StockEntryEditModal model={model({ submitEntryUpdate })} item={CARNE} entry={ENTRY} />);

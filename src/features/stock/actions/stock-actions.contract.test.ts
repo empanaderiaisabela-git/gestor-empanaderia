@@ -56,9 +56,9 @@ describe('acciones de Stock (US-4)', () => {
     expect(await fetchStockEntries(ITEM.id)).toEqual([]);
   });
 
-  it('VALIDATION: cantidad 0 o con decimales (CA-5)', async () => {
+  it('VALIDATION: cantidad negativa o con decimales (CA-5; US-56 deja el 0)', async () => {
     await asUser({ role: 'admin' });
-    expect(await registerStockEntryAction({ menuItemId: ITEM.id, quantity: 0 })).toEqual({ success: false, code: 'VALIDATION', error: MESSAGES.ERROR.VALIDATION.INVALID_DATA });
+    expect(await registerStockEntryAction({ menuItemId: ITEM.id, quantity: -1 })).toEqual({ success: false, code: 'VALIDATION', error: MESSAGES.ERROR.VALIDATION.INVALID_DATA });
     expect(await registerStockLossAction({ menuItemId: ITEM.id, quantity: 0.5, reason: 'x' })).toMatchObject({ code: 'VALIDATION' });
   });
 

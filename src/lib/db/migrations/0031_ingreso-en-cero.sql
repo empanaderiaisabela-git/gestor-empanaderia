@@ -1,0 +1,2 @@
+ALTER TABLE "stock_entries" DROP CONSTRAINT "stock_entries_quantity_check";--> statement-breakpoint
+ALTER TABLE "stock_entries" ADD CONSTRAINT "stock_entries_quantity_check" CHECK ("stock_entries"."quantity" >= 0);

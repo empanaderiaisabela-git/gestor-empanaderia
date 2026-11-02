@@ -30,6 +30,13 @@ describe('editar un ingreso de stock (US-46 CA-3)', () => {
     expect(fake.state.audits.at(-1)).toMatchObject({ action: 'ACTUALIZAR', entity: 'STOCK_ENTRY', entityId: entry.id, detail: { before: { name: 'Carne', quantity: 10 }, after: { name: 'Carne', quantity: 6, providerId: PROVIDER }, stockAfter: 6 } });
   });
 
+  it('un ingreso cargado por error se pone en 0 y el stock vuelve a lo de antes (US-56)', async () => {
+    const entry = await enter(24, 800);
+    const { item, entry: edited } = await service.updateEntry(CALLER, { id: entry.id, version: 1, menuItemId: carne.id, quantity: 0, unitCost: 800 });
+    expect([item.stock, edited.quantity]).toEqual(['0.0', 0]);
+    expect(await service.entriesOf(carne.id)).toMatchObject([{ id: entry.id, quantity: 0 }]);
+  });
+
   it('cambiar el gusto pasa las unidades del viejo al nuevo (D-3)', async () => {
     const entry = await enter(10, 800);
     await service.updateEntry(CALLER, { id: entry.id, version: 1, menuItemId: pollo.id, quantity: 10, unitCost: 750 });

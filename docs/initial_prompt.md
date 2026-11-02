@@ -167,10 +167,11 @@ Hacer preguntas de más es mejor que inventar.
   **0027** agrega `drink_size` y recrea el check de bebidas; `liters` queda sólo para leer lo viejo como "1.5 L". D-5 se
   mantiene: una restricción se puede recrear con DROP + ADD en la misma migración. Supabase pasa a **28** cuando el dev
   la migre.
-- **US-52 a US-55** (sin sprint asignado, 2026-11-01 y 02): búsqueda por palabras en Stock y en "Buscar gusto"
+- **US-52 a US-56** (sin sprint asignado, 2026-11-01 y 02): búsqueda por palabras en Stock y en "Buscar gusto"
   (US-52); el campo Bebida pasa a 30 (US-53, migración 0028) y a 50 caracteres (US-54, migración 0029, `name` en
   `varchar(85)`); bebida fija en las promos (US-55, migración 0030: `promotion_components.menu_item_id` con FK
-  compuesta a `menu_items (id, menu_group)`). Supabase tiene que llegar a **31** migraciones antes de `main`.
+  compuesta a `menu_items (id, menu_group)`). US-56: un ingreso de stock acepta 0, para corregir uno cargado por
+  error (migración 0031). Supabase tiene que llegar a **32** migraciones antes de `main`.
 - **US-43** (sin sprint asignado): la web pública (`/home`, `/product`, `/api/public`) está **apagada salvo
   `PUBLIC_CATALOG=true`**, y sin sesión se entra por `/login`. Para prenderla se carga la variable en Vercel y se
   redespliega. Plan en [`US-43-sin-web-publica.md`](plans/US-43-sin-web-publica.md).

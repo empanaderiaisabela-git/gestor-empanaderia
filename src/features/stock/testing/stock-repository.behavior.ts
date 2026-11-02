@@ -76,6 +76,11 @@ export function describeStockRepository(label: string, setup: () => Promise<Stoc
       expect(await repository.latestEntryId(siblingId)).toBe(first.id);
     });
 
+    it('acepta un ingreso en 0 (US-56)', async () => {
+      const { repository, itemId, userId } = harness;
+      expect(await repository.insertEntry({ menuItemId: itemId, quantity: 0, unitCost: 400, providerId: null, userId })).toMatchObject({ quantity: 0 });
+    });
+
     it('registra una merma con media unidad y el costo del momento', async () => {
       const { repository, itemId, userId } = harness;
       expect(await repository.insertLoss({ menuItemId: itemId, quantity: 0.5, unitCost: 3000, reason: 'Se quemó', userId })).toMatchObject({ quantity: '0.5', unitCost: '3000.00', reason: 'Se quemó' });
