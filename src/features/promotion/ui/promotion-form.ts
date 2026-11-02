@@ -1,7 +1,7 @@
 import { GROUPS, type MenuGroup } from '@/features/menu/domain/menu-groups';
 import { type PromotionDef, type PromotionInput, promotionCreateSchema, promotionUpdateSchema, type PromotionUpdateInput } from '@/features/promotion/domain/promotion.schema';
 
-export type ComponentValues = { group: MenuGroup; presentationKey: string; quantity: string };
+export type ComponentValues = { group: MenuGroup; presentationKey: string; quantity: string; menuItemId: string };
 export type PromotionFormValues = { name: string; price: string; components: ComponentValues[] };
 export type PromotionFormErrors = Partial<Record<'name' | 'price' | 'components', string>>;
 export type FormResult<T> = { ok: true; input: T } | { ok: false; errors: PromotionFormErrors };
@@ -12,17 +12,17 @@ const toNumber = (text: string): number => (text.trim() === '' ? Number.NaN : Nu
 const isField = (key: PropertyKey | undefined): key is (typeof FIELDS)[number] => FIELDS.some((field) => field === key);
 
 export function blankComponent(group: MenuGroup = 'empanadas'): ComponentValues {
-  return { group, presentationKey: GROUPS[group].presentations[0].key, quantity: '1' };
+  return { group, presentationKey: GROUPS[group].presentations[0].key, quantity: '1', menuItemId: '' };
 }
 
 export function initialValues(promotion: PromotionDef | null): PromotionFormValues {
   if (!promotion) return { name: '', price: '', components: [blankComponent()] };
-  const components = promotion.components.map(({ group, presentationKey, quantity }) => ({ group, presentationKey, quantity: String(quantity) }));
+  const components = promotion.components.map(({ group, presentationKey, quantity, menuItemId }) => ({ group, presentationKey, quantity: String(quantity), menuItemId: menuItemId ?? '' }));
   return { name: promotion.name, price: String(promotion.price), components };
 }
 
 function payloadOf(values: PromotionFormValues): Record<string, unknown> {
-  const components = values.components.map(({ group, presentationKey, quantity }) => ({ group, presentationKey, quantity: toNumber(quantity) }));
+  const components = values.components.map(({ group, presentationKey, quantity, menuItemId }) => ({ group, presentationKey, quantity: toNumber(quantity), menuItemId: menuItemId || null }));
   return { name: values.name, price: toNumber(values.price), components };
 }
 

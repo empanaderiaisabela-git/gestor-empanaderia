@@ -4,7 +4,7 @@ import { PROMO_INPUT } from '../testing/promotion-repository.behavior';
 import { createPromotionService, type PromotionService } from './promotion.service';
 
 const CALLER = { id: '00000000-0000-4000-8000-00000000000a' };
-const COCA = { group: 'coca_cola' as const, presentationKey: 'u1', quantity: 1 };
+const COCA = { group: 'coca_cola' as const, presentationKey: 'u1', quantity: 1, menuItemId: null };
 
 describe('promotion.service (US-8)', () => {
   let fake: FakePromotionUnitOfWork;

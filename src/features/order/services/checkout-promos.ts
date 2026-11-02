@@ -12,9 +12,15 @@ import { itemOf, type LockedItems } from './checkout-steps';
 
 export type ResolvedPromo = { promotion: Promotion; quantity: number; parts: OrderLine[] };
 
+type Part = CheckoutPromo['parts'][number];
+type Expected = ReturnType<typeof expandComponents>[number];
+
+const sameKey = (key: Expected, part: Part): boolean =>
+  key.group === part.group && key.presentationKey === part.presentationKey && (key.menuItemId === null || part.flavors.every((flavor) => flavor.menuItemId === key.menuItemId));
+
 function matchesPromotion(parts: CheckoutPromo['parts'], promotion: Promotion): boolean {
   const expected = expandComponents(promotion.components);
-  return expected.length === parts.length && expected.every((key, index) => key.group === parts[index].group && key.presentationKey === parts[index].presentationKey);
+  return expected.length === parts.length && expected.every((key, index) => sameKey(key, parts[index]));
 }
 
 export async function resolvePromos(scope: CheckoutScope, promos: readonly CheckoutPromo[]): Promise<ResolvedPromo[]> {

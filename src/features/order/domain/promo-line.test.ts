@@ -1,25 +1,46 @@
+import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
-import { addToPromo, describePromoFlavors, expandComponents, firstOpenPart, isPromoComplete, newPromoLine, orderSubtotal, promoUsageLines } from './promo-line';
+import { isComplete } from './order-line';
+import { addToPromo, describePromoFlavors, expandComponents, firstOpenPart, isPromoComplete, newPromoLine, nextOpenPart, orderSubtotal, promoUsageLines } from './promo-line';
 
 const PROMO = {
   id: 'p1',
   name: 'Docena + 2 Coca',
   price: 15000,
   components: [
-    { group: 'empanadas' as const, presentationKey: 'u12', quantity: 1 },
-    { group: 'coca_cola' as const, presentationKey: 'u1', quantity: 2 },
+    { group: 'empanadas' as const, presentationKey: 'u12', quantity: 1, menuItemId: null },
+    { group: 'coca_cola' as const, presentationKey: 'u1', quantity: 2, menuItemId: null },
   ],
 };
+const SPRITE = { group: 'coca_cola' as const, presentationKey: 'u1', quantity: 1, menuItemId: 'sprite' };
 const names: Record<string, string> = { carne: 'Carne', pollo: 'Pollo', coca: 'Coca 500', sprite: 'Sprite' };
 const nameOf = (id: string): string => names[id] ?? '?';
 
 describe('línea de promo en el pedido (US-9 CA-1 y CA-2)', () => {
   it('cada producto se abre en tantas partes como su cantidad, para elegir un gusto por parte', () => {
     expect(expandComponents(PROMO.components)).toEqual([
-      { group: 'empanadas', presentationKey: 'u12' },
-      { group: 'coca_cola', presentationKey: 'u1' },
-      { group: 'coca_cola', presentationKey: 'u1' },
+      { group: 'empanadas', presentationKey: 'u12', menuItemId: null },
+      { group: 'coca_cola', presentationKey: 'u1', menuItemId: null },
+      { group: 'coca_cola', presentationKey: 'u1', menuItemId: null },
     ]);
+  });
+
+  it('la bebida fija ya viene puesta y el próximo producto abierto la saltea (US-55)', () => {
+    const promo = newPromoLine({ ...PROMO, components: [PROMO.components[0], SPRITE, { ...SPRITE, menuItemId: null }] }, 'x');
+    expect(promo.parts[1].flavors).toEqual([{ menuItemId: 'sprite', units: 1 }]);
+    expect([firstOpenPart(promo), nextOpenPart(promo, 0), nextOpenPart(promo, 2)]).toEqual([0, 2, null]);
+    expect(firstOpenPart(newPromoLine({ ...PROMO, components: [SPRITE] }, 'y'))).toBeNull();
+  });
+
+  it('fuzz: una promo nueva arranca completa justo en las partes con bebida fija (US-55)', () => {
+    const component = fc.record({ fixed: fc.boolean(), quantity: fc.integer({ min: 1, max: 3 }) });
+    fc.assert(
+      fc.property(fc.array(component, { minLength: 1, maxLength: 5 }), (list) => {
+        const components = list.map(({ fixed, quantity }) => ({ ...SPRITE, quantity, menuItemId: fixed ? 'sprite' : null }));
+        const promo = newPromoLine({ ...PROMO, components }, 'x');
+        expect(promo.parts.map(isComplete)).toEqual(expandComponents(components).map((key) => key.menuItemId !== null));
+      })
+    );
   });
 
   it('una promo nueva tiene sus partes vacías y la primera abierta', () => {

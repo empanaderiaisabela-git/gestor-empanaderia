@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { isDrinkGroup } from '@/features/menu/domain/drink';
 import { MENU_GROUPS } from '@/features/menu/domain/menu-groups';
 import { amountSchema, timestampSchema } from '@/features/menu/domain/menu-item.schema';
 import { priceSchema } from '@/features/menu/domain/menu-prices';
@@ -10,12 +11,15 @@ const name = z.string('El nombre es obligatorio').trim().min(1, 'El nombre es ob
 const version = z.number().int().min(1);
 const quantity = z.number('Ingresá una cantidad válida').int('La cantidad debe ser un número entero').min(1, 'La cantidad debe ser al menos 1').max(99, 'La cantidad no puede superar 99');
 
+const menuItemId = z.uuid('Elegí una bebida válida').nullable().default(null);
+
 export const promotionComponentSchema = z
-  .strictObject({ group: z.enum(MENU_GROUPS, 'Elegí un grupo válido'), presentationKey: z.string().max(10), quantity })
-  .refine((component) => presentationOf(component) !== null, { message: 'Ese grupo no se vende en esa presentación', path: ['presentationKey'] });
+  .strictObject({ group: z.enum(MENU_GROUPS, 'Elegí un grupo válido'), presentationKey: z.string().max(10), quantity, menuItemId })
+  .refine((component) => presentationOf(component) !== null, { message: 'Ese grupo no se vende en esa presentación', path: ['presentationKey'] })
+  .refine((component) => component.menuItemId === null || isDrinkGroup(component.group), { message: 'Sólo se puede fijar una bebida', path: ['menuItemId'] });
 export type PromotionComponent = z.infer<typeof promotionComponentSchema>;
 
-const keyOf = ({ group, presentationKey }: PromotionComponent): string => `${group}:${presentationKey}`;
+const keyOf = ({ group, presentationKey, menuItemId: drink }: PromotionComponent): string => `${group}:${presentationKey}:${drink ?? ''}`;
 
 const components = z
   .array(promotionComponentSchema)
@@ -41,7 +45,7 @@ export const promotionRowSchema = z.object({
   price: amountSchema,
   isActive: z.boolean(),
   version: z.number(),
-  components: z.array(z.object({ group: z.enum(MENU_GROUPS), presentationKey: z.string(), quantity: z.number() })),
+  components: z.array(z.object({ group: z.enum(MENU_GROUPS), presentationKey: z.string(), quantity: z.number(), menuItemId: z.string().nullable(), menuItemName: z.string().nullable() })),
   createdAt: timestampSchema,
   updatedAt: timestampSchema,
 });

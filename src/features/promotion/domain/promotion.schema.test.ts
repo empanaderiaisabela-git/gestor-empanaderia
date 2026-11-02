@@ -6,6 +6,8 @@ const DOCENA = { group: 'empanadas', presentationKey: 'u12', quantity: 1 };
 const COCA = { group: 'coca_cola', presentationKey: 'u1', quantity: 2 };
 const PROMO = { name: 'Docena + 2 Coca', price: 15000, components: [DOCENA, COCA] };
 const ID = '11111111-1111-4111-8111-111111111111';
+const SPRITE = '22222222-2222-4222-8222-222222222222';
+const free = <T extends object>(component: T): T & { menuItemId: null } => ({ ...component, menuItemId: null });
 
 function messages(input: unknown): string[] {
   const result = promotionCreateSchema.safeParse(input);
@@ -14,7 +16,7 @@ function messages(input: unknown): string[] {
 
 describe('promotionCreateSchema (US-8 CA-1 y CA-2)', () => {
   it('acepta una promo con componentes de distintos grupos y el precio escrito a mano', () => {
-    expect(promotionCreateSchema.parse({ ...PROMO, name: '  Docena + 2 Coca  ' })).toEqual(PROMO);
+    expect(promotionCreateSchema.parse({ ...PROMO, name: '  Docena + 2 Coca  ' })).toEqual({ ...PROMO, components: [free(DOCENA), free(COCA)] });
   });
 
   it('acepta una pizza de 2 sabores como componente', () => {
@@ -33,6 +35,9 @@ describe('promotionCreateSchema (US-8 CA-1 y CA-2)', () => {
     { caso: 'cantidad con decimales', input: { ...PROMO, components: [{ ...DOCENA, quantity: 1.5 }] }, message: 'La cantidad debe ser un número entero' },
     { caso: 'cantidad de 100', input: { ...PROMO, components: [{ ...DOCENA, quantity: 100 }] }, message: 'La cantidad no puede superar 99' },
     { caso: 'grupo inexistente', input: { ...PROMO, components: [{ ...DOCENA, group: 'tartas' }] }, message: 'Elegí un grupo válido' },
+    { caso: 'una bebida fija en comida (US-55)', input: { ...PROMO, components: [{ ...DOCENA, menuItemId: ID }] }, message: 'Sólo se puede fijar una bebida' },
+    { caso: 'la misma bebida fija dos veces (US-55)', input: { ...PROMO, components: [{ ...COCA, menuItemId: SPRITE }, { ...COCA, menuItemId: SPRITE }] }, message: 'Ese producto ya está en la promo: sumá la cantidad' },
+    { caso: 'una bebida con id inválido (US-55)', input: { ...PROMO, components: [{ ...COCA, menuItemId: 'x' }] }, message: 'Elegí una bebida válida' },
   ])('rechaza $caso con el mensaje exacto', ({ input, message }) => {
     expect(messages(input)).toContain(message);
   });
@@ -44,9 +49,14 @@ describe('promotionCreateSchema (US-8 CA-1 y CA-2)', () => {
     expect(messages({ ...PROMO, components: [...many, { group: 'ciabattas', presentationKey: 'u1', quantity: 1 }] })).toContain('Una promo puede tener hasta 10 productos');
   });
 
+  it('fija la bebida en Coca-Cola y Quilmes; dos Coca-Cola van juntas si sus bebidas son distintas (US-55)', () => {
+    const components = [{ ...COCA, menuItemId: SPRITE }, { ...COCA, menuItemId: ID }, COCA, { group: 'pepsi', presentationKey: 'u1', quantity: 1, menuItemId: ID }];
+    expect(messages({ ...PROMO, components })).toEqual([]);
+  });
+
   it('rechaza campos de más, también dentro de un componente (strictObject)', () => {
     expect(promotionCreateSchema.safeParse({ ...PROMO, isActive: true }).success).toBe(false);
-    expect(promotionCreateSchema.safeParse({ ...PROMO, components: [{ ...DOCENA, menuItemId: ID }] }).success).toBe(false);
+    expect(promotionCreateSchema.safeParse({ ...PROMO, components: [{ ...DOCENA, stock: 1 }] }).success).toBe(false);
   });
 
   it('fuzz: ninguna entrada arbitraria hace lanzar al schema', () => {
@@ -67,7 +77,8 @@ describe('schemas de edición, activación, borrado y fila', () => {
   });
 
   it('la fila convierte a número el precio que Postgres devuelve como texto', () => {
-    const row = { id: ID, name: 'Promo', price: '15000.00', isActive: true, version: 1, components: [DOCENA], createdAt: new Date(0), updatedAt: new Date(0) };
-    expect(promotionRowSchema.parse(row)).toMatchObject({ price: 15000, components: [DOCENA] });
+    const sprite = { ...COCA, menuItemId: SPRITE, menuItemName: 'Sprite 1.5L' };
+    const row = { id: ID, name: 'Promo', price: '15000.00', isActive: true, version: 1, components: [sprite], createdAt: new Date(0), updatedAt: new Date(0) };
+    expect(promotionRowSchema.parse(row)).toMatchObject({ price: 15000, components: [sprite] });
   });
 });

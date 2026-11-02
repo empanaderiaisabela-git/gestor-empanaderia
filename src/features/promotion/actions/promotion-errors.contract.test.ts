@@ -43,10 +43,17 @@ describe('tabla de errores de Promociones (US-8 CA-4)', () => {
   it.each([
     { caso: 'sin componentes', input: { ...PROMO_INPUT, components: [] } },
     { caso: 'precio 0', input: { ...PROMO_INPUT, price: 0 } },
-    { caso: 'presentación que no es del grupo', input: { ...PROMO_INPUT, components: [{ group: 'pizzas' as const, presentationKey: 'u12', quantity: 1 }] } },
+    { caso: 'presentación que no es del grupo', input: { ...PROMO_INPUT, components: [{ group: 'pizzas' as const, presentationKey: 'u12', quantity: 1, menuItemId: null }] } },
+    { caso: 'una bebida fija en comida (US-55)', input: { ...PROMO_INPUT, components: [{ group: 'empanadas' as const, presentationKey: 'u12', quantity: 1, menuItemId: crypto.randomUUID() }] } },
   ])('VALIDATION: $caso', async ({ input }) => {
     await asUser({ role: 'admin' });
     expect(await createPromotionAction(input)).toEqual({ success: false, code: 'VALIDATION', error: VALIDATION.INVALID_DATA });
+  });
+
+  it('RELATION_NOT_FOUND: una bebida fija que no existe (US-55)', async () => {
+    await asUser({ role: 'admin' });
+    const components = [{ group: 'coca_cola' as const, presentationKey: 'u1', quantity: 1, menuItemId: crypto.randomUUID() }];
+    expect(await createPromotionAction({ ...PROMO_INPUT, components })).toEqual({ success: false, code: 'RELATION_NOT_FOUND', error: DATABASE.RELATION_NOT_FOUND });
   });
 
   it('VALIDATION: editar con un id inválido', async () => {

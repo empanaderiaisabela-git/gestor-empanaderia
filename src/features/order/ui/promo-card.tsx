@@ -18,11 +18,17 @@ function useActivePromotions(): PromotionDef[] {
   return promotions.filter((promotion) => promotion.isActive);
 }
 
+function unavailable(promotion: PromotionDef, board: OrderBoardModel): string | null {
+  const fixed = promotion.components.find((component) => component.menuItemId !== null && !board.itemOf(component.menuItemId));
+  if (fixed) return `Sin stock de ${fixed.menuItemName ?? 'la bebida'}`;
+  return promotion.components.some((component) => board.itemsOf(component.group).length === 0) ? 'Falta cargar gustos de algún producto' : null;
+}
+
 function PromoButton({ promotion, board }: { promotion: PromotionDef; board: OrderBoardModel }): JSX.Element {
   const startPromo = useOrderStore((state) => state.startPromo);
-  const missing = promotion.components.some((component) => board.itemsOf(component.group).length === 0);
+  const missing = unavailable(promotion, board);
   return (
-    <button disabled={missing} onClick={() => startPromo(promotion)} title={missing ? 'Falta cargar gustos de algún producto' : undefined} className='rounded-xl border border-black/10 dark:border-white/10 bg-white/70 dark:bg-zinc-950/40 px-3 py-2.5 text-left hover:border-brand-500 disabled:opacity-50 disabled:cursor-not-allowed'>
+    <button disabled={missing !== null} onClick={() => startPromo(promotion)} title={missing ?? undefined} className='rounded-xl border border-black/10 dark:border-white/10 bg-white/70 dark:bg-zinc-950/40 px-3 py-2.5 text-left hover:border-brand-500 disabled:opacity-50 disabled:cursor-not-allowed'>
       <span className='flex justify-between gap-2 font-bold text-zinc-900 dark:text-zinc-50'>
         <span>{promotion.name}</span>
         <span>{formatMoney(promotion.price)}</span>

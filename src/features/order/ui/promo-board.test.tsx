@@ -15,7 +15,7 @@ vi.mock('@/features/promotion/actions/fetch-promotions', () => ({ fetchPromotion
 const board = boardModelOf(ITEMS);
 const store = () => useOrderStore.getState();
 const promo = (overrides: Partial<PromotionDef>): PromotionDef => ({ id: 'p1', name: 'Media + Coca', price: 9000, isActive: true, version: 1, components: [], createdAt: '', updatedAt: '', ...overrides });
-const MEDIA_Y_COCA = promo({ components: [{ group: 'empanadas', presentationKey: 'u6', quantity: 1 }, { group: 'coca_cola', presentationKey: 'u1', quantity: 1 }] });
+const MEDIA_Y_COCA = promo({ components: [{ group: 'empanadas', presentationKey: 'u6', quantity: 1, menuItemId: null, menuItemName: null }, { group: 'coca_cola', presentationKey: 'u1', quantity: 1, menuItemId: null, menuItemName: null }] });
 const rowOf = (name: string): HTMLElement => screen.getByText(name).closest('li') ?? document.body;
 
 describe('promos en el tablero (US-9 CA-1 y CA-2)', () => {
@@ -23,7 +23,7 @@ describe('promos en el tablero (US-9 CA-1 y CA-2)', () => {
     store().clear();
     store().setBuyer({ name: 'Marta' });
     usePromotionStore.setState({ promotions: [], isLoaded: false });
-    promotions.fetch.mockResolvedValue([MEDIA_Y_COCA, promo({ id: 'p2', name: 'Vieja', isActive: false }), promo({ id: 'p3', name: 'Ciabatta', components: [{ group: 'ciabattas', presentationKey: 'u1', quantity: 1 }] })]);
+    promotions.fetch.mockResolvedValue([MEDIA_Y_COCA, promo({ id: 'p2', name: 'Vieja', isActive: false }), promo({ id: 'p3', name: 'Ciabatta', components: [{ group: 'ciabattas', presentationKey: 'u1', quantity: 1, menuItemId: null, menuItemName: null }] })]);
   });
 
   it('la subdivisión Promos muestra las activas con su precio; una con productos sin gustos queda deshabilitada', async () => {
@@ -34,6 +34,15 @@ describe('promos en el tablero (US-9 CA-1 y CA-2)', () => {
     expect(screen.getByRole('button', { name: /Ciabatta/ }).hasAttribute('disabled')).toBe(true);
     fireEvent.click(media);
     expect(store().promos.map((line) => line.name)).toEqual(['Media + Coca']);
+  });
+
+  it('la bebida fija aparece en la promo, y sin stock la deshabilita (US-55)', async () => {
+    const fixed = (menuItemId: string, menuItemName: string) => ({ group: 'coca_cola' as const, presentationKey: 'u1', quantity: 1, menuItemId, menuItemName });
+    promotions.fetch.mockResolvedValue([promo({ name: 'Con Coca', components: [fixed('coca', 'Coca-Cola 1,5 L')] }), promo({ id: 'p2', name: 'Con Sprite', components: [fixed('sprite', 'Sprite 1,5 L')] })]);
+    render(<PromoCard board={board} />);
+    expect((await screen.findByRole('button', { name: /Con Coca/ })).textContent).toContain('Coca-Cola 1,5 L');
+    expect(screen.getByRole('button', { name: /Con Sprite/ }).getAttribute('title')).toBe('Sin stock de Sprite 1,5 L');
+    expect(screen.getByRole('button', { name: /Con Sprite/ }).hasAttribute('disabled')).toBe(true);
   });
 
   it('sin promos activas lo avisa', async () => {

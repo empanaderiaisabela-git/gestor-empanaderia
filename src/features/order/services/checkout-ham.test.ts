@@ -8,7 +8,7 @@ const fake = createFakeCheckoutUnitOfWork();
 const service = createCheckoutService({ unitOfWork: fake });
 const cash = (amount: number) => [{ type: 'efectivo' as const, amount }];
 const muzza = (quantity: number, ham?: boolean): CheckoutLine => ({ group: 'pizzas', presentationKey: 'pizza_1', flavors: [{ menuItemId: MUZZA.id, units: 1 }], quantity, ham });
-const PIZZA_Y_COCA = { name: 'Pizza + Coca', price: 10000, components: [{ group: 'pizzas' as const, presentationKey: 'pizza_1', quantity: 1 }, { group: 'coca_cola' as const, presentationKey: 'u1', quantity: 1 }] };
+const PIZZA_Y_COCA = { name: 'Pizza + Coca', price: 10000, components: [{ group: 'pizzas' as const, presentationKey: 'pizza_1', quantity: 1, menuItemId: null }, { group: 'coca_cola' as const, presentationKey: 'u1', quantity: 1, menuItemId: null }] };
 
 describe('cobro con jamón extra (US-47 CA-5)', () => {
   beforeEach(async () => {

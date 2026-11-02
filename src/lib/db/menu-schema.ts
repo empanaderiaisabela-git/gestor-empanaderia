@@ -33,6 +33,7 @@ export const menuItems = pgTable(
   },
   (table) => [
     unique('menu_items_group_name_unique').on(table.group, table.name),
+    unique('menu_items_id_group_unique').on(table.id, table.group),
     uniqueIndex('menu_items_one_base_per_group').on(table.group).where(sql`${table.isBase}`),
     check('menu_items_unit_cost_check', sql`${table.unitCost} is null or ${table.unitCost} >= 0`),
     check(
