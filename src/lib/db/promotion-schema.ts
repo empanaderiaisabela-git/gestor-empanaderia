@@ -1,6 +1,6 @@
 import { sql } from 'drizzle-orm';
-import { boolean, check, index, integer, numeric, pgTable, timestamp, unique, uuid, varchar } from 'drizzle-orm/pg-core';
-import { menuGroupEnum } from './menu-schema';
+import { boolean, check, foreignKey, index, integer, numeric, pgTable, timestamp, unique, uuid, varchar } from 'drizzle-orm/pg-core';
+import { menuGroupEnum, menuItems } from './menu-schema';
 
 export const promotions = pgTable(
   'promotions',
@@ -31,10 +31,13 @@ export const promotionComponents = pgTable(
     presentationKey: varchar('presentation_key', { length: 10 }).notNull(),
     quantity: integer('quantity').notNull(),
     position: integer('position').notNull().default(0),
+    menuItemId: uuid('menu_item_id'),
   },
   (table) => [
     index('promotion_components_promotion_id_idx').on(table.promotionId),
-    unique('promotion_components_unique').on(table.promotionId, table.group, table.presentationKey),
+    unique('promotion_components_unique').on(table.promotionId, table.group, table.presentationKey, table.menuItemId).nullsNotDistinct(),
+    foreignKey({ name: 'promotion_components_menu_item_fk', columns: [table.menuItemId, table.group], foreignColumns: [menuItems.id, menuItems.group] }),
+    check('promotion_components_menu_item_check', sql`${table.menuItemId} is null or ${table.group} in ('coca_cola', 'pepsi')`),
     check('promotion_components_quantity_check', sql`${table.quantity} > 0`),
     check('promotion_components_position_check', sql`${table.position} >= 0`),
     check(

@@ -54,7 +54,7 @@ describe('cobro contra Postgres (US-6 CA-3 y CA-4)', () => {
   });
 
   it('cobra una promo: la línea guarda la promo, sus gustos con el costo congelado y descuenta el stock (US-9)', async () => {
-    const promo = await drizzlePromotionRepository(db).insert({ name: 'Coca promo', price: 2000, components: [{ group: 'coca_cola', presentationKey: 'u1', quantity: 1 }] });
+    const promo = await drizzlePromotionRepository(db).insert({ name: 'Coca promo', price: 2000, components: [{ group: 'coca_cola', presentationKey: 'u1', quantity: 1, menuItemId: null }] });
     const promos = [{ promotionId: promo.id, quantity: 1, parts: [{ group: 'coca_cola' as const, presentationKey: 'u1', flavors: [{ menuItemId: coca, units: 1 }] }] }];
     const { total } = await checkoutService.checkout(CALLER, { ...order([], 2000), promos });
     expect(total).toBe(2000);

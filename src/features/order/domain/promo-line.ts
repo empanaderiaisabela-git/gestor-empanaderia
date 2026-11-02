@@ -3,27 +3,29 @@ import { describeFlavors } from './order-describe';
 import { type AddMode, addFlavor, isComplete, type OrderLine, removeFlavor } from './order-line';
 import { hamPrice, orderTotal, type PriceBook, round2 } from './order-pricing';
 
-type PartKey = { group: MenuGroup; presentationKey: string };
+type PartKey = { group: MenuGroup; presentationKey: string; menuItemId: string | null };
 type Component = PartKey & { quantity: number };
 export type PromoSource = { id: string; name: string; price: number; components: readonly Component[] };
 export type PromoLine = { id: string; promotionId: string; name: string; price: number; parts: OrderLine[] };
 export type PromoAddition = { part: number; menuItemId: string; mode: AddMode };
 
 export function expandComponents(components: readonly Component[]): PartKey[] {
-  return components.flatMap(({ group, presentationKey, quantity }) => Array.from({ length: quantity }, () => ({ group, presentationKey })));
+  return components.flatMap(({ group, presentationKey, quantity, menuItemId }) => Array.from({ length: quantity }, () => ({ group, presentationKey, menuItemId })));
 }
 
 export function newPromoLine(promotion: PromoSource, id: string = crypto.randomUUID()): PromoLine {
-  const parts = expandComponents(promotion.components).map((key, index) => ({ ...key, id: `${id}-${index}`, flavors: [], quantity: 1 }));
+  const parts = expandComponents(promotion.components).map(({ menuItemId, ...key }, index) => ({ ...key, id: `${id}-${index}`, flavors: menuItemId === null ? [] : [{ menuItemId, units: 1 }], quantity: 1 }));
   return { id, promotionId: promotion.id, name: promotion.name, price: promotion.price, parts };
 }
 
 export const isPromoComplete = (promo: PromoLine): boolean => promo.parts.every(isComplete);
 
-export function firstOpenPart(promo: PromoLine): number | null {
-  const index = promo.parts.findIndex((part) => !isComplete(part));
+export function nextOpenPart(promo: PromoLine, after: number): number | null {
+  const index = promo.parts.findIndex((part, position) => position > after && !isComplete(part));
   return index < 0 ? null : index;
 }
+
+export const firstOpenPart = (promo: PromoLine): number | null => nextOpenPart(promo, -1);
 
 export function addToPromo(promo: PromoLine, { part, menuItemId, mode }: PromoAddition): PromoLine | null {
   const current = promo.parts[part];

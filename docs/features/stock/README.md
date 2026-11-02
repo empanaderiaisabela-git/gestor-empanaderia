@@ -25,8 +25,8 @@ Muestra el stock de cada gusto y bebida activos, agrupados por grupo, y permite:
 
 ## Reglas de negocio
 
-- La cantidad que entra es un entero mayor a 0. Desde US-29 las mermas también son enteras: ya no hay medias pizzas
-  en stock.
+- La cantidad que entra es un entero de 0 o más (desde US-56 acepta 0, para corregir un ingreso cargado por error).
+  Las mermas siguen siendo mayores a 0 y, desde US-29, enteras: ya no hay medias pizzas en stock.
 - Una merma no puede superar el stock (`INSUFFICIENT_STOCK`).
 - **Primer ingreso de un gusto (US-17, US-28)**: costo y precios de venta son obligatorios en todos los grupos
   (`MISSING_COST`, `MISSING_PRICE`). Los precios tienen que ser los de las presentaciones del grupo: los cuatro en
@@ -52,7 +52,8 @@ Muestra el stock de cada gusto y bebida activos, agrupados por grupo, y permite:
   (categoría, gusto, cantidad, costo, proveedor, precios de venta y mínimo). Todo se puede cambiar, también el gusto
   (D-3), pero no hacia Pizzas o Ciabattas, que no reciben ingresos. Al guardar:
   - Si cambia la cantidad, el gusto sube o baja la diferencia. Si cambia el gusto, las unidades salen del viejo y
-    entran al nuevo. El stock nunca queda negativo (`INSUFFICIENT_STOCK`, P-7).
+    entran al nuevo. El stock nunca queda negativo (`INSUFFICIENT_STOCK`, P-7). Un ingreso puesto en 0 (US-56) resta
+    todo lo que había entrado y queda en el Historial con 0.
   - El costo del ingreso pasa a ser el costo del gusto sólo si cambió (o cambió el gusto) y es su ingreso más
     reciente (P-6, I-7). El gusto viejo conserva su costo (I-6).
   - Los precios de venta y el mínimo son del gusto: lo que se guarda queda como actual. Las ventas ya hechas no cambian.
@@ -101,7 +102,7 @@ La grilla lee los gustos con `fetchMenuItems` del feature `menu`. La tabla (desd
 
 ## Datos
 
-- `stock_entries`: gusto (FK sin borrado en cascada), cantidad (`CHECK > 0`), costo (`CHECK >= 0`), proveedor
+- `stock_entries`: gusto (FK sin borrado en cascada), cantidad (`CHECK >= 0` desde la migración 0031, US-56), costo (`CHECK >= 0`), proveedor
   (nullable), usuario y `version` (migración `0024_editar-ingreso`, US-46). Se edita sólo desde "Editar ingreso".
 - `stock_losses`: gusto, cantidad (`numeric(10,1)`, `CHECK > 0` y en medias; desde US-29 Zod la pide entera), costo,
   motivo (`CHECK` no vacío) y usuario. Sólo inserción.
@@ -126,7 +127,7 @@ La grilla lee los gustos con `fetchMenuItems` del feature `menu`. La tabla (desd
 |---|---|---|---|
 | Sin sesión | `UNAUTHENTICATED` | No autorizado (Token faltante) | `actions/stock-actions.contract.test.ts` |
 | El vendedor ingresa stock o registra una merma (US-16) | `FORBIDDEN` | Solo los administradores pueden realizar esta acción | `stock-actions.contract.test.ts` |
-| Cantidad ≤ 0 o con decimales (también la merma, desde US-29); motivo vacío | `VALIDATION` | Los datos proporcionados no son válidos. | `stock-actions.contract.test.ts`, `domain/stock.schema.test.ts` |
+| Cantidad negativa o con decimales; merma de 0 o con decimales (desde US-29); motivo vacío | `VALIDATION` | Los datos proporcionados no son válidos. | `stock-actions.contract.test.ts`, `domain/stock.schema.test.ts` |
 | Stock mínimo de 0, con decimales o mayor a 100.000 (US-45) | `VALIDATION` | Los datos proporcionados no son válidos. | `actions/stock-min-stock.contract.test.ts`, `domain/stock.schema.test.ts` |
 | Ingreso o pérdida de un gusto de Pizzas o Ciabattas (US-29) | `VALIDATION` | Los datos proporcionados no son válidos. | `stock-actions.contract.test.ts`, `services/stock-bases.test.ts` |
 | Ingreso de una base con costo o precios (US-29) | `VALIDATION` | Los datos proporcionados no son válidos. | `services/stock-bases.test.ts` |

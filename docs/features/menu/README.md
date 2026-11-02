@@ -48,7 +48,8 @@ varias presentaciones), sus fotos y si hay stock.
 - El nombre es único dentro del grupo, sin distinguir mayúsculas. El mismo nombre puede repetirse en otro grupo
   (una Capresse de empanada y otra de ciabatta).
 - Un gusto sin precio cargado no se puede vender ni aparece en el catálogo.
-- Un gusto con ventas o movimientos no se borra: se desactiva. La base rechaza el borrado (`HAS_RELATIONS`).
+- Un gusto con ventas o movimientos no se borra: se desactiva. La base rechaza el borrado (`HAS_RELATIONS`). Lo
+  mismo una bebida fijada en una promo (US-55).
 - **Bases (US-29, D-2 de `sprint-4.md`)**: "Prepizza" (Pizzas) y "Pan de ciabatta" (Ciabattas) son filas de
   `menu_items` con `is_base`. No se listan en Alta de productos, no se venden solas ni aparecen en el catálogo, y
   editarlas, activarlas o desactivarlas, mostrarlas en el catálogo o borrarlas da `VALIDATION`. Son la primera fila
@@ -94,7 +95,7 @@ T-11).
   versión (`STALE_VERSION`). Lo carga el admin desde "Ingresar stock" (categoría "Jamón extra para pizza") y audita
   `ACTUALIZAR` / `PIZZA_EXTRA`.
 
-- `menu_items` suma `drink_name` (`varchar(30)` desde US-53, con `name` en `varchar(65)`), `liters` (`numeric(6,3)`, legado de US-49 que sólo se lee),
+- `menu_items` suma `drink_name` (`varchar(50)` desde US-54, con `name` en `varchar(85)`), `liters` (`numeric(6,3)`, legado de US-49 que sólo se lee),
   `drink_size` (`varchar(10)`, el texto que se escribe desde US-51) y `flavor` (`varchar(25)`), nullable, con el check
   `menu_items_drink_check`: las cuatro nulas, o una bebida con bebida y (`liters` > 0 o `drink_size` no nulo)
   (migraciones `0026_bebidas-por-litros` y `0027_litros-como-texto`).
@@ -133,7 +134,7 @@ T-11).
 | Nombre repetido en el grupo | `DUPLICATE` | Ya existe un registro con esos datos (DNI, nombre o código duplicado). | `menu-errors.contract.test.ts` |
 | Editar, activar o borrar con una versión vieja | `STALE_VERSION` | Otro usuario cambió estos datos. Ya se actualizaron; intentá de nuevo. | `menu-errors.contract.test.ts` |
 | Editar un producto que ya no existe | `NOT_FOUND` | El producto ya no existe. | `menu-errors.contract.test.ts` |
-| Borrar un producto con movimientos | `HAS_RELATIONS` | No se puede completar la operación porque existen registros relacionados. | `menu-errors.contract.test.ts` |
+| Borrar un producto con movimientos o una bebida fijada en una promo (US-55) | `HAS_RELATIONS` | No se puede completar la operación porque existen registros relacionados. | `menu-errors.contract.test.ts` |
 | Editar, activar, desactivar, mostrar en el catálogo o borrar una base (US-29) | `VALIDATION` | Los datos proporcionados no son válidos. | `services/menu-bases.test.ts` |
 | Un vendedor muestra u oculta un gusto o maneja fotos | `FORBIDDEN` | Solo los administradores pueden realizar esta acción | `menu-catalog.contract.test.ts` |
 | Foto que no es JPG, PNG o WEBP, o una URL (no se llama a Cloudinary) | `VALIDATION` | La imagen tiene que ser JPG, PNG o WEBP | `upload-menu-photo.contract.test.ts`, `menu-catalog.contract.test.ts`, `domain/catalog.test.ts` |

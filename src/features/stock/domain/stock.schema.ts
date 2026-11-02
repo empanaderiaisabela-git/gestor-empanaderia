@@ -9,7 +9,7 @@ export const minStockSchema = z.number('Ingresá un stock mínimo').int('El stoc
 
 export const stockEntrySchema = z.strictObject({
   menuItemId,
-  quantity: z.number('Ingresá una cantidad').int('La cantidad tiene que ser un número entero').positive('La cantidad debe ser mayor a 0').max(MAX_QUANTITY, 'La cantidad es demasiado grande'),
+  quantity: z.number('Ingresá una cantidad').int('La cantidad tiene que ser un número entero').min(0, 'La cantidad no puede ser negativa').max(MAX_QUANTITY, 'La cantidad es demasiado grande'),
   unitCost: unitCostSchema.optional(),
   prices: menuPricesSchema.optional(),
   providerId: z.uuid('Elegí un proveedor válido').nullable().optional(),

@@ -9,7 +9,7 @@ const service = createCheckoutService({ unitOfWork: fake });
 const cash = (amount: number) => [{ type: 'efectivo' as const, amount }];
 const muzzas = (quantity: number): CheckoutLine => ({ group: 'pizzas', presentationKey: 'pizza_1', flavors: [{ menuItemId: MUZZA.id, units: 1 }], quantity });
 const ciabatta: CheckoutLine = { group: 'ciabattas', presentationKey: 'u1', flavors: [{ menuItemId: JYQ.id, units: 1 }], quantity: 1 };
-const PIZZA_Y_COCA = { name: 'Pizza + Coca', price: 10000, components: [{ group: 'pizzas' as const, presentationKey: 'pizza_1', quantity: 1 }, { group: 'coca_cola' as const, presentationKey: 'u1', quantity: 1 }] };
+const PIZZA_Y_COCA = { name: 'Pizza + Coca', price: 10000, components: [{ group: 'pizzas' as const, presentationKey: 'pizza_1', quantity: 1, menuItemId: null }, { group: 'coca_cola' as const, presentationKey: 'u1', quantity: 1, menuItemId: null }] };
 const PROMO_PARTS = [
   { group: 'pizzas' as const, presentationKey: 'pizza_1', flavors: [{ menuItemId: MUZZA.id, units: 1 }] },
   { group: 'coca_cola' as const, presentationKey: 'u1', flavors: [{ menuItemId: COCA.id, units: 1 }] },

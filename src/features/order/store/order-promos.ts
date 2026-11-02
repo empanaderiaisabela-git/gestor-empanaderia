@@ -1,5 +1,5 @@
 import type { AddMode } from '@/features/order/domain/order-line';
-import { addToPromo, firstOpenPart, newPromoLine, type PromoLine, type PromoSource, removeFromPromo, togglePartHam } from '@/features/order/domain/promo-line';
+import { addToPromo, firstOpenPart, newPromoLine, nextOpenPart, type PromoLine, type PromoSource, removeFromPromo, togglePartHam } from '@/features/order/domain/promo-line';
 
 export type PromoOpen = { promoId: string; part: number };
 export type PromoState = { promos: PromoLine[]; openPromo: PromoOpen | null };
@@ -45,8 +45,8 @@ export function promoActions(set: Setter, get: () => PromoState): PromoActions {
     },
     nextPromoPart: () => {
       const open = openOne(get());
-      const last = !open || open.part >= open.promo.parts.length - 1;
-      set({ openPromo: last || !open ? null : { promoId: open.promo.id, part: open.part + 1 } });
+      const part = open && nextOpenPart(open.promo, open.part);
+      set({ openPromo: open && part !== null ? { promoId: open.promo.id, part } : null });
     },
     reopenPromo: (promoId) => {
       const promo = get().promos.find((candidate) => candidate.id === promoId);

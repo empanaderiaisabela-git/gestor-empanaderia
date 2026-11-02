@@ -1,6 +1,6 @@
 import { GROUPS } from '@/features/menu/domain/menu-groups';
 import { type AddMode, isComplete, type OrderLine, presentationOf } from '@/features/order/domain/order-line';
-import { promoUsageLines } from '@/features/order/domain/promo-line';
+import { nextOpenPart, promoUsageLines } from '@/features/order/domain/promo-line';
 import { useOrderStore } from '@/features/order/store/order.store';
 
 export type PromoNext = { label: 'Siguiente' | 'Listo'; ready: boolean; go: () => void };
@@ -17,6 +17,6 @@ export function usePickerTarget(): PickerTarget | null {
   const part = openPromo && promo?.parts[openPromo.part];
   if (!promo || !part || !openPromo) return null;
   const heading = [promo.name, labelOf(part), `(${openPromo.part + 1} de ${promo.parts.length})`];
-  const next: PromoNext = { label: openPromo.part + 1 < promo.parts.length ? 'Siguiente' : 'Listo', ready: isComplete(part), go: nextPromoPart };
+  const next: PromoNext = { label: nextOpenPart(promo, openPromo.part) === null ? 'Listo' : 'Siguiente', ready: isComplete(part), go: nextPromoPart };
   return { line: part, heading, usage, inPromo: true, add: addToOpenPromo, remove: removeFromOpen, next };
 }

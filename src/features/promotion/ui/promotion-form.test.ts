@@ -1,22 +1,29 @@
 import { describe, expect, it } from 'vitest';
 import { blankComponent, initialValues, parseCreate, parseUpdate } from './promotion-form';
 
-const VALUES = { name: 'Docena + Coca', price: '15000,50', components: [{ group: 'empanadas' as const, presentationKey: 'u12', quantity: '1' }] };
+const VALUES = { name: 'Docena + Coca', price: '15000,50', components: [{ group: 'empanadas' as const, presentationKey: 'u12', quantity: '1', menuItemId: '' }] };
+const SPRITE = '22222222-2222-4222-8222-222222222222';
 
 describe('formulario de Promociones (US-8 CA-1 y CA-2)', () => {
   it('un componente nuevo arranca con la primera presentación del grupo y cantidad 1', () => {
-    expect(blankComponent()).toEqual({ group: 'empanadas', presentationKey: 'u1', quantity: '1' });
-    expect(blankComponent('pizzas')).toEqual({ group: 'pizzas', presentationKey: 'pizza_1', quantity: '1' });
+    expect(blankComponent()).toEqual({ group: 'empanadas', presentationKey: 'u1', quantity: '1', menuItemId: '' });
+    expect(blankComponent('pizzas')).toEqual({ group: 'pizzas', presentationKey: 'pizza_1', quantity: '1', menuItemId: '' });
   });
 
   it('una promo nueva arranca vacía con un componente; al editar trae lo guardado', () => {
     expect(initialValues(null)).toEqual({ name: '', price: '', components: [blankComponent()] });
-    const promotion = { id: 'x', name: 'Promo', price: 9000, isActive: true, version: 2, components: [{ group: 'pepsi' as const, presentationKey: 'u1', quantity: 2 }], createdAt: '', updatedAt: '' };
-    expect(initialValues(promotion)).toEqual({ name: 'Promo', price: '9000', components: [{ group: 'pepsi', presentationKey: 'u1', quantity: '2' }] });
+    const promotion = { id: 'x', name: 'Promo', price: 9000, isActive: true, version: 2, components: [{ group: 'pepsi' as const, presentationKey: 'u1', quantity: 2, menuItemId: SPRITE, menuItemName: 'Quilmes 1L' }], createdAt: '', updatedAt: '' };
+    expect(initialValues(promotion)).toEqual({ name: 'Promo', price: '9000', components: [{ group: 'pepsi', presentationKey: 'u1', quantity: '2', menuItemId: SPRITE }] });
   });
 
   it('convierte el precio con coma y las cantidades a número', () => {
-    expect(parseCreate(VALUES)).toEqual({ ok: true, input: { name: 'Docena + Coca', price: 15000.5, components: [{ group: 'empanadas', presentationKey: 'u12', quantity: 1 }] } });
+    expect(parseCreate(VALUES)).toEqual({ ok: true, input: { name: 'Docena + Coca', price: 15000.5, components: [{ group: 'empanadas', presentationKey: 'u12', quantity: 1, menuItemId: null }] } });
+  });
+
+  it('la bebida fija viaja con su id y "Cualquiera" como null (US-55)', () => {
+    const coca = { group: 'coca_cola' as const, presentationKey: 'u1', quantity: '1' };
+    const components = [{ ...coca, menuItemId: SPRITE }, { ...coca, menuItemId: '' }];
+    expect(parseCreate({ ...VALUES, components })).toMatchObject({ ok: true, input: { components: [{ menuItemId: SPRITE }, { menuItemId: null }] } });
   });
 
   it('marca el error de cada parte del formulario', () => {

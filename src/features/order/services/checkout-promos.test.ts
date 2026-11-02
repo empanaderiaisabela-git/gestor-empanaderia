@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
+import { stockItem } from '@/features/stock/testing/stock-item';
 import { createFakeCheckoutUnitOfWork } from '../testing/fake-checkout-unit-of-work';
 import { CALLER, CARNE, checkoutOf, COCA, cokes, loadMenu, MEDIA_Y_COCA, POLLO, promoOf, stockOf } from '../testing/checkout-fixtures';
 import { createCheckoutService } from './checkout.service';
@@ -6,6 +7,7 @@ import { createCheckoutService } from './checkout.service';
 const fake = createFakeCheckoutUnitOfWork();
 const service = createCheckoutService({ unitOfWork: fake });
 const cash = (amount: number) => [{ type: 'efectivo' as const, amount }];
+const SPRITE = stockItem({ id: '10000000-0000-4000-8000-00000000000a', group: 'coca_cola', name: 'Sprite', unitCost: '1100.00', stock: '5.0', price1: '2500.00' });
 
 async function loadPromo(): Promise<string> {
   return (await fake.promotions.read.insert(MEDIA_Y_COCA)).id;
@@ -63,6 +65,18 @@ describe('cobrar promos (US-9 CA-2 y CA-3)', () => {
     const id = await loadPromo();
     await expect(service.checkout(CALLER, checkoutOf([], { promos: [change(promoOf(id))], payments: cash(paid ?? 9000) }))).rejects.toMatchObject({ code: 'VALIDATION' });
     expect([fake.sales.length, stockOf(fake, CARNE.id)]).toEqual([0, '10.0']);
+  });
+
+  it('una bebida fija se cobra con esa bebida; con otra da VALIDATION (US-55)', async () => {
+    fake.stock.state.items.push({ ...SPRITE });
+    fake.promotions.state.menuItems.set(COCA.id, { group: 'coca_cola', name: COCA.name });
+    const [media, coca] = MEDIA_Y_COCA.components;
+    const { id } = await fake.promotions.read.insert({ ...MEDIA_Y_COCA, components: [media, { ...coca, menuItemId: COCA.id }] });
+    const promo = promoOf(id);
+    const sprite = { ...promo, parts: [promo.parts[0], { ...promo.parts[1], flavors: [{ menuItemId: SPRITE.id, units: 1 }] }] };
+    await expect(service.checkout(CALLER, checkoutOf([], { promos: [sprite], payments: cash(9000) }))).rejects.toMatchObject({ code: 'VALIDATION' });
+    expect((await service.checkout(CALLER, checkoutOf([], { promos: [promo], payments: cash(9000) }))).total).toBe(9000);
+    expect(stockOf(fake, COCA.id)).toBe('4.0');
   });
 
   it('INSUFFICIENT_STOCK: la promo pide más bebidas de las que hay', async () => {

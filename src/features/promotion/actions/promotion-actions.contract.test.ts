@@ -31,6 +31,13 @@ describe('acciones de Promociones (camino feliz)', () => {
     expect(await deletePromotionAction({ id, version: 4 })).toEqual({ success: true, message: 'Se eliminó la promoción' });
   });
 
+  it('fija la bebida y la devuelve con su nombre (US-55)', async () => {
+    const menuItemId = crypto.randomUUID();
+    fakePromotions.state.menuItems.set(menuItemId, { group: 'coca_cola', name: 'Sprite 1.5L' });
+    const components = [{ group: 'coca_cola' as const, presentationKey: 'u1', quantity: 2, menuItemId }];
+    expect(await createPromotionAction({ ...PROMO_INPUT, components })).toMatchObject({ success: true, data: { components: [{ menuItemId, menuItemName: 'Sprite 1.5L' }] } });
+  });
+
   it('el vendedor también puede listarlas (las usa al vender), con sus componentes', async () => {
     await createPromotionAction(PROMO_INPUT);
     await asUser({ role: 'vendedor' });

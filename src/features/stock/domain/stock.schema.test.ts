@@ -11,6 +11,10 @@ describe('ingresar stock (US-4 CA-2)', () => {
     expect(stockEntrySchema.parse({ menuItemId: ITEM, quantity: 6, unitCost: 450.5, providerId: null })).toMatchObject({ unitCost: 450.5, providerId: null });
   });
 
+  it('acepta cantidad 0, para corregir un ingreso cargado por error (US-56)', () => {
+    expect(stockEntrySchema.parse({ menuItemId: ITEM, quantity: 0 })).toEqual({ menuItemId: ITEM, quantity: 0 });
+  });
+
   it('acepta los precios de venta (US-17) y rechaza uno en 0', () => {
     expect(stockEntrySchema.parse({ menuItemId: ITEM, quantity: 6, prices: { price1: 11000 } })).toMatchObject({ prices: { price1: 11000 } });
     expect(first(stockEntrySchema.safeParse({ menuItemId: ITEM, quantity: 6, prices: { price1: 0 } }))).toBe('El precio debe ser mayor a 0');
@@ -18,7 +22,7 @@ describe('ingresar stock (US-4 CA-2)', () => {
   });
 
   it.each([
-    { caso: 'cantidad 0', input: { menuItemId: ITEM, quantity: 0 }, message: 'La cantidad debe ser mayor a 0' },
+    { caso: 'cantidad negativa', input: { menuItemId: ITEM, quantity: -1 }, message: 'La cantidad no puede ser negativa' },
     { caso: 'cantidad con decimales', input: { menuItemId: ITEM, quantity: 1.5 }, message: 'La cantidad tiene que ser un número entero' },
     { caso: 'cantidad enorme', input: { menuItemId: ITEM, quantity: 100_001 }, message: 'La cantidad es demasiado grande' },
     { caso: 'costo negativo', input: { menuItemId: ITEM, quantity: 1, unitCost: -1 }, message: 'El costo no puede ser negativo' },

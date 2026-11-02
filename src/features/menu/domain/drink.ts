@@ -9,7 +9,7 @@ export type FamilyRow = { group: MenuGroup; drinkName: string | null; drinkSize:
 
 const MAX_TEXT = 25;
 const MAX_SIZE = 8;
-const MAX_DRINK = 30;
+const MAX_DRINK = 50;
 
 export const drinkName = z.string('La bebida es obligatoria').trim().min(1, 'La bebida es obligatoria').max(MAX_DRINK, `La bebida no puede superar los ${MAX_DRINK} caracteres`);
 export const size = z

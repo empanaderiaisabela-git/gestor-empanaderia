@@ -4,7 +4,7 @@ import type { PromotionDef } from '@/features/promotion/domain/promotion.schema'
 import { renderPromotionCard } from './promotion-card';
 import { getPromotionColumns, type PromotionRowActions } from './promotion-columns';
 
-const PROMO: PromotionDef = { id: 'p1', name: 'Docena + Coca', price: 15000, isActive: false, version: 1, components: [{ group: 'empanadas', presentationKey: 'u12', quantity: 1 }], createdAt: '', updatedAt: '' };
+const PROMO: PromotionDef = { id: 'p1', name: 'Docena + Coca', price: 15000, isActive: false, version: 1, components: [{ group: 'empanadas', presentationKey: 'u12', quantity: 1, menuItemId: null, menuItemName: null }], createdAt: '', updatedAt: '' };
 
 function rowActions(): PromotionRowActions {
   return { onEdit: vi.fn(), onToggleActive: vi.fn(), onDelete: vi.fn() };

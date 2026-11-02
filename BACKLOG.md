@@ -4540,6 +4540,91 @@ nombres largos que usa el cliente.
 - `additive-migrations.test.ts` ahora deja cambiar el largo de un `varchar` (`SET DATA TYPE varchar(n)`): no reescribe ni borra datos, y achicarlo con datos más largos lo rechaza Postgres. Amplía D-5 con el OK del dev (2026-11-01).
 - Supabase tiene que llegar a 29 migraciones antes de `main`.
 
+### US-54 · Bebida hasta 50 caracteres
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-11-02 |
+| Tamaño       | XS        |
+| Depende de   | US-53     |
+| Plan         | [`docs/plans/US-54-bebida-50.md`](docs/plans/US-54-bebida-50.md) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como administrador quiero escribir hasta 50 caracteres en el campo Bebida, de forma que el cliente no
+se quede corto con los nombres largos.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · El campo Bebida acepta hasta 50 caracteres y con 51 dice "La bebida no puede superar los 50 caracteres". Litros sigue en 8 y Sabor en 25. La migración 0029 lleva `drink_name` a `varchar(50)` y `name` a `varchar(85)` (`drink.test.ts`) · Estimación: 20 min · Completado: 2026-11-02 19:48
+
+**Notas**
+
+- Nivel 3 (migración). Supabase tiene que llegar a 30 migraciones antes de `main`.
+
+### US-55 · Bebida fija en las promos
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-11-02 |
+| Tamaño       | M         |
+| Depende de   | US-8, US-9 |
+| Plan         | [`docs/plans/US-55-bebida-fija-en-promos.md`](docs/plans/US-55-bebida-fija-en-promos.md) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como administrador quiero fijar la bebida de una promo al armarla (por ejemplo "Coca-Cola 1.5L"), de
+forma que al venderla el vendedor sólo elija la comida.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · En Promociones, cada producto de Coca-Cola o Quilmes tiene el campo "Bebida", con "Cualquiera" (como hoy) y las bebidas activas del grupo. Se guarda y se ve en la lista ("Coca-Cola 1.5L × 2"). Dos bebidas distintas del mismo grupo van en dos productos · Estimación: 1 h 30 min · Completado: 2026-11-02 19:48
+
+- [x] **CA-2** · Al vender la promo, el producto con bebida fijada ya viene puesto: el vendedor sólo elige la comida y "Siguiente" lo saltea · Estimación: 45 min · Completado: 2026-11-02 19:48
+
+- [x] **CA-3** · Si la bebida fijada no tiene stock o está desactivada, el botón de la promo en Ventas queda deshabilitado con "Sin stock de &lt;bebida&gt;" · Estimación: 20 min · Completado: 2026-11-02 19:48
+
+- [x] **CA-4** · La base garantiza la regla: la bebida fijada existe y es del grupo del producto, sólo se fija en bebidas y no se puede borrar mientras esté en una promo (migración 0030). El cobro rechaza otra bebida en el producto fijado · Estimación: 1 h · Completado: 2026-11-02 19:48
+
+- [x] **CA-5** · El formulario de la promo es más ancho (`max-w-2xl` en lugar de `max-w-md`), para que entren los nombres de grupos y bebidas. Pedido del dev al revisar (2026-11-02) · Estimación: 5 min · Completado: 2026-11-02 20:17
+
+**Notas**
+
+- Nivel 3. Decisión del agente, a confirmar: borrar una bebida fijada en una promo da `HAS_RELATIONS` (ver plan).
+- Supabase tiene que llegar a 31 migraciones antes de `main`.
+
+### US-56 · Ingreso de stock en 0
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-11-02 |
+| Tamaño       | XS        |
+| Depende de   | US-46, US-48 |
+| Plan         | [`docs/plans/US-56-ingreso-en-cero.md`](docs/plans/US-56-ingreso-en-cero.md) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como administrador quiero poner en 0 un ingreso de stock que cargué por error, de forma que el stock
+vuelva a lo que había antes sin inventar una merma.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · Con el lápiz (o "Editar ingreso" del Historial), un ingreso de 24 se guarda en 0: queda en el Historial con 0 y el stock baja 24. Si ya se vendieron unidades y el stock quedaría negativo, dice "No hay stock suficiente de &lt;producto&gt;." · Estimación: 20 min · Completado: 2026-11-02 20:17
+
+- [x] **CA-2** · "Ingresar stock" también acepta 0; debajo de 0 dice "La cantidad no puede ser negativa". Las mermas siguen pidiendo más de 0 · Estimación: 10 min · Completado: 2026-11-02 20:17
+
+- [x] **CA-3** · Migración 0031: `stock_entries_quantity_check` pasa a `quantity >= 0` · Estimación: 15 min · Completado: 2026-11-02 20:17
+
+**Notas**
+
+- Nivel 3 (migración). Supabase tiene que llegar a 32 migraciones antes de `main`.
+
 ### US-43 · Sin web pública por ahora: se entra por `/login`
 
 | Campo        | Valor     |

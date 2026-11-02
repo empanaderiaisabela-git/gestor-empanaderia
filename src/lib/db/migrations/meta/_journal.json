@@ -204,6 +204,27 @@
       "when": 1793577458972,
       "tag": "0028_bebida-30",
       "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1793658257091,
+      "tag": "0029_bebida-50",
+      "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "7",
+      "when": 1793658352154,
+      "tag": "0030_bebida-fija-en-promos",
+      "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1793660573343,
+      "tag": "0031_ingreso-en-cero",
+      "breakpoints": true
     }
   ]
 }
