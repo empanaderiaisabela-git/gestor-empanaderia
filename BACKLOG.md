@@ -4514,6 +4514,32 @@ que "empanada carne" encuentre "Empanada de carne", como en el otro gestor que y
 
 - Nivel 2. Sin migración. Logs/Auditoría queda como está (decisión del dev, 2026-11-01).
 
+### US-53 · Bebida hasta 30 caracteres
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Hecho     |
+| Dueño        | Agente    |
+| Inicio       | 2026-11-01 |
+| Tamaño       | XS        |
+| Depende de   | US-51     |
+| Plan         | — (pedido directo del dev) |
+| Merge        | 2026-11-01 |
+| Horas reales | 0,3       |
+
+**Historia**: Como administrador quiero escribir hasta 30 caracteres en el campo Bebida, de forma que entren los
+nombres largos que usa el cliente.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · El campo Bebida acepta hasta 30 caracteres y con 31 dice "La bebida no puede superar los 30 caracteres". Sabor sigue en 25 y Litros en 8 (`drink.test.ts`) · Completado: 2026-11-01 23:58
+
+**Notas**
+
+- Migración 0028: `drink_name` pasa a `varchar(30)` y `name` a `varchar(65)` (30 + 8 + 25 + 2 espacios), para que el nombre armado siempre entre. Los gustos de comida siguen validados en 60.
+- `additive-migrations.test.ts` ahora deja cambiar el largo de un `varchar` (`SET DATA TYPE varchar(n)`): no reescribe ni borra datos, y achicarlo con datos más largos lo rechaza Postgres. Amplía D-5 con el OK del dev (2026-11-01).
+- Supabase tiene que llegar a 29 migraciones antes de `main`.
+
 ### US-43 · Sin web pública por ahora: se entra por `/login`
 
 | Campo        | Valor     |

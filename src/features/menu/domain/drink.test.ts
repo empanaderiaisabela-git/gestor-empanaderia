@@ -1,6 +1,6 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
-import { drinkNameOf, flavor, sameFamily, size, sizeOf } from './drink';
+import { drinkName, drinkNameOf, flavor, sameFamily, size, sizeOf } from './drink';
 
 const AQUARIUS = { group: 'coca_cola' as const, drinkName: 'Aquarius', drinkSize: '1.5L', liters: null };
 
@@ -33,11 +33,17 @@ describe('bebidas con bebida, litros o mililitros y sabor (US-51)', () => {
     expect([sameFamily(AQUARIUS, { ...AQUARIUS, group: 'pepsi' }), sameFamily(AQUARIUS, { ...AQUARIUS, drinkName: null })]).toEqual([false, false]);
   });
 
-  it('el nombre armado entra siempre en 60 caracteres (fuzz)', () => {
-    const text = fc.string({ minLength: 1, maxLength: 25 });
+  it('la bebida acepta hasta 30 caracteres (US-53)', () => {
+    expect(drinkName.safeParse('a'.repeat(30)).success).toBe(true);
+    expect(drinkName.safeParse('a'.repeat(31)).error?.issues[0]?.message).toBe('La bebida no puede superar los 30 caracteres');
+  });
+
+  it('el nombre armado entra siempre en 65 caracteres (fuzz)', () => {
+    const text = fc.string({ minLength: 1, maxLength: 30 });
+    const taste = fc.string({ minLength: 1, maxLength: 25 });
     const amount = fc.string({ minLength: 1, maxLength: 8 });
-    fc.assert(fc.property(text, amount, fc.option(text), (name, liters, taste) => {
-      expect(drinkNameOf({ drinkName: name, size: liters, flavor: taste }).length).toBeLessThanOrEqual(60);
+    fc.assert(fc.property(text, amount, fc.option(taste), (name, liters, flavor) => {
+      expect(drinkNameOf({ drinkName: name, size: liters, flavor }).length).toBeLessThanOrEqual(65);
     }));
   });
 });

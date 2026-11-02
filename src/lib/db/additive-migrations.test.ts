@@ -5,11 +5,12 @@ const DIR = 'src/lib/db/migrations';
 const FIRST_ADDITIVE = 23;
 const FORBIDDEN = /\b(DROP|RENAME|ALTER TYPE|SET DATA TYPE|SET NOT NULL|TRUNCATE)\b|(?<!ON )\b(DELETE|UPDATE)\b/i;
 const DROPPED = /DROP CONSTRAINT "([^"]+)"/g;
+const RESIZED = /SET DATA TYPE varchar\(\d+\)/gi;
 
 const additive = readdirSync(DIR).filter((file) => file.endsWith('.sql') && Number(file.slice(0, 4)) >= FIRST_ADDITIVE);
 
 const recreated = (sql: string): string =>
-  sql.replace(DROPPED, (statement: string, name: string): string => (sql.includes(`ADD CONSTRAINT "${name}"`) ? '' : statement));
+  sql.replace(DROPPED, (statement: string, name: string): string => (sql.includes(`ADD CONSTRAINT "${name}"`) ? '' : statement)).replace(RESIZED, '');
 
 describe('migraciones sólo aditivas desde la 0023 (US-45 CA-1, D-5)', () => {
   it('reconoce lo que borra, renombra o cambia datos, y deja pasar ON DELETE de una FK nueva', () => {
@@ -20,6 +21,11 @@ describe('migraciones sólo aditivas desde la 0023 (US-45 CA-1, D-5)', () => {
   it('permite recrear una restricción en la misma migración y sigue prohibiendo borrarla sin recrearla', () => {
     expect(recreated('ALTER TABLE "x" DROP CONSTRAINT "c";--> statement-breakpoint\nALTER TABLE "x" ADD CONSTRAINT "c" CHECK (true);')).not.toMatch(FORBIDDEN);
     expect(recreated('ALTER TABLE "x" DROP CONSTRAINT "c";')).toMatch(FORBIDDEN);
+  });
+
+  it('permite cambiar el largo de un varchar y sigue prohibiendo otros cambios de tipo (US-53)', () => {
+    expect(recreated('ALTER TABLE "x" ALTER COLUMN "a" SET DATA TYPE varchar(30);')).not.toMatch(FORBIDDEN);
+    expect(recreated('ALTER TABLE "x" ALTER COLUMN "a" SET DATA TYPE integer;')).toMatch(FORBIDDEN);
   });
 
   it.each(additive)('%s sólo agrega', (file) => {
