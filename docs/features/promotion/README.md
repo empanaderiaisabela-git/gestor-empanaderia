@@ -23,7 +23,7 @@ Una promo guardada queda **activa** y aparece en Ventas. No vence: sigue activa 
   esa bebida. Para dos bebidas distintas se agregan dos productos del mismo grupo, cada uno con la suya: el repetido
   se mide por grupo + presentación + bebida fijada (fuente: dev, 2026-11-02, US-55).
 - Una bebida fijada no se puede borrar en Alta de productos (`HAS_RELATIONS`); se desactiva, y la promo queda
-  deshabilitada en Ventas hasta cambiarla (decisión del agente en US-55, a confirmar).
+  deshabilitada en Ventas hasta cambiarla (decisión del agente en US-55, confirmada por el dev el 2026-11-02).
 - El precio de venta se escribe a mano, mayor a 0 y con 2 decimales como máximo. No hay precio de referencia
   (fuente: cliente, 2026-10-25).
 - Sin vigencia: el admin la desactiva cuando quiere (fuente: cliente, 2026-10-25).
