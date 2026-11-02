@@ -94,7 +94,7 @@ T-11).
   versión (`STALE_VERSION`). Lo carga el admin desde "Ingresar stock" (categoría "Jamón extra para pizza") y audita
   `ACTUALIZAR` / `PIZZA_EXTRA`.
 
-- `menu_items` suma `drink_name` (`varchar(30)` desde US-53, con `name` en `varchar(65)`), `liters` (`numeric(6,3)`, legado de US-49 que sólo se lee),
+- `menu_items` suma `drink_name` (`varchar(50)` desde US-54, con `name` en `varchar(85)`), `liters` (`numeric(6,3)`, legado de US-49 que sólo se lee),
   `drink_size` (`varchar(10)`, el texto que se escribe desde US-51) y `flavor` (`varchar(25)`), nullable, con el check
   `menu_items_drink_check`: las cuatro nulas, o una bebida con bebida y (`liters` > 0 o `drink_size` no nulo)
   (migraciones `0026_bebidas-por-litros` y `0027_litros-como-texto`).

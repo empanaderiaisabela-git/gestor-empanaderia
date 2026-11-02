@@ -33,17 +33,17 @@ describe('bebidas con bebida, litros o mililitros y sabor (US-51)', () => {
     expect([sameFamily(AQUARIUS, { ...AQUARIUS, group: 'pepsi' }), sameFamily(AQUARIUS, { ...AQUARIUS, drinkName: null })]).toEqual([false, false]);
   });
 
-  it('la bebida acepta hasta 30 caracteres (US-53)', () => {
-    expect(drinkName.safeParse('a'.repeat(30)).success).toBe(true);
-    expect(drinkName.safeParse('a'.repeat(31)).error?.issues[0]?.message).toBe('La bebida no puede superar los 30 caracteres');
+  it('la bebida acepta hasta 50 caracteres (US-54)', () => {
+    expect(drinkName.safeParse('a'.repeat(50)).success).toBe(true);
+    expect(drinkName.safeParse('a'.repeat(51)).error?.issues[0]?.message).toBe('La bebida no puede superar los 50 caracteres');
   });
 
-  it('el nombre armado entra siempre en 65 caracteres (fuzz)', () => {
-    const text = fc.string({ minLength: 1, maxLength: 30 });
+  it('el nombre armado entra siempre en 85 caracteres (fuzz)', () => {
+    const text = fc.string({ minLength: 1, maxLength: 50 });
     const taste = fc.string({ minLength: 1, maxLength: 25 });
     const amount = fc.string({ minLength: 1, maxLength: 8 });
     fc.assert(fc.property(text, amount, fc.option(taste), (name, liters, flavor) => {
-      expect(drinkNameOf({ drinkName: name, size: liters, flavor }).length).toBeLessThanOrEqual(65);
+      expect(drinkNameOf({ drinkName: name, size: liters, flavor }).length).toBeLessThanOrEqual(85);
     }));
   });
 });

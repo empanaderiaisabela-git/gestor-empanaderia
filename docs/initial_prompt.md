@@ -1,7 +1,7 @@
 # Prompt inicial: contexto completo de gestor-empanaderia
 
 > **Uso.** Al empezar una sesión nueva de Claude Code: `Leé @docs/initial_prompt.md y seguilo.`
-> Foto del proyecto al **2026-10-31**. Se adapta en cada avance significativo
+> Foto del proyecto al **2026-11-02**. Se adapta en cada avance significativo
 > ([criterios](how-to-document.md#mantener-al-día-docsinitial_promptmd)). Si algo de acá contradice a
 > [`AGENTS.md`](../AGENTS.md) o a los docs que enlaza, **ganan ellos**: avisale al dev que este archivo quedó
 > desactualizado.
@@ -167,6 +167,9 @@ Hacer preguntas de más es mejor que inventar.
   **0027** agrega `drink_size` y recrea el check de bebidas; `liters` queda sólo para leer lo viejo como "1.5 L". D-5 se
   mantiene: una restricción se puede recrear con DROP + ADD en la misma migración. Supabase pasa a **28** cuando el dev
   la migre.
+- **US-52 a US-54** (sin sprint asignado, 2026-11-01 y 02): búsqueda por palabras en Stock y en "Buscar gusto"
+  (US-52); el campo Bebida pasa a 30 (US-53, migración 0028) y a 50 caracteres (US-54, migración 0029, `name` en
+  `varchar(85)`). Supabase tiene que llegar a **30** migraciones antes de `main`.
 - **US-43** (sin sprint asignado): la web pública (`/home`, `/product`, `/api/public`) está **apagada salvo
   `PUBLIC_CATALOG=true`**, y sin sesión se entra por `/login`. Para prenderla se carga la variable en Vercel y se
   redespliega. Plan en [`US-43-sin-web-publica.md`](plans/US-43-sin-web-publica.md).

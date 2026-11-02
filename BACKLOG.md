@@ -4540,6 +4540,30 @@ nombres largos que usa el cliente.
 - `additive-migrations.test.ts` ahora deja cambiar el largo de un `varchar` (`SET DATA TYPE varchar(n)`): no reescribe ni borra datos, y achicarlo con datos más largos lo rechaza Postgres. Amplía D-5 con el OK del dev (2026-11-01).
 - Supabase tiene que llegar a 29 migraciones antes de `main`.
 
+### US-54 · Bebida hasta 50 caracteres
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-11-02 |
+| Tamaño       | XS        |
+| Depende de   | US-53     |
+| Plan         | [`docs/plans/US-54-bebida-50.md`](docs/plans/US-54-bebida-50.md) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como administrador quiero escribir hasta 50 caracteres en el campo Bebida, de forma que el cliente no
+se quede corto con los nombres largos.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · El campo Bebida acepta hasta 50 caracteres y con 51 dice "La bebida no puede superar los 50 caracteres". Litros sigue en 8 y Sabor en 25. La migración 0029 lleva `drink_name` a `varchar(50)` y `name` a `varchar(85)` (`drink.test.ts`) · Estimación: 20 min · Completado: 2026-11-02 19:48
+
+**Notas**
+
+- Nivel 3 (migración). Supabase tiene que llegar a 30 migraciones antes de `main`.
+
 ### US-43 · Sin web pública por ahora: se entra por `/login`
 
 | Campo        | Valor     |
