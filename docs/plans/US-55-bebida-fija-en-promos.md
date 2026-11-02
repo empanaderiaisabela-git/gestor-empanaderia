@@ -80,11 +80,11 @@ Migración 0030, sólo aditiva:
 
 ## Riesgos y decisiones
 
-- **Decisión del agente**: borrar una bebida fijada en una promo se bloquea (`HAS_RELATIONS`). Es lo más prudente y lo
+- **Decisión del agente, confirmada por el dev (2026-11-02)**: borrar una bebida fijada en una promo se bloquea (`HAS_RELATIONS`). Es lo más prudente y lo
   mismo que pasa con una bebida ya vendida. Para sacarla de la venta se desactiva, y la promo queda deshabilitada en
   Ventas hasta cambiar la bebida o volver a activarla. Si el dev prefiere que la promo pase sola a "Cualquiera",
   la FK lleva `onDelete set null`.
-- **Cambio chico de comportamiento**: "Siguiente" ahora salta los productos ya completos (los fijados). En una promo
+- **Cambio chico de comportamiento, confirmado por el dev (2026-11-02)**: "Siguiente" ahora salta los productos ya completos (los fijados). En una promo
   nueva no cambia nada más, porque los productos que siguen están vacíos.
 - El texto "Productos de la promo (los gustos se eligen al vender)" deja de ser cierto para la bebida fijada. Pasa a
   "Productos de la promo".

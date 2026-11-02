@@ -4544,13 +4544,13 @@ nombres largos que usa el cliente.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | En revisión |
+| Estado       | Hecho     |
 | Dueño        | Agente    |
 | Inicio       | 2026-11-02 |
 | Tamaño       | XS        |
 | Depende de   | US-53     |
 | Plan         | [`docs/plans/US-54-bebida-50.md`](docs/plans/US-54-bebida-50.md) |
-| Merge        | —         |
+| Merge        | `5c27aab` en `develop`, `89809c1` en `main` |
 | Horas reales | —         |
 
 **Historia**: Como administrador quiero escribir hasta 50 caracteres en el campo Bebida, de forma que el cliente no
@@ -4568,13 +4568,13 @@ se quede corto con los nombres largos.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | En revisión |
+| Estado       | Hecho     |
 | Dueño        | Agente    |
 | Inicio       | 2026-11-02 |
 | Tamaño       | M         |
 | Depende de   | US-8, US-9 |
 | Plan         | [`docs/plans/US-55-bebida-fija-en-promos.md`](docs/plans/US-55-bebida-fija-en-promos.md) |
-| Merge        | —         |
+| Merge        | `a662e3d` en `develop`, `89809c1` en `main` |
 | Horas reales | —         |
 
 **Historia**: Como administrador quiero fijar la bebida de una promo al armarla (por ejemplo "Coca-Cola 1.5L"), de
@@ -4594,20 +4594,20 @@ forma que al venderla el vendedor sólo elija la comida.
 
 **Notas**
 
-- Nivel 3. Decisión del agente, a confirmar: borrar una bebida fijada en una promo da `HAS_RELATIONS` (ver plan).
+- Nivel 3. Borrar una bebida fijada en una promo da `HAS_RELATIONS`, y "Siguiente" saltea los productos ya completos: decisiones del agente confirmadas por el dev (2026-11-02).
 - Supabase tiene que llegar a 31 migraciones antes de `main`.
 
 ### US-56 · Ingreso de stock en 0
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | En revisión |
+| Estado       | Hecho     |
 | Dueño        | Agente    |
 | Inicio       | 2026-11-02 |
 | Tamaño       | XS        |
 | Depende de   | US-46, US-48 |
 | Plan         | [`docs/plans/US-56-ingreso-en-cero.md`](docs/plans/US-56-ingreso-en-cero.md) |
-| Merge        | —         |
+| Merge        | `96df027` en `develop`, `89809c1` en `main` |
 | Horas reales | —         |
 
 **Historia**: Como administrador quiero poner en 0 un ingreso de stock que cargué por error, de forma que el stock
