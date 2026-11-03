@@ -37,7 +37,8 @@ feat/us-20-…  ── (merge --squash local)──▶  develop  ── "chore(r
    git branch -D feat/us-20-…     # -D: el squash no marca la rama como mergeada
    ```
 
-2. **Cerrar el sprint.** Antes de la demo, con el OK del dev:
+2. **Cerrar el sprint o la Actualización.** Antes de la demo, con el OK del dev (desde el 2026-11-03 se cierran
+   Actualizaciones: el mensaje es `chore(release): actualización N` y el tag, `actualizacion-N`):
 
    ```bash
    git switch main && git pull

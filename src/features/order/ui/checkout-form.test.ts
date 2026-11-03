@@ -9,6 +9,11 @@ describe('formulario de cobro (US-6 CA-1 y CA-5)', () => {
     expect(checkCheckout(18500, BLANK_CHECKOUT)).toEqual({ total: 18500, payments: [{ type: 'efectivo', amount: 18500 }], discount: { percentage: 0, amount: 0 }, error: null });
   });
 
+  it('el envío suma después del descuento, y el descuento no puede comerse toda la comida (US-59 CA-3, D-2)', () => {
+    expect(checkCheckout(10000, form({ percentage: '10' }), 1500)).toMatchObject({ total: 10500, payments: [{ type: 'efectivo', amount: 10500 }], error: null });
+    expect(checkCheckout(10000, form({ amount: '10000' }), 1500)).toMatchObject({ total: 1500, error: 'El descuento no puede dejar el total en $0' });
+  });
+
   it('con dos medios, el segundo se lleva el resto', () => {
     expect(paymentsOf(18500, form({ methods: ['efectivo', 'debito'], split: '10000' }))).toEqual([
       { type: 'efectivo', amount: 10000 },

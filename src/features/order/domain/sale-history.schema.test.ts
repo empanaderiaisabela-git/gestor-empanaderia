@@ -13,6 +13,8 @@ const ROW = {
   total: '18500.00',
   discountAmount: '0.00',
   discountPercentage: '10.00',
+  shippingTitle: 'Centro',
+  shippingAmount: '1500.00',
   lines: [
     { group: 'pizzas', presentationKey: 'pizza_2', promotionId: null, quantity: 1, unitPrice: '12000.00', subtotal: '12000.00', description: 'Muzza / Napolitana' },
     { group: null, presentationKey: null, promotionId: '30000000-0000-4000-8000-000000000001', quantity: 1, unitPrice: '9000.00', subtotal: '9000.00', description: 'Media + Coca: Carne · Coca 500' },
@@ -22,7 +24,7 @@ const ROW = {
 
 describe('lectura de una venta registrada (US-7 CA-1)', () => {
   it('convierte los importes de la base a números', () => {
-    expect(saleRowSchema.parse(ROW)).toMatchObject({ total: 18500, discountPercentage: 10, lines: [{ unitPrice: 12000, subtotal: 12000 }, { group: null, unitPrice: 9000 }], payments: [{ type: 'debito', amount: 18500 }] });
+    expect(saleRowSchema.parse(ROW)).toMatchObject({ total: 18500, discountPercentage: 10, shippingTitle: 'Centro', shippingAmount: 1500, lines: [{ unitPrice: 12000, subtotal: 12000 }, { group: null, unitPrice: 9000 }], payments: [{ type: 'debito', amount: 18500 }] });
   });
 
   it('una línea de promo no tiene grupo ni presentación, pero sí su promo (US-9)', () => {

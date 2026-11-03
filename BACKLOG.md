@@ -4730,7 +4730,7 @@ lugar de sprints; cada una cierra con un merge `develop → main` y el tag `actu
 | 1   | [US-60](#us-60--ventas-promos-con-scroll-propio) | Ventas: Promos con scroll propio | En revisión | — | 20 min |
 | 2   | [US-61](#us-61--selector-de-gustos-con-scroll-y-faltan-n-grande) | Selector de gustos con scroll y "FALTAN N" grande | En revisión | — | 25 min |
 | 3   | [US-58](#us-58--envíos-pestaña-y-alta-edición-y-baja) | Envíos: pestaña y alta, edición y baja | En revisión | — | 4 h |
-| 4   | [US-59](#us-59--ventas-envío-en-el-carrito) | Ventas: envío en el carrito | Pendiente | US-58 | 4 h 30 min |
+| 4   | [US-59](#us-59--ventas-envío-en-el-carrito) | Ventas: envío en el carrito | En revisión | US-58 | 4 h 30 min |
 | 5   | [T-27](#t-27--cierre-de-la-actualización-1) | Cierre de la Actualización 1 | Pendiente | todos | 1 h 30 min |
 |     |    | **Total de la actualización** | | | **10 h 45 min** |
 
@@ -4822,9 +4822,9 @@ monto, de forma que el vendedor los pueda sumar a un pedido.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
+| Estado       | En revisión |
 | Dueño        | Agente    |
-| Inicio       | —         |
+| Inicio       | 2026-11-03 |
 | Tamaño       | L         |
 | Depende de   | US-58     |
 | Plan         | [`docs/plans/actualizacion-1.md`](docs/plans/actualizacion-1.md) |
@@ -4836,17 +4836,19 @@ que cobro.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · Abajo a la izquierda del pedido actual, el desplegable "Envío" ofrece "Sin envío" y los envíos activos ("Centro · $ 1.500"). Elegido uno, el total y "Cobrar" lo suman. "Vaciar" y cobrar lo vuelven a "Sin envío" · Estimación: 1 h 15 min · Completado: —
+- [x] **CA-1** · Abajo a la izquierda del pedido actual, el desplegable "Envío" ofrece "Sin envío" y los envíos activos ("Centro · $ 1.500"). Elegido uno, el total y "Cobrar" lo suman. "Vaciar" y cobrar lo vuelven a "Sin envío". Lo cubre `current-order-shipping.test.tsx` · Estimación: 1 h 15 min · Completado: 2026-11-03 15:08
 
-- [ ] **CA-2** · Con envío y sin domicilio, "Cobrar" queda deshabilitado con "Falta el domicilio", y el servidor lo rechaza con "Anotá el domicilio para el envío" (D-4) · Estimación: 30 min · Completado: —
+- [x] **CA-2** · Con envío y sin domicilio, "Cobrar" queda deshabilitado con "Falta el domicilio", y el servidor lo rechaza con `VALIDATION` (el schema lo explica con "Anotá el domicilio para el envío") (D-4). Lo cubren `checkout-shipping.schema.test.ts` y `checkout-shipping.contract.test.ts` · Estimación: 30 min · Completado: 2026-11-03 15:08
 
-- [ ] **CA-3** · El cobro recalcula el envío en el servidor y lo suma después del descuento: $10.000 − 10 % + $1.500 = $10.500 (D-2). Un envío desactivado o borrado da `NOT_FOUND`. Lo cubren tests de dominio, service, contrato e integración · Estimación: 1 h 15 min · Completado: —
+- [x] **CA-3** · El cobro recalcula el envío en el servidor y lo suma después del descuento: $10.000 − 10 % + $1.500 = $10.500 (D-2). Un envío desactivado o borrado da `NOT_FOUND`. Lo cubren `checkout-form.test.ts`, `checkout-shipping.test.ts`, `checkout-shipping.contract.test.ts` y `checkout-shipping.int.test.ts` · Estimación: 1 h 15 min · Completado: 2026-11-03 15:08
 
-- [ ] **CA-4** · El comprobante muestra "Envío · Centro" con su monto. Estadísticas lo suma a Ventas y a Ganancia en limpio, pero no a ninguna comida ni a Promos (D-3). Un E2E da de alta un envío, vende con él y abre el comprobante · Estimación: 1 h 30 min · Completado: —
+- [x] **CA-4** · El comprobante muestra "Envío · Centro" con su monto. Estadísticas lo suma a Ventas y a Ganancia en limpio, pero no a ninguna comida ni a Promos (D-3). Lo cubren `sale-receipt.test.tsx`, `compute-workday-stats.test.ts` y el E2E `envio-en-venta.spec.ts` · Estimación: 1 h 30 min · Completado: 2026-11-03 15:08
 
 **Notas**
 
 - Nivel 3: cobro, historial y Estadísticas. Sin migración propia: usa la 0032 de US-58.
+- `npm run verify` en verde (2026-11-03): 1284 tests unit y de componente, 141 de integración, cobertura 96,4 / 90,4, mutación 85,8 y build. Probado en el navegador: $3.000 − 10 % + $1.500 = $4.200, el comprobante con "Envío · Centro" y Estadísticas con Empanadas en $2.700 y Efectivo en $4.200. El E2E corre en el cierre (T-27).
+- Un descuento que deja la comida en $0 o menos sigue siendo inválido aunque el envío cubra la diferencia (I-4 del plan).
 
 ### T-27 · Cierre de la Actualización 1
 

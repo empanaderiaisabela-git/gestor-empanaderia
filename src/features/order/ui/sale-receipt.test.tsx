@@ -17,6 +17,7 @@ describe('comprobante de una venta (US-7 CA-2)', () => {
     expect(screen.getByText('Subtotal').nextSibling?.textContent).toBe('$18.500');
     expect(screen.getByText('Débito').nextSibling?.textContent).toBe('$8.500');
     expect(screen.queryByText('Descuento')).toBeNull();
+    expect(screen.queryByText(/Envío/)).toBeNull();
   });
 
   it('el pago con crédito figura por su monto, sin el recargo de la tarjeta (BUG-20)', () => {
@@ -24,6 +25,12 @@ describe('comprobante de una venta (US-7 CA-2)', () => {
     render(<SaleReceipt sale={saleDef({ total: 10000, payments })} onClose={vi.fn()} />);
     expect(screen.getByText('Crédito · Visa · 3 cuotas').nextSibling?.textContent).toBe('$6.000');
     expect(screen.queryByText(/Recargo/)).toBeNull();
+  });
+
+  it('muestra el envío con su título y su monto, y no lo muestra en una venta sin envío (US-59 CA-4)', () => {
+    render(<SaleReceipt sale={saleDef({ total: 20000, shippingTitle: 'Centro', shippingAmount: 1500 })} onClose={vi.fn()} />);
+    expect(screen.getByText('Envío · Centro').nextSibling?.textContent).toBe('$1.500');
+    expect(screen.getByText('Subtotal').nextSibling?.textContent).toBe('$18.500');
   });
 
   it('muestra los descuentos en % y en $, y "Sin nombre" si no hay comprador', () => {

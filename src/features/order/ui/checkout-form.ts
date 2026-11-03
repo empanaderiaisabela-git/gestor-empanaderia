@@ -27,19 +27,20 @@ export function paymentsOf(total: number, form: CheckoutForm): FormPayment[] {
   return [withCard({ type: first, amount }, form), withCard({ type: second, amount: round2(total - amount) }, form)];
 }
 
-function errorOf(total: number, discount: Discount, payments: FormPayment[]): string | null {
+function errorOf({ food, total }: { food: number; total: number }, discount: Discount, payments: FormPayment[]): string | null {
   if (!(discount.percentage >= 0 && discount.percentage <= 100)) return 'El descuento va de 0 a 100 %';
   if (!(discount.amount >= 0)) return 'El descuento no puede ser negativo';
-  if (total <= 0) return 'El descuento no puede dejar el total en $0';
+  if (food <= 0) return 'El descuento no puede dejar el total en $0';
   if (payments.length === 0) return 'Elegí un medio de pago';
   if (!payments.every((payment) => payment.amount > 0) || !paymentsCover(total, payments)) return 'Los pagos tienen que sumar el total';
   if (payments.some((payment) => payment.type === 'credito' && payment.cardId === undefined)) return 'Elegí la tarjeta y las cuotas';
   return null;
 }
 
-export function checkCheckout(subtotal: number, form: CheckoutForm): CheckoutCheck {
+export function checkCheckout(subtotal: number, form: CheckoutForm, shipping = 0): CheckoutCheck {
   const discount = { percentage: numberOf(form.percentage), amount: numberOf(form.amount) };
-  const total = applyDiscount(subtotal, discount);
+  const food = applyDiscount(subtotal, discount);
+  const total = round2(food + shipping);
   const payments = paymentsOf(total, form);
-  return { total, payments, discount, error: errorOf(total, discount, payments) };
+  return { total, payments, discount, error: errorOf({ food, total }, discount, payments) };
 }

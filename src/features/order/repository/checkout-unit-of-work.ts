@@ -3,6 +3,7 @@ import { type DbTransaction, withTransaction } from '@/lib/db/transaction';
 import { type CardRepository, drizzleCardRepository } from '@/features/card/repository/card.repository';
 import { drizzlePizzaExtraRepository, type PizzaExtraRepository } from '@/features/menu/repository/pizza-extra.repository';
 import { drizzlePromotionRepository, type PromotionRepository } from '@/features/promotion/repository/promotion.repository';
+import { drizzleShippingRepository, type ShippingRepository } from '@/features/shipping/repository/shipping.repository';
 import { drizzleStockRepository, type StockRepository } from '@/features/stock/repository/stock.repository';
 import { type CheckoutCustomers, drizzleCheckoutCustomers } from './checkout-customers.repository';
 import { drizzleSaleWriter, type SaleWriter } from './sale-writer.repository';
@@ -20,6 +21,7 @@ export type CheckoutScope = {
   promotions: Pick<PromotionRepository, 'findById'>;
   cards: Pick<CardRepository, 'findById'>;
   extras: Pick<PizzaExtraRepository, 'findHam'>;
+  shippings: Pick<ShippingRepository, 'findById'>;
   sales: SaleWriter;
   customers: CheckoutCustomers;
   audit: (entry: SaleAuditEntry) => Promise<void>;
@@ -38,6 +40,6 @@ export function auditIn(tx: DbTransaction): CheckoutScope['audit'] {
 export const drizzleCheckoutUnitOfWork: CheckoutUnitOfWork = {
   run: (work) =>
     withTransaction((tx) =>
-      work({ stock: drizzleStockRepository(tx), promotions: drizzlePromotionRepository(tx), cards: drizzleCardRepository(tx), extras: drizzlePizzaExtraRepository(tx), sales: drizzleSaleWriter(tx), customers: drizzleCheckoutCustomers(tx), audit: auditIn(tx) })
+      work({ stock: drizzleStockRepository(tx), promotions: drizzlePromotionRepository(tx), cards: drizzleCardRepository(tx), extras: drizzlePizzaExtraRepository(tx), shippings: drizzleShippingRepository(tx), sales: drizzleSaleWriter(tx), customers: drizzleCheckoutCustomers(tx), audit: auditIn(tx) })
     ),
 };

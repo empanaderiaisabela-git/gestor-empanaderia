@@ -108,6 +108,9 @@ servidor con el actual, como los precios. La anulación no cambia: el envío se 
 | I-1 | ¿El borrado de un envío usado lo frena la base o el service? | Los dos, como en Proveedores: el service pregunta `hasSales` y devuelve `HAS_RELATIONS`, y la FK de `sales.shipping_option_id` es la red de seguridad. |
 | I-2 | ¿Qué pasa en el celular con el selector de gustos? | Cada fila mide 145 px (los botones bajan a otro renglón): la lista ocupa media pantalla, unas 3 filas, para que "Listo" se vea. En la PC y la tablet, 5 y media. |
 | I-3 | ¿El aviso "FALTAN N" tiene que aparecer antes del primer gusto? | No: sigue apareciendo desde el primer gusto, como hoy; sólo cambia de tamaño y pasa a mayúscula. |
+| I-4 | ¿Un descuento puede comerse toda la comida si el envío cubre la diferencia? | No: comida $8.000, descuento $9.000 y envío $1.500 sigue siendo inválido ("El descuento no puede dejar el total en $0"). Si el dev quiere permitirlo, cambia una comparación en `checkout-form.ts` y en `checkout.service.ts`. |
+| I-5 | ¿Qué mensaje da el servidor si llega un envío sin domicilio? | El genérico de datos inválidos (`VALIDATION`), como cualquier entrada mal formada; el carrito ya lo frena antes con "Falta el domicilio". |
+| I-6 | ¿El campo "Domicilio (opcional)" cambia de nombre con un envío elegido? | No: el aviso "Falta el domicilio" queda debajo del desplegable y "Cobrar" se apaga. Si el dev prefiere que el campo diga "Domicilio" a secas con envío, es un cambio de texto. |
 
 ## Resumen para el dev
 
@@ -143,3 +146,13 @@ La lista simple de cada commit, a medida que se integra a `develop`.
 - Adónde va: `develop`. Trae la migración 0032: una tabla nueva y tres columnas nuevas en las ventas, sin tocar datos
   (las ventas de hoy quedan "sin envío", en $0). **Supabase la tenés que migrar vos antes de desplegar** (queda en 33).
 - Qué no entra: todavía no se puede elegir el envío al vender; eso es US-59. El vendedor no ve la pestaña.
+
+### US-59 · Envío en el carrito
+
+- Qué es: en el carrito, abajo a la izquierda, el desplegable "Envío" con "Sin envío" y los envíos activos. El elegido
+  se suma al total y a "Cobrar". Con envío, el domicilio es obligatorio.
+- Por qué importa: el vendedor cobra el envío sin hacer cuentas. El descuento se aplica sólo a la comida
+  ($3.000 − 10 % + envío $1.500 = $4.200).
+- Adónde va: `develop`. La venta guarda qué envío fue y cuánto se cobró, aunque después cambies el monto. El
+  comprobante lo muestra, y Estadísticas lo suma a Ventas y a la Ganancia, pero no a ninguna comida.
+- Qué no entra: no hay una tarjeta "Envíos" aparte en Estadísticas (elegiste que no hacía falta).

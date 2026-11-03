@@ -11,6 +11,8 @@ export function saleDef(overrides: Partial<SaleDef> = {}): SaleDef {
     total: 18500,
     discountAmount: 0,
     discountPercentage: 0,
+    shippingTitle: null,
+    shippingAmount: 0,
     lines: [
       { group: 'empanadas', presentationKey: 'u6', promotionId: null, quantity: 1, unitPrice: 6500, subtotal: 6500, description: '2 Carne + 4 Pollo' },
       { group: 'pizzas', presentationKey: 'pizza_2', promotionId: null, quantity: 1, unitPrice: 12000, subtotal: 12000, description: 'Muzza / Napolitana' },

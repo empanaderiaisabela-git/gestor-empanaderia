@@ -40,7 +40,9 @@ mejores vendedores (cliente, 2026-10-25). El KPI "Total facturado" se quitó de 
   posterior a "Hasta" mueve los dos.
 - **Dinero por comida**: cada línea suma en su grupo. El descuento de la venta se reparte entre las comidas en
   proporción a lo que pesa cada una (dev, 2026-10-25): la suma de los cuadros es lo cobrado por los productos. Las
-  líneas de promo van al cuadro Promos. El recargo de las cuotas no es de ninguna comida.
+  líneas de promo van al cuadro Promos. El recargo de las cuotas no es de ninguna comida, y el envío (US-59) tampoco:
+  las comidas se reparten el total sin el envío, que sí suma a lo facturado y a la Ganancia (D-3 de
+  `docs/plans/actualizacion-1.md`).
 - **Ganancia** = total facturado − Σ unidades × costo congelado (también lo que usó cada
   promo) − Σ mermas de la jornada × su costo. Ejemplo del cliente: comprada a $10 y vendida a $30 ⇒ $20.
 - **Por medio de pago**: cada pago suma su monto, sin el recargo de las cuotas (BUG-20).

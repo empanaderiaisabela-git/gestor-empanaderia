@@ -62,8 +62,10 @@ export const checkoutSchema = z
     discountPercentage: z.number('Ingresá un porcentaje').min(0, 'El descuento no puede ser negativo').max(100, 'El descuento no puede superar el 100 %'),
     discountAmount: money.min(0, 'El descuento no puede ser negativo'),
     payments: z.array(paymentSchema).min(1, 'Elegí un medio de pago').max(2, 'Se aceptan hasta 2 medios de pago').refine(distinctTypes, 'Usá medios de pago distintos'),
+    shippingOptionId: z.uuid('Elegí un envío válido').nullable().optional(),
   })
-  .refine((order) => order.lines.length + (order.promos?.length ?? 0) > 0, { message: 'El pedido está vacío', path: ['lines'] });
+  .refine((order) => order.lines.length + (order.promos?.length ?? 0) > 0, { message: 'El pedido está vacío', path: ['lines'] })
+  .refine((order) => !order.shippingOptionId || order.buyer.address !== '', { message: 'Anotá el domicilio para el envío', path: ['buyer', 'address'] });
 export type CheckoutInput = z.input<typeof checkoutSchema>;
 export type CheckoutData = z.output<typeof checkoutSchema>;
 export type CheckoutLine = CheckoutData['lines'][number];

@@ -7,6 +7,9 @@ para todos; las skills `start-task` y `finish-task` lo automatizan.
 Requerimiento → Backlog → Descubrimiento → Plan aprobado → Rama → TDD → Gates → Docs → Merge → Backlog
 ```
 
+Desde el 2026-11-03 los sprints pasan a llamarse **Actualizaciones** (`BACKLOG.md`, "Actualización N"): donde estos
+docs dicen "sprint", vale igual para una Actualización. Su plan va en `docs/plans/actualizacion-N.md`.
+
 ## 0. Entrada de requerimientos
 
 1. El dev pega lo que pide el cliente, **textual**, en

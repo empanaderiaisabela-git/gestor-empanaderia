@@ -3,7 +3,7 @@ import type { StatsSale } from '@/features/stats/domain/stats.schema';
 import { computeWorkdayStats } from './compute-workday-stats';
 
 function sale(overrides: Partial<StatsSale>): StatsSale {
-  return { createdAt: new Date('2026-10-25T15:00:00Z'), total: '0', buyerName: null, vendor: 'vendedora', lines: [], items: [], payments: [], ...overrides };
+  return { createdAt: new Date('2026-10-25T15:00:00Z'), total: '0', shippingAmount: '0.00', buyerName: null, vendor: 'vendedora', lines: [], items: [], payments: [], ...overrides };
 }
 
 const DAY = { from: '2026-10-25', to: '2026-10-25' };
@@ -27,6 +27,13 @@ describe('KPI de la jornada (US-12 CA-2, CA-3 y CA-5)', () => {
     const lines = [{ group: 'empanadas' as const, subtotal: '15000.00' }, { group: 'coca_cola' as const, subtotal: '5000.00' }];
     const stats = computeWorkdayStats(DAY, { sales: [sale({ total: '18000.00', lines, payments: [cash('18000.00')] })], losses: [] });
     expect([stats.byGroup.empanadas, stats.byGroup.coca_cola]).toEqual([13500, 4500]);
+  });
+
+  it('el envío suma a lo facturado y a la ganancia, pero no a ninguna comida (US-59 CA-4, D-3)', () => {
+    const lines = [{ group: 'empanadas' as const, subtotal: '15000.00' }, { group: null, subtotal: '5000.00' }];
+    const stats = computeWorkdayStats(DAY, { sales: [sale({ total: '19500.00', shippingAmount: '1500.00', lines, items: [{ units: '12', unitCost: '400.00' }], payments: [cash('19500.00')] })], losses: [] });
+    expect([stats.byGroup.empanadas, stats.promos]).toEqual([13500, 4500]);
+    expect(stats).toMatchObject({ revenue: 19500, profit: 14700, byPayment: { efectivo: 19500 } });
   });
 
   it('el recargo de las cuotas es de la tarjeta: no suma a las comidas, al crédito, a lo facturado ni a la ganancia (BUG-20)', () => {

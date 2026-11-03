@@ -4,6 +4,7 @@ import type { NewPayment, NewSale, NewSaleLine, SaleWriter } from '@/features/or
 import { createFakeCardUnitOfWork, type FakeCardUnitOfWork } from '@/features/card/testing/fake-card-unit-of-work';
 import { createFakePizzaExtraUnitOfWork, type FakePizzaExtraUnitOfWork } from '@/features/menu/testing/fake-pizza-extra-unit-of-work';
 import { createFakePromotionUnitOfWork, type FakePromotionUnitOfWork } from '@/features/promotion/testing/fake-promotion-unit-of-work';
+import { createFakeShippingUnitOfWork, type FakeShippingUnitOfWork } from '@/features/shipping/testing/fake-shipping-unit-of-work';
 import { createFakeStockUnitOfWork, type FakeStockUnitOfWork } from '@/features/stock/testing/fake-stock-unit-of-work';
 
 export type FakeSale = NewSale & { id: string; createdAt: Date; lines: NewSaleLine[]; payments: NewPayment[] };
@@ -14,6 +15,7 @@ export type FakeCheckoutUnitOfWork = CheckoutUnitOfWork & {
   promotions: FakePromotionUnitOfWork;
   cards: FakeCardUnitOfWork;
   extras: FakePizzaExtraUnitOfWork;
+  shippings: FakeShippingUnitOfWork;
   sales: FakeSale[];
   customers: FakeCustomer[];
   audits: SaleAuditEntry[];
@@ -60,6 +62,7 @@ export function createFakeCheckoutUnitOfWork(): FakeCheckoutUnitOfWork {
     promotions: createFakePromotionUnitOfWork(),
     cards: createFakeCardUnitOfWork(),
     extras: createFakePizzaExtraUnitOfWork(),
+    shippings: createFakeShippingUnitOfWork(),
     sales: [],
     customers: [],
     audits: [],
@@ -69,6 +72,7 @@ export function createFakeCheckoutUnitOfWork(): FakeCheckoutUnitOfWork {
         promotions: fake.promotions.read,
         cards: fake.cards.read,
         extras: fake.extras.read,
+        shippings: fake.shippings.read,
         sales: fakeSaleWriter(fake.sales),
         customers: fakeCustomers(fake.customers),
         audit: async (entry) => void fake.audits.push(entry),
@@ -78,6 +82,7 @@ export function createFakeCheckoutUnitOfWork(): FakeCheckoutUnitOfWork {
       fake.promotions.reset();
       fake.cards.reset();
       fake.extras.reset();
+      fake.shippings.reset();
       fake.sales.length = 0;
       fake.customers.length = 0;
       fake.audits.length = 0;
