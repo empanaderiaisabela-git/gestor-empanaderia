@@ -15,6 +15,7 @@
 - [Sprint 5 · Cierre de la primera entrega](#sprint-5--cierre-de-la-primera-entrega)
 - [Sprint 6 · Revisión del cliente en producción](#sprint-6--revisión-del-cliente-en-producción)
 - [Sin sprint asignado](#sin-sprint-asignado)
+- [Actualización 1 · Envíos](#actualización-1--envíos)
 
 ## Convenciones
 
@@ -4704,3 +4705,165 @@ sesión inválida. El cierre de sesión ya vuelve a `/login`.
 - Probado en el navegador contra el dev server sin la variable: sin sesión, `/`, `/home`, `/product/abc`,
   `/api/public/catalog` y `/ventas` terminan en `/login`; con la sesión de admin, `/home` abre.
 - Lint, typecheck, 880 tests unitarios y los E2E de `landing` y `navegacion` (6) en verde.
+
+------------------------------------------------------------------------------------------------------------------------
+
+## Actualización 1 · Envíos
+
+------------------------------------------------------------------------------------------------------------------------
+
+**Objetivo**: lo que pidió el cliente el 2026-11-03. Desde acá el trabajo se agrupa en **Actualizaciones** numeradas en
+lugar de sprints; cada una cierra con un merge `develop → main` y el tag `actualizacion-N`.
+
+- Una pestaña "Envíos", entre Ventas/Pedidos y Promociones, para dar de alta los envíos con título, detalle y monto.
+- En el carrito, un desplegable "Envío" que suma su monto al total del pedido.
+- En Ventas, la tarjeta de Promos y el selector de gustos con scroll propio.
+
+**Restricción**: el sistema está en producción. La migración es sólo aditiva y Supabase la migra el dev.
+
+**Plan**: [`docs/plans/actualizacion-1.md`](docs/plans/actualizacion-1.md), con las decisiones del dev (D-1 a D-8).
+
+### Resumen de la Actualización 1
+
+| #   | ID | Título | Estado | Depende de | Estimación |
+| --- | -- | ------ | ------ | ---------- | ---------- |
+| 1   | [US-60](#us-60--ventas-promos-con-scroll-propio) | Ventas: Promos con scroll propio | En progreso | — | 20 min |
+| 2   | [US-61](#us-61--selector-de-gustos-con-scroll-y-faltan-n-grande) | Selector de gustos con scroll y "FALTAN N" grande | Pendiente | — | 25 min |
+| 3   | [US-58](#us-58--envíos-pestaña-y-alta-edición-y-baja) | Envíos: pestaña y alta, edición y baja | Pendiente | — | 4 h |
+| 4   | [US-59](#us-59--ventas-envío-en-el-carrito) | Ventas: envío en el carrito | Pendiente | US-58 | 4 h 30 min |
+| 5   | [T-27](#t-27--cierre-de-la-actualización-1) | Cierre de la Actualización 1 | Pendiente | todos | 1 h 30 min |
+|     |    | **Total de la actualización** | | | **10 h 45 min** |
+
+### US-60 · Ventas: Promos con scroll propio
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En progreso |
+| Dueño        | Agente    |
+| Inicio       | 2026-11-03 |
+| Tamaño       | XS        |
+| Depende de   | —         |
+| Plan         | [`docs/plans/actualizacion-1.md`](docs/plans/actualizacion-1.md) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como vendedor quiero que la tarjeta de Promos de Ventas scrollee por dentro, de forma que muchas promos
+no estiren toda la página hacia abajo.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · La tarjeta de Promos muestra hasta 3 promos y la mitad de la cuarta; el resto se ve scrolleando dentro de la tarjeta, y la página no crece. Se mira en el navegador con 6 promos · Estimación: 20 min · Completado: —
+
+**Notas**
+
+- Nivel 1: sólo estilo.
+
+### US-61 · Selector de gustos con scroll y "FALTAN N" grande
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Pendiente |
+| Dueño        | Agente    |
+| Inicio       | —         |
+| Tamaño       | XS        |
+| Depende de   | —         |
+| Plan         | [`docs/plans/actualizacion-1.md`](docs/plans/actualizacion-1.md) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como vendedor quiero que la lista del selector de gustos scrollee por dentro y que el aviso de cuántas
+faltan se lea bien, de forma que arme las surtidas sin perder de vista cuántas me faltan.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · El selector de gustos muestra hasta 5 gustos y la mitad del sexto; el resto se ve scrolleando dentro de la lista, con el buscador y el botón de abajo siempre a la vista. Vale para todos los grupos y las partes de las promos (D-7). Se mira en el navegador · Estimación: 15 min · Completado: —
+
+- [ ] **CA-2** · El aviso de arriba ("2 Carne · faltan 10") se ve en mayúscula y a 20 px en lugar de 14 px · Estimación: 10 min · Completado: —
+
+**Notas**
+
+- Nivel 1: sólo estilo.
+
+### US-58 · Envíos: pestaña y alta, edición y baja
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Pendiente |
+| Dueño        | Agente    |
+| Inicio       | —         |
+| Tamaño       | L         |
+| Depende de   | —         |
+| Plan         | [`docs/plans/actualizacion-1.md`](docs/plans/actualizacion-1.md) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como administrador quiero dar de alta los envíos que hace el local, con su título, su detalle y su
+monto, de forma que el vendedor los pueda sumar a un pedido.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · Migración 0032, aditiva: la tabla `shipping_options` (título único, detalle, monto ≥ 0, activo y `version`) y en `sales` el envío elegido, su título y su monto congelados. Lo cubren `additive-migrations.test.ts` y tests de integración · Estimación: 45 min · Completado: —
+
+- [ ] **CA-2** · El menú del admin tiene "Envíos" entre Ventas/Pedidos y Promociones. El vendedor no lo ve y `/envios` lo lleva a `/ventas` (D-1) · Estimación: 20 min · Completado: —
+
+- [ ] **CA-3** · "Nuevo envío" pide Título (obligatorio, único, hasta 60), Detalle (opcional, hasta 150) y Monto ($0 o más, 2 decimales) (D-6). La lista muestra los tres datos y se puede editar. Cada error tiene su mensaje y su test · Estimación: 2 h · Completado: —
+
+- [ ] **CA-4** · Un envío se desactiva (deja de aparecer en el carrito) y se reactiva; se borra sólo si nunca se usó en una venta, y si no dice `HAS_RELATIONS` (D-5). Todo queda en Auditoría como "ENVÍO" · Estimación: 55 min · Completado: —
+
+**Notas**
+
+- Nivel 3: schema y migración. Supabase pasa a 33 migraciones; la migra el dev antes de `main`.
+
+### US-59 · Ventas: envío en el carrito
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Pendiente |
+| Dueño        | Agente    |
+| Inicio       | —         |
+| Tamaño       | L         |
+| Depende de   | US-58     |
+| Plan         | [`docs/plans/actualizacion-1.md`](docs/plans/actualizacion-1.md) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como vendedor quiero elegir el envío del pedido en el carrito, de forma que su monto se sume al total
+que cobro.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · Abajo a la izquierda del pedido actual, el desplegable "Envío" ofrece "Sin envío" y los envíos activos ("Centro · $ 1.500"). Elegido uno, el total y "Cobrar" lo suman. "Vaciar" y cobrar lo vuelven a "Sin envío" · Estimación: 1 h 15 min · Completado: —
+
+- [ ] **CA-2** · Con envío y sin domicilio, "Cobrar" queda deshabilitado con "Falta el domicilio", y el servidor lo rechaza con "Anotá el domicilio para el envío" (D-4) · Estimación: 30 min · Completado: —
+
+- [ ] **CA-3** · El cobro recalcula el envío en el servidor y lo suma después del descuento: $10.000 − 10 % + $1.500 = $10.500 (D-2). Un envío desactivado o borrado da `NOT_FOUND`. Lo cubren tests de dominio, service, contrato e integración · Estimación: 1 h 15 min · Completado: —
+
+- [ ] **CA-4** · El comprobante muestra "Envío · Centro" con su monto. Estadísticas lo suma a Ventas y a Ganancia en limpio, pero no a ninguna comida ni a Promos (D-3). Un E2E da de alta un envío, vende con él y abre el comprobante · Estimación: 1 h 30 min · Completado: —
+
+**Notas**
+
+- Nivel 3: cobro, historial y Estadísticas. Sin migración propia: usa la 0032 de US-58.
+
+### T-27 · Cierre de la Actualización 1
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Pendiente |
+| Dueño        | Agente    |
+| Inicio       | —         |
+| Tamaño       | S         |
+| Depende de   | todos     |
+| Plan         | [`docs/plans/actualizacion-1.md`](docs/plans/actualizacion-1.md) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como dev quiero la Actualización 1 verificada completa y en `main`, con las instrucciones para migrar
+Supabase, de forma que la versión que use el cliente sea la que se probó.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · `npm run verify` completo y todos los E2E en verde sobre `develop` · Estimación: 40 min · Completado: —
+
+- [ ] **CA-2** · README, `docs/architecture.md`, `docs/initial_prompt.md` y los docs de `shipping`, `order` y `stats` al día. Con el OK del dev, merge local `develop → main` con el tag `actualizacion-1` · Estimación: 40 min · Completado: —
+
+- [ ] **CA-3** · El dev migra Supabase antes de desplegar y comprueba que quedan 33 migraciones · Estimación: 10 min · Completado: —
