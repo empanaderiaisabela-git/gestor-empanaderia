@@ -8,7 +8,7 @@ import { boardModelOf } from './use-order-board';
 
 const board = boardModelOf(ITEMS);
 const store = () => useOrderStore.getState();
-const PROMO: PromotionDef = { id: 'p1', name: 'Media + Coca', price: 9000, isActive: true, version: 1, components: [{ group: 'coca_cola', presentationKey: 'u1', quantity: 1, menuItemId: null, menuItemName: null }], createdAt: '', updatedAt: '' };
+const PROMO: PromotionDef = { id: 'p1', name: 'Media + Coca', price: 9000, isActive: true, version: 1, components: [{ group: 'coca_cola', presentationKey: 'u1', quantity: 1, menuItemId: null, menuItemName: null, drinkName: null, drinkSize: null }], createdAt: '', updatedAt: '' };
 
 function addDozen(): void {
   act(() => {

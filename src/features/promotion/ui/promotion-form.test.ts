@@ -12,7 +12,7 @@ describe('formulario de Promociones (US-8 CA-1 y CA-2)', () => {
 
   it('una promo nueva arranca vacía con un componente; al editar trae lo guardado', () => {
     expect(initialValues(null)).toEqual({ name: '', price: '', components: [blankComponent()] });
-    const promotion = { id: 'x', name: 'Promo', price: 9000, isActive: true, version: 2, components: [{ group: 'pepsi' as const, presentationKey: 'u1', quantity: 2, menuItemId: SPRITE, menuItemName: 'Quilmes 1L' }], createdAt: '', updatedAt: '' };
+    const promotion = { id: 'x', name: 'Promo', price: 9000, isActive: true, version: 2, components: [{ group: 'pepsi' as const, presentationKey: 'u1', quantity: 2, menuItemId: SPRITE, menuItemName: 'Quilmes 1L', drinkName: 'Quilmes', drinkSize: '1L' }], createdAt: '', updatedAt: '' };
     expect(initialValues(promotion)).toEqual({ name: 'Promo', price: '9000', components: [{ group: 'pepsi', presentationKey: 'u1', quantity: '2', menuItemId: SPRITE }] });
   });
 

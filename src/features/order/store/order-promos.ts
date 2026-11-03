@@ -1,11 +1,11 @@
 import type { AddMode } from '@/features/order/domain/order-line';
-import { addToPromo, firstOpenPart, newPromoLine, nextOpenPart, type PromoLine, type PromoSource, removeFromPromo, togglePartHam } from '@/features/order/domain/promo-line';
+import { addToPromo, firstOpenPart, newPromoLine, nextOpenPart, type PromoLine, type PromoSource, removeFromPromo, type SingleDrink, togglePartHam } from '@/features/order/domain/promo-line';
 
 export type PromoOpen = { promoId: string; part: number };
 export type PromoState = { promos: PromoLine[]; openPromo: PromoOpen | null };
 
 export type PromoActions = {
-  startPromo: (promotion: PromoSource) => void;
+  startPromo: (promotion: PromoSource, single?: SingleDrink) => void;
   addToOpenPromo: (menuItemId: string, mode: AddMode) => boolean;
   removeFromOpenPromo: (menuItemId: string) => void;
   nextPromoPart: () => void;
@@ -28,8 +28,8 @@ export function promoActions(set: Setter, get: () => PromoState): PromoActions {
   };
   const replace = (next: PromoLine): void => set({ promos: get().promos.map((candidate) => (candidate.id === next.id ? next : candidate)) });
   return {
-    startPromo: (promotion) => {
-      const promo = newPromoLine(promotion);
+    startPromo: (promotion, single) => {
+      const promo = newPromoLine(promotion, crypto.randomUUID(), single);
       set({ promos: [...get().promos, promo], openPromo: openAt(promo), openLineId: null });
     },
     addToOpenPromo: (menuItemId, mode) => {

@@ -41,3 +41,14 @@ export function familySourceOf<T extends FamilyRow & { price1: number | null }>(
   if (item.price1 !== null) return item;
   return items.find((other) => other.price1 !== null && sameFamily(other, item)) ?? null;
 }
+
+export type FixedDrink = { menuItemId: string; menuItemName: string | null; drinkName: string | null; drinkSize: string | null };
+
+export function matchesDrink(item: Omit<FamilyRow, 'group'> & { id: string }, fixed: FixedDrink): boolean {
+  if (item.id === fixed.menuItemId) return true;
+  return fixed.drinkName !== null && fixed.drinkSize !== null && item.drinkName === fixed.drinkName && sizeOf(item) === fixed.drinkSize;
+}
+
+export function fixedDrinkLabel({ menuItemName, drinkName: name, drinkSize }: Omit<FixedDrink, 'menuItemId'>): string {
+  return name !== null && drinkSize !== null ? drinkNameOf({ drinkName: name, size: drinkSize, flavor: null }) : (menuItemName ?? '');
+}

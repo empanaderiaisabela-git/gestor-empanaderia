@@ -77,7 +77,7 @@ describe('schemas de edición, activación, borrado y fila', () => {
   });
 
   it('la fila convierte a número el precio que Postgres devuelve como texto', () => {
-    const sprite = { ...COCA, menuItemId: SPRITE, menuItemName: 'Sprite 1.5L' };
+    const sprite = { ...COCA, menuItemId: SPRITE, menuItemName: 'Sprite 1.5L', drinkName: 'Sprite', drinkSize: '1.5L' };
     const row = { id: ID, name: 'Promo', price: '15000.00', isActive: true, version: 1, components: [sprite], createdAt: new Date(0), updatedAt: new Date(0) };
     expect(promotionRowSchema.parse(row)).toMatchObject({ price: 15000, components: [sprite] });
   });

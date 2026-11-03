@@ -9,7 +9,8 @@ import { fetchMenuItems } from '@/features/menu/actions/fetch-menu-items';
 import { isDrinkGroup } from '@/features/menu/domain/drink';
 import { SALE_PRICE_TERM } from '@/features/menu/domain/menu-terms';
 import { useMenuStore } from '@/features/menu/store/menu.store';
-import { type DrinkOption, PromotionComponentFields } from './promotion-component-fields';
+import type { DrinkOption } from './drink-families';
+import { PromotionComponentFields } from './promotion-component-fields';
 import { initialValues, parseCreate, parseUpdate, type PromotionFormErrors, type PromotionFormValues } from './promotion-form';
 import type { PromotionsPanelModel } from './use-promotions-panel';
 

@@ -1,6 +1,6 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
-import { drinkName, drinkNameOf, flavor, sameFamily, size, sizeOf } from './drink';
+import { drinkName, drinkNameOf, fixedDrinkLabel, flavor, matchesDrink, sameFamily, size, sizeOf } from './drink';
 
 const AQUARIUS = { group: 'coca_cola' as const, drinkName: 'Aquarius', drinkSize: '1.5L', liters: null };
 
@@ -45,5 +45,21 @@ describe('bebidas con bebida, litros o mililitros y sabor (US-51)', () => {
     fc.assert(fc.property(text, amount, fc.option(taste), (name, liters, flavor) => {
       expect(drinkNameOf({ drinkName: name, size: liters, flavor }).length).toBeLessThanOrEqual(85);
     }));
+  });
+});
+
+describe('bebida fija de una promo: bebida y litros (US-57)', () => {
+  const fixed = { menuItemId: 'pera', menuItemName: 'Aquarius 1 L Pera', drinkName: 'Aquarius', drinkSize: '1 L' };
+  const item = (id: string, drinkSize: string | null, liters: string | null = null) => ({ id, drinkName: 'Aquarius', drinkSize, liters });
+
+  it('vale el mismo producto u otro sabor de la familia; no otros litros', () => {
+    expect([matchesDrink(item('pera', '1 L'), fixed), matchesDrink(item('manzana', '1 L'), fixed), matchesDrink(item('vieja', null, '1'), fixed)]).toEqual([true, true, true]);
+    expect([matchesDrink(item('grande', '1.5 L'), fixed), matchesDrink({ ...item('x', '1 L'), drinkName: 'Cepita' }, fixed)]).toEqual([false, false]);
+  });
+
+  it('una bebida vieja, sin bebida ni litros, sólo se fija a sí misma', () => {
+    const legacy = { menuItemId: 'sprite', menuItemName: 'Sprite 1,5 L', drinkName: null, drinkSize: null };
+    expect([matchesDrink({ id: 'sprite', drinkName: null, drinkSize: null, liters: null }, legacy), matchesDrink({ id: 'otra', drinkName: null, drinkSize: null, liters: null }, legacy)]).toEqual([true, false]);
+    expect([fixedDrinkLabel(fixed), fixedDrinkLabel(legacy)]).toEqual(['Aquarius 1 L', 'Sprite 1,5 L']);
   });
 });

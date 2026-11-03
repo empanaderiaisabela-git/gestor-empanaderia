@@ -3,11 +3,10 @@ import type { JSX } from 'react';
 import { inputClass } from '@/components/ui/form-field';
 import { isDrinkGroup } from '@/features/menu/domain/drink';
 import { GROUPS, MENU_GROUPS, type MenuGroup } from '@/features/menu/domain/menu-groups';
-import type { MenuItemDef } from '@/features/menu/domain/menu-item.schema';
 import { MAX_COMPONENTS } from '@/features/promotion/domain/promotion.schema';
+import { type DrinkOption, drinkFamilies } from './drink-families';
 import { blankComponent, type ComponentValues } from './promotion-form';
 
-export type DrinkOption = Pick<MenuItemDef, 'id' | 'group' | 'name' | 'isActive'>;
 type Props = { components: ComponentValues[]; error?: string; drinks?: readonly DrinkOption[]; onChange: (components: ComponentValues[]) => void };
 type RowProps = { component: ComponentValues; index: number; drinks: readonly DrinkOption[]; onChange: (component: ComponentValues) => void; onRemove: () => void };
 type SelectProps = Pick<RowProps, 'component' | 'drinks' | 'onChange'> & { number: number };
@@ -16,13 +15,13 @@ const isMenuGroup = (value: string): value is MenuGroup => MENU_GROUPS.some((gro
 const selectClass = `${inputClass(false)} mt-0`;
 
 function DrinkSelect({ component, number, drinks, onChange }: SelectProps): JSX.Element {
-  const options = drinks.filter((drink) => drink.group === component.group && (drink.isActive || drink.id === component.menuItemId));
+  const { value, options } = drinkFamilies(drinks, component.group, component.menuItemId);
   return (
-    <select aria-label={`Bebida del producto ${number}`} value={component.menuItemId} onChange={(event) => onChange({ ...component, menuItemId: event.target.value })} className={selectClass}>
+    <select aria-label={`Bebida del producto ${number}`} value={value} onChange={(event) => onChange({ ...component, menuItemId: event.target.value })} className={selectClass}>
       <option value=''>Cualquiera</option>
-      {options.map((drink) => (
-        <option key={drink.id} value={drink.id}>
-          {drink.name}
+      {options.map((option) => (
+        <option key={option.id} value={option.id}>
+          {option.label}
         </option>
       ))}
     </select>

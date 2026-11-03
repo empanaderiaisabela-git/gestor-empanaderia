@@ -7,8 +7,8 @@ const PROMO = {
   name: 'Media + 2 Coca',
   price: 9000,
   components: [
-    { group: 'empanadas' as const, presentationKey: 'u6', quantity: 1, menuItemId: null },
-    { group: 'coca_cola' as const, presentationKey: 'u1', quantity: 2, menuItemId: null },
+    { group: 'empanadas' as const, presentationKey: 'u6', quantity: 1, menuItemId: null, menuItemName: null, drinkName: null, drinkSize: null },
+    { group: 'coca_cola' as const, presentationKey: 'u1', quantity: 2, menuItemId: null, menuItemName: null, drinkName: null, drinkSize: null },
   ],
 };
 
@@ -39,14 +39,17 @@ describe('promos en el pedido actual (US-9 CA-1 y CA-2)', () => {
     expect(state().promos[0].parts.map((part) => part.flavors.map((flavor) => flavor.menuItemId))).toEqual([['carne', 'pollo'], ['coca'], ['sprite']]);
   });
 
-  it('"Siguiente" saltea la bebida fija y una promo toda fija no abre nada (US-55)', () => {
-    const sprite = { group: 'coca_cola' as const, presentationKey: 'u1', quantity: 1, menuItemId: 'sprite' };
-    state().startPromo({ ...PROMO, components: [PROMO.components[0], sprite, { ...sprite, menuItemId: null }] });
+  it('"Siguiente" saltea la bebida fija resuelta y una promo toda resuelta no abre nada (US-55, US-57)', () => {
+    const sprite = { ...PROMO.components[1], quantity: 1, menuItemId: 'sprite', menuItemName: 'Sprite 1 L', drinkName: 'Sprite', drinkSize: '1 L' };
+    const single = (): string => 'sprite';
+    state().startPromo({ ...PROMO, components: [PROMO.components[0], sprite, { ...sprite, menuItemId: null }] }, single);
     state().addToOpenPromo('carne', 'rest');
     state().nextPromoPart();
     expect(state().openPromo?.part).toBe(2);
-    state().startPromo({ ...PROMO, id: 'p2', components: [sprite] });
+    state().startPromo({ ...PROMO, id: 'p2', components: [sprite] }, single);
     expect(state().openPromo).toBeNull();
+    state().startPromo({ ...PROMO, id: 'p3', components: [sprite] });
+    expect(state().openPromo?.part).toBe(0);
   });
 
   it('"Quitar uno" resta del producto abierto de la promo y de la línea común abierta (US-39 CA-3)', () => {

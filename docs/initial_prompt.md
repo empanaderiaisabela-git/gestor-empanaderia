@@ -41,7 +41,8 @@ Funciones que ya existen (Sprints 1 a 4):
 - Cobro con efectivo, transferencia, débito o crédito (hasta 2 medios) y descuentos, con precios recalculados en el
   servidor. Historial en Ventas/Pedidos, comprobante imprimible y anulación con reposición de stock.
 - Promociones con precio de venta a mano, que se venden desde el tablero eligiendo los gustos de cada parte
-  (US-8 y US-9). La bebida de Coca-Cola o Quilmes se puede fijar al armar la promo (US-55).
+  (US-8 y US-9). La bebida y los litros de Coca-Cola o Quilmes se pueden fijar al armar la promo; el sabor
+  se elige al vender (US-55, US-57).
 - Tarjetas con planes de 1, 3, 6 o 12 cuotas y su recargo; el recargo es de la tarjeta: la venta y los pagos
   quedan al precio original y el recargo sólo se guarda como dato (US-10, US-11 y BUG-20).
 - Estadísticas de una o varias jornadas (7:00 a 6:59), entre "Desde" y "Hasta" (US-32): ganancia en limpio, ventas, dinero por comida y por promos, lo
@@ -167,11 +168,12 @@ Hacer preguntas de más es mejor que inventar.
   **0027** agrega `drink_size` y recrea el check de bebidas; `liters` queda sólo para leer lo viejo como "1.5 L". D-5 se
   mantiene: una restricción se puede recrear con DROP + ADD en la misma migración. Supabase pasa a **28** cuando el dev
   la migre.
-- **US-52 a US-56** (sin sprint asignado, 2026-11-01 y 02): búsqueda por palabras en Stock y en "Buscar gusto"
+- **US-52 a US-57** (sin sprint asignado, 2026-11-01 y 02): búsqueda por palabras en Stock y en "Buscar gusto"
   (US-52); el campo Bebida pasa a 30 (US-53, migración 0028) y a 50 caracteres (US-54, migración 0029, `name` en
   `varchar(85)`); bebida fija en las promos (US-55, migración 0030: `promotion_components.menu_item_id` con FK
   compuesta a `menu_items (id, menu_group)`). US-56: un ingreso de stock acepta 0, para corregir uno cargado por
-  error (migración 0031). Supabase tiene que llegar a **32** migraciones antes de `main`.
+  error (migración 0031). US-57: la promo fija bebida y litros, sin migración (`menu_item_id` representa a la
+  familia). Supabase está en **32** migraciones (la migró el dev el 2026-11-02).
 - **US-43** (sin sprint asignado): la web pública (`/home`, `/product`, `/api/public`) está **apagada salvo
   `PUBLIC_CATALOG=true`**, y sin sesión se entra por `/login`. Para prenderla se carga la variable en Vercel y se
   redespliega. Plan en [`US-43-sin-web-publica.md`](plans/US-43-sin-web-publica.md).

@@ -2,6 +2,7 @@
 
 import { type JSX, useState } from 'react';
 import { inputClass } from '@/components/ui/form-field';
+import { matchesDrink } from '@/features/menu/domain/drink';
 import { ResponsiveModal } from '@/components/ui/responsive-modal';
 import { visibleFlavors } from '@/features/order/domain/flavor-list';
 import { describeFlavors, missingLabel } from '@/features/order/domain/order-describe';
@@ -45,7 +46,8 @@ export function FlavorPicker({ board }: { board: OrderBoardModel }): JSX.Element
   const toast = useAddedToast();
   const line = target?.line;
   const progress = line && line.flavors.length > 0 ? `${describeFlavors(line, board.nameOf)} · ${missingLabel(line) ?? 'completa'}` : null;
-  const flavors = target ? visibleFlavors(board.itemsOf(target.line.group), target.line, search) : [];
+  const pool = target ? board.itemsOf(target.line.group).filter((item) => target.drink === null || matchesDrink(item, target.drink)) : [];
+  const flavors = target ? visibleFlavors(pool, target.line, search) : [];
   const done = (): void => {
     setSearch('');
     close();

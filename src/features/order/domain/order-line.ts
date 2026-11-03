@@ -28,7 +28,7 @@ function amountToAdd(presentation: Presentation, free: number, mode: AddMode): n
   return mode === 'rest' ? free : 1;
 }
 
-export function addFlavor(line: OrderLine, menuItemId: string, mode: AddMode): OrderLine | null {
+export function addFlavor<T extends OrderLine>(line: T, menuItemId: string, mode: AddMode): T | null {
   const presentation = presentationOf(line);
   if (!presentation) return null;
   const free = remaining(line);
@@ -41,7 +41,7 @@ export function addFlavor(line: OrderLine, menuItemId: string, mode: AddMode): O
   return { ...line, flavors };
 }
 
-export function removeFlavor(line: OrderLine, menuItemId: string): OrderLine | null {
+export function removeFlavor<T extends OrderLine>(line: T, menuItemId: string): T | null {
   const presentation = presentationOf(line);
   const current = line.flavors.find((flavor) => flavor.menuItemId === menuItemId);
   if (!presentation || !current) return null;

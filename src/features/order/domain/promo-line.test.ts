@@ -3,42 +3,51 @@ import { describe, expect, it } from 'vitest';
 import { isComplete } from './order-line';
 import { addToPromo, describePromoFlavors, expandComponents, firstOpenPart, isPromoComplete, newPromoLine, nextOpenPart, orderSubtotal, promoUsageLines } from './promo-line';
 
+const FREE = { menuItemId: null, menuItemName: null, drinkName: null, drinkSize: null };
 const PROMO = {
   id: 'p1',
   name: 'Docena + 2 Coca',
   price: 15000,
   components: [
-    { group: 'empanadas' as const, presentationKey: 'u12', quantity: 1, menuItemId: null },
-    { group: 'coca_cola' as const, presentationKey: 'u1', quantity: 2, menuItemId: null },
+    { group: 'empanadas' as const, presentationKey: 'u12', quantity: 1, ...FREE },
+    { group: 'coca_cola' as const, presentationKey: 'u1', quantity: 2, ...FREE },
   ],
 };
-const SPRITE = { group: 'coca_cola' as const, presentationKey: 'u1', quantity: 1, menuItemId: 'sprite' };
+const DRINK = { menuItemId: 'pera', menuItemName: 'Aquarius 1 L Pera', drinkName: 'Aquarius', drinkSize: '1 L' };
+const AQUARIUS = { group: 'coca_cola' as const, presentationKey: 'u1', quantity: 1, ...DRINK };
 const names: Record<string, string> = { carne: 'Carne', pollo: 'Pollo', coca: 'Coca 500', sprite: 'Sprite' };
 const nameOf = (id: string): string => names[id] ?? '?';
 
 describe('línea de promo en el pedido (US-9 CA-1 y CA-2)', () => {
   it('cada producto se abre en tantas partes como su cantidad, para elegir un gusto por parte', () => {
     expect(expandComponents(PROMO.components)).toEqual([
-      { group: 'empanadas', presentationKey: 'u12', menuItemId: null },
-      { group: 'coca_cola', presentationKey: 'u1', menuItemId: null },
-      { group: 'coca_cola', presentationKey: 'u1', menuItemId: null },
+      { group: 'empanadas', presentationKey: 'u12', drink: null },
+      { group: 'coca_cola', presentationKey: 'u1', drink: null },
+      { group: 'coca_cola', presentationKey: 'u1', drink: null },
     ]);
   });
 
-  it('la bebida fija ya viene puesta y el próximo producto abierto la saltea (US-55)', () => {
-    const promo = newPromoLine({ ...PROMO, components: [PROMO.components[0], SPRITE, { ...SPRITE, menuItemId: null }] }, 'x');
-    expect(promo.parts[1].flavors).toEqual([{ menuItemId: 'sprite', units: 1 }]);
-    expect([firstOpenPart(promo), nextOpenPart(promo, 0), nextOpenPart(promo, 2)]).toEqual([0, 2, null]);
-    expect(firstOpenPart(newPromoLine({ ...PROMO, components: [SPRITE] }, 'y'))).toBeNull();
+  it('la parte con bebida fija lleva su familia y queda abierta para elegir el sabor (US-57)', () => {
+    const promo = newPromoLine({ ...PROMO, components: [PROMO.components[0], AQUARIUS] }, 'x');
+    expect([promo.parts[1].drink, promo.parts[1].flavors]).toEqual([DRINK, []]);
+    expect(firstOpenPart(promo)).toBe(0);
   });
 
-  it('fuzz: una promo nueva arranca completa justo en las partes con bebida fija (US-55)', () => {
+  it('si hay un solo producto de la familia a la venta, viene puesto y se saltea (US-55, US-57)', () => {
+    const single = (): string => 'manzana';
+    const promo = newPromoLine({ ...PROMO, components: [PROMO.components[0], AQUARIUS, { ...AQUARIUS, ...FREE }] }, 'x', single);
+    expect(promo.parts[1].flavors).toEqual([{ menuItemId: 'manzana', units: 1 }]);
+    expect([firstOpenPart(promo), nextOpenPart(promo, 0), nextOpenPart(promo, 2)]).toEqual([0, 2, null]);
+    expect(firstOpenPart(newPromoLine({ ...PROMO, components: [AQUARIUS] }, 'y', single))).toBeNull();
+  });
+
+  it('fuzz: una promo nueva arranca completa justo en las partes fijas que se resuelven solas (US-57)', () => {
     const component = fc.record({ fixed: fc.boolean(), quantity: fc.integer({ min: 1, max: 3 }) });
     fc.assert(
-      fc.property(fc.array(component, { minLength: 1, maxLength: 5 }), (list) => {
-        const components = list.map(({ fixed, quantity }) => ({ ...SPRITE, quantity, menuItemId: fixed ? 'sprite' : null }));
-        const promo = newPromoLine({ ...PROMO, components }, 'x');
-        expect(promo.parts.map(isComplete)).toEqual(expandComponents(components).map((key) => key.menuItemId !== null));
+      fc.property(fc.array(component, { minLength: 1, maxLength: 5 }), fc.boolean(), (list, resolves) => {
+        const components = list.map(({ fixed, quantity }) => ({ ...AQUARIUS, quantity, ...(fixed ? DRINK : FREE) }));
+        const promo = newPromoLine({ ...PROMO, components }, 'x', () => (resolves ? 'pera' : null));
+        expect(promo.parts.map(isComplete)).toEqual(expandComponents(components).map((key) => resolves && key.drink !== null));
       })
     );
   });

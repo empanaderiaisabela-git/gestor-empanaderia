@@ -1,6 +1,6 @@
 # Feature: promociones
 
-- **US relacionadas**: US-8 (armar promos); US-9 las vende desde el tablero; US-55 fija la bebida.
+- **US relacionadas**: US-8 (armar promos); US-9 las vende desde el tablero; US-55 fija la bebida; US-57 la fija por bebida y litros.
 - **Código**: `src/features/promotion/` (domain, repository, services, actions, store, ui), tablas en
   `src/lib/db/promotion-schema.ts`, pantalla en `src/app/(main)/promociones/`.
 
@@ -19,11 +19,14 @@ Una promo guardada queda **activa** y aparece en Ventas. No vence: sigue activa 
   (fuente: US-8 CA-1).
 - De 1 a 10 productos. Cada uno con una presentación que su grupo vende de verdad y una cantidad de 1 a 99. El mismo
   grupo y presentación no se repite: se suma la cantidad (fuente: US-8 CA-1).
-- En Coca-Cola y Quilmes se puede fijar la bebida (opcional; "Cualquiera" es como antes). Con cantidad 2, las dos son
-  esa bebida. Para dos bebidas distintas se agregan dos productos del mismo grupo, cada uno con la suya: el repetido
-  se mide por grupo + presentación + bebida fijada (fuente: dev, 2026-11-02, US-55).
-- Una bebida fijada no se puede borrar en Alta de productos (`HAS_RELATIONS`); se desactiva, y la promo queda
-  deshabilitada en Ventas hasta cambiarla (decisión del agente en US-55, confirmada por el dev el 2026-11-02).
+- En Coca-Cola y Quilmes se puede fijar la bebida (opcional; "Cualquiera" es como antes). Se fija **bebida y litros**
+  ("Aquarius 1 L", la familia de US-51); el sabor lo elige el vendedor al vender (US-57). Con cantidad 2, las dos son
+  de esa familia. Para dos bebidas distintas se agregan dos productos del mismo grupo, cada uno con la suya: el
+  repetido se mide por grupo + presentación + bebida fijada (fuente: dev, 2026-11-02, US-55 y US-57).
+- `menu_item_id` guarda un producto de la familia (el primero por nombre); de él salen bebida y litros. Una bebida
+  vieja, sin bebida ni litros cargados, es una familia de un solo producto.
+- Una bebida fijada no se puede borrar en Alta de productos (`HAS_RELATIONS`), aunque haya otros sabores; se desactiva, y la
+  promo queda deshabilitada en Ventas si no queda ningún producto de la familia a la venta (decisión del agente en US-55, confirmada por el dev el 2026-11-02).
 - El precio de venta se escribe a mano, mayor a 0 y con 2 decimales como máximo. No hay precio de referencia
   (fuente: cliente, 2026-10-25).
 - Sin vigencia: el admin la desactiva cuando quiere (fuente: cliente, 2026-10-25).
@@ -55,13 +58,14 @@ Cada cambio se audita con la entidad `PROMOTION` ("PROMOCIÓN" en Auditoría): n
 - `promotions`: nombre (`varchar(60)`, `unique`), precio (`numeric(10,2)`, `CHECK > 0`), `is_active`, `version` y
   timestamps.
 - `promotion_components`: promo (FK con `onDelete cascade`), grupo, presentación, cantidad (`CHECK > 0`), posición y
-  `menu_item_id` (la bebida fija, nullable; US-55, migración 0030).
+  `menu_item_id` (un producto de la bebida fija, nullable; US-55, migración 0030; desde US-57 representa a su familia).
   - `unique nulls not distinct (promotion_id, menu_group, presentation_key, menu_item_id)`.
   - FK compuesta `(menu_item_id, menu_group) → menu_items (id, menu_group)`, sin `onDelete`: la bebida existe, es del
     grupo del producto y no se puede borrar mientras esté en una promo. Para eso `menu_items` tiene
     `unique (id, menu_group)`.
   - `CHECK`: `menu_item_id` nulo, o grupo `coca_cola` o `pepsi`.
-  - La lectura trae el nombre de la bebida (`menuItemName`) con un `leftJoin` a `menu_items`.
+  - La lectura trae nombre, bebida y litros de ese producto (`menuItemName`, `drinkName`, `drinkSize`) con un
+    `leftJoin` a `menu_items`.
   - Un `CHECK` exige que la presentación sea del grupo, tal como `GROUPS` (`menu-groups.ts`). Un test de integración
     prueba cada combinación, para que no se desincronicen.
 - Editar reemplaza los productos de la promo en la misma transacción. Editar, activar y borrar filtran por `id` y
@@ -90,8 +94,9 @@ Cada cambio se audita con la entidad `PROMOTION` ("PROMOCIÓN" en Auditoría): n
 - Formulario (`PromotionFormModal`, ancho `2xl` desde US-55 para que entren los nombres):
   - nombre;
   - la lista de productos ("Productos de la promo"), con grupo, presentación y cantidad, "Agregar producto" y "Quitar
-    producto". En Coca-Cola y Quilmes, en lugar de la presentación (sólo "1 unidad") va **Bebida**: "Cualquiera" y las
-    bebidas activas del grupo por nombre, más la fijada aunque se haya desactivado (US-55);
+    producto". En Coca-Cola y Quilmes, en lugar de la presentación (sólo "1 unidad") va **Bebida**: "Cualquiera" y una
+    opción por bebida y litros con algún producto activo ("Aquarius 1 L"), más la fijada aunque no tenga ninguno
+    (`drink-families.ts`, US-57);
   - el precio de venta de la promo, con la aclaración "Lo que paga el cliente. Se escribe a mano.".
 - Estados: esqueleto mientras carga, "Todavía no hay promociones." y los errores del servidor en el formulario o en el
   aviso superior.

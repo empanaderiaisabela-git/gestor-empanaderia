@@ -45,7 +45,7 @@ export const promotionRowSchema = z.object({
   price: amountSchema,
   isActive: z.boolean(),
   version: z.number(),
-  components: z.array(z.object({ group: z.enum(MENU_GROUPS), presentationKey: z.string(), quantity: z.number(), menuItemId: z.string().nullable(), menuItemName: z.string().nullable() })),
+  components: z.array(z.object({ group: z.enum(MENU_GROUPS), presentationKey: z.string(), quantity: z.number(), menuItemId: z.string().nullable(), menuItemName: z.string().nullable(), drinkName: z.string().nullable(), drinkSize: z.string().nullable() })),
   createdAt: timestampSchema,
   updatedAt: timestampSchema,
 });

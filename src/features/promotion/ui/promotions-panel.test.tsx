@@ -18,7 +18,7 @@ vi.mock('@/features/promotion/actions/update-promotion', () => ({ updatePromotio
 vi.mock('@/features/promotion/actions/delete-promotion', () => ({ deletePromotionAction: vi.fn() }));
 vi.mock('@/features/promotion/actions/toggle-promotion-active', () => ({ togglePromotionActiveAction: vi.fn() }));
 
-const PROMO: PromotionDef = { id: 'p1', name: 'Docena + Coca', price: 15000, isActive: true, version: 1, components: [{ group: 'empanadas', presentationKey: 'u12', quantity: 1, menuItemId: null, menuItemName: null }], createdAt: '', updatedAt: '' };
+const PROMO: PromotionDef = { id: 'p1', name: 'Docena + Coca', price: 15000, isActive: true, version: 1, components: [{ group: 'empanadas', presentationKey: 'u12', quantity: 1, menuItemId: null, menuItemName: null, drinkName: null, drinkSize: null }], createdAt: '', updatedAt: '' };
 
 describe('pantalla de Promociones (US-8)', () => {
   beforeEach(() => {

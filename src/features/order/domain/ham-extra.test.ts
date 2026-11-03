@@ -40,7 +40,7 @@ describe('jamón extra en una pizza del carrito (US-47)', () => {
   });
 
   it('cada pizza de una promo con jamón suma su precio al de la promo (D-2)', () => {
-    const promo: PromoLine = { id: 'p', promotionId: 'x', name: '2 pizzas', price: 20000, parts: [pizza({ ham: true }), pizza({ id: 'c', ham: true })] };
+    const promo: PromoLine = { id: 'p', promotionId: 'x', name: '2 pizzas', price: 20000, parts: [{ ...pizza({ ham: true }), drink: null }, { ...pizza({ id: 'c', ham: true }), drink: null }] };
     expect(orderSubtotal([], [promo], book(1500))).toBe(23000);
     expect(orderSubtotal([], [promo], book(null))).toBeNull();
   });

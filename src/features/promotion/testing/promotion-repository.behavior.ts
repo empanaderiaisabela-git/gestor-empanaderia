@@ -6,7 +6,7 @@ import type { PromotionRepository } from '@/features/promotion/repository/promot
 const DOCENA = { group: 'empanadas' as const, presentationKey: 'u12', quantity: 1, menuItemId: null };
 const COCA = { group: 'coca_cola' as const, presentationKey: 'u1', quantity: 2, menuItemId: null };
 export const PROMO_INPUT = { name: 'Docena + 2 Coca', price: 15000, components: [DOCENA, COCA] };
-const read = <T extends object>(component: T): T & { menuItemName: null } => ({ ...component, menuItemName: null });
+const read = <T extends object>(component: T): T & { menuItemName: null; drinkName: null; drinkSize: null } => ({ ...component, menuItemName: null, drinkName: null, drinkSize: null });
 
 async function failureCode(operation: Promise<unknown>): Promise<string | null> {
   return operation.then(
@@ -15,7 +15,7 @@ async function failureCode(operation: Promise<unknown>): Promise<string | null> 
   );
 }
 
-export type PromotionRepositoryHarness = { repository: PromotionRepository; linkSale(promotionId: string): Promise<void>; addDrink(group: MenuGroup, name: string): Promise<string> };
+export type PromotionRepositoryHarness = { repository: PromotionRepository; linkSale(promotionId: string): Promise<void>; addDrink(group: MenuGroup, drinkName: string): Promise<string> };
 
 export function describePromotionRepository(label: string, setup: () => Promise<PromotionRepositoryHarness>): void {
   describe(`PromotionRepository (${label}) — US-8 CA-1`, () => {
@@ -40,15 +40,16 @@ export function describePromotionRepository(label: string, setup: () => Promise<
       expect((await repository.findById(created.id))?.components).toEqual([read(DOCENA), read(COCA)]);
     });
 
-    it('guarda la bebida fija y la lee con su nombre (US-55)', async () => {
-      const sprite = { ...COCA, menuItemId: await harness.addDrink('coca_cola', 'Sprite 1.5L') };
+    it('guarda la bebida fija y la lee con su nombre, bebida y litros (US-55, US-57)', async () => {
+      const sprite = { ...COCA, menuItemId: await harness.addDrink('coca_cola', 'Sprite') };
       const created = await repository.insert({ ...PROMO_INPUT, components: [DOCENA, sprite] });
-      expect(created.components).toEqual([read(DOCENA), { ...sprite, menuItemName: 'Sprite 1.5L' }]);
-      expect((await repository.findById(created.id))?.components[1]).toEqual({ ...sprite, menuItemName: 'Sprite 1.5L' });
+      const stored = { ...sprite, menuItemName: 'Sprite 1.5L', drinkName: 'Sprite', drinkSize: '1.5L' };
+      expect(created.components).toEqual([read(DOCENA), stored]);
+      expect((await repository.findById(created.id))?.components[1]).toEqual(stored);
     });
 
     it('RELATION_NOT_FOUND: una bebida fija de otro grupo o que no existe (US-55)', async () => {
-      const quilmes = await harness.addDrink('pepsi', 'Quilmes 1L');
+      const quilmes = await harness.addDrink('pepsi', 'Quilmes');
       for (const menuItemId of [quilmes, crypto.randomUUID()]) {
         expect(await failureCode(repository.insert({ ...PROMO_INPUT, name: menuItemId, components: [{ ...COCA, menuItemId }] }))).toBe('RELATION_NOT_FOUND');
       }
