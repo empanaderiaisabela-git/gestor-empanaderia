@@ -110,6 +110,7 @@ servidor con el actual, como los precios. La anulación no cambia: el envío se 
 | I-3 | ¿El aviso "FALTAN N" tiene que aparecer antes del primer gusto? | No: sigue apareciendo desde el primer gusto, como hoy; sólo cambia de tamaño y pasa a mayúscula. |
 | I-4 | ¿Un descuento puede comerse toda la comida si el envío cubre la diferencia? | No: comida $8.000, descuento $9.000 y envío $1.500 sigue siendo inválido ("El descuento no puede dejar el total en $0"). Si el dev quiere permitirlo, cambia una comparación en `checkout-form.ts` y en `checkout.service.ts`. |
 | I-5 | ¿Qué mensaje da el servidor si llega un envío sin domicilio? | El genérico de datos inválidos (`VALIDATION`), como cualquier entrada mal formada; el carrito ya lo frena antes con "Falta el domicilio". |
+| I-7 | Al cerrar, el E2E "proveedor borrado durante un ingreso" (Escenario C de `concurrencia.spec.ts`) fallaba: buscaba "Fanta 1,5 L" en "Gusto o bebida", que desde US-49 no existe para las bebidas. ¿Se arregla acá? | Sí, como BUG-30: sólo el test, que ahora carga una empanada. La app no cambia. El seed que falla con una promo con bebida fija quedó como BUG-31, pendiente de tu OK porque el seed borra datos. |
 | I-6 | ¿El campo "Domicilio (opcional)" cambia de nombre con un envío elegido? | No: el aviso "Falta el domicilio" queda debajo del desplegable y "Cobrar" se apaga. Si el dev prefiere que el campo diga "Domicilio" a secas con envío, es un cambio de texto. |
 
 ## Resumen para el dev
@@ -156,3 +157,11 @@ La lista simple de cada commit, a medida que se integra a `develop`.
 - Adónde va: `develop`. La venta guarda qué envío fue y cuánto se cobró, aunque después cambies el monto. El
   comprobante lo muestra, y Estadísticas lo suma a Ventas y a la Ganancia, pero no a ninguna comida.
 - Qué no entra: no hay una tarjeta "Envíos" aparte en Estadísticas (elegiste que no hacía falta).
+
+### BUG-30 · Un test viejo de Stock
+
+- Qué es: una prueba automática que simula a dos personas a la vez (una borra un proveedor mientras la otra carga
+  stock con él) buscaba la Fanta en un lugar donde ya no está desde que las bebidas se cargan por Bebida, Litros y
+  Sabor. Ahora la prueba usa una empanada.
+- Por qué importa: con esto pasan las 83 pruebas de punta a punta, que es la condición para cerrar la Actualización.
+- Adónde va: `develop`. No cambia nada de la app.

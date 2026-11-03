@@ -4706,6 +4706,29 @@ sesión inválida. El cierre de sesión ya vuelve a `/login`.
   `/api/public/catalog` y `/ventas` terminan en `/login`; con la sesión de admin, `/home` abre.
 - Lint, typecheck, 880 tests unitarios y los E2E de `landing` y `navegacion` (6) en verde.
 
+### BUG-31 · `db:seed` falla si quedó una promo con una bebida fija
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Pendiente |
+| Dueño        | —         |
+| Inicio       | —         |
+| Tamaño       | XS        |
+| Depende de   | US-55     |
+| Plan         | —         |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Esperado**: `npm run db:seed` limpia la base local y carga los datos de demo, aunque haya promos con una bebida fija.
+
+**Actual**: `clearMenu` (`src/lib/db/scripts/seed-menu.ts`) borra `menu_items` sin borrar antes `promotion_components`, y la FK `promotion_components_menu_item_fk` de US-55 lo frena: "update or delete on table menu_items violates foreign key constraint". Pasa al volver a correr los E2E sobre un `db-test` que no se recreó (la promo con bebida fija la crea un E2E), y en la base local de quien haya fijado una bebida.
+
+- [ ] **CA-1** · El seed borra las promos y sus productos antes que el menú, y un test lo cubre · Estimación: 20 min · Completado: —
+
+**Notas**
+
+- Lo encontró el agente al cerrar la Actualización 1 (2026-11-03). Mientras tanto: `docker compose rm -sf db-test` y volver a levantarlo antes de correr los E2E. Espera el OK del dev: el seed borra datos.
+
 ------------------------------------------------------------------------------------------------------------------------
 
 ## Actualización 1 · Envíos
@@ -4731,8 +4754,9 @@ lugar de sprints; cada una cierra con un merge `develop → main` y el tag `actu
 | 2   | [US-61](#us-61--selector-de-gustos-con-scroll-y-faltan-n-grande) | Selector de gustos con scroll y "FALTAN N" grande | En revisión | — | 25 min |
 | 3   | [US-58](#us-58--envíos-pestaña-y-alta-edición-y-baja) | Envíos: pestaña y alta, edición y baja | En revisión | — | 4 h |
 | 4   | [US-59](#us-59--ventas-envío-en-el-carrito) | Ventas: envío en el carrito | En revisión | US-58 | 4 h 30 min |
-| 5   | [T-27](#t-27--cierre-de-la-actualización-1) | Cierre de la Actualización 1 | Pendiente | todos | 1 h 30 min |
-|     |    | **Total de la actualización** | | | **10 h 45 min** |
+| 5   | [BUG-30](#bug-30--el-e2e-proveedor-borrado-durante-un-ingreso-busca-un-selector-viejo) | El E2E "proveedor borrado durante un ingreso" busca un selector viejo | En revisión | US-49 | 15 min |
+| 6   | [T-27](#t-27--cierre-de-la-actualización-1) | Cierre de la Actualización 1 | En progreso | todos | 1 h 30 min |
+|     |    | **Total de la actualización** | | | **11 h** |
 
 ### US-60 · Ventas: Promos con scroll propio
 
@@ -4850,13 +4874,36 @@ que cobro.
 - `npm run verify` en verde (2026-11-03): 1284 tests unit y de componente, 141 de integración, cobertura 96,4 / 90,4, mutación 85,8 y build. Probado en el navegador: $3.000 − 10 % + $1.500 = $4.200, el comprobante con "Envío · Centro" y Estadísticas con Empanadas en $2.700 y Efectivo en $4.200. El E2E corre en el cierre (T-27).
 - Un descuento que deja la comida en $0 o menos sigue siendo inválido aunque el envío cubra la diferencia (I-4 del plan).
 
+### BUG-30 · El E2E "proveedor borrado durante un ingreso" busca un selector viejo
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-11-03 |
+| Tamaño       | XS        |
+| Depende de   | US-49     |
+| Plan         | [`docs/plans/actualizacion-1.md`](docs/plans/actualizacion-1.md) (I-7) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Esperado**: el Escenario C de `tests/concurrencia.spec.ts` pasa: un usuario carga un ingreso con un proveedor que otro borra, y al confirmar ve "Una de las entidades relacionadas ya no existe.".
+
+**Actual**: desde US-49 las bebidas se eligen con Bebida → Litros → Sabor, y el E2E seguía buscando "Fanta 1,5 L" en "Gusto o bebida" de Coca-Cola: esperaba 60 s y fallaba.
+
+- [x] **CA-1** · El escenario carga el ingreso con una empanada ("Humita") y vuelve a pasar; los 83 E2E en verde sobre `develop` · Estimación: 15 min · Completado: 2026-11-03 15:40
+
+**Notas**
+
+- Nivel 1: sólo el test. La app no cambia.
+
 ### T-27 · Cierre de la Actualización 1
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
+| Estado       | En progreso |
 | Dueño        | Agente    |
-| Inicio       | —         |
+| Inicio       | 2026-11-03 |
 | Tamaño       | S         |
 | Depende de   | todos     |
 | Plan         | [`docs/plans/actualizacion-1.md`](docs/plans/actualizacion-1.md) |
@@ -4868,8 +4915,13 @@ Supabase, de forma que la versión que use el cliente sea la que se probó.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · `npm run verify` completo y todos los E2E en verde sobre `develop` · Estimación: 40 min · Completado: —
+- [x] **CA-1** · `npm run verify` completo y todos los E2E en verde sobre `develop` · Estimación: 40 min · Completado: 2026-11-03 15:40
 
 - [ ] **CA-2** · README, `docs/architecture.md`, `docs/initial_prompt.md` y los docs de `shipping`, `order` y `stats` al día. Con el OK del dev, merge local `develop → main` con el tag `actualizacion-1` · Estimación: 40 min · Completado: —
 
 - [ ] **CA-3** · El dev migra Supabase antes de desplegar y comprueba que quedan 33 migraciones · Estimación: 10 min · Completado: —
+
+**Notas**
+
+- CA-1: `npm run verify` verde en US-58 y US-59 (el último: 1284 tests unit y de componente, 141 de integración, cobertura 96,4 / 90,4, mutación 85,8 y build) y los 83 E2E en verde sobre `develop` (2026-11-03), con BUG-30 arreglado. El E2E de Clientes de BUG-16 falló una vez y pasó al repetirlo.
+- CA-2: docs al día; falta el OK del dev para el merge a `main` y el tag.
