@@ -4710,12 +4710,12 @@ sesión inválida. El cierre de sesión ya vuelve a `/login`.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
-| Dueño        | —         |
-| Inicio       | —         |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-11-03 |
 | Tamaño       | XS        |
 | Depende de   | US-55     |
-| Plan         | —         |
+| Plan         | Pedido directo del dev (2026-11-03) |
 | Merge        | —         |
 | Horas reales | —         |
 
@@ -4723,11 +4723,13 @@ sesión inválida. El cierre de sesión ya vuelve a `/login`.
 
 **Actual**: `clearMenu` (`src/lib/db/scripts/seed-menu.ts`) borra `menu_items` sin borrar antes `promotion_components`, y la FK `promotion_components_menu_item_fk` de US-55 lo frena: "update or delete on table menu_items violates foreign key constraint". Pasa al volver a correr los E2E sobre un `db-test` que no se recreó (la promo con bebida fija la crea un E2E), y en la base local de quien haya fijado una bebida.
 
-- [ ] **CA-1** · El seed borra las promos y sus productos antes que el menú, y un test lo cubre · Estimación: 20 min · Completado: —
+- [x] **CA-1** · El seed borra las promos y sus productos antes que el menú, y un test lo cubre (`regression BUG-31` en `seed-menu.int.test.ts`) · Estimación: 20 min · Completado: 2026-11-03 18:20
 
 **Notas**
 
-- Lo encontró el agente al cerrar la Actualización 1 (2026-11-03). Mientras tanto: `docker compose rm -sf db-test` y volver a levantarlo antes de correr los E2E. Espera el OK del dev: el seed borra datos.
+- Lo encontró el agente al cerrar la Actualización 1 (2026-11-03); el dev dio el OK para arreglarlo el mismo día.
+- Nivel 2. `clearMenu` borra `promotions` antes que `menu_items`; sus productos se van en cascada. Sólo lo usan `db:seed` y `db:reset-data`, que ya vaciaban la base y se niegan a correr contra producción (BUG-3). Supabase no se toca.
+- Probado: el test falla sin el arreglo con el error de la FK; con el arreglo, los 83 E2E y después otra corrida sin recrear `db-test` (antes se cortaba en el seed), y los 142 tests de integración en verde.
 
 ------------------------------------------------------------------------------------------------------------------------
 
