@@ -103,7 +103,11 @@ servidor con el actual, como los precios. La anulación no cambia: el envío se 
 
 ## Decisiones tomadas durante la implementación
 
-(Se completan a medida que aparecen, con la pregunta que las originó.)
+| # | Pregunta | Qué se eligió y qué cambia si el dev dice otra cosa |
+|---|---|---|
+| I-1 | ¿El borrado de un envío usado lo frena la base o el service? | Los dos, como en Proveedores: el service pregunta `hasSales` y devuelve `HAS_RELATIONS`, y la FK de `sales.shipping_option_id` es la red de seguridad. |
+| I-2 | ¿Qué pasa en el celular con el selector de gustos? | Cada fila mide 145 px (los botones bajan a otro renglón): la lista ocupa media pantalla, unas 3 filas, para que "Listo" se vea. En la PC y la tablet, 5 y media. |
+| I-3 | ¿El aviso "FALTAN N" tiene que aparecer antes del primer gusto? | No: sigue apareciendo desde el primer gusto, como hoy; sólo cambia de tamaño y pasa a mayúscula. |
 
 ## Resumen para el dev
 
@@ -130,3 +134,12 @@ La lista simple de cada commit, a medida que se integra a `develop`.
 - Adónde va: `develop`. Vale para todos los grupos y las promos. Sólo cambia cómo se ve.
 - Qué no entra: en el celular entran unas 3 filas, porque cada una es más alta; con 5 y media el modal no entraría en
   la pantalla.
+
+### US-58 · Envíos
+
+- Qué es: una pestaña nueva, "Envíos", entre Ventas/Pedidos y Promociones. Ahí el admin da de alta cada envío con su
+  título, su detalle y su monto (puede ser $0), lo edita, lo desactiva o lo borra si nunca se usó.
+- Por qué importa: es la lista de la que el vendedor va a elegir el envío en el carrito (US-59).
+- Adónde va: `develop`. Trae la migración 0032: una tabla nueva y tres columnas nuevas en las ventas, sin tocar datos
+  (las ventas de hoy quedan "sin envío", en $0). **Supabase la tenés que migrar vos antes de desplegar** (queda en 33).
+- Qué no entra: todavía no se puede elegir el envío al vender; eso es US-59. El vendedor no ve la pestaña.

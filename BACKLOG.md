@@ -4729,7 +4729,7 @@ lugar de sprints; cada una cierra con un merge `develop → main` y el tag `actu
 | --- | -- | ------ | ------ | ---------- | ---------- |
 | 1   | [US-60](#us-60--ventas-promos-con-scroll-propio) | Ventas: Promos con scroll propio | En revisión | — | 20 min |
 | 2   | [US-61](#us-61--selector-de-gustos-con-scroll-y-faltan-n-grande) | Selector de gustos con scroll y "FALTAN N" grande | En revisión | — | 25 min |
-| 3   | [US-58](#us-58--envíos-pestaña-y-alta-edición-y-baja) | Envíos: pestaña y alta, edición y baja | Pendiente | — | 4 h |
+| 3   | [US-58](#us-58--envíos-pestaña-y-alta-edición-y-baja) | Envíos: pestaña y alta, edición y baja | En revisión | — | 4 h |
 | 4   | [US-59](#us-59--ventas-envío-en-el-carrito) | Ventas: envío en el carrito | Pendiente | US-58 | 4 h 30 min |
 | 5   | [T-27](#t-27--cierre-de-la-actualización-1) | Cierre de la Actualización 1 | Pendiente | todos | 1 h 30 min |
 |     |    | **Total de la actualización** | | | **10 h 45 min** |
@@ -4790,9 +4790,9 @@ faltan se lea bien, de forma que arme las surtidas sin perder de vista cuántas 
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
+| Estado       | En revisión |
 | Dueño        | Agente    |
-| Inicio       | —         |
+| Inicio       | 2026-11-03 |
 | Tamaño       | L         |
 | Depende de   | —         |
 | Plan         | [`docs/plans/actualizacion-1.md`](docs/plans/actualizacion-1.md) |
@@ -4804,17 +4804,19 @@ monto, de forma que el vendedor los pueda sumar a un pedido.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · Migración 0032, aditiva: la tabla `shipping_options` (título único, detalle, monto ≥ 0, activo y `version`) y en `sales` el envío elegido, su título y su monto congelados. Lo cubren `additive-migrations.test.ts` y tests de integración · Estimación: 45 min · Completado: —
+- [x] **CA-1** · Migración 0032, aditiva: la tabla `shipping_options` (título único, detalle, monto ≥ 0, activo y `version`) y en `sales` el envío elegido, su título y su monto congelados. Lo cubren `additive-migrations.test.ts` y `envios.migration.int.test.ts` · Estimación: 45 min · Completado: 2026-11-03 14:38
 
-- [ ] **CA-2** · El menú del admin tiene "Envíos" entre Ventas/Pedidos y Promociones. El vendedor no lo ve y `/envios` lo lleva a `/ventas` (D-1) · Estimación: 20 min · Completado: —
+- [x] **CA-2** · El menú del admin tiene "Envíos" entre Ventas/Pedidos y Promociones. El vendedor no lo ve y `/envios` lo lleva a `/ventas` (D-1). Lo cubren `navigation.test.ts`, `sidebar-nav.test.tsx` y `envios.spec.ts` · Estimación: 20 min · Completado: 2026-11-03 14:38
 
-- [ ] **CA-3** · "Nuevo envío" pide Título (obligatorio, único, hasta 60), Detalle (opcional, hasta 150) y Monto ($0 o más, 2 decimales) (D-6). La lista muestra los tres datos y se puede editar. Cada error tiene su mensaje y su test · Estimación: 2 h · Completado: —
+- [x] **CA-3** · "Nuevo envío" pide Título (obligatorio, único, hasta 60), Detalle (opcional, hasta 150) y Monto ($0 o más, 2 decimales) (D-6). La lista muestra los tres datos y se puede editar. Cada error tiene su mensaje y su test · Estimación: 2 h · Completado: 2026-11-03 14:38
 
-- [ ] **CA-4** · Un envío se desactiva (deja de aparecer en el carrito) y se reactiva; se borra sólo si nunca se usó en una venta, y si no dice `HAS_RELATIONS` (D-5). Todo queda en Auditoría como "ENVÍO" · Estimación: 55 min · Completado: —
+- [x] **CA-4** · Un envío se desactiva (deja de aparecer en el carrito) y se reactiva; se borra sólo si nunca se usó en una venta, y si no dice `HAS_RELATIONS` (D-5). Todo queda en Auditoría como "ENVÍO" · Estimación: 55 min · Completado: 2026-11-03 14:38
 
 **Notas**
 
 - Nivel 3: schema y migración. Supabase pasa a 33 migraciones; la migra el dev antes de `main`.
+- `npm run verify` en verde (2026-11-03): 1264 tests unit y de componente, 140 de integración, cobertura 96,4 / 90,3, mutación 85,8 y build. El E2E `envios.spec.ts` corre en el cierre (T-27).
+- La migración trae también las columnas de `sales` que usa US-59 (`shipping_option_id`, `shipping_title`, `shipping_amount`), para que sea una sola.
 
 ### US-59 · Ventas: envío en el carrito
 

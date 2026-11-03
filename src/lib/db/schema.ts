@@ -1,6 +1,7 @@
 import { pgTable, uuid, varchar, timestamp, pgEnum, numeric, integer, jsonb, index, boolean, check } from 'drizzle-orm/pg-core';
 import { sql, relations } from 'drizzle-orm';
 import { cards } from './card-schema';
+import { shippingOptions } from './shipping-schema';
 
 export const roleEnum = pgEnum('role', ['admin', 'vendedor']);
 export const paymentTypeEnum = pgEnum('payment_type', ['efectivo', 'transferencia', 'debito', 'credito']);
@@ -62,9 +63,18 @@ export const sales = pgTable(
     buyerName: varchar('buyer_name', { length: 100 }),
     buyerPhone: varchar('buyer_phone', { length: 30 }),
     buyerAddress: varchar('buyer_address', { length: 150 }),
+    shippingOptionId: uuid('shipping_option_id').references(() => shippingOptions.id),
+    shippingTitle: varchar('shipping_title', { length: 60 }),
+    shippingAmount: numeric('shipping_amount', { precision: 10, scale: 2 }).default('0').notNull(),
     createdAt: timestamp('created_at').defaultNow().notNull(),
   },
-  (table) => [index('sales_customer_id_idx').on(table.customerId), index('sales_vendor_id_idx').on(table.vendorId)]
+  (table) => [
+    index('sales_customer_id_idx').on(table.customerId),
+    index('sales_vendor_id_idx').on(table.vendorId),
+    index('sales_shipping_option_id_idx').on(table.shippingOptionId),
+    check('sales_shipping_amount_check', sql`${table.shippingAmount} >= 0`),
+    check('sales_shipping_check', sql`(${table.shippingOptionId} is null) = (${table.shippingTitle} is null)`),
+  ]
 );
 
 export const auditLogs = pgTable(

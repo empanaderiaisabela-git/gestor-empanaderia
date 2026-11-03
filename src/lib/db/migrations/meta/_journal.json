@@ -225,6 +225,13 @@
       "when": 1793660573343,
       "tag": "0031_ingreso-en-cero",
       "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1793726161550,
+      "tag": "0032_envios",
+      "breakpoints": true
     }
   ]
 }
