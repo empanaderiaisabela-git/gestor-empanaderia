@@ -158,6 +158,12 @@ La lista simple de cada commit, a medida que se integra a `develop`.
   comprobante lo muestra, y Estadísticas lo suma a Ventas y a la Ganancia, pero no a ninguna comida.
 - Qué no entra: no hay una tarjeta "Envíos" aparte en Estadísticas (elegiste que no hacía falta).
 
+### US-62 · Selector de gustos más ancho
+
+- Qué es: la ventana donde se eligen los gustos pasa de 544 a 714 píxeles de ancho.
+- Por qué importa: los nombres largos entran en un renglón y la lista muestra justo 5 gustos y medio.
+- Adónde va: `develop`. Sólo cambia cómo se ve.
+
 ### BUG-30 · Un test viejo de Stock
 
 - Qué es: una prueba automática que simula a dos personas a la vez (una borra un proveedor mientras la otra carga

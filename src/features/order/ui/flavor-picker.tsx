@@ -61,7 +61,7 @@ export function FlavorPicker({ board }: { board: OrderBoardModel }): JSX.Element
     toast.notify(board.nameOf(menuItemId));
   };
   return (
-    <ResponsiveModal isOpen={Boolean(target)} onClose={done} title={<PickerHeading lines={target?.heading ?? []} />} width='lg'>
+    <ResponsiveModal isOpen={Boolean(target)} onClose={done} title={<PickerHeading lines={target?.heading ?? []} />} width='2xl'>
       {progress && <p className='mb-3 text-xl font-black uppercase text-brand-700 dark:text-brand-300'>{progress}</p>}
       <input type='search' aria-label='Buscar gusto' placeholder='Buscar gusto...' value={search} onChange={(event) => setSearch(event.target.value)} className={inputClass(false)} />
       <ul aria-label='Gustos' className='max-h-[50vh] sm:max-h-[19.5rem] overflow-y-auto pr-1'>

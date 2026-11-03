@@ -4754,9 +4754,10 @@ lugar de sprints; cada una cierra con un merge `develop → main` y el tag `actu
 | 2   | [US-61](#us-61--selector-de-gustos-con-scroll-y-faltan-n-grande) | Selector de gustos con scroll y "FALTAN N" grande | En revisión | — | 25 min |
 | 3   | [US-58](#us-58--envíos-pestaña-y-alta-edición-y-baja) | Envíos: pestaña y alta, edición y baja | En revisión | — | 4 h |
 | 4   | [US-59](#us-59--ventas-envío-en-el-carrito) | Ventas: envío en el carrito | En revisión | US-58 | 4 h 30 min |
-| 5   | [BUG-30](#bug-30--el-e2e-proveedor-borrado-durante-un-ingreso-busca-un-selector-viejo) | El E2E "proveedor borrado durante un ingreso" busca un selector viejo | En revisión | US-49 | 15 min |
-| 6   | [T-27](#t-27--cierre-de-la-actualización-1) | Cierre de la Actualización 1 | En progreso | todos | 1 h 30 min |
-|     |    | **Total de la actualización** | | | **11 h** |
+| 5   | [US-62](#us-62--selector-de-gustos-más-ancho) | Selector de gustos más ancho | En revisión | US-61 | 10 min |
+| 6   | [BUG-30](#bug-30--el-e2e-proveedor-borrado-durante-un-ingreso-busca-un-selector-viejo) | El E2E "proveedor borrado durante un ingreso" busca un selector viejo | En revisión | US-49 | 15 min |
+| 7   | [T-27](#t-27--cierre-de-la-actualización-1) | Cierre de la Actualización 1 | En progreso | todos | 1 h 30 min |
+|     |    | **Total de la actualización** | | | **11 h 10 min** |
 
 ### US-60 · Ventas: Promos con scroll propio
 
@@ -4873,6 +4874,30 @@ que cobro.
 - Nivel 3: cobro, historial y Estadísticas. Sin migración propia: usa la 0032 de US-58.
 - `npm run verify` en verde (2026-11-03): 1284 tests unit y de componente, 141 de integración, cobertura 96,4 / 90,4, mutación 85,8 y build. Probado en el navegador: $3.000 − 10 % + $1.500 = $4.200, el comprobante con "Envío · Centro" y Estadísticas con Empanadas en $2.700 y Efectivo en $4.200. El E2E corre en el cierre (T-27).
 - Un descuento que deja la comida en $0 o menos sigue siendo inválido aunque el envío cubra la diferencia (I-4 del plan).
+
+### US-62 · Selector de gustos más ancho
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-11-03 |
+| Tamaño       | XS        |
+| Depende de   | US-61     |
+| Plan         | Pedido directo del dev (2026-11-03) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como vendedor quiero que el selector de gustos sea más ancho, de forma que los nombres largos entren en un renglón y la lista se lea mejor.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · El selector de gustos (el modal donde se eligen los gustos de cada producto y de cada parte de una promo) pasa de 544 px a 714 px de ancho máximo (`max-w-2xl`, el mismo que el formulario de promos de US-55). Se mira en el navegador · Estimación: 10 min · Completado: 2026-11-03 17:56
+
+**Notas**
+
+- Nivel 1: sólo estilo. Es el ancho más grande que admite el modal de la casa (`src/components/ui/modal.tsx`).
+- Probado en el navegador: con 714 px, los nombres largos ("Carne cortada a cuchillo") entran en un renglón, todas las filas miden 60 px y la lista muestra justo 5 y media (US-61). Lint y los 27 tests relacionados en verde.
 
 ### BUG-30 · El E2E "proveedor borrado durante un ingreso" busca un selector viejo
 
