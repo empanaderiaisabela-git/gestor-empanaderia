@@ -23,8 +23,8 @@ async function linkSale(promotionId: string): Promise<void> {
   await db.insert(saleLines).values({ saleId: sale.id, promotionId, quantity: 1, unitPrice: '15000.00', subtotal: '15000.00', description: 'Docena + 2 Coca: Carne · Coca · Coca' });
 }
 
-async function addDrink(group: MenuGroup, name: string): Promise<string> {
-  const [item] = await db.insert(menuItems).values({ group, name, drinkName: name, drinkSize: '1.5L' }).returning({ id: menuItems.id });
+async function addDrink(group: MenuGroup, drinkName: string): Promise<string> {
+  const [item] = await db.insert(menuItems).values({ group, name: `${drinkName} 1.5L`, drinkName, drinkSize: '1.5L' }).returning({ id: menuItems.id });
   return item.id;
 }
 
@@ -40,14 +40,14 @@ describe('bebida fija en promotion_components (US-55)', () => {
 
   it('no deja borrar una bebida fija en una promo', async () => {
     await truncateAll();
-    const sprite = await addDrink('coca_cola', 'Sprite 1.5L');
+    const sprite = await addDrink('coca_cola', 'Sprite');
     await drizzlePromotionRepository(db).insert({ ...PROMO_INPUT, components: [coca(sprite)] });
     expect(await failure(db.delete(menuItems).where(eq(menuItems.id, sprite)))).toBe('HAS_RELATIONS');
   });
 
   it('repite el grupo sólo con bebidas distintas, y nunca fija comida', async () => {
     await truncateAll();
-    const [sprite, fanta] = [await addDrink('coca_cola', 'Sprite 1.5L'), await addDrink('coca_cola', 'Fanta 1.5L')];
+    const [sprite, fanta] = [await addDrink('coca_cola', 'Sprite'), await addDrink('coca_cola', 'Fanta')];
     const repository = drizzlePromotionRepository(db);
     expect((await repository.insert({ ...PROMO_INPUT, components: [coca(sprite), coca(fanta), coca(null)] })).components).toHaveLength(3);
     expect(await failure(repository.insert({ ...PROMO_INPUT, name: 'B', components: [coca(null), coca(null)] }))).toBe('DUPLICATE');

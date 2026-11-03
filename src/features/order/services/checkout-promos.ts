@@ -1,4 +1,5 @@
 import { AppError } from '@/lib/errors';
+import { matchesDrink } from '@/features/menu/domain/drink';
 import type { CheckoutPromo } from '@/features/order/domain/checkout.schema';
 import { describeFlavors } from '@/features/order/domain/order-describe';
 import type { OrderLine } from '@/features/order/domain/order-line';
@@ -12,15 +13,17 @@ import { itemOf, type LockedItems } from './checkout-steps';
 
 export type ResolvedPromo = { promotion: Promotion; quantity: number; parts: OrderLine[] };
 
-type Part = CheckoutPromo['parts'][number];
-type Expected = ReturnType<typeof expandComponents>[number];
-
-const sameKey = (key: Expected, part: Part): boolean =>
-  key.group === part.group && key.presentationKey === part.presentationKey && (key.menuItemId === null || part.flavors.every((flavor) => flavor.menuItemId === key.menuItemId));
-
 function matchesPromotion(parts: CheckoutPromo['parts'], promotion: Promotion): boolean {
   const expected = expandComponents(promotion.components);
-  return expected.length === parts.length && expected.every((key, index) => sameKey(key, parts[index]));
+  return expected.length === parts.length && expected.every((key, index) => key.group === parts[index].group && key.presentationKey === parts[index].presentationKey);
+}
+
+export function assertFixedDrinks(promos: readonly ResolvedPromo[], items: LockedItems): void {
+  for (const { promotion, parts } of promos) {
+    const keys = expandComponents(promotion.components);
+    const wrong = parts.some((part, index) => part.flavors.some((flavor) => { const drink = keys[index]?.drink; return drink && !matchesDrink(itemOf(items, flavor.menuItemId), drink); }));
+    if (wrong) throw new AppError('VALIDATION');
+  }
 }
 
 export async function resolvePromos(scope: CheckoutScope, promos: readonly CheckoutPromo[]): Promise<ResolvedPromo[]> {

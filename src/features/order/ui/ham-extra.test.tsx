@@ -6,7 +6,7 @@ import { CurrentOrder } from './current-order';
 import { boardModelOf } from './use-order-board';
 
 const store = () => useOrderStore.getState();
-const PIZZA_X2 = { id: 'promo-x2', name: '2 pizzas', price: 20000, components: [{ group: 'pizzas' as const, presentationKey: 'pizza_1', quantity: 2, menuItemId: null }] };
+const PIZZA_X2 = { id: 'promo-x2', name: '2 pizzas', price: 20000, components: [{ group: 'pizzas' as const, presentationKey: 'pizza_1', quantity: 2, menuItemId: null, menuItemName: null, drinkName: null, drinkSize: null }] };
 
 function addMuzza(): void {
   act(() => {

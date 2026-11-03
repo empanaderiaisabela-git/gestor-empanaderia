@@ -2,6 +2,9 @@
 
 import { HandCoins } from 'lucide-react';
 import { type JSX, useEffect } from 'react';
+import { fixedDrinkLabel, matchesDrink } from '@/features/menu/domain/drink';
+import type { MenuItemDef } from '@/features/menu/domain/menu-item.schema';
+import { expandComponents, type PartKey } from '@/features/order/domain/promo-line';
 import { fetchPromotions } from '@/features/promotion/actions/fetch-promotions';
 import { describeComponents } from '@/features/promotion/domain/promotion-describe';
 import type { PromotionDef } from '@/features/promotion/domain/promotion.schema';
@@ -18,17 +21,23 @@ function useActivePromotions(): PromotionDef[] {
   return promotions.filter((promotion) => promotion.isActive);
 }
 
+const forSale = (board: OrderBoardModel, { group, drink }: PartKey): MenuItemDef[] => board.itemsOf(group).filter((item) => drink === null || matchesDrink(item, drink));
+
 function unavailable(promotion: PromotionDef, board: OrderBoardModel): string | null {
-  const fixed = promotion.components.find((component) => component.menuItemId !== null && !board.itemOf(component.menuItemId));
-  if (fixed) return `Sin stock de ${fixed.menuItemName ?? 'la bebida'}`;
+  const fixed = expandComponents(promotion.components).find((part) => part.drink !== null && forSale(board, part).length === 0);
+  if (fixed?.drink) return `Sin stock de ${fixedDrinkLabel(fixed.drink)}`;
   return promotion.components.some((component) => board.itemsOf(component.group).length === 0) ? 'Falta cargar gustos de algún producto' : null;
 }
 
 function PromoButton({ promotion, board }: { promotion: PromotionDef; board: OrderBoardModel }): JSX.Element {
   const startPromo = useOrderStore((state) => state.startPromo);
   const missing = unavailable(promotion, board);
+  const single = (part: PartKey): string | null => {
+    const options = forSale(board, part);
+    return options.length === 1 ? options[0].id : null;
+  };
   return (
-    <button disabled={missing !== null} onClick={() => startPromo(promotion)} title={missing ?? undefined} className='rounded-xl border border-black/10 dark:border-white/10 bg-white/70 dark:bg-zinc-950/40 px-3 py-2.5 text-left hover:border-brand-500 disabled:opacity-50 disabled:cursor-not-allowed'>
+    <button disabled={missing !== null} onClick={() => startPromo(promotion, single)} title={missing ?? undefined} className='rounded-xl border border-black/10 dark:border-white/10 bg-white/70 dark:bg-zinc-950/40 px-3 py-2.5 text-left hover:border-brand-500 disabled:opacity-50 disabled:cursor-not-allowed'>
       <span className='flex justify-between gap-2 font-bold text-zinc-900 dark:text-zinc-50'>
         <span>{promotion.name}</span>
         <span>{formatMoney(promotion.price)}</span>

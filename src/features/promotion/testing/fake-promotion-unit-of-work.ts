@@ -3,7 +3,7 @@ import type { PromotionComponent } from '@/features/promotion/domain/promotion.s
 import type { Promotion, PromotionRepository, StoredComponent } from '@/features/promotion/repository/promotion.repository';
 import type { PromotionAuditEntry, PromotionUnitOfWork } from '@/features/promotion/repository/promotion-unit-of-work';
 
-type FakeState = { rows: Promotion[]; withSales: Set<string>; audits: PromotionAuditEntry[]; clock: number; menuItems: Map<string, { group: MenuGroup; name: string }> };
+type FakeState = { rows: Promotion[]; withSales: Set<string>; audits: PromotionAuditEntry[]; clock: number; menuItems: Map<string, { group: MenuGroup; name: string; drinkName: string | null; drinkSize: string | null }> };
 
 const pgError = (code: string, detail: string): Error => Object.assign(new Error(`Failed query (${code})`), { cause: { code, detail } });
 const copy = (row: Promotion): Promotion => ({ ...row, components: row.components.map((component) => ({ ...component })) });
@@ -12,7 +12,7 @@ function stored(state: FakeState, components: PromotionComponent[]): StoredCompo
   return components.map((component) => {
     const drink = component.menuItemId === null ? null : state.menuItems.get(component.menuItemId);
     if (drink === undefined || (drink && drink.group !== component.group)) throw pgError('23503', 'Key (menu_item_id, menu_group) is not present in table "menu_items".');
-    return { ...component, menuItemName: drink?.name ?? null };
+    return { ...component, menuItemName: drink?.name ?? null, drinkName: drink?.drinkName ?? null, drinkSize: drink?.drinkSize ?? null };
   });
 }
 

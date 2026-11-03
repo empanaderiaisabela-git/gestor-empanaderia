@@ -4625,6 +4625,34 @@ vuelva a lo que había antes sin inventar una merma.
 
 - Nivel 3 (migración). Supabase tiene que llegar a 32 migraciones antes de `main`.
 
+### US-57 · La promo fija bebida y litros; el sabor se elige al vender
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-11-02 |
+| Tamaño       | S         |
+| Depende de   | US-55     |
+| Plan         | [`docs/plans/US-57-bebida-fija-por-familia.md`](docs/plans/US-57-bebida-fija-por-familia.md) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como administrador quiero fijar en la promo la bebida y los litros ("Aquarius 1 L") sin el sabor, de
+forma que el vendedor elija el sabor al venderla.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · En Promociones, "Bebida" ofrece una opción por bebida y litros ("Aquarius 1 L"), sin repetir por sabor. La lista de promos la muestra igual ("Aquarius 1 L × 2") · Estimación: 30 min · Completado: 2026-11-02 21:30
+
+- [x] **CA-2** · Al vender, esa parte muestra sólo los productos de la familia para elegir el sabor. Si hay uno solo a la venta (por ejemplo "Sprite 1L", sin sabores), viene puesto y "Siguiente" lo saltea. Si no hay ninguno, la promo queda deshabilitada con "Sin stock de Aquarius 1 L" · Estimación: 45 min · Completado: 2026-11-02 21:30
+
+- [x] **CA-3** · El cobro rechaza (`VALIDATION`) un producto de otra familia en la parte fija. Sin migración: `menu_item_id` apunta a un producto de la familia · Estimación: 30 min · Completado: 2026-11-02 21:30
+
+**Notas**
+
+- Nivel 3. Corrige el alcance de US-55 (pedido del dev, 2026-11-02): fijaba el producto exacto con su sabor.
+
 ### US-43 · Sin web pública por ahora: se entra por `/login`
 
 | Campo        | Valor     |

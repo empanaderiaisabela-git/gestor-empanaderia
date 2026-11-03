@@ -1,20 +1,28 @@
+import type { FixedDrink } from '@/features/menu/domain/drink';
 import type { MenuGroup } from '@/features/menu/domain/menu-groups';
 import { describeFlavors } from './order-describe';
 import { type AddMode, addFlavor, isComplete, type OrderLine, removeFlavor } from './order-line';
 import { hamPrice, orderTotal, type PriceBook, round2 } from './order-pricing';
 
-type PartKey = { group: MenuGroup; presentationKey: string; menuItemId: string | null };
-type Component = PartKey & { quantity: number };
+export type PartKey = { group: MenuGroup; presentationKey: string; drink: FixedDrink | null };
+type Component = Omit<FixedDrink, 'menuItemId'> & { group: MenuGroup; presentationKey: string; quantity: number; menuItemId: string | null };
 export type PromoSource = { id: string; name: string; price: number; components: readonly Component[] };
-export type PromoLine = { id: string; promotionId: string; name: string; price: number; parts: OrderLine[] };
+export type PromoPart = OrderLine & { drink: FixedDrink | null };
+export type PromoLine = { id: string; promotionId: string; name: string; price: number; parts: PromoPart[] };
+export type SingleDrink = (part: PartKey) => string | null;
 export type PromoAddition = { part: number; menuItemId: string; mode: AddMode };
 
+const drinkOf = ({ menuItemId, menuItemName, drinkName, drinkSize }: Component): FixedDrink | null => (menuItemId === null ? null : { menuItemId, menuItemName, drinkName, drinkSize });
+
 export function expandComponents(components: readonly Component[]): PartKey[] {
-  return components.flatMap(({ group, presentationKey, quantity, menuItemId }) => Array.from({ length: quantity }, () => ({ group, presentationKey, menuItemId })));
+  return components.flatMap((component) => Array.from({ length: component.quantity }, () => ({ group: component.group, presentationKey: component.presentationKey, drink: drinkOf(component) })));
 }
 
-export function newPromoLine(promotion: PromoSource, id: string = crypto.randomUUID()): PromoLine {
-  const parts = expandComponents(promotion.components).map(({ menuItemId, ...key }, index) => ({ ...key, id: `${id}-${index}`, flavors: menuItemId === null ? [] : [{ menuItemId, units: 1 }], quantity: 1 }));
+export function newPromoLine(promotion: PromoSource, id: string = crypto.randomUUID(), single: SingleDrink = () => null): PromoLine {
+  const parts = expandComponents(promotion.components).map((key, index) => {
+    const only = key.drink && single(key);
+    return { ...key, id: `${id}-${index}`, flavors: only ? [{ menuItemId: only, units: 1 }] : [], quantity: 1 };
+  });
   return { id, promotionId: promotion.id, name: promotion.name, price: promotion.price, parts };
 }
 
@@ -43,7 +51,7 @@ export const togglePartHam = (promo: PromoLine, part: number): PromoLine => ({ .
 
 export const promoUsageLines = (promos: readonly PromoLine[]): OrderLine[] => promos.flatMap((promo) => promo.parts);
 
-export function promoPrice(promo: Pick<PromoLine, 'price' | 'parts'>, book: PriceBook): number | null {
+export function promoPrice(promo: { price: number; parts: readonly OrderLine[] }, book: PriceBook): number | null {
   const hams = promo.parts.map((part) => hamPrice(part, book));
   return hams.every((ham): ham is number => ham !== null) ? round2(hams.reduce((sum, ham) => sum + ham, promo.price)) : null;
 }

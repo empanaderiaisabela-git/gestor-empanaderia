@@ -120,8 +120,8 @@ tarjeta, con su recargo). El total a cobrar es el precio original: el recargo lo
 ## Promos en el tablero (US-9)
 
 La subdivisión **Promos** del tablero lista las promos activas (US-8) con su precio de venta. Una promo con un
-producto cuyo grupo no tiene gustos activos queda deshabilitada. También una con una bebida fija (US-55) que no está
-a la venta (sin stock o desactivada), con el aviso "Sin stock de <bebida>".
+producto cuyo grupo no tiene gustos activos queda deshabilitada. También una con una bebida fija (US-55) sin ningún
+producto de su familia a la venta (US-57), con el aviso "Sin stock de Aquarius 1 L".
 
 - Elegir una promo la suma al pedido y abre la lista de gustos de su primer producto. Cada producto se abre en
   tantas partes como su cantidad: "2 × Coca-Cola · 1 unidad" pide dos bebidas, que pueden ser distintas.
@@ -129,8 +129,10 @@ a la venta (sin stock o desactivada), con el aviso "Sin stock de <bebida>".
   lugar del precio: se cobra el precio de la promo. El título va en tres renglones: la promo, el producto y "(1 de
   N)". No avanza sola (US-39): "Siguiente" se habilita con el producto completo y en el último dice "Listo" y
   cierra. Para dejarla a medio armar se cierra con la X.
-- Un producto con bebida fija (US-55) ya viene puesto con esa bebida: nunca se abre, y "Siguiente" va al próximo
-  producto sin completar (`nextOpenPart`). Si no queda ninguno, dice "Listo". Una promo con todo fijo entra completa.
+- Un producto con bebida fija (US-57) muestra sólo los productos de su familia ("Aquarius 1 L Pera", "Aquarius 1 L
+  Manzana") para elegir el sabor (`matchesDrink`). Si hay uno solo a la venta (por ejemplo "Sprite 1L"), viene puesto,
+  nunca se abre y "Siguiente" va al próximo producto sin completar (`nextOpenPart`); si no queda ninguno, dice
+  "Listo".
 - En el pedido, la promo aparece como "Promo · <nombre>" con sus gustos y su precio. A medio armar muestra
   "faltan gustos · elegir", que retoma donde quedó, y bloquea el cobro. Se pueden sumar varias, iguales o distintas.
 
@@ -138,9 +140,11 @@ Al cobrar, el navegador manda cada promo como `{ promotionId, quantity, parts }`
 sin precios. `checkout-promos.ts`, dentro de la misma transacción del cobro:
 
 1. Lee la promo: si no existe o está desactivada, `NOT_FOUND`.
-2. Controla que las partes sean exactamente las de sus productos, en orden (`expandComponents`), y que una parte
-   con bebida fija traiga sólo esa bebida (US-55); si no, `VALIDATION`.
+2. Controla que las partes sean exactamente las de sus productos, en orden (`expandComponents`); si no,
+   `VALIDATION`.
 3. Suma los gustos de las partes al bloqueo, la validación de grupo y el control de stock del resto del pedido.
+   Con los gustos bloqueados, una parte con bebida fija tiene que traer productos de su familia
+   (`assertFixedDrinks`, US-57); si no, `VALIDATION`.
 4. Cobra el precio de la promo guardado en la base, por la cantidad. El descuento de la venta se aplica sobre el
    total, promos incluidas (decisión provisoria D-2).
 5. Guarda una línea con `promotion_id`, sin grupo ni presentación, con la descripción "<promo>: <gustos>" y lo
@@ -186,7 +190,7 @@ borre.
 | Tarjeta inexistente o desactivada (US-11) | `NOT_FOUND` | La tarjeta ya no existe. | `checkout-payments.test.ts` |
 | Plan de cuotas que la tarjeta no tiene (US-11) | `NOT_FOUND` | El plan de cuotas ya no existe. | `checkout-payments.test.ts` |
 | Promo inexistente o desactivada (US-9) | `NOT_FOUND` | La promoción ya no existe. | `checkout-promos.test.ts`, `checkout.contract.test.ts` |
-| Partes de la promo que no coinciden con sus productos, gustos incompletos o de otro grupo (US-9), u otra bebida en la parte fija (US-55) | `VALIDATION` | Los datos proporcionados no son válidos. | `checkout-promos.test.ts` |
+| Partes de la promo que no coinciden con sus productos, gustos incompletos o de otro grupo (US-9), u otra familia en la parte fija (US-55, US-57) | `VALIDATION` | Los datos proporcionados no son válidos. | `checkout-promos.test.ts` |
 | Otro movimiento cambió el gusto entre el bloqueo y el guardado | `STALE_VERSION` | mensaje de concurrencia | `checkout-errors.test.ts` |
 | Anular: el vendedor lo intenta | `FORBIDDEN` | Solo los administradores pueden realizar esta acción | `sale-history.contract.test.ts` |
 | Anular: la venta no existe o ya se anuló | `NOT_FOUND` | La venta ya no existe. | `sale-history.contract.test.ts` y `sale-history.service.int.test.ts` |

@@ -6,7 +6,7 @@ import { applyDiscount, paymentsCover } from '@/features/order/domain/order-vali
 import { type CheckoutScope, type CheckoutUnitOfWork, drizzleCheckoutUnitOfWork } from '@/features/order/repository/checkout-unit-of-work';
 import { customerFor } from './checkout-customer';
 import { chargePayments } from './checkout-payments';
-import { promoSaleLineOf, promoSubtotal, resolvePromos } from './checkout-promos';
+import { assertFixedDrinks, promoSaleLineOf, promoSubtotal, resolvePromos } from './checkout-promos';
 import { assertSellable, consumeStock, lockFlavors, priceBookOf, priceLine, saleLineOf } from './checkout-steps';
 
 type Caller = { id: string };
@@ -26,6 +26,7 @@ async function checkout(scope: CheckoutScope, caller: Caller, input: CheckoutDat
   const promos = await resolvePromos(scope, input.promos ?? []);
   const sold = [...lines, ...promos.flatMap((promo) => promo.parts)];
   const items = await lockFlavors(scope, sold);
+  assertFixedDrinks(promos, items);
   assertSellable(sold, items);
   const ham = await hamPriceOf(scope, sold);
   const book = priceBookOf(items, ham);
