@@ -179,10 +179,11 @@ Hacer preguntas de más es mejor que inventar.
   tag `actualizacion-N`.
 - **Actualización 1 · Envíos** (2026-11-03, plan en [`actualizacion-1.md`](plans/actualizacion-1.md)): la pestaña
   Envíos (`/envios`, sólo admin) con título, detalle y monto de $0 o más (US-58, migración **0032**, sólo aditiva:
-  Supabase pasa a **33** cuando el dev la migre); el desplegable "Envío" del carrito, que suma después del descuento,
+  Supabase está en **33**, la migró el dev el 2026-11-03); el desplegable "Envío" del carrito, que suma después del descuento,
   pide el domicilio y queda congelado en la venta, el comprobante y Estadísticas, sin sumar a ninguna comida (US-59);
   la tarjeta de Promos y el selector de gustos de Ventas con scroll propio, y "FALTAN N" en mayúscula y más grande
-  (US-60 y US-61). Lo hizo el agente solo, con permiso del dev para commitear y pushear a `develop`.
+  (US-60 y US-61); el selector de gustos más ancho (US-62). En `main` con el tag `actualizacion-1` desde el
+  2026-11-03. Lo hizo el agente solo, con permiso del dev para commitear y pushear a `develop`.
 - **US-43** (sin sprint asignado): la web pública (`/home`, `/product`, `/api/public`) está **apagada salvo
   `PUBLIC_CATALOG=true`**, y sin sesión se entra por `/login`. Para prenderla se carga la variable en Vercel y se
   redespliega. Plan en [`US-43-sin-web-publica.md`](plans/US-43-sin-web-publica.md).

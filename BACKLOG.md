@@ -4756,7 +4756,7 @@ lugar de sprints; cada una cierra con un merge `develop → main` y el tag `actu
 | 4   | [US-59](#us-59--ventas-envío-en-el-carrito) | Ventas: envío en el carrito | En revisión | US-58 | 4 h 30 min |
 | 5   | [US-62](#us-62--selector-de-gustos-más-ancho) | Selector de gustos más ancho | En revisión | US-61 | 10 min |
 | 6   | [BUG-30](#bug-30--el-e2e-proveedor-borrado-durante-un-ingreso-busca-un-selector-viejo) | El E2E "proveedor borrado durante un ingreso" busca un selector viejo | En revisión | US-49 | 15 min |
-| 7   | [T-27](#t-27--cierre-de-la-actualización-1) | Cierre de la Actualización 1 | En progreso | todos | 1 h 30 min |
+| 7   | [T-27](#t-27--cierre-de-la-actualización-1) | Cierre de la Actualización 1 | En revisión | todos | 1 h 30 min |
 |     |    | **Total de la actualización** | | | **11 h 10 min** |
 
 ### US-60 · Ventas: Promos con scroll propio
@@ -4926,7 +4926,7 @@ que cobro.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | En progreso |
+| Estado       | En revisión |
 | Dueño        | Agente    |
 | Inicio       | 2026-11-03 |
 | Tamaño       | S         |
@@ -4942,11 +4942,12 @@ Supabase, de forma que la versión que use el cliente sea la que se probó.
 
 - [x] **CA-1** · `npm run verify` completo y todos los E2E en verde sobre `develop` · Estimación: 40 min · Completado: 2026-11-03 15:40
 
-- [ ] **CA-2** · README, `docs/architecture.md`, `docs/initial_prompt.md` y los docs de `shipping`, `order` y `stats` al día. Con el OK del dev, merge local `develop → main` con el tag `actualizacion-1` · Estimación: 40 min · Completado: —
+- [x] **CA-2** · README, `docs/architecture.md`, `docs/initial_prompt.md` y los docs de `shipping`, `order` y `stats` al día. Con el OK del dev, merge local `develop → main` con el tag `actualizacion-1` · Estimación: 40 min · Completado: 2026-11-03 18:05
 
-- [ ] **CA-3** · El dev migra Supabase antes de desplegar y comprueba que quedan 33 migraciones · Estimación: 10 min · Completado: —
+- [x] **CA-3** · El dev migra Supabase antes de desplegar y comprueba que quedan 33 migraciones · Estimación: 10 min · Completado: 2026-11-03 18:05
 
 **Notas**
 
 - CA-1: `npm run verify` verde en US-58 y US-59 (el último: 1284 tests unit y de componente, 141 de integración, cobertura 96,4 / 90,4, mutación 85,8 y build) y los 83 E2E en verde sobre `develop` (2026-11-03), con BUG-30 arreglado. El E2E de Clientes de BUG-16 falló una vez y pasó al repetirlo.
-- CA-2: docs al día; falta el OK del dev para el merge a `main` y el tag.
+- CA-2: docs al día. El dev dio el OK al merge a `main` con el tag `actualizacion-1` el 2026-11-03, con US-62 adentro.
+- CA-3: el dev migró Supabase el 2026-11-03 y la consulta da 33.
