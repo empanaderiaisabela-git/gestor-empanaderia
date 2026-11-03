@@ -26,6 +26,8 @@ export const saleRowSchema = z.object({
   total: amount,
   discountAmount: amount,
   discountPercentage: amount,
+  shippingTitle: z.string().nullable(),
+  shippingAmount: amount,
   lines: z.array(saleLineRowSchema),
   payments: z.array(salePaymentRowSchema),
 });

@@ -18,7 +18,7 @@ export type CheckoutModel = {
 };
 
 async function submit({ discount, payments }: CheckoutDraft): ReturnType<typeof checkoutAction> {
-  const { lines, promos, buyer } = useOrderStore.getState();
+  const { lines, promos, buyer, shippingId } = useOrderStore.getState();
   const filled = lines.filter((line) => line.flavors.length > 0);
   return checkoutAction({
     buyer,
@@ -27,6 +27,7 @@ async function submit({ discount, payments }: CheckoutDraft): ReturnType<typeof 
     discountPercentage: discount.percentage,
     discountAmount: discount.amount,
     payments,
+    shippingOptionId: shippingId,
   });
 }
 

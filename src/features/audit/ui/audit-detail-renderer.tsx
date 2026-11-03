@@ -13,6 +13,9 @@ const KEY_LABELS: Record<string, string> = {
   paymentTypes: 'Medios de pago',
   discountAmount: 'Descuento ($)',
   discountPercentage: 'Descuento (%)',
+  shipping: 'Envío',
+  amount: 'Monto',
+  detail: 'Detalle',
   // User
   username: 'Usuario',
   role: 'Rol',

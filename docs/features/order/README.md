@@ -1,8 +1,8 @@
 # Feature: pedido (tablero, cobro e historial de ventas)
 
 - **US relacionadas**: US-5 (tablero y pedido actual), US-6 (cobro), US-7 (historial, comprobante y anulación) y
-  US-29 (las pizzas y las ciabattas descuentan prepizzas y panes) y US-35 (aviso, orden por precio y buscador en la
-  lista de gustos).
+  US-29 (las pizzas y las ciabattas descuentan prepizzas y panes), US-35 (aviso, orden por precio y buscador en la
+  lista de gustos) y US-59 (envío en el carrito).
 - **Código**: `src/features/order/` (domain, store, actions, services, repository, ui, testing). Pantallas en
   `src/app/(main)/ventas/` (Ventas/Pedidos) y `src/app/(main)/ventas/nueva/` (tablero).
 - **Datos que usa**: gustos, bebidas, sus precios y stock del feature `menu` (`fetchMenuItems`). Al cobrar escribe en `sales`, `sale_lines`, `sale_line_items`, `sale_payments` y
@@ -117,6 +117,21 @@ tarjeta, con su recargo). El total a cobrar es el precio original: el recargo lo
   "+ Jamón extra" en la descripción, que ven el comprobante y el historial. No descuenta stock ni tiene costo (P-3):
   Estadísticas lo cuenta en Pizzas (o en Promos) y entero en Ganancia.
 
+## Envío (US-59)
+
+- Abajo a la izquierda del pedido actual, el desplegable **"Envío"** ofrece "Sin envío" y los envíos activos del
+  feature `shipping` ("Centro · $1.500"). El elegido suma su monto al total del pedido y a "Cobrar". "Vaciar" y un
+  cobro exitoso lo vuelven a "Sin envío" (`order.store`, `shippingId`).
+- Con un envío elegido, el domicilio es obligatorio (D-4 de `docs/plans/actualizacion-1.md`): sin domicilio, "Cobrar"
+  queda deshabilitado y el desplegable dice "Falta el domicilio"; el servidor lo rechaza con `VALIDATION`.
+- El descuento es sólo de la comida (D-2): comida $10.000, 10 % y envío $1.500 ⇒ $9.000 + $1.500 = $10.500. Un
+  descuento que deja la comida en $0 o menos sigue siendo inválido aunque el envío cubra la diferencia.
+- Al cobrar viaja `shippingOptionId`. El servidor lee el envío en la transacción del cobro (inexistente o desactivado
+  ⇒ `NOT_FOUND`), toma su monto de la base, nunca del navegador, y guarda en `sales` el envío, su título y su monto
+  congelados (`shipping_option_id`, `shipping_title`, `shipping_amount`). La auditoría de la venta anota el título.
+- El comprobante muestra "Envío · Centro" con su monto entre los descuentos y el Total. La anulación no cambia: el
+  envío se va con la venta.
+
 ## Promos en el tablero (US-9)
 
 La subdivisión **Promos** del tablero lista las promos activas (US-8) con su precio de venta. Una promo con un
@@ -182,6 +197,8 @@ borre.
 | Jamón extra sin precio cargado (US-47, P-2) | `MISSING_PRICE` | Falta el precio de venta. | `checkout-ham.test.ts`, `checkout-ham.contract.test.ts`, `checkout-ham.int.test.ts` |
 | Línea incompleta, gusto de otro grupo o dado de baja, gusto sin precio, descuento mayor al total o pagos que no suman | `VALIDATION` | idem | `checkout-errors.test.ts` |
 | Un gusto que ya no existe | `NOT_FOUND` | El producto ya no existe. | `checkout-errors.test.ts` |
+| Un envío desactivado o que ya no existe (US-59) | `NOT_FOUND` | El envío ya no existe. | `checkout-shipping.test.ts`, `checkout-shipping.contract.test.ts` |
+| Envío sin domicilio, o un envío que no es un id (US-59) | `VALIDATION` | Los datos proporcionados no son válidos. | `checkout-shipping.schema.test.ts`, `checkout-shipping.contract.test.ts` |
 | Un gusto no alcanza | `INSUFFICIENT_STOCK` | No hay stock suficiente de {gusto}. | `checkout-errors.test.ts` y `checkout.service.int.test.ts` |
 | No alcanzan las prepizzas o los panes (US-29) | `INSUFFICIENT_STOCK` | No hay stock suficiente de Prepizza. (o de Pan de ciabatta) | `checkout-bases.test.ts`, `checkout.contract.test.ts` y `sale-history.service.int.test.ts` |
 | Vender una base como gusto (US-29, D-2) | `VALIDATION` | Los datos proporcionados no son válidos. | `checkout-bases.test.ts` |

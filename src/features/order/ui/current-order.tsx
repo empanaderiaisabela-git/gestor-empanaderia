@@ -3,22 +3,27 @@
 import { Check, Trash2 } from 'lucide-react';
 import type { JSX } from 'react';
 import { isComplete } from '@/features/order/domain/order-line';
+import { round2 } from '@/features/order/domain/order-pricing';
 import { canAddOne } from '@/features/order/domain/order-usage';
 import { isPromoComplete, orderSubtotal, promoUsageLines } from '@/features/order/domain/promo-line';
 import { useOrderStore } from '@/features/order/store/order.store';
 import { formatMoney } from '@/lib/format-money';
 import { CustomerFields } from './customer-fields';
 import { OrderTable } from './order-table';
+import { ShippingPicker, useChosenShipping } from './shipping-picker';
 import type { OrderBoardModel } from './use-order-board';
 
 type CurrentOrderProps = { board: OrderBoardModel; onCheckout?: () => void };
 
 export function CurrentOrder({ board, onCheckout }: CurrentOrderProps): JSX.Element {
   const { lines, promos, buyer, remove, removeOne, addOne, toggleHam, clear, removePromo, reopenPromo, togglePromoHam } = useOrderStore();
+  const { options, chosen } = useChosenShipping();
   const visible = lines.filter((line) => line.flavors.length > 0);
   const usage = [...visible, ...promoUsageLines(promos)];
-  const total = orderSubtotal(visible, promos, board.book);
-  const ready = visible.length + promos.length > 0 && visible.every(isComplete) && promos.every(isPromoComplete) && total !== null && buyer.name.trim().length >= 2;
+  const food = orderSubtotal(visible, promos, board.book);
+  const total = food === null ? null : round2(food + (chosen?.amount ?? 0));
+  const missingAddress = chosen !== null && buyer.address.trim() === '';
+  const ready = visible.length + promos.length > 0 && visible.every(isComplete) && promos.every(isPromoComplete) && total !== null && buyer.name.trim().length >= 2 && !missingAddress;
   return (
     <section aria-label='Pedido actual' className='rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 space-y-3'>
       <div className='flex flex-wrap items-center justify-between gap-3'>
@@ -30,13 +35,16 @@ export function CurrentOrder({ board, onCheckout }: CurrentOrderProps): JSX.Elem
       </div>
       <CustomerFields />
       <OrderTable lines={visible} promos={promos} board={board} lineActions={{ onRemove: remove, onRemoveOne: removeOne, onAddOne: addOne, canAddOne: (line) => canAddOne(line, usage, board), onToggleHam: toggleHam }} promoActions={{ onRemove: removePromo, onReopen: reopenPromo, onToggleHam: togglePromoHam }} />
-      <div className='flex justify-end gap-2'>
-        <button onClick={clear} className='inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-zinc-300 dark:border-zinc-700'>
-          <Trash2 className='w-4 h-4' /> Vaciar
-        </button>
-        <button onClick={onCheckout} disabled={!ready || !onCheckout} className='inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white font-semibold disabled:opacity-40 disabled:cursor-not-allowed'>
-          <Check className='w-4 h-4' /> Cobrar {formatMoney(total ?? 0)}
-        </button>
+      <div className='flex flex-wrap items-end justify-between gap-2'>
+        <ShippingPicker options={options} chosen={chosen} missingAddress={missingAddress} />
+        <div className='flex gap-2'>
+          <button onClick={clear} className='inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-zinc-300 dark:border-zinc-700'>
+            <Trash2 className='w-4 h-4' /> Vaciar
+          </button>
+          <button onClick={onCheckout} disabled={!ready || !onCheckout} className='inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white font-semibold disabled:opacity-40 disabled:cursor-not-allowed'>
+            <Check className='w-4 h-4' /> Cobrar {formatMoney(total ?? 0)}
+          </button>
+        </div>
       </div>
     </section>
   );

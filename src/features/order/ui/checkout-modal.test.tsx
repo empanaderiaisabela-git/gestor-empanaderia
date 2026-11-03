@@ -54,6 +54,7 @@ describe('cobrar desde el tablero (US-6 CA-1 y CA-5)', () => {
       discountPercentage: 0,
       discountAmount: 0,
       payments: [{ type: 'efectivo', amount: 10000 }, { type: 'debito', amount: 5500 }],
+      shippingOptionId: null,
     });
     expect(store().lines).toEqual([]);
   });

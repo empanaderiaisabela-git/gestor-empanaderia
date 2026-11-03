@@ -15,6 +15,7 @@
 - [Sprint 5 · Cierre de la primera entrega](#sprint-5--cierre-de-la-primera-entrega)
 - [Sprint 6 · Revisión del cliente en producción](#sprint-6--revisión-del-cliente-en-producción)
 - [Sin sprint asignado](#sin-sprint-asignado)
+- [Actualización 1 · Envíos](#actualización-1--envíos)
 
 ## Convenciones
 
@@ -4704,3 +4705,249 @@ sesión inválida. El cierre de sesión ya vuelve a `/login`.
 - Probado en el navegador contra el dev server sin la variable: sin sesión, `/`, `/home`, `/product/abc`,
   `/api/public/catalog` y `/ventas` terminan en `/login`; con la sesión de admin, `/home` abre.
 - Lint, typecheck, 880 tests unitarios y los E2E de `landing` y `navegacion` (6) en verde.
+
+### BUG-31 · `db:seed` falla si quedó una promo con una bebida fija
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Pendiente |
+| Dueño        | —         |
+| Inicio       | —         |
+| Tamaño       | XS        |
+| Depende de   | US-55     |
+| Plan         | —         |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Esperado**: `npm run db:seed` limpia la base local y carga los datos de demo, aunque haya promos con una bebida fija.
+
+**Actual**: `clearMenu` (`src/lib/db/scripts/seed-menu.ts`) borra `menu_items` sin borrar antes `promotion_components`, y la FK `promotion_components_menu_item_fk` de US-55 lo frena: "update or delete on table menu_items violates foreign key constraint". Pasa al volver a correr los E2E sobre un `db-test` que no se recreó (la promo con bebida fija la crea un E2E), y en la base local de quien haya fijado una bebida.
+
+- [ ] **CA-1** · El seed borra las promos y sus productos antes que el menú, y un test lo cubre · Estimación: 20 min · Completado: —
+
+**Notas**
+
+- Lo encontró el agente al cerrar la Actualización 1 (2026-11-03). Mientras tanto: `docker compose rm -sf db-test` y volver a levantarlo antes de correr los E2E. Espera el OK del dev: el seed borra datos.
+
+------------------------------------------------------------------------------------------------------------------------
+
+## Actualización 1 · Envíos
+
+------------------------------------------------------------------------------------------------------------------------
+
+**Objetivo**: lo que pidió el cliente el 2026-11-03. Desde acá el trabajo se agrupa en **Actualizaciones** numeradas en
+lugar de sprints; cada una cierra con un merge `develop → main` y el tag `actualizacion-N`.
+
+- Una pestaña "Envíos", entre Ventas/Pedidos y Promociones, para dar de alta los envíos con título, detalle y monto.
+- En el carrito, un desplegable "Envío" que suma su monto al total del pedido.
+- En Ventas, la tarjeta de Promos y el selector de gustos con scroll propio.
+
+**Restricción**: el sistema está en producción. La migración es sólo aditiva y Supabase la migra el dev.
+
+**Plan**: [`docs/plans/actualizacion-1.md`](docs/plans/actualizacion-1.md), con las decisiones del dev (D-1 a D-8).
+
+### Resumen de la Actualización 1
+
+| #   | ID | Título | Estado | Depende de | Estimación |
+| --- | -- | ------ | ------ | ---------- | ---------- |
+| 1   | [US-60](#us-60--ventas-promos-con-scroll-propio) | Ventas: Promos con scroll propio | En revisión | — | 20 min |
+| 2   | [US-61](#us-61--selector-de-gustos-con-scroll-y-faltan-n-grande) | Selector de gustos con scroll y "FALTAN N" grande | En revisión | — | 25 min |
+| 3   | [US-58](#us-58--envíos-pestaña-y-alta-edición-y-baja) | Envíos: pestaña y alta, edición y baja | En revisión | — | 4 h |
+| 4   | [US-59](#us-59--ventas-envío-en-el-carrito) | Ventas: envío en el carrito | En revisión | US-58 | 4 h 30 min |
+| 5   | [US-62](#us-62--selector-de-gustos-más-ancho) | Selector de gustos más ancho | En revisión | US-61 | 10 min |
+| 6   | [BUG-30](#bug-30--el-e2e-proveedor-borrado-durante-un-ingreso-busca-un-selector-viejo) | El E2E "proveedor borrado durante un ingreso" busca un selector viejo | En revisión | US-49 | 15 min |
+| 7   | [T-27](#t-27--cierre-de-la-actualización-1) | Cierre de la Actualización 1 | En revisión | todos | 1 h 30 min |
+|     |    | **Total de la actualización** | | | **11 h 10 min** |
+
+### US-60 · Ventas: Promos con scroll propio
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-11-03 |
+| Tamaño       | XS        |
+| Depende de   | —         |
+| Plan         | [`docs/plans/actualizacion-1.md`](docs/plans/actualizacion-1.md) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como vendedor quiero que la tarjeta de Promos de Ventas scrollee por dentro, de forma que muchas promos
+no estiren toda la página hacia abajo.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · La tarjeta de Promos muestra hasta 3 promos y la mitad de la cuarta; el resto se ve scrolleando dentro de la tarjeta, y la página no crece. Se mira en el navegador con 6 promos · Estimación: 20 min · Completado: 2026-11-03 14:06
+
+**Notas**
+
+- Nivel 1: sólo estilo. La lista lleva `max-h-60` (15 rem): con 6 promos mide 255 px en lugar de 437 px, justo 3 botones de 65,7 px y la mitad del cuarto.
+
+### US-61 · Selector de gustos con scroll y "FALTAN N" grande
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-11-03 |
+| Tamaño       | XS        |
+| Depende de   | —         |
+| Plan         | [`docs/plans/actualizacion-1.md`](docs/plans/actualizacion-1.md) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como vendedor quiero que la lista del selector de gustos scrollee por dentro y que el aviso de cuántas
+faltan se lea bien, de forma que arme las surtidas sin perder de vista cuántas me faltan.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · El selector de gustos muestra hasta 5 gustos y la mitad del sexto; el resto se ve scrolleando dentro de la lista, con el buscador y el botón de abajo siempre a la vista. Vale para todos los grupos y las partes de las promos (D-7). Se mira en el navegador · Estimación: 15 min · Completado: 2026-11-03 14:10
+
+- [x] **CA-2** · El aviso de arriba ("2 Carne · faltan 10") se ve en mayúscula y a 21 px en lugar de 15 px · Estimación: 10 min · Completado: 2026-11-03 14:10
+
+**Notas**
+
+- Nivel 1: sólo estilo. La lista lleva `sm:max-h-[19.5rem]`: con filas de 60,5 px entran 5 y media (332 px). Un gusto de nombre largo ocupa dos o tres renglones, y entonces se ven menos filas.
+- En el celular cada fila mide 145 px, porque los botones bajan a otro renglón: la lista ocupa la mitad de la pantalla (`max-h-[50vh]`, unas 3 filas) para que "Listo" no quede afuera.
+- El aviso usa `text-xl` (1,25 rem): con la letra base del panel, de 17 px, da 21 px; antes era `text-sm`, 15 px.
+
+### US-58 · Envíos: pestaña y alta, edición y baja
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-11-03 |
+| Tamaño       | L         |
+| Depende de   | —         |
+| Plan         | [`docs/plans/actualizacion-1.md`](docs/plans/actualizacion-1.md) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como administrador quiero dar de alta los envíos que hace el local, con su título, su detalle y su
+monto, de forma que el vendedor los pueda sumar a un pedido.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · Migración 0032, aditiva: la tabla `shipping_options` (título único, detalle, monto ≥ 0, activo y `version`) y en `sales` el envío elegido, su título y su monto congelados. Lo cubren `additive-migrations.test.ts` y `envios.migration.int.test.ts` · Estimación: 45 min · Completado: 2026-11-03 14:38
+
+- [x] **CA-2** · El menú del admin tiene "Envíos" entre Ventas/Pedidos y Promociones. El vendedor no lo ve y `/envios` lo lleva a `/ventas` (D-1). Lo cubren `navigation.test.ts`, `sidebar-nav.test.tsx` y `envios.spec.ts` · Estimación: 20 min · Completado: 2026-11-03 14:38
+
+- [x] **CA-3** · "Nuevo envío" pide Título (obligatorio, único, hasta 60), Detalle (opcional, hasta 150) y Monto ($0 o más, 2 decimales) (D-6). La lista muestra los tres datos y se puede editar. Cada error tiene su mensaje y su test · Estimación: 2 h · Completado: 2026-11-03 14:38
+
+- [x] **CA-4** · Un envío se desactiva (deja de aparecer en el carrito) y se reactiva; se borra sólo si nunca se usó en una venta, y si no dice `HAS_RELATIONS` (D-5). Todo queda en Auditoría como "ENVÍO" · Estimación: 55 min · Completado: 2026-11-03 14:38
+
+**Notas**
+
+- Nivel 3: schema y migración. Supabase pasa a 33 migraciones; la migra el dev antes de `main`.
+- `npm run verify` en verde (2026-11-03): 1264 tests unit y de componente, 140 de integración, cobertura 96,4 / 90,3, mutación 85,8 y build. El E2E `envios.spec.ts` corre en el cierre (T-27).
+- La migración trae también las columnas de `sales` que usa US-59 (`shipping_option_id`, `shipping_title`, `shipping_amount`), para que sea una sola.
+
+### US-59 · Ventas: envío en el carrito
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-11-03 |
+| Tamaño       | L         |
+| Depende de   | US-58     |
+| Plan         | [`docs/plans/actualizacion-1.md`](docs/plans/actualizacion-1.md) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como vendedor quiero elegir el envío del pedido en el carrito, de forma que su monto se sume al total
+que cobro.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · Abajo a la izquierda del pedido actual, el desplegable "Envío" ofrece "Sin envío" y los envíos activos ("Centro · $ 1.500"). Elegido uno, el total y "Cobrar" lo suman. "Vaciar" y cobrar lo vuelven a "Sin envío". Lo cubre `current-order-shipping.test.tsx` · Estimación: 1 h 15 min · Completado: 2026-11-03 15:08
+
+- [x] **CA-2** · Con envío y sin domicilio, "Cobrar" queda deshabilitado con "Falta el domicilio", y el servidor lo rechaza con `VALIDATION` (el schema lo explica con "Anotá el domicilio para el envío") (D-4). Lo cubren `checkout-shipping.schema.test.ts` y `checkout-shipping.contract.test.ts` · Estimación: 30 min · Completado: 2026-11-03 15:08
+
+- [x] **CA-3** · El cobro recalcula el envío en el servidor y lo suma después del descuento: $10.000 − 10 % + $1.500 = $10.500 (D-2). Un envío desactivado o borrado da `NOT_FOUND`. Lo cubren `checkout-form.test.ts`, `checkout-shipping.test.ts`, `checkout-shipping.contract.test.ts` y `checkout-shipping.int.test.ts` · Estimación: 1 h 15 min · Completado: 2026-11-03 15:08
+
+- [x] **CA-4** · El comprobante muestra "Envío · Centro" con su monto. Estadísticas lo suma a Ventas y a Ganancia en limpio, pero no a ninguna comida ni a Promos (D-3). Lo cubren `sale-receipt.test.tsx`, `compute-workday-stats.test.ts` y el E2E `envio-en-venta.spec.ts` · Estimación: 1 h 30 min · Completado: 2026-11-03 15:08
+
+**Notas**
+
+- Nivel 3: cobro, historial y Estadísticas. Sin migración propia: usa la 0032 de US-58.
+- `npm run verify` en verde (2026-11-03): 1284 tests unit y de componente, 141 de integración, cobertura 96,4 / 90,4, mutación 85,8 y build. Probado en el navegador: $3.000 − 10 % + $1.500 = $4.200, el comprobante con "Envío · Centro" y Estadísticas con Empanadas en $2.700 y Efectivo en $4.200. El E2E corre en el cierre (T-27).
+- Un descuento que deja la comida en $0 o menos sigue siendo inválido aunque el envío cubra la diferencia (I-4 del plan).
+
+### US-62 · Selector de gustos más ancho
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-11-03 |
+| Tamaño       | XS        |
+| Depende de   | US-61     |
+| Plan         | Pedido directo del dev (2026-11-03) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como vendedor quiero que el selector de gustos sea más ancho, de forma que los nombres largos entren en un renglón y la lista se lea mejor.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · El selector de gustos (el modal donde se eligen los gustos de cada producto y de cada parte de una promo) pasa de 544 px a 714 px de ancho máximo (`max-w-2xl`, el mismo que el formulario de promos de US-55). Se mira en el navegador · Estimación: 10 min · Completado: 2026-11-03 17:56
+
+**Notas**
+
+- Nivel 1: sólo estilo. Es el ancho más grande que admite el modal de la casa (`src/components/ui/modal.tsx`).
+- Probado en el navegador: con 714 px, los nombres largos ("Carne cortada a cuchillo") entran en un renglón, todas las filas miden 60 px y la lista muestra justo 5 y media (US-61). Lint y los 27 tests relacionados en verde.
+
+### BUG-30 · El E2E "proveedor borrado durante un ingreso" busca un selector viejo
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-11-03 |
+| Tamaño       | XS        |
+| Depende de   | US-49     |
+| Plan         | [`docs/plans/actualizacion-1.md`](docs/plans/actualizacion-1.md) (I-7) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Esperado**: el Escenario C de `tests/concurrencia.spec.ts` pasa: un usuario carga un ingreso con un proveedor que otro borra, y al confirmar ve "Una de las entidades relacionadas ya no existe.".
+
+**Actual**: desde US-49 las bebidas se eligen con Bebida → Litros → Sabor, y el E2E seguía buscando "Fanta 1,5 L" en "Gusto o bebida" de Coca-Cola: esperaba 60 s y fallaba.
+
+- [x] **CA-1** · El escenario carga el ingreso con una empanada ("Humita") y vuelve a pasar; los 83 E2E en verde sobre `develop` · Estimación: 15 min · Completado: 2026-11-03 15:40
+
+**Notas**
+
+- Nivel 1: sólo el test. La app no cambia.
+
+### T-27 · Cierre de la Actualización 1
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-11-03 |
+| Tamaño       | S         |
+| Depende de   | todos     |
+| Plan         | [`docs/plans/actualizacion-1.md`](docs/plans/actualizacion-1.md) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como dev quiero la Actualización 1 verificada completa y en `main`, con las instrucciones para migrar
+Supabase, de forma que la versión que use el cliente sea la que se probó.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · `npm run verify` completo y todos los E2E en verde sobre `develop` · Estimación: 40 min · Completado: 2026-11-03 15:40
+
+- [x] **CA-2** · README, `docs/architecture.md`, `docs/initial_prompt.md` y los docs de `shipping`, `order` y `stats` al día. Con el OK del dev, merge local `develop → main` con el tag `actualizacion-1` · Estimación: 40 min · Completado: 2026-11-03 18:05
+
+- [x] **CA-3** · El dev migra Supabase antes de desplegar y comprueba que quedan 33 migraciones · Estimación: 10 min · Completado: 2026-11-03 18:05
+
+**Notas**
+
+- CA-1: `npm run verify` verde en US-58 y US-59 (el último: 1284 tests unit y de componente, 141 de integración, cobertura 96,4 / 90,4, mutación 85,8 y build) y los 83 E2E en verde sobre `develop` (2026-11-03), con BUG-30 arreglado. El E2E de Clientes de BUG-16 falló una vez y pasó al repetirlo.
+- CA-2: docs al día. El dev dio el OK al merge a `main` con el tag `actualizacion-1` el 2026-11-03, con US-62 adentro.
+- CA-3: el dev migró Supabase el 2026-11-03 y la consulta da 33.

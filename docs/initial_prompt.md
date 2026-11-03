@@ -1,7 +1,7 @@
 # Prompt inicial: contexto completo de gestor-empanaderia
 
 > **Uso.** Al empezar una sesión nueva de Claude Code: `Leé @docs/initial_prompt.md y seguilo.`
-> Foto del proyecto al **2026-11-02**. Se adapta en cada avance significativo
+> Foto del proyecto al **2026-11-03**. Se adapta en cada avance significativo
 > ([criterios](how-to-document.md#mantener-al-día-docsinitial_promptmd)). Si algo de acá contradice a
 > [`AGENTS.md`](../AGENTS.md) o a los docs que enlaza, **ganan ellos**: avisale al dev que este archivo quedó
 > desactualizado.
@@ -27,7 +27,7 @@ Sistema de **gestión de stock y punto de venta + catálogo web** para la rotise
 | Cara | Rutas | Quién |
 |---|---|---|
 | Catálogo público | `/home`, `/product/[id]` | Clientes del local, sin login. Consultan por WhatsApp o Instagram; no hay pedidos online. **Por ahora no se publica**: sólo se despliega el gestor y el catálogo queda en el código. |
-| Panel de gestión | `/` (Estadísticas), `/gastos`, `/ventas` (Ventas/Pedidos: historial, comprobante y anulación), `/ventas/nueva` (tablero de pedidos y cobro), `/promociones`, `/stock`, `/alta-de-productos`, `/tarjetas`, `/clientes`, `/proveedores`, `/usuarios`, `/logs` (Auditoría) | `admin`: todo. `vendedor`: Ventas/Pedidos, Clientes y Stock sólo para mirar (sin costos), y entra a Ventas/Pedidos. El menú y `proxy.ts` salen de `src/config/navigation.ts` (US-2). |
+| Panel de gestión | `/` (Estadísticas), `/gastos`, `/ventas` (Ventas/Pedidos: historial, comprobante y anulación), `/ventas/nueva` (tablero de pedidos y cobro), `/envios`, `/promociones`, `/stock`, `/alta-de-productos`, `/tarjetas`, `/clientes`, `/proveedores`, `/usuarios`, `/logs` (Auditoría) | `admin`: todo. `vendedor`: Ventas/Pedidos, Clientes y Stock sólo para mirar (sin costos), y entra a Ventas/Pedidos. El menú y `proxy.ts` salen de `src/config/navigation.ts` (US-2). |
 
 Funciones que ya existen (Sprints 1 a 4):
 - Alta de gustos y bebidas por grupo fijo: sólo grupo y nombre, con fotos y visibilidad en el catálogo (US-17). Ya
@@ -88,12 +88,12 @@ jornada y los gastos. Las decisiones del Sprint 2 están en [`sprint-2.md`](plan
 
 - Producción propia vs. reventa; recetas e insumos.
 - Vencimiento y perecederos.
-- Delivery y horarios del local.
+- Horarios del local. (Los envíos ya están definidos: Actualización 1, `docs/plans/actualizacion-1.md`.)
 - Facturación.
 
 Hacer preguntas de más es mejor que inventar.
 
-## 4. Estado actual del repo (al 2026-10-27)
+## 4. Estado actual del repo (al 2026-11-03)
 
 - **Sprint 0 terminado** (base técnica): todos sus ítems están integrados y en `En revisión` en `BACKLOG.md`,
   esperando que el dev los pase a `Hecho`. `main` tiene el tag `sprint-0`.
@@ -174,15 +174,25 @@ Hacer preguntas de más es mejor que inventar.
   compuesta a `menu_items (id, menu_group)`). US-56: un ingreso de stock acepta 0, para corregir uno cargado por
   error (migración 0031). US-57: la promo fija bebida y litros, sin migración (`menu_item_id` representa a la
   familia). Supabase está en **32** migraciones (la migró el dev el 2026-11-02).
+- **Desde el 2026-11-03 no hay más sprints: el trabajo se agrupa en Actualizaciones** numeradas, cada una con su
+  sección en `BACKLOG.md`, su plan en `docs/plans/actualizacion-N.md` y, al cerrarla, un merge `develop → main` con el
+  tag `actualizacion-N`.
+- **Actualización 1 · Envíos** (2026-11-03, plan en [`actualizacion-1.md`](plans/actualizacion-1.md)): la pestaña
+  Envíos (`/envios`, sólo admin) con título, detalle y monto de $0 o más (US-58, migración **0032**, sólo aditiva:
+  Supabase está en **33**, la migró el dev el 2026-11-03); el desplegable "Envío" del carrito, que suma después del descuento,
+  pide el domicilio y queda congelado en la venta, el comprobante y Estadísticas, sin sumar a ninguna comida (US-59);
+  la tarjeta de Promos y el selector de gustos de Ventas con scroll propio, y "FALTAN N" en mayúscula y más grande
+  (US-60 y US-61); el selector de gustos más ancho (US-62). En `main` con el tag `actualizacion-1` desde el
+  2026-11-03. Lo hizo el agente solo, con permiso del dev para commitear y pushear a `develop`.
 - **US-43** (sin sprint asignado): la web pública (`/home`, `/product`, `/api/public`) está **apagada salvo
   `PUBLIC_CATALOG=true`**, y sin sesión se entra por `/login`. Para prenderla se carga la variable en Vercel y se
   redespliega. Plan en [`US-43-sin-web-publica.md`](plans/US-43-sin-web-publica.md).
-- Git: `main` recibe un merge de `develop` al cierre de cada sprint. El trabajo nuevo sale de `develop`. El repo de GitHub
+- Git: `main` recibe un merge de `develop` al cierre de cada sprint o Actualización. El trabajo nuevo sale de `develop`. El repo de GitHub
   es **público**: todo lo que se pushea queda publicado.
 - **No existe todavía**: `docs/conventions/`.
 - **Sí existen**:
-  - `BACKLOG.md`, con los Sprints 0 a 6 en orden de ejecución.
-  - Los planes de cada sprint en `docs/plans/sprint-0.md`, `sprint-1.md`, `sprint-2.md`, `sprint-3.md`, `sprint-4.md` y `sprint-5.md`: orden, decisiones del
+  - `BACKLOG.md`, con los Sprints 0 a 6, los ítems sin sprint y, desde el 2026-11-03, las Actualizaciones.
+  - Los planes de cada sprint en `docs/plans/sprint-0.md`, `sprint-1.md`, `sprint-2.md`, `sprint-3.md`, `sprint-4.md`, `sprint-5.md` y `sprint-6.md`, y desde 2026-11-03 los de cada Actualización (`actualizacion-1.md`): orden, decisiones del
     dev y enfoque de cada ítem.
   - Las plantillas en `docs/templates/` (`plan.md`, `feature.md`, `adr.md`), los planes en `docs/plans/` y los
     ADR en `docs/adr/`.
@@ -196,7 +206,7 @@ Hacer preguntas de más es mejor que inventar.
   - E2E con Playwright (`tests/`, con Page Objects) contra `db-test`, con `next build` + `next start` en el 3100 y la carpeta
     `.next-e2e` (T-6, ver `tests/readme.md`). Nunca toca la base de desarrollo.
   - Mutación con Stryker (`stryker.config.mjs`, `npm run test:mutation`) sobre el dominio y los services de
-    `provider`, `menu`, `stock`, `order` (también su store), `promotion`, `card`, `stats` y `expense`, y
+    `provider`, `menu`, `stock`, `order` (también su store), `promotion`, `card`, `stats`, `expense` y `shipping`, y
     `src/lib/errors`.
 - Features del dominio, cada uno con su README en `docs/features/`:
   - `menu` (US-3, T-12, ADR 0005): gustos y bebidas por grupo fijo, precios, fotos y catálogo público.
@@ -207,6 +217,7 @@ Hacer preguntas de más es mejor que inventar.
   - `card` (US-10): tarjetas y planes de cuotas con recargo.
   - `stats` (US-12 y US-13): estadísticas de la jornada y los cuadros de vendedores y de ventas.
   - `expense` (US-14): anotador de gastos.
+  - `shipping` (US-58 y US-59): envíos con título, detalle y monto, que se suman al pedido en el carrito.
 - `provider` es el **feature molde** (T-5, `docs/features/provider/README.md`): los demás features se migran
   copiando su estructura.
 - Gates (T-3, ADR 0003):
@@ -229,7 +240,7 @@ Detalle en [`docs/architecture.md`](architecture.md).
 - **En ejecución es cliente-servidor y en despliegue es un monolito modular.** El navegador habla con el
   servidor por **Server Actions** (`'use server'`), no por una API REST.
 - Capas: `ui → actions → service → repository → db`. La capa `service`, con unidad de trabajo, existe en `provider`,
-  `menu`, `stock`, `order`, `promotion`, `card` y `expense`; `stats` tiene service y calcula con funciones puras. En `customer`, `user` y `audit` la lógica sigue repartida entre actions y
+  `menu`, `stock`, `order`, `promotion`, `card`, `expense` y `shipping`; `stats` tiene service y calcula con funciones puras. En `customer`, `user` y `audit` la lógica sigue repartida entre actions y
   repositorios: el código nuevo copia `provider`.
 - Cada feature vive en `src/features/<feature>/` con estas carpetas:
   - `domain/`: schemas Zod de entrada y de fila.
@@ -247,9 +258,9 @@ Detalle en [`docs/architecture.md`](architecture.md).
   `--conditions=react-server`, ya configurado en `package.json`. Si agregás un script que importe `@/lib/db`, sumale
   esa condición.
 - Doc por feature en `docs/features/<f>/README.md`: hoy `provider`, `menu`, `stock`, `order`, `promotion`, `card`,
-  `stats` y `expense`.
+  `stats`, `expense` y `shipping`.
 - Schema de la base en `src/lib/db/schema.ts`, `menu-schema.ts`, `stock-schema.ts`, `order-schema.ts`,
-  `promotion-schema.ts`, `card-schema.ts` y `expense-schema.ts`.
+  `promotion-schema.ts`, `card-schema.ts`, `expense-schema.ts` y `shipping-schema.ts`.
 - **Seguridad**:
   - JWT en la cookie `session`.
   - `src/proxy.ts` filtra por ruta y rol, pero es sólo una barrera de navegación.
@@ -463,3 +474,5 @@ las cuentas reales y se borran esas.
 | Recargo de cuotas | El % del plan de la tarjeta sobre la parte pagada con crédito. Es de la tarjeta, no del local: no suma al total de la venta ni a la ganancia, sólo se guarda como dato (US-11, BUG-20). |
 | Jornada | El día del local para Estadísticas: de 7:00 a 6:59 del día siguiente, en hora de Argentina (US-12). |
 | Turno | Mañana (7:00 a 16:59) o tarde (17:00 a 6:59), en el cuadro de vendedores (US-13). |
+| Envío | Lo que cobra el local por llevar el pedido: título, detalle y monto (US-58). Se elige en el carrito, suma después del descuento y es plata del local, pero no de ninguna comida (US-59). En el código, `shipping_options`. |
+| Actualización | Desde el 2026-11-03, el reemplazo del sprint: un grupo de ítems que cierra con el tag `actualizacion-N`. |

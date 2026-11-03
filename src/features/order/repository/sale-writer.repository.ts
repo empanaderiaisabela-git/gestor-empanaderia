@@ -5,7 +5,7 @@ import type { DbTransaction } from '@/lib/db/transaction';
 import type { MenuGroup } from '@/features/menu/domain/menu-groups';
 import type { PaymentType } from '@/features/order/domain/order-validation';
 
-export type NewSale = { vendorId: string; customerId: string | null; buyerName: string; buyerPhone: string | null; buyerAddress: string | null; total: number; discountAmount: number; discountPercentage: number };
+export type NewSale = { vendorId: string; customerId: string | null; buyerName: string; buyerPhone: string | null; buyerAddress: string | null; total: number; discountAmount: number; discountPercentage: number; shippingOptionId: string | null; shippingTitle: string | null; shippingAmount: number };
 export type NewPayment = { type: PaymentType; amount: number; cardId: string | null; installments: number | null; surchargePct: number | null; surchargeAmount: number | null };
 export type NewSaleItem = { menuItemId: string; units: number; unitCost: number };
 export type NewSaleLine = { group: MenuGroup | null; presentationKey: string | null; promotionId: string | null; quantity: number; unitPrice: number; subtotal: number; description: string; position: number; items: NewSaleItem[] };
@@ -23,10 +23,10 @@ const optionalMoney = (value: number | null): string | null => (value === null ?
 
 export function drizzleSaleWriter(executor: Executor = db): SaleWriter {
   return {
-    insertSale: async ({ total, discountAmount, discountPercentage, ...sale }) => {
+    insertSale: async ({ total, discountAmount, discountPercentage, shippingAmount, ...sale }) => {
       const [row] = await executor
         .insert(sales)
-        .values({ ...sale, total: money(total), discountAmount: money(discountAmount), discountPercentage: money(discountPercentage) })
+        .values({ ...sale, total: money(total), discountAmount: money(discountAmount), discountPercentage: money(discountPercentage), shippingAmount: money(shippingAmount) })
         .returning({ id: sales.id });
       return row.id;
     },

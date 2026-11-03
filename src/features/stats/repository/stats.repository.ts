@@ -8,7 +8,7 @@ import type { StatsSale, StatsSnapshot } from '@/features/stats/domain/stats.sch
 import type { WorkdayRange } from '@/features/stats/domain/workday';
 
 const CONSISTENT_READ = { isolationLevel: 'repeatable read', accessMode: 'read only' } as const;
-const SALE_COLUMNS = { id: sales.id, createdAt: sales.createdAt, total: sales.total, buyerName: sales.buyerName, vendor: users.username };
+const SALE_COLUMNS = { id: sales.id, createdAt: sales.createdAt, total: sales.total, shippingAmount: sales.shippingAmount, buyerName: sales.buyerName, vendor: users.username };
 
 async function detailsOf(tx: DbTransaction, ids: string[]) {
   const lines = await tx.select({ saleId: saleLines.saleId, line: { group: saleLines.group, subtotal: saleLines.subtotal } }).from(saleLines).where(inArray(saleLines.saleId, ids));

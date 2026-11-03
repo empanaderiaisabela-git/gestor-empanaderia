@@ -17,6 +17,6 @@ describe('referencia de cada registro de auditoría (T-12)', () => {
   });
 
   it('nombra cada entidad en español, sin restos de la casa de celulares', () => {
-    expect(['MENU_ITEM', 'STOCK_ENTRY', 'STOCK_LOSS', 'SALE', 'OTRA'].map(entityLabel)).toEqual(['PRODUCTO', 'STOCK', 'MERMA', 'VENTA', 'OTRA']);
+    expect(['MENU_ITEM', 'STOCK_ENTRY', 'STOCK_LOSS', 'SALE', 'SHIPPING', 'OTRA'].map(entityLabel)).toEqual(['PRODUCTO', 'STOCK', 'MERMA', 'VENTA', 'ENVÍO', 'OTRA']);
   });
 });

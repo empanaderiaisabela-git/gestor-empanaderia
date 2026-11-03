@@ -11,6 +11,7 @@ import { formatMoney } from '@/lib/format-money';
 import { BLANK_CHECKOUT, type CheckoutForm, checkCheckout } from './checkout-form';
 import { useActiveCards } from './credit-fields';
 import { PaymentPicker } from './payment-picker';
+import { useChosenShipping } from './shipping-picker';
 import type { CheckoutModel } from './use-checkout';
 import type { OrderBoardModel } from './use-order-board';
 
@@ -36,8 +37,9 @@ export function CheckoutModal({ model, board }: CheckoutModalProps): JSX.Element
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
   const cards = useActiveCards();
+  const { chosen } = useChosenShipping();
   const subtotal = orderSubtotal(lines.filter((line) => line.flavors.length > 0), promos, board.book) ?? 0;
-  const check = checkCheckout(subtotal, form);
+  const check = checkCheckout(subtotal, form, chosen?.amount ?? 0);
 
   useEffect(() => {
     setForm(BLANK_CHECKOUT);
@@ -57,7 +59,7 @@ export function CheckoutModal({ model, board }: CheckoutModalProps): JSX.Element
       <ErrorAlert error={error} />
       <div className='space-y-4'>
         <p className='text-sm text-zinc-700 dark:text-zinc-200'>
-          Cliente: {[buyer.name, buyer.phone, buyer.address].map((value) => value.trim()).filter(Boolean).join(' · ')} · Subtotal {formatMoney(subtotal)}
+          Cliente: {[buyer.name, buyer.phone, buyer.address].map((value) => value.trim()).filter(Boolean).join(' · ')} · Subtotal {formatMoney(subtotal)}{chosen && ` · Envío ${chosen.title} ${formatMoney(chosen.amount)}`}
         </p>
         <DiscountFields form={form} onChange={setForm} />
         <PaymentPicker form={form} total={check.total} cards={cards} onChange={setForm} />

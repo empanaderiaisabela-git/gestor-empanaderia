@@ -304,3 +304,24 @@ pero sin perturbar el resto del contenido
 Pedido del dev (2026-11-01):
 
 quiero poner esta misma practica en mi proyecto de gestor empanaderia isabela, porque allí la busqueda es exacta coincidencia lo que no le gusta a mi cliente pues su otro gestor de LAN (este mismo que tambien le pertece) lo tiene acostumbrado a buscar sin coincidencia exacta
+
+---------------------------------------------------------------------------
+
+Pedido del cliente (2026-11-03), Actualización 1:
+
+Mi cliente ahora quiere la modalidad de "Envios" así que se creará un nuevo tab. La idea es la siguiente:
+
+Ahora envios va entre Ventas/pedidos y Promociones. Aqui se daran de alta todos los envios que mi cliente tenga en su tienda. El botón de "Nuevo envío" daría lugar a completar el siguiente form:
+
+Titulo: *acá iría el nombre del envío*
+Detalle: *acá escribirían el alcance del envío, ej: "Barrio A hasta Barrio B", simple string libre*
+Monto: *acá iría el monto adicional al activar la opción de envío*
+
+Luego, para que esto funcione, la idea es que en el carrito al momento de estar por terminar la venta y cerrarla, que abajo a la izquierda del marco del pedido actual, se establezca una ventana desplegable de "Envios" la cual despliegue todos los envíos disponibles para seleccionar, y que una vez selecto uno, que este le sume el monto adicional dado de alta previamente al costo total del pedidio que se está realizando.
+
+pequeño cambio adicional:
+junto con esta actualización entran dos cambios muy pequeños adicionales:
+
+nro 1: en ventas, la tarjeta de promos cada vez que crece estira la totalidad de la pagina hacia abajo; quiero que funcione como componente scrolleable aislado, quiero que se muestren hasta 3 promos nada mas, y la mitad de la 4ta promo, asi se da a entender que eso sigue hacia abajo y se puede scrollear para seguir viendo el resto de las promos.
+
+nro 2: cuando selecciono la opcion de vender empanadas, que hay que rellenar, me muestra todas las empanadas disponibles que hay: quiero que ese componente también sea scrolleable, que muestre hasta 5 empanadas y lam mitad de la 6ta para que se pueda interpretar que eso sigue hacia abajo, y que además, el cartel de arriba de este form que dice cuantas te falta, quiero que esté en mayuscula y que sea mas grande el tamaño de los px de sus letras, para que se note bien cuantas faltan.

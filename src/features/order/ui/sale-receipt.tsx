@@ -24,6 +24,7 @@ function ReceiptTotals({ sale }: { sale: SaleDef }): JSX.Element {
       </p>
       {sale.discountPercentage > 0 && <p className={row}><span>Descuento</span><span>-{sale.discountPercentage}%</span></p>}
       {sale.discountAmount > 0 && <p className={row}><span>Descuento</span><span>-{formatMoney(sale.discountAmount)}</span></p>}
+      {sale.shippingTitle && <p className={row}><span>Envío · {sale.shippingTitle}</span><span>{formatMoney(sale.shippingAmount)}</span></p>}
       <p className={`${row} text-xl font-black`}>
         <span>Total</span>
         <span>{formatMoney(sale.total)}</span>

@@ -27,6 +27,9 @@ describe('cobrar el pedido (US-6)', () => {
         total: 18000,
         discountAmount: 0,
         discountPercentage: 0,
+        shippingOptionId: null,
+        shippingTitle: null,
+        shippingAmount: 0,
         payments: saved,
         lines: [
           { group: 'empanadas', presentationKey: 'u6', promotionId: null, quantity: 1, unitPrice: 8000, subtotal: 8000, description: '2 Carne + 4 Pollo', position: 0, items: [{ menuItemId: CARNE.id, units: 2, unitCost: 400 }, { menuItemId: POLLO.id, units: 4, unitCost: 350 }] },

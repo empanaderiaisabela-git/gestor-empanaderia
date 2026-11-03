@@ -8,6 +8,7 @@ export type StatsPayment = { type: PaymentType; amount: string; surchargeAmount:
 export type StatsSale = {
   createdAt: Date;
   total: string;
+  shippingAmount: string;
   buyerName: string | null;
   vendor: string;
   lines: StatsLine[];

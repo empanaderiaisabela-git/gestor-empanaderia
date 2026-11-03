@@ -14,7 +14,7 @@ const zeroPayments = (): Record<PaymentType, number> => ({ efectivo: 0, transfer
 
 function addShares(sale: StatsSale, shares: Shares): void {
   const subtotal = sumBy(sale.lines, (line) => amount(line.subtotal));
-  const factor = subtotal > 0 ? amount(sale.total) / subtotal : 0;
+  const factor = subtotal > 0 ? (amount(sale.total) - amount(sale.shippingAmount)) / subtotal : 0;
   for (const line of sale.lines) {
     const share = amount(line.subtotal) * factor;
     if (line.group === null) shares.promos += share;

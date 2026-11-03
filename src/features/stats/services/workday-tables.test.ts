@@ -5,7 +5,7 @@ import { saleRows, vendorRows } from './workday-tables';
 type SaleSeed = { vendor: string; at: string; total: string; buyerName?: string | null };
 
 function sale({ vendor, at, total, buyerName = null }: SaleSeed): StatsSale {
-  return { createdAt: new Date(at), total, buyerName, vendor, lines: [], items: [], payments: [] };
+  return { createdAt: new Date(at), total, shippingAmount: '0.00', buyerName, vendor, lines: [], items: [], payments: [] };
 }
 
 const SALES = [
