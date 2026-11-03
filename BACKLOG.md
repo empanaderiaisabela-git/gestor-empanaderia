@@ -4728,7 +4728,7 @@ lugar de sprints; cada una cierra con un merge `develop → main` y el tag `actu
 | #   | ID | Título | Estado | Depende de | Estimación |
 | --- | -- | ------ | ------ | ---------- | ---------- |
 | 1   | [US-60](#us-60--ventas-promos-con-scroll-propio) | Ventas: Promos con scroll propio | En revisión | — | 20 min |
-| 2   | [US-61](#us-61--selector-de-gustos-con-scroll-y-faltan-n-grande) | Selector de gustos con scroll y "FALTAN N" grande | Pendiente | — | 25 min |
+| 2   | [US-61](#us-61--selector-de-gustos-con-scroll-y-faltan-n-grande) | Selector de gustos con scroll y "FALTAN N" grande | En revisión | — | 25 min |
 | 3   | [US-58](#us-58--envíos-pestaña-y-alta-edición-y-baja) | Envíos: pestaña y alta, edición y baja | Pendiente | — | 4 h |
 | 4   | [US-59](#us-59--ventas-envío-en-el-carrito) | Ventas: envío en el carrito | Pendiente | US-58 | 4 h 30 min |
 | 5   | [T-27](#t-27--cierre-de-la-actualización-1) | Cierre de la Actualización 1 | Pendiente | todos | 1 h 30 min |
@@ -4762,9 +4762,9 @@ no estiren toda la página hacia abajo.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
+| Estado       | En revisión |
 | Dueño        | Agente    |
-| Inicio       | —         |
+| Inicio       | 2026-11-03 |
 | Tamaño       | XS        |
 | Depende de   | —         |
 | Plan         | [`docs/plans/actualizacion-1.md`](docs/plans/actualizacion-1.md) |
@@ -4776,13 +4776,15 @@ faltan se lea bien, de forma que arme las surtidas sin perder de vista cuántas 
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · El selector de gustos muestra hasta 5 gustos y la mitad del sexto; el resto se ve scrolleando dentro de la lista, con el buscador y el botón de abajo siempre a la vista. Vale para todos los grupos y las partes de las promos (D-7). Se mira en el navegador · Estimación: 15 min · Completado: —
+- [x] **CA-1** · El selector de gustos muestra hasta 5 gustos y la mitad del sexto; el resto se ve scrolleando dentro de la lista, con el buscador y el botón de abajo siempre a la vista. Vale para todos los grupos y las partes de las promos (D-7). Se mira en el navegador · Estimación: 15 min · Completado: 2026-11-03 14:10
 
-- [ ] **CA-2** · El aviso de arriba ("2 Carne · faltan 10") se ve en mayúscula y a 20 px en lugar de 14 px · Estimación: 10 min · Completado: —
+- [x] **CA-2** · El aviso de arriba ("2 Carne · faltan 10") se ve en mayúscula y a 21 px en lugar de 15 px · Estimación: 10 min · Completado: 2026-11-03 14:10
 
 **Notas**
 
-- Nivel 1: sólo estilo.
+- Nivel 1: sólo estilo. La lista lleva `sm:max-h-[19.5rem]`: con filas de 60,5 px entran 5 y media (332 px). Un gusto de nombre largo ocupa dos o tres renglones, y entonces se ven menos filas.
+- En el celular cada fila mide 145 px, porque los botones bajan a otro renglón: la lista ocupa la mitad de la pantalla (`max-h-[50vh]`, unas 3 filas) para que "Listo" no quede afuera.
+- El aviso usa `text-xl` (1,25 rem): con la letra base del panel, de 17 px, da 21 px; antes era `text-sm`, 15 px.
 
 ### US-58 · Envíos: pestaña y alta, edición y baja
 

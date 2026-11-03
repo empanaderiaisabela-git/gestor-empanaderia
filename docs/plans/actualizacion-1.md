@@ -121,3 +121,12 @@ La lista simple de cada commit, a medida que se integra a `develop`.
   dentro de la tarjeta.
 - Por qué importa: con muchas promos, la tarjeta ya no estira toda la página hacia abajo.
 - Adónde va: `develop`. Sólo cambia cómo se ve; no toca datos ni la base.
+
+### US-61 · Selector de gustos con scroll
+
+- Qué es: al elegir los gustos (por ejemplo, de una docena), la lista muestra 5 gustos y la mitad del sexto, y el resto
+  se ve scrolleando dentro de la lista. El aviso de cuántas faltan va en mayúscula y más grande ("2 CARNE · FALTAN 10").
+- Por qué importa: el buscador y el botón de abajo quedan siempre a la vista, y se lee de un vistazo cuántas faltan.
+- Adónde va: `develop`. Vale para todos los grupos y las promos. Sólo cambia cómo se ve.
+- Qué no entra: en el celular entran unas 3 filas, porque cada una es más alta; con 5 y media el modal no entraría en
+  la pantalla.
