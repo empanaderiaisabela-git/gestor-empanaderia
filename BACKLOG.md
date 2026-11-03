@@ -4727,7 +4727,7 @@ lugar de sprints; cada una cierra con un merge `develop → main` y el tag `actu
 
 | #   | ID | Título | Estado | Depende de | Estimación |
 | --- | -- | ------ | ------ | ---------- | ---------- |
-| 1   | [US-60](#us-60--ventas-promos-con-scroll-propio) | Ventas: Promos con scroll propio | En progreso | — | 20 min |
+| 1   | [US-60](#us-60--ventas-promos-con-scroll-propio) | Ventas: Promos con scroll propio | En revisión | — | 20 min |
 | 2   | [US-61](#us-61--selector-de-gustos-con-scroll-y-faltan-n-grande) | Selector de gustos con scroll y "FALTAN N" grande | Pendiente | — | 25 min |
 | 3   | [US-58](#us-58--envíos-pestaña-y-alta-edición-y-baja) | Envíos: pestaña y alta, edición y baja | Pendiente | — | 4 h |
 | 4   | [US-59](#us-59--ventas-envío-en-el-carrito) | Ventas: envío en el carrito | Pendiente | US-58 | 4 h 30 min |
@@ -4738,7 +4738,7 @@ lugar de sprints; cada una cierra con un merge `develop → main` y el tag `actu
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | En progreso |
+| Estado       | En revisión |
 | Dueño        | Agente    |
 | Inicio       | 2026-11-03 |
 | Tamaño       | XS        |
@@ -4752,11 +4752,11 @@ no estiren toda la página hacia abajo.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · La tarjeta de Promos muestra hasta 3 promos y la mitad de la cuarta; el resto se ve scrolleando dentro de la tarjeta, y la página no crece. Se mira en el navegador con 6 promos · Estimación: 20 min · Completado: —
+- [x] **CA-1** · La tarjeta de Promos muestra hasta 3 promos y la mitad de la cuarta; el resto se ve scrolleando dentro de la tarjeta, y la página no crece. Se mira en el navegador con 6 promos · Estimación: 20 min · Completado: 2026-11-03 14:06
 
 **Notas**
 
-- Nivel 1: sólo estilo.
+- Nivel 1: sólo estilo. La lista lleva `max-h-60` (15 rem): con 6 promos mide 255 px en lugar de 437 px, justo 3 botones de 65,7 px y la mitad del cuarto.
 
 ### US-61 · Selector de gustos con scroll y "FALTAN N" grande
 

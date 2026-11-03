@@ -62,7 +62,7 @@ export function PromoCard({ board }: { board: OrderBoardModel }): JSX.Element {
         </div>
       </header>
       {promotions.length === 0 && <p className='text-xs font-semibold text-amber-800 dark:text-amber-300'>Todavía no hay promos activas</p>}
-      <div className='grid grid-cols-1 gap-2'>
+      <div className='grid grid-cols-1 gap-2 max-h-60 overflow-y-auto pr-1'>
         {promotions.map((promotion) => (
           <PromoButton key={promotion.id} promotion={promotion} board={board} />
         ))}

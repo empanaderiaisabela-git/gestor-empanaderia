@@ -107,4 +107,17 @@ servidor con el actual, como los precios. La anulación no cambia: el envío se 
 
 ## Resumen para el dev
 
-(La lista simple de cada commit, a medida que se integra.)
+La lista simple de cada commit, a medida que se integra a `develop`.
+
+### Backlog de la Actualización 1 (`docs(backlog)`)
+
+- Qué es: el pedido del cliente copiado tal cual, los cinco ítems nuevos en el backlog y este plan.
+- Por qué importa: deja registrado qué se va a hacer y qué decidiste vos antes de programar.
+- Adónde va: `develop`. No cambia nada de la app.
+
+### US-60 · Promos con scroll
+
+- Qué es: en Ventas, la tarjeta de Promos muestra 3 promos y la mitad de la cuarta; las demás se ven scrolleando
+  dentro de la tarjeta.
+- Por qué importa: con muchas promos, la tarjeta ya no estira toda la página hacia abajo.
+- Adónde va: `develop`. Sólo cambia cómo se ve; no toca datos ni la base.
