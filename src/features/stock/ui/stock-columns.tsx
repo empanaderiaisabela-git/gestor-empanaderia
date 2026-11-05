@@ -79,14 +79,11 @@ export function getStockViewColumns(): ColumnDef<MenuItemDef>[] {
     { header: 'Categoría', headerClassName: 'w-48', cellClassName: 'whitespace-nowrap text-zinc-700 dark:text-zinc-200', cell: (item) => CATEGORY_LABELS[categoryOf(item)] },
     { header: 'Gusto / bebida', cellClassName: 'font-bold text-zinc-900 dark:text-zinc-50', cell: (item) => (item.isBase ? '—' : item.name) },
     { header: 'Stock', headerClassName: 'w-45', cell: (item) => <StockBadge item={item} /> },
+    { header: SALE_PRICE_TERM, headerClassName: 'w-48', cellClassName: 'text-zinc-800 dark:text-zinc-100 text-sm', cell: (item) => <PriceCell item={item} /> },
   ];
 }
 
 export function getStockColumns(actions: StockRowActions): ColumnDef<MenuItemDef>[] {
-  const columns: ColumnDef<MenuItemDef>[] = [
-    ...getStockViewColumns(),
-    { header: SALE_PRICE_TERM, headerClassName: 'w-48', cellClassName: 'text-zinc-800 dark:text-zinc-100 text-sm', cell: (item) => <PriceCell item={item} /> },
-  ];
   const cost: ColumnDef<MenuItemDef> = { header: COST_TERM, cellClassName: 'text-zinc-700 dark:text-zinc-200', cell: (item) => costText(item) };
-  return [...columns, cost, { header: 'Acciones', headerClassName: 'w-36 text-right', cellClassName: 'flex gap-1 justify-end', cell: (item) => <StockButtons item={item} actions={actions} /> }];
+  return [...getStockViewColumns(), cost, { header: 'Acciones', headerClassName: 'w-36 text-right', cellClassName: 'flex gap-1 justify-end', cell: (item) => <StockButtons item={item} actions={actions} /> }];
 }

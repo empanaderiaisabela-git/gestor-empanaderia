@@ -1,7 +1,7 @@
 # Prompt inicial: contexto completo de gestor-empanaderia
 
 > **Uso.** Al empezar una sesión nueva de Claude Code: `Leé @docs/initial_prompt.md y seguilo.`
-> Foto del proyecto al **2026-11-03**. Se adapta en cada avance significativo
+> Foto del proyecto al **2026-11-04**. Se adapta en cada avance significativo
 > ([criterios](how-to-document.md#mantener-al-día-docsinitial_promptmd)). Si algo de acá contradice a
 > [`AGENTS.md`](../AGENTS.md) o a los docs que enlaza, **ganan ellos**: avisale al dev que este archivo quedó
 > desactualizado.
@@ -27,7 +27,7 @@ Sistema de **gestión de stock y punto de venta + catálogo web** para la rotise
 | Cara | Rutas | Quién |
 |---|---|---|
 | Catálogo público | `/home`, `/product/[id]` | Clientes del local, sin login. Consultan por WhatsApp o Instagram; no hay pedidos online. **Por ahora no se publica**: sólo se despliega el gestor y el catálogo queda en el código. |
-| Panel de gestión | `/` (Estadísticas), `/gastos`, `/ventas` (Ventas/Pedidos: historial, comprobante y anulación), `/ventas/nueva` (tablero de pedidos y cobro), `/envios`, `/promociones`, `/stock`, `/alta-de-productos`, `/tarjetas`, `/clientes`, `/proveedores`, `/usuarios`, `/logs` (Auditoría) | `admin`: todo. `vendedor`: Ventas/Pedidos, Clientes y Stock sólo para mirar (sin costos), y entra a Ventas/Pedidos. El menú y `proxy.ts` salen de `src/config/navigation.ts` (US-2). |
+| Panel de gestión | `/` (Estadísticas), `/gastos`, `/ventas` (Ventas/Pedidos: historial, comprobante y anulación), `/ventas/nueva` (tablero de pedidos y cobro), `/envios`, `/promociones`, `/stock`, `/alta-de-productos`, `/tarjetas`, `/clientes`, `/proveedores`, `/usuarios`, `/logs` (Auditoría) | `admin`: todo. `vendedor`: Ventas/Pedidos, Clientes y Stock sólo para mirar (con el precio de venta y sin costos, US-63), y entra a Ventas/Pedidos. El menú y `proxy.ts` salen de `src/config/navigation.ts` (US-2). |
 
 Funciones que ya existen (Sprints 1 a 4):
 - Alta de gustos y bebidas por grupo fijo: sólo grupo y nombre, con fotos y visibilidad en el catálogo (US-17). Ya
@@ -36,7 +36,7 @@ Funciones que ya existen (Sprints 1 a 4):
   gusto y proveedor, "Costo y precio" de cada gusto con una casilla para copiarlo a todo el grupo, pérdidas (mermas)
   e historial (US-16 a US-18, US-28). Pizzas y Ciabattas no se stockean por gusto: se cuentan las bases Prepizza y
   Pan de ciabatta, y cada pizza o ciabatta vendida descuenta una (US-29). El vendedor ve Stock sólo para mirar,
-  sin costos (US-31).
+  con el precio de venta y sin costos (US-31, US-63).
 - Tablero de pedidos con colores e íconos de lucide por grupo (US-20), sólo con los gustos con stock (US-19), el pedido en un carrito desplegable (US-24), "Quitar uno" en cada línea (US-22), surtidas ("Agregar uno" / "Completar") y pizzas mitad y mitad.
 - Cobro con efectivo, transferencia, débito o crédito (hasta 2 medios) y descuentos, con precios recalculados en el
   servidor. Historial en Ventas/Pedidos, comprobante imprimible y anulación con reposición de stock.
@@ -184,6 +184,9 @@ Hacer preguntas de más es mejor que inventar.
   la tarjeta de Promos y el selector de gustos de Ventas con scroll propio, y "FALTAN N" en mayúscula y más grande
   (US-60 y US-61); el selector de gustos más ancho (US-62). En `main` con el tag `actualizacion-1` desde el
   2026-11-03. Lo hizo el agente solo, con permiso del dev para commitear y pushear a `develop`.
+- **Actualización 2** (2026-11-04, plan en [`actualizacion-2.md`](plans/actualizacion-2.md)): el vendedor ve en Stock
+  la columna "Precio de venta" (US-63), y el seed ya no se corta con una promo con bebida fija (BUG-31). Sin
+  migración: Supabase sigue en **33**. En `main` con el tag `actualizacion-2`.
 - **US-43** (sin sprint asignado): la web pública (`/home`, `/product`, `/api/public`) está **apagada salvo
   `PUBLIC_CATALOG=true`**, y sin sesión se entra por `/login`. Para prenderla se carga la variable en Vercel y se
   redespliega. Plan en [`US-43-sin-web-publica.md`](plans/US-43-sin-web-publica.md).
