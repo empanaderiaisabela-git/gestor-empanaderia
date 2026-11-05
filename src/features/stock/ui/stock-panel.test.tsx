@@ -27,12 +27,12 @@ describe('pantalla de Stock (US-4)', () => {
     actions.entry.mockResolvedValue({ success: true, message: 'Stock ingresado: Humita queda con 29', data: { menuItemId: ITEM.id, stock: 29, version: 2 } });
   });
 
-  it('el vendedor sólo ve categoría, gusto y stock, sin botones, costo ni categorías sin stock (US-31, BUG-23)', async () => {
+  it('el vendedor ve categoría, gusto, stock y precio de venta, sin botones, costo ni categorías sin stock (US-31, BUG-23, US-63)', async () => {
     useAuthStore.setState({ user: { id: 'v', username: 'vendedor', role: 'vendedor' }, isAuthenticated: true });
     actions.fetchItems.mockResolvedValue([PREPIZZA, COCA, MUZZA]);
     render(<StockPanel />);
     const headers = await screen.findAllByRole('columnheader');
-    expect(headers.map((header) => header.textContent)).toEqual(['Categoría', 'Gusto / bebida', 'Stock']);
+    expect(headers.map((header) => header.textContent)).toEqual(['Categoría', 'Gusto / bebida', 'Stock', 'Precio de venta']);
     expect(screen.queryByRole('button', { name: 'Ingresar stock' })).toBeNull();
     expect(screen.queryByRole('option', { name: 'Pizzas' })).toBeNull();
   });

@@ -82,7 +82,7 @@ Muestra el stock de cada gusto y bebida activos, agrupados por grupo, y permite:
 
 | Acción | admin | vendedor | público (sin sesión) |
 |---|---|---|---|
-| Ver `/stock` | Sí | No (lo manda a Ventas/Pedidos) | No |
+| Ver `/stock` | Sí | Sólo para mirar: categoría, gusto, stock y precio de venta, sin costo ni botones (US-31, US-63) | No |
 | Ingresar stock, con costo y proveedor | Sí | No (`FORBIDDEN`) | No |
 | Costo y precio (y aplicarlo a todo el grupo) | Sí | No (`FORBIDDEN`) | No (`UNAUTHENTICATED`) |
 | Registrar una merma | Sí | No (`FORBIDDEN`) | No |

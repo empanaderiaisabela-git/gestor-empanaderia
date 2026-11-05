@@ -16,6 +16,7 @@
 - [Sprint 6 · Revisión del cliente en producción](#sprint-6--revisión-del-cliente-en-producción)
 - [Sin sprint asignado](#sin-sprint-asignado)
 - [Actualización 1 · Envíos](#actualización-1--envíos)
+- [Actualización 2 · Precio de venta en el Stock del vendedor](#actualización-2--precio-de-venta-en-el-stock-del-vendedor)
 
 ## Convenciones
 
@@ -4710,12 +4711,12 @@ sesión inválida. El cierre de sesión ya vuelve a `/login`.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
-| Dueño        | —         |
-| Inicio       | —         |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-11-03 |
 | Tamaño       | XS        |
 | Depende de   | US-55     |
-| Plan         | —         |
+| Plan         | Pedido directo del dev (2026-11-03) |
 | Merge        | —         |
 | Horas reales | —         |
 
@@ -4723,11 +4724,13 @@ sesión inválida. El cierre de sesión ya vuelve a `/login`.
 
 **Actual**: `clearMenu` (`src/lib/db/scripts/seed-menu.ts`) borra `menu_items` sin borrar antes `promotion_components`, y la FK `promotion_components_menu_item_fk` de US-55 lo frena: "update or delete on table menu_items violates foreign key constraint". Pasa al volver a correr los E2E sobre un `db-test` que no se recreó (la promo con bebida fija la crea un E2E), y en la base local de quien haya fijado una bebida.
 
-- [ ] **CA-1** · El seed borra las promos y sus productos antes que el menú, y un test lo cubre · Estimación: 20 min · Completado: —
+- [x] **CA-1** · El seed borra las promos y sus productos antes que el menú, y un test lo cubre (`regression BUG-31` en `seed-menu.int.test.ts`) · Estimación: 20 min · Completado: 2026-11-03 18:20
 
 **Notas**
 
-- Lo encontró el agente al cerrar la Actualización 1 (2026-11-03). Mientras tanto: `docker compose rm -sf db-test` y volver a levantarlo antes de correr los E2E. Espera el OK del dev: el seed borra datos.
+- Lo encontró el agente al cerrar la Actualización 1 (2026-11-03); el dev dio el OK para arreglarlo el mismo día.
+- Nivel 2. `clearMenu` borra `promotions` antes que `menu_items`; sus productos se van en cascada. Sólo lo usan `db:seed` y `db:reset-data`, que ya vaciaban la base y se niegan a correr contra producción (BUG-3). Supabase no se toca.
+- Probado: el test falla sin el arreglo con el error de la FK; con el arreglo, los 83 E2E y después otra corrida sin recrear `db-test` (antes se cortaba en el seed), y los 142 tests de integración en verde.
 
 ------------------------------------------------------------------------------------------------------------------------
 
@@ -4951,3 +4954,45 @@ Supabase, de forma que la versión que use el cliente sea la que se probó.
 - CA-1: `npm run verify` verde en US-58 y US-59 (el último: 1284 tests unit y de componente, 141 de integración, cobertura 96,4 / 90,4, mutación 85,8 y build) y los 83 E2E en verde sobre `develop` (2026-11-03), con BUG-30 arreglado. El E2E de Clientes de BUG-16 falló una vez y pasó al repetirlo.
 - CA-2: docs al día. El dev dio el OK al merge a `main` con el tag `actualizacion-1` el 2026-11-03, con US-62 adentro.
 - CA-3: el dev migró Supabase el 2026-11-03 y la consulta da 33.
+
+------------------------------------------------------------------------------------------------------------------------
+
+## Actualización 2 · Precio de venta en el Stock del vendedor
+
+------------------------------------------------------------------------------------------------------------------------
+
+**Objetivo**: pedido del dev (2026-11-04): el vendedor ve en Stock el precio de venta de cada producto.
+
+**Plan**: [`docs/plans/actualizacion-2.md`](docs/plans/actualizacion-2.md). Entra también BUG-31, ya arreglado en `develop`.
+
+### Resumen de la Actualización 2
+
+| #   | ID | Título | Estado | Depende de | Estimación |
+| --- | -- | ------ | ------ | ---------- | ---------- |
+| 1   | [US-63](#us-63--precio-de-venta-en-el-stock-del-vendedor) | Precio de venta en el Stock del vendedor | En revisión | US-31 | 15 min |
+|     |    | **Total de la actualización** | | | **15 min** |
+
+### US-63 · Precio de venta en el Stock del vendedor
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-11-04 |
+| Tamaño       | XS        |
+| Depende de   | US-31     |
+| Plan         | [`docs/plans/actualizacion-2.md`](docs/plans/actualizacion-2.md) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como vendedor quiero ver en Stock el precio de venta de cada producto, de forma que pueda consultarlo sin pedírselo al admin.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · La grilla de Stock del vendedor suma la columna "Precio de venta", con el mismo título y los mismos precios por presentación que ve el admin. Sigue sin costo ni botones. Lo cubren `stock-panel.test.tsx` y el E2E de `navegacion.spec.ts`, y se miró en el navegador · Estimación: 15 min · Completado: 2026-11-04 21:26
+
+**Notas**
+
+- Nivel 1: sólo cambia qué columnas se ven. `fetchMenuItems` ya le mandaba los precios al vendedor (sólo le oculta el costo).
+- Las tarjetas de Stock en el celular no cambian: tampoco le muestran el precio al admin.
+- El dev pidió hacer todo el proceso hasta `main` sin frenar (2026-11-04).
