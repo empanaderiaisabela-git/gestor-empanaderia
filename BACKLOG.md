@@ -18,6 +18,7 @@
 - [Actualización 1 · Envíos](#actualización-1--envíos)
 - [Actualización 2 · Precio de venta en el Stock del vendedor](#actualización-2--precio-de-venta-en-el-stock-del-vendedor)
 - [Actualización 3 · Comanda y gustos agrupados](#actualización-3--comanda-y-gustos-agrupados)
+- [Actualización 4 · Comanda en negrita](#actualización-4--comanda-en-negrita)
 
 ## Convenciones
 
@@ -5108,3 +5109,35 @@ que la versión que use el cliente sea la que se probó.
 
 - CA-1: `npm run verify` verde en US-65 (1301 tests unit y de componente, 144 de integración, cobertura 96,5 / 90,3, mutación 85,7 y build) y los 84 E2E en verde sobre `develop` (2026-11-05). El E2E de la comanda pasó a Capresse porque con Humita le cambiaba el stock al E2E de Stock.
 - CA-2: el dev migró Supabase el 2026-11-05 y la consulta da 34; con eso, merge a `main` con el tag `actualizacion-3`.
+
+------------------------------------------------------------------------------------------------------------------------
+
+## Actualización 4 · Comanda en negrita
+
+------------------------------------------------------------------------------------------------------------------------
+
+**Objetivo**: pedido del cliente (2026-11-06): la comanda con letra gruesa, notoria y bien oscura.
+
+### US-66 · Comanda en negrita
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-11-06 |
+| Tamaño       | XS        |
+| Depende de   | US-65     |
+| Plan         | Pedido directo del dev (2026-11-06) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como vendedor quiero la comanda con letra gruesa y negra, de forma que se lea bien en el papel térmico.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · La comanda se imprime en Courier New peso 900 y negro puro, con el mismo tamaño y las mismas 32 columnas en 48 mm. Lo cubre `print-comanda.test.tsx` · Estimación: 10 min · Completado: 2026-11-06 13:07
+
+**Notas**
+
+- Nivel 1: sólo el estilo de `print-comanda.ts`. Sin migración: Supabase sigue en 34.
+- Si hace falta más oscuro: la densidad ("Darkness") del driver de la térmica en Windows.
