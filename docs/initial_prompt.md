@@ -189,8 +189,8 @@ Hacer preguntas de más es mejor que inventar.
   migración: Supabase sigue en **33**. En `main` con el tag `actualizacion-2`.
 - **Actualización 3** (2026-11-05, plan en [`actualizacion-3.md`](plans/actualizacion-3.md)): los renglones del mismo
   gusto van en un solo ítem del carrito (US-64), y cada venta imprime su comanda de 57 mm desde Ventas/Pedidos, con un
-  número de pedido correlativo (US-65, migración **0033**: `sales.order_number`). Supabase pasa a **34** cuando el dev
-  la migre; recién ahí va a `main` con el tag `actualizacion-3`.
+  número de pedido correlativo (US-65, migración **0033**: `sales.order_number`). Supabase está en **34** (la migró el dev
+  el 2026-11-05). En `main` con el tag `actualizacion-3`.
 - **US-43** (sin sprint asignado): la web pública (`/home`, `/product`, `/api/public`) está **apagada salvo
   `PUBLIC_CATALOG=true`**, y sin sesión se entra por `/login`. Para prenderla se carga la variable en Vercel y se
   redespliega. Plan en [`US-43-sin-web-publica.md`](plans/US-43-sin-web-publica.md).

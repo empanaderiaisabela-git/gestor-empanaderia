@@ -5018,7 +5018,7 @@ provisorias del agente (P-1 a P-6).
 | --- | -- | ------ | ------ | ---------- | ---------- |
 | 1   | [US-64](#us-64--gustos-iguales-en-un-solo-ítem-del-carrito) | Gustos iguales en un solo ítem del carrito | En revisión | — | 1 h 30 min |
 | 2   | [US-65](#us-65--comanda-de-57-mm) | Comanda de 57 mm | En revisión | US-55 | 4 h |
-| 3   | [T-28](#t-28--cierre-de-la-actualización-3) | Cierre de la Actualización 3 | En progreso | todos | 1 h |
+| 3   | [T-28](#t-28--cierre-de-la-actualización-3) | Cierre de la Actualización 3 | En revisión | todos | 1 h |
 |     |    | **Total de la actualización** | | | **6 h 30 min** |
 
 ### US-64 · Gustos iguales en un solo ítem del carrito
@@ -5086,7 +5086,7 @@ el cadete tengan el pedido, el cliente y el envío en papel.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | En progreso |
+| Estado       | En revisión |
 | Dueño        | Agente    |
 | Inicio       | 2026-11-05 |
 | Tamaño       | S         |
@@ -5102,8 +5102,9 @@ que la versión que use el cliente sea la que se probó.
 
 - [x] **CA-1** · `npm run verify` completo y todos los E2E en verde sobre `develop` · Estimación: 40 min · Completado: 2026-11-05 22:55
 
-- [ ] **CA-2** · El dev migra Supabase y comprueba que quedan 34 migraciones; recién ahí, merge `develop → main` con el tag `actualizacion-3` · Estimación: 20 min · Completado: —
+- [x] **CA-2** · El dev migra Supabase y comprueba que quedan 34 migraciones; recién ahí, merge `develop → main` con el tag `actualizacion-3` · Estimación: 20 min · Completado: 2026-11-05 23:22
 
 **Notas**
 
 - CA-1: `npm run verify` verde en US-65 (1301 tests unit y de componente, 144 de integración, cobertura 96,5 / 90,3, mutación 85,7 y build) y los 84 E2E en verde sobre `develop` (2026-11-05). El E2E de la comanda pasó a Capresse porque con Humita le cambiaba el stock al E2E de Stock.
+- CA-2: el dev migró Supabase el 2026-11-05 y la consulta da 34; con eso, merge a `main` con el tag `actualizacion-3`.
