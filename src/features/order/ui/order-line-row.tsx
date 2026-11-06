@@ -8,7 +8,7 @@ import { formatMoney } from '@/lib/format-money';
 import { HamSwitch } from './ham-switch';
 import type { OrderBoardModel } from './use-order-board';
 
-export type LineRowActions = { onRemove: (lineId: string) => void; onRemoveOne: (lineId: string) => void; onAddOne: (lineId: string) => void; canAddOne: (line: OrderLine) => boolean; onToggleHam: (lineId: string) => void };
+export type LineRowActions = { onRemove: (lineId: string) => void; onRemoveOne: (lineId: string) => void; onAddOne: (lineId: string) => void; onAddUnit: (lineId: string) => void; canAddOne: (line: OrderLine) => boolean; onToggleHam: (lineId: string) => void };
 type OrderLineRowProps = { line: OrderLine; board: OrderBoardModel; actions: LineRowActions };
 
 const iconButton = 'p-1.5 rounded-lg text-zinc-800 hover:bg-zinc-100 dark:text-zinc-100 dark:hover:bg-zinc-800 disabled:opacity-40 disabled:cursor-not-allowed';

@@ -7,7 +7,7 @@ import { createFakePromotionUnitOfWork, type FakePromotionUnitOfWork } from '@/f
 import { createFakeShippingUnitOfWork, type FakeShippingUnitOfWork } from '@/features/shipping/testing/fake-shipping-unit-of-work';
 import { createFakeStockUnitOfWork, type FakeStockUnitOfWork } from '@/features/stock/testing/fake-stock-unit-of-work';
 
-export type FakeSale = NewSale & { id: string; createdAt: Date; lines: NewSaleLine[]; payments: NewPayment[] };
+export type FakeSale = NewSale & { id: string; orderNumber: number; createdAt: Date; lines: NewSaleLine[]; payments: NewPayment[] };
 export type FakeCustomer = NewCustomer & { id: string; isActive: boolean };
 
 export type FakeCheckoutUnitOfWork = CheckoutUnitOfWork & {
@@ -32,7 +32,7 @@ function fakeSaleWriter(sales: FakeSale[]): SaleWriter {
   return {
     insertSale: async (sale) => {
       const id = crypto.randomUUID();
-      sales.push({ ...sale, id, createdAt: new Date(Date.UTC(2026, 9, 25, 15, sales.length)), lines: [], payments: [] });
+      sales.push({ ...sale, id, orderNumber: Math.max(0, ...sales.map((row) => row.orderNumber)) + 1, createdAt: new Date(Date.UTC(2026, 9, 25, 15, sales.length)), lines: [], payments: [] });
       return id;
     },
     insertLine: async (saleId, line) => {

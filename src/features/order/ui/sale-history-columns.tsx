@@ -1,4 +1,4 @@
-import { FileText, Trash2 } from 'lucide-react';
+import { FileText, Printer, Trash2 } from 'lucide-react';
 import type { JSX } from 'react';
 import { EntityCard } from '@/components/ui/entity-card';
 import type { ColumnDef } from '@/components/ui/virtualized-data-table';
@@ -7,6 +7,7 @@ import { describePayment } from '@/features/order/domain/payment-describe';
 import { buyerLabel, type SaleDef } from '@/features/order/domain/sale-history.schema';
 import { formatDateTime } from '@/lib/format-date-time';
 import { formatMoney } from '@/lib/format-money';
+import { printComanda } from './print-comanda';
 
 export type SaleRowActions = { isAdmin: boolean; onReceipt: (sale: SaleDef) => void; onVoid: (sale: SaleDef) => void };
 
@@ -35,6 +36,9 @@ export function SaleButtons({ sale, actions }: { sale: SaleDef; actions: SaleRow
     <>
       <button onClick={() => actions.onReceipt(sale)} className={`${button} text-brand-600 dark:text-brand-400`} title='Ver comprobante'>
         <FileText className='w-4 h-4' />
+      </button>
+      <button onClick={() => printComanda(sale)} className={`${button} text-zinc-700 dark:text-zinc-200`} title='Imprimir comanda'>
+        <Printer className='w-4 h-4' />
       </button>
       {actions.isAdmin && (
         <button onClick={() => actions.onVoid(sale)} className={`${button} text-red-600 dark:text-red-400`} title='Anular venta'>

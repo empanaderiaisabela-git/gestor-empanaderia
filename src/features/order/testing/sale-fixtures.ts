@@ -3,6 +3,7 @@ import type { SaleDef } from '@/features/order/domain/sale-history.schema';
 export function saleDef(overrides: Partial<SaleDef> = {}): SaleDef {
   return {
     id: '20000000-0000-4000-8000-000000000001',
+    orderNumber: 143,
     createdAt: '2026-10-25T17:05:00.000Z',
     buyerName: 'Marta',
     buyerPhone: null,
@@ -14,8 +15,8 @@ export function saleDef(overrides: Partial<SaleDef> = {}): SaleDef {
     shippingTitle: null,
     shippingAmount: 0,
     lines: [
-      { group: 'empanadas', presentationKey: 'u6', promotionId: null, quantity: 1, unitPrice: 6500, subtotal: 6500, description: '2 Carne + 4 Pollo' },
-      { group: 'pizzas', presentationKey: 'pizza_2', promotionId: null, quantity: 1, unitPrice: 12000, subtotal: 12000, description: 'Muzza / Napolitana' },
+      { group: 'empanadas', presentationKey: 'u6', promotionId: null, promotionName: null, quantity: 1, unitPrice: 6500, subtotal: 6500, description: '2 Carne + 4 Pollo', items: [{ name: 'Carne', units: 2 }, { name: 'Pollo', units: 4 }] },
+      { group: 'pizzas', presentationKey: 'pizza_2', promotionId: null, promotionName: null, quantity: 1, unitPrice: 12000, subtotal: 12000, description: 'Muzza / Napolitana', items: [{ name: 'Muzza', units: 0.5 }, { name: 'Napolitana', units: 0.5 }] },
     ],
     payments: [
       { type: 'efectivo', amount: 10000, cardName: null, installments: null, surchargeAmount: null },

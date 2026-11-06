@@ -18,6 +18,7 @@ describe('cobrar el pedido (US-6)', () => {
     expect(fake.sales).toEqual([
       {
         id: result.saleId,
+        orderNumber: 1,
         createdAt: expect.any(Date),
         vendorId: CALLER.id,
         customerId: CLIENTE.id,

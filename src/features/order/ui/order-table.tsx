@@ -1,5 +1,7 @@
 import type { JSX } from 'react';
+import { groupLines } from '@/features/order/domain/order-groups';
 import type { OrderLine } from '@/features/order/domain/order-line';
+import { GroupedLineRow } from './grouped-line-row';
 import type { PromoLine } from '@/features/order/domain/promo-line';
 import { type LineRowActions, OrderLineRow } from './order-line-row';
 import { PromoLineRow, type PromoRowActions } from './promo-line-row';
@@ -23,9 +25,7 @@ export function OrderTable({ lines, promos = [], board, lineActions, promoAction
         </tr>
       </thead>
       <tbody>
-        {lines.map((line) => (
-          <OrderLineRow key={line.id} line={line} board={board} actions={lineActions} />
-        ))}
+        {groupLines(lines).map((row) => (row.lines.length === 1 ? <OrderLineRow key={row.key} line={row.lines[0]} board={board} actions={lineActions} /> : <GroupedLineRow key={row.key} lines={row.lines} board={board} actions={lineActions} />))}
         {promos.map((promo) => (
           <PromoLineRow key={promo.id} promo={promo} board={board} actions={promoActions} />
         ))}

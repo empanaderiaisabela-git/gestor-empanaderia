@@ -1,4 +1,4 @@
-import { pgTable, uuid, varchar, timestamp, pgEnum, numeric, integer, jsonb, index, boolean, check } from 'drizzle-orm/pg-core';
+import { pgTable, uuid, varchar, timestamp, pgEnum, numeric, integer, jsonb, index, boolean, check, serial } from 'drizzle-orm/pg-core';
 import { sql, relations } from 'drizzle-orm';
 import { cards } from './card-schema';
 import { shippingOptions } from './shipping-schema';
@@ -66,6 +66,7 @@ export const sales = pgTable(
     shippingOptionId: uuid('shipping_option_id').references(() => shippingOptions.id),
     shippingTitle: varchar('shipping_title', { length: 60 }),
     shippingAmount: numeric('shipping_amount', { precision: 10, scale: 2 }).default('0').notNull(),
+    orderNumber: serial('order_number').notNull().unique('sales_order_number_unique'),
     createdAt: timestamp('created_at').defaultNow().notNull(),
   },
   (table) => [
