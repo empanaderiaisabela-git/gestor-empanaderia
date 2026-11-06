@@ -19,6 +19,7 @@
 - [Actualización 2 · Precio de venta en el Stock del vendedor](#actualización-2--precio-de-venta-en-el-stock-del-vendedor)
 - [Actualización 3 · Comanda y gustos agrupados](#actualización-3--comanda-y-gustos-agrupados)
 - [Actualización 4 · Comanda en negrita](#actualización-4--comanda-en-negrita)
+- [Actualización 5 · Precios enteros en la comanda](#actualización-5--precios-enteros-en-la-comanda)
 
 ## Convenciones
 
@@ -5141,3 +5142,32 @@ que la versión que use el cliente sea la que se probó.
 
 - Nivel 1: sólo el estilo de `print-comanda.ts`. Sin migración: Supabase sigue en 34.
 - Si hace falta más oscuro: la densidad ("Darkness") del driver de la térmica en Windows.
+
+------------------------------------------------------------------------------------------------------------------------
+
+## Actualización 5 · Precios enteros en la comanda
+
+------------------------------------------------------------------------------------------------------------------------
+
+### BUG-32 · La comanda corta el último carácter de los precios
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-11-06 |
+| Tamaño       | XS        |
+| Depende de   | US-66     |
+| Plan         | Pedido directo del dev (2026-11-06) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Actual**: en la térmica, "$32.000" sale "$32.00": la letra de 2,5 mm ocupa 48 mm justos y la columna 32 queda fuera del área imprimible.
+
+**Esperado**: los 32 caracteres entran completos, con margen.
+
+- [x] **CA-1** · La letra pasa a 2,3 mm (32 columnas = 44,2 mm) y el ancho a 46 mm. El texto de la comanda no cambia. Lo cubre `print-comanda.test.tsx` · Estimación: 10 min · Completado: 2026-11-06 13:49
+
+**Notas**
+
+- Nivel 1. Entran precios de hasta 7 cifras ("$1.000.000"). No se probó en la térmica del local.
