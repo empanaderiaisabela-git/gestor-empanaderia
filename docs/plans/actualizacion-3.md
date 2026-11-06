@@ -67,4 +67,12 @@ Pedido del cliente, por el dev (2026-11-05, textual en `docs/requerimientos/spec
 
 ## Resumen para el dev
 
-(La lista simple de cada commit, a medida que se integra.)
+La lista simple de cada commit, a medida que se integra a `develop`.
+
+### US-64 · Gustos iguales en un solo ítem del carrito
+
+- Qué es: si en el carrito hay ½ docena de un gusto y 1 unidad del mismo gusto, se ven en una sola fila: "½ docena +
+  1 unidad", 7 unidades, con el precio de siempre. "+" suma una empanada más y "−" saca primero las sueltas.
+- Por qué importa: el vendedor ve de un vistazo cuántas lleva de cada gusto.
+- Adónde va: `develop`. No cambia el cobro, el comprobante ni el stock: por dentro siguen siendo los mismos renglones.
+- Qué no entra: las surtidas y las mitad y mitad no se juntan.

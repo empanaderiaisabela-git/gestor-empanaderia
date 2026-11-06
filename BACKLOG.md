@@ -5016,7 +5016,7 @@ provisorias del agente (P-1 a P-6).
 
 | #   | ID | Título | Estado | Depende de | Estimación |
 | --- | -- | ------ | ------ | ---------- | ---------- |
-| 1   | [US-64](#us-64--gustos-iguales-en-un-solo-ítem-del-carrito) | Gustos iguales en un solo ítem del carrito | En progreso | — | 1 h 30 min |
+| 1   | [US-64](#us-64--gustos-iguales-en-un-solo-ítem-del-carrito) | Gustos iguales en un solo ítem del carrito | En revisión | — | 1 h 30 min |
 | 2   | [US-65](#us-65--comanda-de-57-mm) | Comanda de 57 mm | Pendiente | US-55 | 4 h |
 | 3   | [T-28](#t-28--cierre-de-la-actualización-3) | Cierre de la Actualización 3 | Pendiente | todos | 1 h |
 |     |    | **Total de la actualización** | | | **6 h 30 min** |
@@ -5025,7 +5025,7 @@ provisorias del agente (P-1 a P-6).
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | En progreso |
+| Estado       | En revisión |
 | Dueño        | Agente    |
 | Inicio       | 2026-11-05 |
 | Tamaño       | M         |
@@ -5039,15 +5039,16 @@ empanadas de Jamón y queso se lean como 7 y no como ½ docena por un lado y 1 u
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · ½ docena de Jamón y queso más 1 unidad de Jamón y queso se ven en una sola fila: "Empanadas · Jamón y queso", cantidad "½ docena + 1 unidad", 7 unidades y el importe de siempre (precio de la ½ docena + precio de la unidad). Las surtidas y las mitad y mitad no se juntan, ni dos renglones con distinto jamón extra · Estimación: 45 min · Completado: —
+- [x] **CA-1** · ½ docena de Jamón y queso más 1 unidad de Jamón y queso se ven en una sola fila: "Empanadas · Jamón y queso", cantidad "½ docena + 1 unidad", 7 unidades y el importe de siempre (precio de la ½ docena + precio de la unidad). Las surtidas y las mitad y mitad no se juntan, ni dos renglones con distinto jamón extra. Lo cubren `order-groups.test.ts` y `grouped-line-row.test.tsx` · Estimación: 45 min · Completado: 2026-11-05 22:17
 
-- [ ] **CA-2** · En esa fila, "+" suma 1 unidad (respetando el stock) y "−" saca primero las unidades sueltas y después la ½ docena entera (7 → 6 → vacío); el tacho saca todo (D-6) · Estimación: 30 min · Completado: —
+- [x] **CA-2** · En esa fila, "+" suma 1 unidad (respetando el stock) y "−" saca primero las unidades sueltas y después la ½ docena entera (7 → 6 → vacío); el tacho saca todo (D-6). Lo cubren `order-add-unit.test.ts` y `grouped-line-row.test.tsx` · Estimación: 30 min · Completado: 2026-11-05 22:17
 
-- [ ] **CA-3** · El cobro, el comprobante y el stock no cambian: por dentro siguen siendo los mismos renglones. Lo cubren tests de dominio, del store y de componente · Estimación: 15 min · Completado: —
+- [x] **CA-3** · El cobro, el comprobante y el stock no cambian: por dentro siguen siendo los mismos renglones. Los 312 tests de `order` siguen en verde sin cambios · Estimación: 15 min · Completado: 2026-11-05 22:17
 
 **Notas**
 
 - Nivel 2: lógica acotada del carrito, sin servidor ni base.
+- Probado en el navegador: ½ docena de J&Q + 1 unidad de J&Q quedan en una fila con "½ docena + 1 unidad", 7 unidades y $18.000 ($15.000 + $3.000).
 
 ### US-65 · Comanda de 57 mm
 
