@@ -232,6 +232,13 @@
       "when": 1793726161550,
       "tag": "0032_envios",
       "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1793928092446,
+      "tag": "0033_numero-de-pedido",
+      "breakpoints": true
     }
   ]
 }

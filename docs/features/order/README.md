@@ -187,6 +187,32 @@ POS viejo ("Consideraciones del primer sprint" de `specs.md`).
 El historial muestra sólo las ventas del modelo nuevo (con líneas). Las del POS viejo quedan hasta que T-12 las
 borre.
 
+## Gustos agrupados en el carrito (US-64)
+
+- Los renglones completos de un solo gusto, del mismo grupo y con el mismo jamón extra, se ven en una sola fila aunque
+  sean de presentaciones distintas: ½ docena de Jamón y queso + 1 unidad de Jamón y queso es "½ docena + 1 unidad", 7
+  unidades, con la suma de los dos precios (`domain/order-groups.ts`, `ui/grouped-line-row.tsx`).
+- "+" suma 1 unidad del gusto (`addUnit`, en la presentación de 1 unidad) y "−" saca primero de la presentación más
+  chica (`lastToRemove`): 7 → 6 → vacío. El tacho saca la fila entera.
+- Es sólo cómo se ve y se edita: por dentro siguen siendo los mismos renglones, así que el cobro, el comprobante, el
+  historial y el stock no cambian. Las surtidas y las mitad y mitad no se juntan.
+
+## Comanda de 57 mm (US-65)
+
+- En Ventas/Pedidos, al lado de "Ver comprobante", el botón "Imprimir comanda" (admin y vendedor) abre una ventana con
+  la comanda y el diálogo de impresión; se confirma con Enter sobre la térmica (`ui/print-comanda.ts`). La ventana se
+  cierra sola después de imprimir. El texto va con `textContent`, nunca como HTML.
+- El texto lo arma `buildComanda(sale, marca)` (`domain/comanda.ts`, `comanda-detail.ts`, `comanda-format.ts`): 32
+  caracteres por renglón, monoespaciada, a 48 mm (el ancho imprimible del rollo de 57 mm).
+- Lleva: la marca, `NRO PEDIDO: #000143` (correlativo de 6 dígitos, `sales.order_number`), fecha y hora de Argentina,
+  `TIPO: ENVIO A DOMICILIO` o `RETIRA EN LOCAL`, los datos del cliente (los que haya; el domicilio largo se parte en
+  renglones), el detalle, subtotal, descuento (si hubo), envío (si hubo), total general y medio de pago, sin "Paga con".
+- Detalle: el nombre del grupo o de la promo, y debajo un renglón por gusto con sus unidades; el subtotal del producto
+  va en el primero. Los gustos iguales de renglones distintos se juntan ("7x JAMÓN Y QUESO"). Las mitades salen como
+  "1/2x MUZZA" y el jamón extra como "+ JAMÓN EXTRA".
+- El historial (`sale-history.repository.ts`) trae para eso el número de pedido, el nombre de la promo de cada línea y
+  sus gustos con las unidades (`sale_line_items` + `menu_items`).
+
 ## Errores
 
 | Situación | Código | Mensaje | Test |

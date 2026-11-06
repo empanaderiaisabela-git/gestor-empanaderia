@@ -8,16 +8,19 @@ export const saleLineRowSchema = z.object({
   group: z.enum(MENU_GROUPS).nullable(),
   presentationKey: z.string().nullable(),
   promotionId: z.uuid().nullable(),
+  promotionName: z.string().nullable(),
   quantity: z.number(),
   unitPrice: amount,
   subtotal: amount,
   description: z.string(),
+  items: z.array(z.object({ name: z.string(), units: amount })),
 });
 
 export const salePaymentRowSchema = z.object({ type: z.enum(PAYMENT_TYPES), amount, cardName: z.string().nullable(), installments: z.number().nullable(), surchargeAmount: amount.nullable() });
 
 export const saleRowSchema = z.object({
   id: z.uuid(),
+  orderNumber: z.number(),
   createdAt: z.union([z.date(), z.string()]),
   buyerName: z.string().nullable(),
   buyerPhone: z.string().nullable(),

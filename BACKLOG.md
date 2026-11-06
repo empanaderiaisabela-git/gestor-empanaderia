@@ -5017,7 +5017,7 @@ provisorias del agente (P-1 a P-6).
 | #   | ID | Título | Estado | Depende de | Estimación |
 | --- | -- | ------ | ------ | ---------- | ---------- |
 | 1   | [US-64](#us-64--gustos-iguales-en-un-solo-ítem-del-carrito) | Gustos iguales en un solo ítem del carrito | En revisión | — | 1 h 30 min |
-| 2   | [US-65](#us-65--comanda-de-57-mm) | Comanda de 57 mm | Pendiente | US-55 | 4 h |
+| 2   | [US-65](#us-65--comanda-de-57-mm) | Comanda de 57 mm | En revisión | US-55 | 4 h |
 | 3   | [T-28](#t-28--cierre-de-la-actualización-3) | Cierre de la Actualización 3 | Pendiente | todos | 1 h |
 |     |    | **Total de la actualización** | | | **6 h 30 min** |
 
@@ -5054,9 +5054,9 @@ empanadas de Jamón y queso se lean como 7 y no como ½ docena por un lado y 1 u
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
+| Estado       | En revisión |
 | Dueño        | Agente    |
-| Inicio       | —         |
+| Inicio       | 2026-11-05 |
 | Tamaño       | L         |
 | Depende de   | US-55     |
 | Plan         | [`docs/plans/actualizacion-3.md`](docs/plans/actualizacion-3.md) |
@@ -5068,17 +5068,19 @@ el cadete tengan el pedido, el cliente y el envío en papel.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · Migración 0033, aditiva: `sales.order_number`, correlativo y único. Las ventas nuevas toman el siguiente número y las que ya existen reciben el suyo al migrar. Lo cubren `additive-migrations.test.ts` y un test de integración · Estimación: 45 min · Completado: —
+- [x] **CA-1** · Migración 0033, aditiva: `sales.order_number`, correlativo y único. Las ventas nuevas toman el siguiente número y las que ya existen reciben el suyo al migrar. Lo cubren `additive-migrations.test.ts`, `numero-de-pedido.migration.int.test.ts` y `sale-history-comanda.int.test.ts` · Estimación: 45 min · Completado: 2026-11-05 22:35
 
-- [ ] **CA-2** · En Ventas/Pedidos, al lado de "Ver comprobante", el botón "Imprimir comanda" abre el diálogo de impresión con la comanda (D-4). Lo ven el admin y el vendedor · Estimación: 1 h · Completado: —
+- [x] **CA-2** · En Ventas/Pedidos, al lado de "Ver comprobante", el botón "Imprimir comanda" abre el diálogo de impresión con la comanda (D-4). Lo ven el admin y el vendedor. Lo cubren `print-comanda.test.tsx` y el E2E `comanda.spec.ts` · Estimación: 1 h · Completado: 2026-11-05 22:35
 
-- [ ] **CA-3** · La comanda tiene 32 caracteres por renglón y el formato del ejemplo: nombre del local, `NRO PEDIDO: #000143` (D-1), fecha y hora de Argentina, `TIPO` (D-3), datos del cliente, un renglón por gusto con su cantidad y el subtotal del producto en el primero (D-5), subtotal, descuento si hubo, envío si hubo, total general y medio de pago, sin "Paga con" (D-2). Lo cubren tests de la función que arma el texto · Estimación: 2 h · Completado: —
+- [x] **CA-3** · La comanda tiene 32 caracteres por renglón y el formato del ejemplo: nombre del local, `NRO PEDIDO: #000143` (D-1), fecha y hora de Argentina, `TIPO` (D-3), datos del cliente, un renglón por gusto con su cantidad y el subtotal del producto en el primero (D-5), subtotal, descuento si hubo, envío si hubo, total general y medio de pago, sin "Paga con" (D-2). Lo cubre `comanda.test.ts` · Estimación: 2 h · Completado: 2026-11-05 22:35
 
-- [ ] **CA-4** · Los gustos iguales de renglones distintos salen juntos ("7x JAMON Y QUESO" con el importe sumado) · Estimación: 15 min · Completado: —
+- [x] **CA-4** · Los gustos iguales de renglones distintos salen juntos ("7x JAMON Y QUESO" con el importe sumado). Lo cubren `comanda.test.ts` y el E2E `comanda.spec.ts` · Estimación: 15 min · Completado: 2026-11-05 22:35
 
 **Notas**
 
-- Nivel 3: migración y lectura de ventas. Supabase pasa a 34 migraciones; la migra el dev antes de `main` (D-7).
+- Nivel 3: migración y lectura de ventas. Supabase pasa a 34 migraciones; la migra el dev antes de `main` (D-7).
+- La comanda se miró en una captura del navegador (Chromium, ventana de 360 px): 32 columnas parejas a 48 mm. No se probó en la térmica del local.
+- El encabezado "Cant Producto Subtot" del ejemplo tenía 33 caracteres; quedó en 32, como el resto (I-1 del plan).
 
 ### T-28 · Cierre de la Actualización 3
 

@@ -55,7 +55,7 @@ Pedido del cliente, por el dev (2026-11-05, textual en `docs/requerimientos/spec
 | # | Pregunta | Qué se eligió y qué cambia si el dev dice otra cosa |
 |---|---|---|
 | P-1 | Con un renglón por gusto, "JAMON Y QUESO" puede ser una empanada o una ciabatta. ¿Cómo lo distingue la cocina? | Antes de los gustos de cada grupo va su nombre en un renglón ("EMPANADAS", "CIABATTAS"), y las promos con su nombre ("PROMO DOCENA + COCA"). Si no los querés, se sacan esos renglones. |
-| P-2 | ¿Mayúsculas sin tildes, como el ejemplo? | Mayúsculas en los títulos y los gustos, con tildes: la térmica imprime por el driver de Windows y las tildes salen bien. Los datos del cliente van como se cargaron. |
+| P-2 | ¿Mayúsculas sin tildes, como el ejemplo? | Los rótulos fijos van tal cual el ejemplo ("TIPO: ENVIO A DOMICILIO", "METODO PAGO"). La marca, los grupos y los gustos van en mayúsculas con sus tildes ("EMPANADERÍA ISABELA", "JAMÓN Y QUESO"): la térmica imprime por el driver de Windows y las tildes salen bien. Los datos del cliente van como se cargaron. |
 | P-3 | ¿Qué pasa con un domicilio largo? | Se parte en renglones de 32 caracteres; no se corta, porque lo necesita el cadete. |
 | P-4 | ¿Y el título del envío ("Centro")? | No sale, como en el ejemplo: sólo el renglón `ENVIO` con su monto. |
 | P-5 | Sin envío, ¿el título del bloque? | `[ DATOS DEL CLIENTE ]`; con envío, `[ DATOS DEL CLIENTE / ENVIO ]`. Sin teléfono o sin domicilio, ese renglón no sale. |
@@ -63,7 +63,11 @@ Pedido del cliente, por el dev (2026-11-05, textual en `docs/requerimientos/spec
 
 ## Decisiones tomadas durante la implementación
 
-(Se completan a medida que aparecen.)
+| # | Pregunta | Qué se eligió y qué cambia si el dev dice otra cosa |
+|---|---|---|
+| I-1 | El renglón "Cant Producto Subtot" del ejemplo tiene 33 caracteres y el resto 32. ¿Cuál vale? | 32, el ancho que entra en el rollo de 57 mm con la letra elegida. |
+| I-2 | ¿Cómo se ve un nombre de producto que no entra al lado del precio? | Sigue en el renglón de abajo, con sangría ("1x CEPITA 1.0L ANANA $2.500" y "   TROPIC"); no se corta. |
+| I-3 | Si hubo descuento, el total no cierra con subtotal + envío. ¿Se muestra? | Sí: el renglón "DESCUENTO: -$1.000" entre el subtotal y el envío. |
 
 ## Resumen para el dev
 
@@ -76,3 +80,14 @@ La lista simple de cada commit, a medida que se integra a `develop`.
 - Por qué importa: el vendedor ve de un vistazo cuántas lleva de cada gusto.
 - Adónde va: `develop`. No cambia el cobro, el comprobante ni el stock: por dentro siguen siendo los mismos renglones.
 - Qué no entra: las surtidas y las mitad y mitad no se juntan.
+
+### US-65 · Comanda de 57 mm
+
+- Qué es: en Ventas/Pedidos, cada venta tiene un botón con una impresora, al lado del comprobante. Abre la comanda y
+  el diálogo de impresión: se elige la térmica y Enter. Lleva el número de pedido (#000143), fecha, hora, si es envío o
+  retira en el local, los datos del cliente, cada gusto con sus unidades, el subtotal, el envío, el total y el medio de
+  pago.
+- Por qué importa: la cocina y el cadete tienen el pedido en papel.
+- Adónde va: `develop`. Trae la migración 0033, que agrega el número de pedido a las ventas (las de antes también
+  reciben el suyo). **Antes de `main` la tenés que migrar en Supabase (queda en 34).**
+- Qué no entra: "Paga con" y el vuelto (elegiste sacarlos). No la probé en tu térmica: la miré en pantalla.

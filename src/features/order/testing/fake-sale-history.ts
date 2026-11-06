@@ -6,8 +6,11 @@ const money = (value: number): string => value.toFixed(2);
 
 function viewOf(fake: FakeCheckoutUnitOfWork, sale: FakeSale): SaleView {
   const lines = [...sale.lines].sort((a, b) => a.position - b.position);
+  const nameOf = (menuItemId: string): string => fake.stock.state.items.find((item) => item.id === menuItemId)?.name ?? '?';
+  const promoName = (promotionId: string | null): string | null => fake.promotions.state.rows.find((promo) => promo.id === promotionId)?.name ?? null;
   return {
     id: sale.id,
+    orderNumber: sale.orderNumber,
     createdAt: sale.createdAt,
     buyerName: sale.buyerName,
     buyerPhone: sale.buyerPhone,
@@ -18,7 +21,7 @@ function viewOf(fake: FakeCheckoutUnitOfWork, sale: FakeSale): SaleView {
     discountPercentage: money(sale.discountPercentage),
     shippingTitle: sale.shippingTitle,
     shippingAmount: money(sale.shippingAmount),
-    lines: lines.map(({ group, presentationKey, promotionId, quantity, unitPrice, subtotal, description }) => ({ group, presentationKey, promotionId, quantity, unitPrice: money(unitPrice), subtotal: money(subtotal), description })),
+    lines: lines.map(({ group, presentationKey, promotionId, quantity, unitPrice, subtotal, description, items }) => ({ group, presentationKey, promotionId, promotionName: promoName(promotionId), quantity, unitPrice: money(unitPrice), subtotal: money(subtotal), description, items: items.map(({ menuItemId, units }) => ({ name: nameOf(menuItemId), units: units.toFixed(1) })) })),
     payments: sale.payments.map(({ type, amount, cardId, installments, surchargeAmount }) => ({ type, amount: money(amount), cardName: fake.cards.state.rows.find((card) => card.id === cardId)?.name ?? null, installments, surchargeAmount: surchargeAmount === null ? null : money(surchargeAmount) })),
   };
 }
