@@ -325,3 +325,60 @@ junto con esta actualización entran dos cambios muy pequeños adicionales:
 nro 1: en ventas, la tarjeta de promos cada vez que crece estira la totalidad de la pagina hacia abajo; quiero que funcione como componente scrolleable aislado, quiero que se muestren hasta 3 promos nada mas, y la mitad de la 4ta promo, asi se da a entender que eso sigue hacia abajo y se puede scrollear para seguir viendo el resto de las promos.
 
 nro 2: cuando selecciono la opcion de vender empanadas, que hay que rellenar, me muestra todas las empanadas disponibles que hay: quiero que ese componente también sea scrolleable, que muestre hasta 5 empanadas y lam mitad de la 6ta para que se pueda interpretar que eso sigue hacia abajo, y que además, el cartel de arriba de este form que dice cuantas te falta, quiero que esté en mayuscula y que sea mas grande el tamaño de los px de sus letras, para que se note bien cuantas faltan.
+
+---------------------------------------------------------------------------
+
+Pedido del cliente (2026-11-05), Actualización 3:
+
+nueva actualizacion, pequeña tambien:
+
+mi cliente adquirió una impresora termica de 57mm... Quiero que pueda imprimir la comanda.
+
+LA idea es la siguiente, por venta, ahora aparece al lado del ticket de compra, otro boton mas con la comanda.
+
+La comanda extra los datos de la propia venta que se hizo, y anotará los datos que te proveo en el siguiente texto:
+
+================================
+     EMPANADERIA ISABELA
+================================
+NRO PEDIDO: #0143
+FECHA: 05/11/2026   HORA: 21:42
+TIPO: ENVIO A DOMICILIO
+--------------------------------
+[ DATOS DEL CLIENTE / ENVIO ]
+Cliente: Juan Perez
+Direcc: Av. G. Hudson 1250
+Tel: 280-4567890
+--------------------------------
+[ DETALLE DE LA ORDEN ]
+Cant Producto              Subtot
+--------------------------------
+2x EMPANADAS                $3.200
+   * CARNE SUAVE
+1x EMPANADAS                $1.600
+   * POLLO
+1x EMPANADAS                $1.800
+   * BONDIOLA MOSTAZA MIEL
+1x EMPANADAS                $1.800
+   * MUZZA CEB Y ROQUEFORT
+1x CEPITA BOTELLA 1.0L      $2.500
+   * ANANA TROPIC
+--------------------------------
+SUBTOTAL:                  $10.900
+ENVIO:                      $1.500
+================================
+TOTAL GENERAL:             $12.400
+================================
+METODO PAGO: Efectivo
+Paga con: $15.000 (Vuelto: $2.600)
+--------------------------------
+       ¡GRACIAS POR SU COMPRA!
+================================
+
+así se vería un ejemplar de impresión. Toda la información se obtiene de la propia compra.
+
+Obviamente esto es un ejemplo, tu deberías rellenar con la info de la compra cada item que contiene info.
+
+Para practicidad, agreguemos también que en la propia compra, en el carrito, añadir 6 empanadas de jamon y queso, y luego agregar 1 empanada de jamon y queso (o sea, el cliente pide 7 empanadas de jamon y queso) agrupe todo en un solo item de compra, sumando las 7 empandas por ser del mismo gusto.
+
+Por supuesto, el precio va a ser el mismo que era antes de este fix, es decir, el precio de la media docena mas el precio de la unidad.

@@ -17,6 +17,7 @@
 - [Sin sprint asignado](#sin-sprint-asignado)
 - [Actualización 1 · Envíos](#actualización-1--envíos)
 - [Actualización 2 · Precio de venta en el Stock del vendedor](#actualización-2--precio-de-venta-en-el-stock-del-vendedor)
+- [Actualización 3 · Comanda y gustos agrupados](#actualización-3--comanda-y-gustos-agrupados)
 
 ## Convenciones
 
@@ -4996,3 +4997,106 @@ Supabase, de forma que la versión que use el cliente sea la que se probó.
 - Nivel 1: sólo cambia qué columnas se ven. `fetchMenuItems` ya le mandaba los precios al vendedor (sólo le oculta el costo).
 - Las tarjetas de Stock en el celular no cambian: tampoco le muestran el precio al admin.
 - El dev pidió hacer todo el proceso hasta `main` sin frenar (2026-11-04).
+
+------------------------------------------------------------------------------------------------------------------------
+
+## Actualización 3 · Comanda y gustos agrupados
+
+------------------------------------------------------------------------------------------------------------------------
+
+**Objetivo**: pedido del cliente del 2026-11-05: imprimir la comanda de cada venta en la térmica de 57 mm, y juntar en
+un solo ítem del carrito los renglones del mismo gusto.
+
+**Restricción**: la migración es sólo aditiva. El dev migra Supabase antes del merge a `main` (D-7).
+
+**Plan**: [`docs/plans/actualizacion-3.md`](docs/plans/actualizacion-3.md), con las decisiones del dev (D-1 a D-7) y las
+provisorias del agente (P-1 a P-6).
+
+### Resumen de la Actualización 3
+
+| #   | ID | Título | Estado | Depende de | Estimación |
+| --- | -- | ------ | ------ | ---------- | ---------- |
+| 1   | [US-64](#us-64--gustos-iguales-en-un-solo-ítem-del-carrito) | Gustos iguales en un solo ítem del carrito | En progreso | — | 1 h 30 min |
+| 2   | [US-65](#us-65--comanda-de-57-mm) | Comanda de 57 mm | Pendiente | US-55 | 4 h |
+| 3   | [T-28](#t-28--cierre-de-la-actualización-3) | Cierre de la Actualización 3 | Pendiente | todos | 1 h |
+|     |    | **Total de la actualización** | | | **6 h 30 min** |
+
+### US-64 · Gustos iguales en un solo ítem del carrito
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En progreso |
+| Dueño        | Agente    |
+| Inicio       | 2026-11-05 |
+| Tamaño       | M         |
+| Depende de   | —         |
+| Plan         | [`docs/plans/actualizacion-3.md`](docs/plans/actualizacion-3.md) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como vendedor quiero que los renglones del mismo gusto queden en un solo ítem del carrito, de forma que 7
+empanadas de Jamón y queso se lean como 7 y no como ½ docena por un lado y 1 unidad por otro.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · ½ docena de Jamón y queso más 1 unidad de Jamón y queso se ven en una sola fila: "Empanadas · Jamón y queso", cantidad "½ docena + 1 unidad", 7 unidades y el importe de siempre (precio de la ½ docena + precio de la unidad). Las surtidas y las mitad y mitad no se juntan, ni dos renglones con distinto jamón extra · Estimación: 45 min · Completado: —
+
+- [ ] **CA-2** · En esa fila, "+" suma 1 unidad (respetando el stock) y "−" saca primero las unidades sueltas y después la ½ docena entera (7 → 6 → vacío); el tacho saca todo (D-6) · Estimación: 30 min · Completado: —
+
+- [ ] **CA-3** · El cobro, el comprobante y el stock no cambian: por dentro siguen siendo los mismos renglones. Lo cubren tests de dominio, del store y de componente · Estimación: 15 min · Completado: —
+
+**Notas**
+
+- Nivel 2: lógica acotada del carrito, sin servidor ni base.
+
+### US-65 · Comanda de 57 mm
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Pendiente |
+| Dueño        | Agente    |
+| Inicio       | —         |
+| Tamaño       | L         |
+| Depende de   | US-55     |
+| Plan         | [`docs/plans/actualizacion-3.md`](docs/plans/actualizacion-3.md) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como vendedor quiero imprimir la comanda de cada venta en la térmica de 57 mm, de forma que la cocina y
+el cadete tengan el pedido, el cliente y el envío en papel.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · Migración 0033, aditiva: `sales.order_number`, correlativo y único. Las ventas nuevas toman el siguiente número y las que ya existen reciben el suyo al migrar. Lo cubren `additive-migrations.test.ts` y un test de integración · Estimación: 45 min · Completado: —
+
+- [ ] **CA-2** · En Ventas/Pedidos, al lado de "Ver comprobante", el botón "Imprimir comanda" abre el diálogo de impresión con la comanda (D-4). Lo ven el admin y el vendedor · Estimación: 1 h · Completado: —
+
+- [ ] **CA-3** · La comanda tiene 32 caracteres por renglón y el formato del ejemplo: nombre del local, `NRO PEDIDO: #000143` (D-1), fecha y hora de Argentina, `TIPO` (D-3), datos del cliente, un renglón por gusto con su cantidad y el subtotal del producto en el primero (D-5), subtotal, descuento si hubo, envío si hubo, total general y medio de pago, sin "Paga con" (D-2). Lo cubren tests de la función que arma el texto · Estimación: 2 h · Completado: —
+
+- [ ] **CA-4** · Los gustos iguales de renglones distintos salen juntos ("7x JAMON Y QUESO" con el importe sumado) · Estimación: 15 min · Completado: —
+
+**Notas**
+
+- Nivel 3: migración y lectura de ventas. Supabase pasa a 34 migraciones; la migra el dev antes de `main` (D-7).
+
+### T-28 · Cierre de la Actualización 3
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | Pendiente |
+| Dueño        | Agente    |
+| Inicio       | —         |
+| Tamaño       | S         |
+| Depende de   | todos     |
+| Plan         | [`docs/plans/actualizacion-3.md`](docs/plans/actualizacion-3.md) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como dev quiero la Actualización 3 verificada completa y en `main`, después de migrar Supabase, de forma
+que la versión que use el cliente sea la que se probó.
+
+**Criterios de aceptación**
+
+- [ ] **CA-1** · `npm run verify` completo y todos los E2E en verde sobre `develop` · Estimación: 40 min · Completado: —
+
+- [ ] **CA-2** · El dev migra Supabase y comprueba que quedan 34 migraciones; recién ahí, merge `develop → main` con el tag `actualizacion-3` · Estimación: 20 min · Completado: —
