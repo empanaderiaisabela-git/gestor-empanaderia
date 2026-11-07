@@ -5,12 +5,16 @@ import { BLANK_CHECKOUT, checkCheckout, paymentsOf, toggleMethod } from './check
 const form = (overrides: Partial<typeof BLANK_CHECKOUT>) => ({ ...BLANK_CHECKOUT, ...overrides });
 
 describe('formulario de cobro (US-6 CA-1 y CA-5)', () => {
-  it('arranca en efectivo por el total, sin descuento', () => {
-    expect(checkCheckout(18500, BLANK_CHECKOUT)).toEqual({ total: 18500, payments: [{ type: 'efectivo', amount: 18500 }], discount: { percentage: 0, amount: 0 }, error: null });
+  it('arranca sin medio de pago: la venta queda pendiente, sin error (US-68, D-5)', () => {
+    expect(checkCheckout(18500, BLANK_CHECKOUT)).toEqual({ total: 18500, payments: [], discount: { percentage: 0, amount: 0 }, error: null });
+  });
+
+  it('con efectivo, paga el total', () => {
+    expect(checkCheckout(18500, form({ methods: ['efectivo'] }))).toMatchObject({ payments: [{ type: 'efectivo', amount: 18500 }], error: null });
   });
 
   it('el envío suma después del descuento, y el descuento no puede comerse toda la comida (US-59 CA-3, D-2)', () => {
-    expect(checkCheckout(10000, form({ percentage: '10' }), 1500)).toMatchObject({ total: 10500, payments: [{ type: 'efectivo', amount: 10500 }], error: null });
+    expect(checkCheckout(10000, form({ percentage: '10', methods: ['efectivo'] }), 1500)).toMatchObject({ total: 10500, payments: [{ type: 'efectivo', amount: 10500 }], error: null });
     expect(checkCheckout(10000, form({ amount: '10000' }), 1500)).toMatchObject({ total: 1500, error: 'El descuento no puede dejar el total en $0' });
   });
 
@@ -36,7 +40,6 @@ describe('formulario de cobro (US-6 CA-1 y CA-5)', () => {
     { caso: 'porcentaje que no es número', value: form({ percentage: 'diez' }), error: 'El descuento va de 0 a 100 %' },
     { caso: 'monto negativo', value: form({ amount: '-5' }), error: 'El descuento no puede ser negativo' },
     { caso: 'descuento total', value: form({ percentage: '100' }), error: 'El descuento no puede dejar el total en $0' },
-    { caso: 'sin medio de pago', value: form({ methods: [] }), error: 'Elegí un medio de pago' },
     { caso: 'el primer pago cubre todo', value: form({ methods: ['efectivo', 'debito'], split: '18500' }), error: 'Los pagos tienen que sumar el total' },
     { caso: 'el primer pago no es número', value: form({ methods: ['efectivo', 'debito'], split: 'x' }), error: 'Los pagos tienen que sumar el total' },
   ])('avisa: $caso', ({ value, error }) => {

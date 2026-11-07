@@ -14,6 +14,7 @@ export type SaleRowActions = { isAdmin: boolean; onReceipt: (sale: SaleDef) => v
 const chip = 'px-1.5 py-0.5 text-xs font-bold uppercase rounded bg-brand-50 text-brand-700 dark:bg-brand-500/15 dark:text-brand-300';
 
 export function PaymentChips({ sale }: { sale: SaleDef }): JSX.Element {
+  if (sale.payments.length === 0) return <span className='px-1.5 py-0.5 text-xs font-bold uppercase rounded bg-amber-100 text-amber-800 dark:bg-amber-400/15 dark:text-amber-300'>Pendiente</span>;
   return (
     <span className='flex flex-wrap gap-1'>
       {sale.payments.map((payment) => (

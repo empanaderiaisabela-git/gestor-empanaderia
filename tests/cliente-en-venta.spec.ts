@@ -13,6 +13,7 @@ async function armarQuilmes(page: Page): Promise<Locator> {
 
 async function cobrar(page: Page, pedido: Locator): Promise<void> {
   await pedido.getByRole('button', { name: /^Cobrar/ }).click();
+  await page.getByRole('button', { name: 'Efectivo' }).click();
   await page.getByRole('button', { name: /^Confirmar/ }).click();
   await expect(page.getByText(/Venta registrada/)).toBeVisible();
 }

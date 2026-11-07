@@ -55,7 +55,7 @@ export function CheckoutModal({ model, board }: CheckoutModalProps): JSX.Element
   };
 
   return (
-    <ResponsiveModal isOpen={model.isOpen} onClose={model.close} title='Cobrar pedido' icon={<Wallet className='w-5 h-5 text-brand-600' />} width='sm' onSubmit={submit} submitLabel={`Confirmar ${formatMoney(check.total)}`} isPending={pending}>
+    <ResponsiveModal isOpen={model.isOpen} onClose={model.close} title='Cobrar pedido' icon={<Wallet className='w-5 h-5 text-brand-600' />} width='sm' onSubmit={submit} submitLabel={check.payments.length === 0 ? 'Confirmar sin pago' : `Confirmar ${formatMoney(check.total)}`} isPending={pending}>
       <ErrorAlert error={error} />
       <div className='space-y-4'>
         <p className='text-sm text-zinc-700 dark:text-zinc-200'>

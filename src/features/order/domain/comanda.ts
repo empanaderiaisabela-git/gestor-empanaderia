@@ -34,7 +34,8 @@ function totals(sale: SaleDef): string[] {
 
 function payment(sale: SaleDef): string[] {
   const [only, ...others] = sale.payments;
-  if (only && others.length === 0) return wrapWords(`METODO PAGO: ${describePayment(only)}`, WIDTH);
+  if (!only) return ['METODO PAGO: PENDIENTE'];
+  if (others.length === 0) return wrapWords(`METODO PAGO: ${describePayment(only)}`, WIDTH);
   return ['METODO PAGO:', ...sale.payments.flatMap((paid) => columns(describePayment(paid), formatMoney(paid.amount)))];
 }
 

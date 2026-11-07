@@ -54,14 +54,18 @@ const buyerSchema = z.strictObject({
 
 const distinctTypes = (payments: { type: string }[]): boolean => new Set(payments.map((payment) => payment.type)).size === payments.length;
 
+export const paymentsSchema = z.array(paymentSchema).max(2, 'Se aceptan hasta 2 medios de pago').refine(distinctTypes, 'Usá medios de pago distintos');
+export const discountPercentageSchema = z.number('Ingresá un porcentaje').min(0, 'El descuento no puede ser negativo').max(100, 'El descuento no puede superar el 100 %');
+export const discountAmountSchema = money.min(0, 'El descuento no puede ser negativo');
+
 export const checkoutSchema = z
   .strictObject({
     buyer: buyerSchema,
     lines: z.array(lineSchema).max(MAX_LINES, 'El pedido tiene demasiadas líneas'),
     promos: z.array(promoLineSchema).max(MAX_LINES, 'El pedido tiene demasiadas promos').optional(),
-    discountPercentage: z.number('Ingresá un porcentaje').min(0, 'El descuento no puede ser negativo').max(100, 'El descuento no puede superar el 100 %'),
-    discountAmount: money.min(0, 'El descuento no puede ser negativo'),
-    payments: z.array(paymentSchema).min(1, 'Elegí un medio de pago').max(2, 'Se aceptan hasta 2 medios de pago').refine(distinctTypes, 'Usá medios de pago distintos'),
+    discountPercentage: discountPercentageSchema,
+    discountAmount: discountAmountSchema,
+    payments: paymentsSchema,
     shippingOptionId: z.uuid('Elegí un envío válido').nullable().optional(),
   })
   .refine((order) => order.lines.length + (order.promos?.length ?? 0) > 0, { message: 'El pedido está vacío', path: ['lines'] })

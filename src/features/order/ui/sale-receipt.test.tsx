@@ -33,6 +33,11 @@ describe('comprobante de una venta (US-7 CA-2)', () => {
     expect(screen.getByText('Subtotal').nextSibling?.textContent).toBe('$18.500');
   });
 
+  it('una venta sin pagos dice "Pago pendiente" (US-68)', () => {
+    render(<SaleReceipt sale={saleDef({ payments: [] })} onClose={vi.fn()} />);
+    expect(screen.getByText('Pago pendiente')).toBeDefined();
+  });
+
   it('muestra los descuentos en % y en $, y "Sin nombre" si no hay comprador', () => {
     render(<SaleReceipt sale={MORNING_SALE} onClose={vi.fn()} />);
     expect(screen.getByText('Sin nombre')).toBeDefined();

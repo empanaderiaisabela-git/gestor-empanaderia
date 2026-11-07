@@ -39,6 +39,7 @@ export function drizzleSaleWriter(executor: Executor = db): SaleWriter {
       return row.id;
     },
     insertPayments: async (saleId, payments) => {
+      if (payments.length === 0) return;
       const rows = payments.map(({ amount, surchargePct, surchargeAmount, ...payment }) => ({ ...payment, saleId, amount: money(amount), surchargePct: optionalMoney(surchargePct), surchargeAmount: optionalMoney(surchargeAmount) }));
       await executor.insert(salePayments).values(rows);
     },

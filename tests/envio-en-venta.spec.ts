@@ -28,6 +28,7 @@ test.describe('envío en la venta (US-59)', () => {
     await pedido.getByLabel('Domicilio (opcional)').fill('Mitre 123');
     await expect(pedido.getByRole('button', { name: /^Cobrar/ })).not.toHaveText(sinEnvio ?? '');
     await pedido.getByRole('button', { name: /^Cobrar/ }).click();
+    await page.getByRole('button', { name: 'Efectivo' }).click();
     await page.getByRole('button', { name: /^Confirmar/ }).click();
     await expect(page.getByText(/Venta registrada/)).toBeVisible();
 

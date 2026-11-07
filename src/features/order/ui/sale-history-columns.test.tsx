@@ -18,6 +18,11 @@ describe('grilla de Ventas/Pedidos (US-7 CA-1)', () => {
     expect(screen.getByText('Empanadas · ½ docena: 2 Carne + 4 Pollo · Pizzas · 2 sabores: Muzza / Napolitana')).toBeDefined();
   });
 
+  it('una venta sin pagos dice "Pendiente" en la columna Pago (US-68)', () => {
+    render(<div>{getSaleHistoryColumns(actions(false))[4].cell(saleDef({ payments: [] }))}</div>);
+    expect(screen.getByText('Pendiente')).toBeDefined();
+  });
+
   it('muestra los descuentos y "Sin nombre" cuando no hay comprador', () => {
     const columns = getSaleHistoryColumns(actions(false));
     render(<div>{[1, 5].map((index) => <span key={index}>{columns[index].cell(MORNING_SALE)}</span>)}</div>);

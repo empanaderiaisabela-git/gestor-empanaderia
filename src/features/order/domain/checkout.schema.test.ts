@@ -14,6 +14,10 @@ describe('lo que el navegador puede mandar al cobrar (US-6 CA-1 y CA-2)', () => 
     expect(checkoutSchema.parse({ ...VALID, buyer: { customerId: ITEM, name: '  Marta ', phone: ' 11 5555-1234 ', address: ' Mitre 123 ' } }).buyer).toEqual({ customerId: ITEM, name: 'Marta', phone: '11 5555-1234', address: 'Mitre 123' });
   });
 
+  it('acepta un pedido sin medio de pago: queda pendiente (US-68)', () => {
+    expect(checkoutSchema.parse({ ...VALID, payments: [] }).payments).toEqual([]);
+  });
+
   it('acepta los 4 medios de pago, hasta 2 y distintos', () => {
     const payments = [{ type: 'debito', amount: 1000 }, { type: 'credito', amount: 2000, cardId: ITEM, installments: 3 }];
     expect(checkoutSchema.parse({ ...VALID, payments }).payments).toEqual(payments);
@@ -22,7 +26,6 @@ describe('lo que el navegador puede mandar al cobrar (US-6 CA-1 y CA-2)', () => 
 
   it.each([
     { caso: 'pedido vacío', input: { ...VALID, lines: [] }, message: 'El pedido está vacío' },
-    { caso: 'sin pagos', input: { ...VALID, payments: [] }, message: 'Elegí un medio de pago' },
     { caso: '3 pagos', input: { ...VALID, payments: [{ type: 'efectivo', amount: 1 }, { type: 'debito', amount: 1 }, { type: 'transferencia', amount: 1 }] }, message: 'Se aceptan hasta 2 medios de pago' },
     { caso: 'crédito sin tarjeta', input: { ...VALID, payments: [{ type: 'credito', amount: 3000 }] }, message: 'Elegí la tarjeta y las cuotas' },
     { caso: 'crédito sin cuotas', input: { ...VALID, payments: [{ type: 'credito', amount: 3000, cardId: ITEM }] }, message: 'Elegí la tarjeta y las cuotas' },

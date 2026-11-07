@@ -26,6 +26,7 @@ describe('cobrar una pizza con jamón extra (US-47 CA-5)', () => {
     render(<OrderBoard />);
     fireEvent.click(await screen.findByRole('button', { name: 'Ver pedido (1)' }));
     fireEvent.click(await screen.findByRole('button', { name: 'Cobrar $11.500' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Efectivo' }));
     fireEvent.click(screen.getByRole('button', { name: 'Confirmar $11.500' }));
     await waitFor(() => expect(checkoutAction).toHaveBeenCalledWith(expect.objectContaining({ lines: [{ group: 'pizzas', presentationKey: 'pizza_1', flavors: [{ menuItemId: 'muzza', units: 1 }], quantity: 1, ham: true }] })));
   });
