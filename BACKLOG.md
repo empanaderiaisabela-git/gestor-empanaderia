@@ -5247,7 +5247,7 @@ que la versión que use el cliente sea la que se probó.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | En progreso |
+| Estado       | En revisión |
 | Dueño        | Agente    |
 | Inicio       | 2026-11-07 |
 | Tamaño       | M         |
@@ -5260,19 +5260,19 @@ que la versión que use el cliente sea la que se probó.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · Las ventas sin pagos tienen en Acciones el ícono "Completar pago" (admin y vendedor). Abre un modal con descuento y medios de pago; el total es la comida con el descuento más el envío (D-3) · Estimación: 1 h 30 min · Completado: —
+- [x] **CA-1** · Las ventas sin pagos tienen en Acciones el ícono "Completar pago" (admin y vendedor). Abre un modal con descuento y medios de pago; el total es la comida con el descuento más el envío (D-3). Lo cubre `complete-payment-modal.test.tsx` · Estimación: 1 h 30 min · Completado: 2026-11-07 17:02
 
-- [ ] **CA-2** · Al confirmar, el servidor recalcula el total, valida los pagos, aplica el recargo de la tarjeta y guarda total, descuentos y pagos; queda en Auditoría. Si otro ya la completó, `STALE_VERSION`. Lo cubren tests de dominio, service, contrato e integración · Estimación: 1 h 30 min · Completado: —
+- [x] **CA-2** · Al confirmar, el servidor recalcula el total, valida los pagos, aplica el recargo de la tarjeta y guarda total, descuentos y pagos; queda en Auditoría. Si otro ya la completó, `STALE_VERSION`. Lo cubren `sale-payment.service.test.ts`, `complete-sale-payment.contract.test.ts` y `sale-payment.int.test.ts` (dos a la vez: uno recibe `STALE_VERSION`) · Estimación: 1 h 30 min · Completado: 2026-11-07 17:02
 
-- [ ] **CA-3** · Completada, deja de decir "Pendiente" y cuenta en Estadísticas, en la jornada de la venta (D-2). Un E2E vende sin pago, imprime la comanda y la completa · Estimación: 45 min · Completado: —
+- [x] **CA-3** · Completada, deja de decir "Pendiente" y cuenta en Estadísticas, en la jornada de la venta (D-2). Lo cubren `compute-workday-stats.test.ts` y el E2E `pago-pendiente.spec.ts` · Estimación: 45 min · Completado: 2026-11-07 17:02
 
 ### T-29 · Cierre de la Actualización 7
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
+| Estado       | En revisión |
 | Dueño        | Agente    |
-| Inicio       | —         |
+| Inicio       | 2026-11-07 |
 | Tamaño       | S         |
 | Depende de   | todos     |
 | Plan         | [`docs/plans/actualizacion-7.md`](docs/plans/actualizacion-7.md) |
@@ -5283,4 +5283,8 @@ que la versión que use el cliente sea la que se probó.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · `npm run verify` y todos los E2E en verde sobre `develop`; docs al día; merge a `main` con el tag `actualizacion-7` (D-6) · Estimación: 45 min · Completado: —
+- [x] **CA-1** · `npm run verify` y todos los E2E en verde sobre `develop`; docs al día; merge a `main` con el tag `actualizacion-7` (D-6) · Estimación: 45 min · Completado: 2026-11-07 17:28
+
+**Notas**
+
+- `npm run verify` verde (1319 tests unit y de componente, 146 de integración, cobertura 96,4 / 90,4, mutación 85,9 y build) y los 85 E2E en verde (2026-11-07). En una primera corrida completa el E2E nuevo tardó más de 15 s en confirmar la venta por la carga de la máquina; solo y en la segunda corrida completa pasó.

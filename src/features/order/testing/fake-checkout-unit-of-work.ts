@@ -28,7 +28,7 @@ function saleOf(sales: FakeSale[], saleId: string): FakeSale {
   return sale;
 }
 
-function fakeSaleWriter(sales: FakeSale[]): SaleWriter {
+export function fakeSaleWriter(sales: FakeSale[]): SaleWriter {
   return {
     insertSale: async (sale) => {
       const id = crypto.randomUUID();
@@ -41,6 +41,9 @@ function fakeSaleWriter(sales: FakeSale[]): SaleWriter {
     },
     insertPayments: async (saleId, payments) => {
       saleOf(sales, saleId).payments.push(...payments);
+    },
+    updateTotals: async (saleId, totals) => {
+      Object.assign(saleOf(sales, saleId), totals);
     },
   };
 }

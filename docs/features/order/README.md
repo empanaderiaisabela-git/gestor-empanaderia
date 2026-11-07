@@ -197,6 +197,21 @@ borre.
 - Es sólo cómo se ve y se edita: por dentro siguen siendo los mismos renglones, así que el cobro, el comprobante, el
   historial y el stock no cambian. Las surtidas y las mitad y mitad no se juntan.
 
+## Venta con el pago pendiente (US-68 y US-69)
+
+- "Cobrar pedido" arranca sin medio de pago elegido. Sin medio, el botón dice "Confirmar sin pago": la venta se
+  registra con su total, descuenta el stock y no guarda pagos. Con medios, siguen teniendo que cubrir el total.
+- Pendiente = la venta no tiene pagos (`sale_payments` vacío); no hay columna nueva. En Ventas/Pedidos la columna Pago
+  dice "Pendiente", el comprobante "Pago pendiente" y la comanda `METODO PAGO: PENDIENTE`.
+- No cuenta en Estadísticas hasta que se completa; completada, cuenta en la jornada de la venta.
+- En Acciones, el ícono "Completar pago" (admin y vendedor) abre el modal con descuento y medios de pago. El servidor
+  (`completeSalePaymentAction`, `sale-payment.service.ts`) bloquea la venta (`FOR UPDATE`), recalcula el total (la
+  comida con el descuento nuevo más el envío), valida los pagos, aplica el recargo de la tarjeta como en el cobro y
+  guarda total, descuentos y pagos en la misma transacción, con la auditoría (`ACTUALIZAR`, "Pago completado").
+- Errores de completar: ya tiene pagos (otro la completó) → `STALE_VERSION`; venta que no existe → `NOT_FOUND`; pagos
+  que no cubren, sin medios o descuento mayor que la comida → `VALIDATION` (`sale-payment.service.test.ts`,
+  `complete-sale-payment.contract.test.ts`, `sale-payment.int.test.ts`).
+
 ## Comanda de 57 mm (US-65)
 
 - En Ventas/Pedidos, al lado de "Ver comprobante", el botón "Imprimir comanda" (admin y vendedor) abre una ventana con

@@ -4,7 +4,7 @@ import { MORNING_SALE, saleDef } from '../testing/sale-fixtures';
 import { getSaleHistoryColumns, renderSaleCard, SaleButtons } from './sale-history-columns';
 
 const SALE = saleDef();
-const actions = (isAdmin: boolean) => ({ isAdmin, onReceipt: vi.fn(), onVoid: vi.fn() });
+const actions = (isAdmin: boolean) => ({ isAdmin, onReceipt: vi.fn(), onVoid: vi.fn(), onComplete: vi.fn() });
 
 describe('grilla de Ventas/Pedidos (US-7 CA-1)', () => {
   it('tiene toda la información de la grilla de historial', () => {

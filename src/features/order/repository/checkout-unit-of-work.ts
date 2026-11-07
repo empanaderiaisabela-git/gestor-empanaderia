@@ -10,7 +10,7 @@ import { drizzleSaleWriter, type SaleWriter } from './sale-writer.repository';
 
 export type SaleAuditEntry = {
   userId: string;
-  action: 'CREAR' | 'ELIMINAR';
+  action: 'CREAR' | 'ACTUALIZAR' | 'ELIMINAR';
   entity: 'SALE' | 'CUSTOMER';
   entityId: string;
   detail: Record<string, unknown>;

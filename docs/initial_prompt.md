@@ -1,7 +1,7 @@
 # Prompt inicial: contexto completo de gestor-empanaderia
 
 > **Uso.** Al empezar una sesión nueva de Claude Code: `Leé @docs/initial_prompt.md y seguilo.`
-> Foto del proyecto al **2026-11-05**. Se adapta en cada avance significativo
+> Foto del proyecto al **2026-11-07**. Se adapta en cada avance significativo
 > ([criterios](how-to-document.md#mantener-al-día-docsinitial_promptmd)). Si algo de acá contradice a
 > [`AGENTS.md`](../AGENTS.md) o a los docs que enlaza, **ganan ellos**: avisale al dev que este archivo quedó
 > desactualizado.
@@ -187,6 +187,10 @@ Hacer preguntas de más es mejor que inventar.
 - **Actualización 2** (2026-11-04, plan en [`actualizacion-2.md`](plans/actualizacion-2.md)): el vendedor ve en Stock
   la columna "Precio de venta" (US-63), y el seed ya no se corta con una promo con bebida fija (BUG-31). Sin
   migración: Supabase sigue en **33**. En `main` con el tag `actualizacion-2`.
+- **Actualizaciones 4 a 7** (2026-11-06 y 07): la comanda en negrita, con letra de 2,3 mm para que entren las 32
+  columnas, sin encabezado de detalle y con las bebidas bajo `BEBIDAS` (US-66, BUG-32, US-67); y la **venta con el pago
+  pendiente**: el cobro arranca sin medio, la venta se registra sin pagos y se completa desde Ventas/Pedidos (US-68 y
+  US-69, plan en [`actualizacion-7.md`](plans/actualizacion-7.md)). Sin migraciones: Supabase sigue en **34**.
 - **Actualización 3** (2026-11-05, plan en [`actualizacion-3.md`](plans/actualizacion-3.md)): los renglones del mismo
   gusto van en un solo ítem del carrito (US-64), y cada venta imprime su comanda de 57 mm desde Ventas/Pedidos, con un
   número de pedido correlativo (US-65, migración **0033**: `sales.order_number`). Supabase está en **34** (la migró el dev

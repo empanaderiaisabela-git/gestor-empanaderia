@@ -18,7 +18,7 @@ import type { OrderBoardModel } from './use-order-board';
 type CheckoutModalProps = { model: CheckoutModel; board: OrderBoardModel };
 type DiscountFieldsProps = { form: CheckoutForm; onChange: (form: CheckoutForm) => void };
 
-function DiscountFields({ form, onChange }: DiscountFieldsProps): JSX.Element {
+export function DiscountFields({ form, onChange }: DiscountFieldsProps): JSX.Element {
   return (
     <div className='grid grid-cols-2 gap-3'>
       <FormField label='Descuento %'>
