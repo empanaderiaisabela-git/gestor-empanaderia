@@ -31,8 +31,7 @@ describe('comanda de 57 mm (US-65 CA-3 y CA-4)', () => {
       EQ, '      EMPANADERÍA ISABELA       ', EQ,
       'NRO PEDIDO: #000143', 'FECHA: 05/11/2026   HORA: 21:42', 'TIPO: ENVIO A DOMICILIO', DASH,
       '[ DATOS DEL CLIENTE / ENVIO ]', 'Cliente: Juan Perez', 'Direcc: Av. G. Hudson 1250', 'Tel: 280-4567890', DASH,
-      '[ DETALLE DE LA ORDEN ]', cols('Cant Producto', 'Subtot'), DASH,
-      'EMPANADAS', cols('7x JAMÓN Y QUESO', '$9.700'), 'COCA-COLA', cols('1x CEPITA 1.0L ANANA', '$2.500'), '   TROPIC', DASH,
+      'EMPANADAS', cols('7x JAMÓN Y QUESO', '$9.700'), 'BEBIDAS', cols('1x CEPITA 1.0L ANANA', '$2.500'), '   TROPIC', DASH,
       cols('SUBTOTAL:', '$12.200'), cols('ENVIO:', '$1.500'), EQ, cols('TOTAL GENERAL:', '$13.700'), EQ,
       'METODO PAGO: Efectivo', DASH, '    ¡GRACIAS POR SU COMPRA!     ', EQ,
     ]);
@@ -52,13 +51,19 @@ describe('comanda de 57 mm (US-65 CA-3 y CA-4)', () => {
     });
     const text = buildComanda(sale, 'Empanadería Isabela');
     expect(text.slice(5, 9)).toEqual(['TIPO: RETIRA EN LOCAL', DASH, '[ DATOS DEL CLIENTE ]', 'Cliente: Sin nombre']);
-    expect(text.slice(13, 25)).toEqual([
+    expect(text.slice(10, 22)).toEqual([
       'PIZZAS', cols('1/2x MUZZA', '$11.500'), '1/2x NAPOLITANA', '   + JAMÓN EXTRA',
       'EMPANADAS', cols('3x CARNE', '$6.500'), '3x POLLO',
       'PROMO DOCENA + COCA', cols('12x CARNE', '$15.000'), '1x COCA 500', DASH, cols('SUBTOTAL:', '$33.000'),
     ]);
-    expect(text.slice(25, 31)).toEqual([cols('DESCUENTO:', '-$1.000'), EQ, cols('TOTAL GENERAL:', '$32.000'), EQ, 'METODO PAGO:', cols('Efectivo', '$20.000')]);
-    expect(text[31]).toBe(cols('Débito', '$12.000'));
+    expect(text.slice(22, 28)).toEqual([cols('DESCUENTO:', '-$1.000'), EQ, cols('TOTAL GENERAL:', '$32.000'), EQ, 'METODO PAGO:', cols('Efectivo', '$20.000')]);
+    expect(text[28]).toBe(cols('Débito', '$12.000'));
+  });
+
+  it('Coca-Cola y Quilmes van juntas bajo BEBIDAS; la comida mantiene su grupo (US-67)', () => {
+    const lines = [line({ group: 'coca_cola', subtotal: 2500, items: [{ name: 'Coca 500', units: 1 }] }), line({ group: 'pepsi', quantity: 2, subtotal: 6000, items: [{ name: 'Quilmes 1L', units: 2 }] })];
+    const text = buildComanda(saleDef({ lines, total: 8500 }), 'Empanadería Isabela');
+    expect(text.slice(10, 14)).toEqual(['BEBIDAS', cols('1x COCA 500', '$2.500'), cols('2x QUILMES 1L', '$6.000'), DASH]);
   });
 
   it('ningún renglón pasa de 32 caracteres, aunque el domicilio sea largo', () => {

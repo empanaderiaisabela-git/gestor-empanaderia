@@ -20,6 +20,7 @@
 - [Actualización 3 · Comanda y gustos agrupados](#actualización-3--comanda-y-gustos-agrupados)
 - [Actualización 4 · Comanda en negrita](#actualización-4--comanda-en-negrita)
 - [Actualización 5 · Precios enteros en la comanda](#actualización-5--precios-enteros-en-la-comanda)
+- [Actualización 6 · Comanda más limpia](#actualización-6--comanda-más-limpia)
 
 ## Convenciones
 
@@ -5171,3 +5172,34 @@ que la versión que use el cliente sea la que se probó.
 **Notas**
 
 - Nivel 1. Entran precios de hasta 7 cifras ("$1.000.000"). No se probó en la térmica del local.
+
+------------------------------------------------------------------------------------------------------------------------
+
+## Actualización 6 · Comanda más limpia
+
+------------------------------------------------------------------------------------------------------------------------
+
+### US-67 · Comanda sin encabezado de detalle y con "BEBIDAS"
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-11-07 |
+| Tamaño       | XS        |
+| Depende de   | US-65     |
+| Plan         | Pedido directo del dev (2026-11-07), con ejemplo aprobado |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como vendedor quiero una comanda más limpia, de forma que la cocina vea directo los productos y las bebidas juntas.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · La comanda ya no tiene `[ DETALLE DE LA ORDEN ]` ni `Cant Producto … Subtot`: después de los datos del cliente vienen los productos. Lo cubre `comanda.test.ts` · Estimación: 5 min · Completado: 2026-11-07 10:00
+
+- [x] **CA-2** · Coca-Cola y Quilmes salen bajo un solo título, `BEBIDAS`, con el nombre completo de cada bebida; la comida mantiene el título de su grupo y las promos el suyo. Lo cubre `comanda.test.ts` · Estimación: 10 min · Completado: 2026-11-07 10:00
+
+**Notas**
+
+- Nivel 1. Sin migración: Supabase sigue en 34. El dev autorizó ir directo a `main`.
