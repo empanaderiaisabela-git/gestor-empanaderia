@@ -36,6 +36,13 @@ describe('KPI de la jornada (US-12 CA-2, CA-3 y CA-5)', () => {
     expect(stats).toMatchObject({ revenue: 19500, profit: 14700, byPayment: { efectivo: 19500 } });
   });
 
+  it('una venta con el pago pendiente no cuenta en nada hasta completarse (US-68, D-1)', () => {
+    const pending = sale({ total: '5000.00', lines: [{ group: 'empanadas', subtotal: '5000.00' }], items: [{ units: '6', unitCost: '400.00' }] });
+    const stats = computeWorkdayStats(DAY, { sales: [pending], losses: [] });
+    expect(stats).toMatchObject({ revenue: 0, profit: 0, salesCount: 0, vendorTable: [], saleTable: [] });
+    expect(stats.byGroup.empanadas).toBe(0);
+  });
+
   it('el recargo de las cuotas es de la tarjeta: no suma a las comidas, al crédito, a lo facturado ni a la ganancia (BUG-20)', () => {
     const payments = [cash('4000.00'), { type: 'credito' as const, amount: '6000.00', surchargeAmount: '600.00' }];
     const items = [{ units: '12', unitCost: '400.00' }];

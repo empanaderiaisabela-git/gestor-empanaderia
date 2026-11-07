@@ -29,7 +29,9 @@ function byPaymentOf(sales: readonly StatsSale[]): Record<PaymentType, number> {
   return totals;
 }
 
-export function computeWorkdayStats({ from, to }: WorkdayPeriod, { sales, losses }: StatsSnapshot): WorkdayStats {
+export function computeWorkdayStats({ from, to }: WorkdayPeriod, snapshot: StatsSnapshot): WorkdayStats {
+  const sales = snapshot.sales.filter((sale) => sale.payments.length > 0);
+  const { losses } = snapshot;
   const shares: Shares = { byGroup: zeroGroups(), promos: 0 };
   sales.forEach((sale) => addShares(sale, shares));
   for (const group of MENU_GROUPS) shares.byGroup[group] = round2(shares.byGroup[group]);

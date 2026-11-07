@@ -24,6 +24,7 @@ test.describe('gustos agrupados y comanda (US-64, US-65)', () => {
     await expect(fila).toContainText('½ docena + 1 unidad');
     await pedido.getByLabel('Nombre del cliente').fill(cliente);
     await pedido.getByRole('button', { name: /^Cobrar/ }).click();
+    await page.getByRole('button', { name: 'Efectivo' }).click();
     await page.getByRole('button', { name: /^Confirmar/ }).click();
     await expect(page.getByText(/Venta registrada/)).toBeVisible();
 

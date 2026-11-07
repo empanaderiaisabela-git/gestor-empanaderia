@@ -12,6 +12,7 @@ import { TableSkeleton } from '@/components/ui/table-skeleton';
 import { TEST_IDS } from '@/constants/test-ids';
 import { buyerLabel } from '@/features/order/domain/sale-history.schema';
 import { formatMoney } from '@/lib/format-money';
+import { CompletePaymentModal } from './complete-payment-modal';
 import { getSaleHistoryColumns, renderSaleCard, type SaleRowActions } from './sale-history-columns';
 import { SaleReceipt } from './sale-receipt';
 import { type SaleHistoryModel, useSaleHistory } from './use-sale-history';
@@ -37,13 +38,14 @@ export function SaleHistoryPanel(): JSX.Element {
   const model = useSaleHistory();
   if (model.loading) return <TableSkeleton />;
   if (model.receipt) return <SaleReceipt sale={model.receipt} onClose={() => model.setReceipt(null)} />;
-  const actions: SaleRowActions = { isAdmin: model.isAdmin, onReceipt: model.setReceipt, onVoid: model.setToVoid };
+  const actions: SaleRowActions = { isAdmin: model.isAdmin, onReceipt: model.setReceipt, onVoid: model.setToVoid, onComplete: model.setToComplete };
   return (
     <div className='flex flex-col flex-1 h-full overflow-hidden'>
       <Toolbar model={model} />
       <GlobalMessage message={model.notice} />
       <ResponsivePanelView columns={getSaleHistoryColumns(actions)} data={model.sales} emptyMessage='No hay ventas que coincidan con los filtros.' renderCard={renderSaleCard(actions)} />
       <VoidConfirm model={model} />
+      <CompletePaymentModal sale={model.toComplete} onClose={() => model.setToComplete(null)} onDone={(message) => void model.completed(message)} />
     </div>
   );
 }

@@ -15,6 +15,9 @@ export type SaleHistoryModel = {
   setFilters: (filters: Partial<SaleFilters>) => void;
   receipt: SaleDef | null;
   setReceipt: (sale: SaleDef | null) => void;
+  toComplete: SaleDef | null;
+  setToComplete: (sale: SaleDef | null) => void;
+  completed: (message: string) => Promise<void>;
   toVoid: SaleDef | null;
   setToVoid: (sale: SaleDef | null) => void;
   pending: boolean;
@@ -36,10 +39,16 @@ function useSales(): { all: SaleDef[]; loading: boolean; reload: () => Promise<v
   return { all, loading, reload };
 }
 
-function useVoidSale(reload: () => Promise<void>): Pick<SaleHistoryModel, 'toVoid' | 'setToVoid' | 'pending' | 'notice' | 'confirmVoid'> {
+function useVoidSale(reload: () => Promise<void>): Pick<SaleHistoryModel, 'toVoid' | 'setToVoid' | 'pending' | 'notice' | 'confirmVoid' | 'toComplete' | 'setToComplete' | 'completed'> {
   const [toVoid, setToVoid] = useState<SaleDef | null>(null);
+  const [toComplete, setToComplete] = useState<SaleDef | null>(null);
   const [pending, setPending] = useState(false);
   const [notice, setNotice] = useState<Notice | null>(null);
+  const completed = async (message: string): Promise<void> => {
+    setToComplete(null);
+    setNotice({ type: 'success', text: message });
+    await reload();
+  };
   const confirmVoid = async (): Promise<void> => {
     if (!toVoid) return;
     setPending(true);
@@ -51,7 +60,7 @@ function useVoidSale(reload: () => Promise<void>): Pick<SaleHistoryModel, 'toVoi
     useMenuStore.getState().setLoaded(false);
     await reload();
   };
-  return { toVoid, setToVoid, pending, notice, confirmVoid };
+  return { toVoid, setToVoid, pending, notice, confirmVoid, toComplete, setToComplete, completed };
 }
 
 export function useSaleHistory(): SaleHistoryModel {

@@ -37,7 +37,7 @@ async function checkout(scope: CheckoutScope, caller: Caller, input: CheckoutDat
   const shipping = await shippingOf(scope, input.shippingOptionId);
   const food = applyDiscount(subtotal, { percentage: discountPercentage, amount: discountAmount });
   const total = round2(food + shipping.shippingAmount);
-  if (food < 0 || !paymentsCover(total, payments)) throw new AppError('VALIDATION');
+  if (food < 0 || (payments.length > 0 && !paymentsCover(total, payments))) throw new AppError('VALIDATION');
   const charged = await chargePayments(scope, payments);
   await consumeStock(scope, items, sold);
   const customerId = await customerFor(scope, caller.id, buyer);

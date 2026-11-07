@@ -382,3 +382,15 @@ Obviamente esto es un ejemplo, tu deberías rellenar con la info de la compra ca
 Para practicidad, agreguemos también que en la propia compra, en el carrito, añadir 6 empanadas de jamon y queso, y luego agregar 1 empanada de jamon y queso (o sea, el cliente pide 7 empanadas de jamon y queso) agrupe todo en un solo item de compra, sumando las 7 empandas por ser del mismo gusto.
 
 Por supuesto, el precio va a ser el mismo que era antes de este fix, es decir, el precio de la media docena mas el precio de la unidad.
+
+---------------------------------------------------------------------------
+
+Pedido del cliente (2026-11-07), Actualización 7:
+
+mi cliente me acaba de proponer una nocion que tiene mucho sentido.
+
+Situacion: un cliente pide un pedido, el pedido es conocido y ya está cerrado, pero sin embargo, se cuelga 30-40 minutos hasta que contesta como va a pagar, es decir, no dice su medio de pago al instante. El problema que trae esto es que la comanda tiene que salir igual, pero la venta obliga a completar el medio de pago. Vamos a hacer un cambio para mejorar esto.
+
+La idea sería dejar el medio de pago opcional para agilizar la venta y poder largar la comanda lo mas rapido posible.
+
+¿Que ocurre con estadisticas? La idea sería que en la grilla del historial de ventas, aparezca un ícono en "Acciones" que permita completar la venta, para poder efectivamente completar la información que corresponde.

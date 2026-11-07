@@ -1,4 +1,4 @@
-import { FileText, Printer, Trash2 } from 'lucide-react';
+import { FileText, Printer, Trash2, Wallet } from 'lucide-react';
 import type { JSX } from 'react';
 import { EntityCard } from '@/components/ui/entity-card';
 import type { ColumnDef } from '@/components/ui/virtualized-data-table';
@@ -9,11 +9,12 @@ import { formatDateTime } from '@/lib/format-date-time';
 import { formatMoney } from '@/lib/format-money';
 import { printComanda } from './print-comanda';
 
-export type SaleRowActions = { isAdmin: boolean; onReceipt: (sale: SaleDef) => void; onVoid: (sale: SaleDef) => void };
+export type SaleRowActions = { isAdmin: boolean; onReceipt: (sale: SaleDef) => void; onVoid: (sale: SaleDef) => void; onComplete: (sale: SaleDef) => void };
 
 const chip = 'px-1.5 py-0.5 text-xs font-bold uppercase rounded bg-brand-50 text-brand-700 dark:bg-brand-500/15 dark:text-brand-300';
 
 export function PaymentChips({ sale }: { sale: SaleDef }): JSX.Element {
+  if (sale.payments.length === 0) return <span className='px-1.5 py-0.5 text-xs font-bold uppercase rounded bg-amber-100 text-amber-800 dark:bg-amber-400/15 dark:text-amber-300'>Pendiente</span>;
   return (
     <span className='flex flex-wrap gap-1'>
       {sale.payments.map((payment) => (
@@ -37,6 +38,11 @@ export function SaleButtons({ sale, actions }: { sale: SaleDef; actions: SaleRow
       <button onClick={() => actions.onReceipt(sale)} className={`${button} text-brand-600 dark:text-brand-400`} title='Ver comprobante'>
         <FileText className='w-4 h-4' />
       </button>
+      {sale.payments.length === 0 && (
+        <button onClick={() => actions.onComplete(sale)} className={`${button} text-amber-700 dark:text-amber-400`} title='Completar pago'>
+          <Wallet className='w-4 h-4' />
+        </button>
+      )}
       <button onClick={() => printComanda(sale)} className={`${button} text-zinc-700 dark:text-zinc-200`} title='Imprimir comanda'>
         <Printer className='w-4 h-4' />
       </button>

@@ -22,7 +22,7 @@ describe('imprimir la comanda (US-65 CA-2)', () => {
 
   it('el botón de cada venta abre la comanda en una ventana aparte y pide imprimirla', () => {
     const popup = fakePopup();
-    render(<SaleButtons sale={saleDef()} actions={{ isAdmin: false, onReceipt: vi.fn(), onVoid: vi.fn() }} />);
+    render(<SaleButtons sale={saleDef()} actions={{ isAdmin: false, onReceipt: vi.fn(), onVoid: vi.fn(), onComplete: vi.fn() }} />);
     fireEvent.click(screen.getByTitle('Imprimir comanda'));
     expect(popup.document.title).toBe('Comanda #000143');
     expect(popup.document.querySelector('pre')?.textContent).toContain('NRO PEDIDO: #000143');

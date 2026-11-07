@@ -42,6 +42,7 @@ test.describe('prepizzas (US-29, BUG-23) y jamón extra (US-47)', () => {
     await expect(pedido.getByText('Muzza / Napolitana + Jamón extra')).toBeVisible();
     await pedido.getByLabel('Nombre del cliente').fill('Cliente pizzas');
     await pedido.getByRole('button', { name: 'Cobrar $24.500' }).click();
+    await page.getByRole('button', { name: 'Efectivo' }).click();
     await page.getByRole('button', { name: 'Confirmar $24.500' }).click();
     await expect(page.getByText('Venta registrada por $24.500')).toBeVisible();
 

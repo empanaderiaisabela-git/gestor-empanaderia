@@ -21,6 +21,7 @@
 - [Actualización 4 · Comanda en negrita](#actualización-4--comanda-en-negrita)
 - [Actualización 5 · Precios enteros en la comanda](#actualización-5--precios-enteros-en-la-comanda)
 - [Actualización 6 · Comanda más limpia](#actualización-6--comanda-más-limpia)
+- [Actualización 7 · Venta con pago pendiente](#actualización-7--venta-con-pago-pendiente)
 
 ## Convenciones
 
@@ -5203,3 +5204,87 @@ que la versión que use el cliente sea la que se probó.
 **Notas**
 
 - Nivel 1. Sin migración: Supabase sigue en 34. El dev autorizó ir directo a `main`.
+
+------------------------------------------------------------------------------------------------------------------------
+
+## Actualización 7 · Venta con pago pendiente
+
+------------------------------------------------------------------------------------------------------------------------
+
+**Objetivo**: pedido del cliente del 2026-11-07: registrar la venta (y largar la comanda) sin medio de pago, y completarlo después.
+
+**Plan**: [`docs/plans/actualizacion-7.md`](docs/plans/actualizacion-7.md), con las decisiones del dev (D-1 a D-6). Sin migración.
+
+### US-68 · Vender sin medio de pago
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-11-07 |
+| Tamaño       | M         |
+| Depende de   | US-6      |
+| Plan         | [`docs/plans/actualizacion-7.md`](docs/plans/actualizacion-7.md) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como vendedor quiero registrar la venta sin medio de pago, de forma que la comanda salga aunque el cliente todavía no dijo cómo paga.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · "Cobrar pedido" arranca sin medio elegido (D-5); sin medio, "Confirmar sin pago" registra la venta con su total, descuenta el stock y no guarda pagos. Con medios, siguen teniendo que cubrir el total. Lo cubren `checkout-form.test.ts`, `checkout.schema.test.ts` y `checkout-pending.test.ts` · Estimación: 1 h · Completado: 2026-11-07 16:44
+
+- [x] **CA-2** · La venta pendiente no cuenta en Estadísticas hasta que se completa (D-1). Lo cubre `compute-workday-stats.test.ts` · Estimación: 20 min · Completado: 2026-11-07 16:44
+
+- [x] **CA-3** · En Ventas/Pedidos la columna Pago dice "Pendiente", el comprobante "Pago pendiente" y la comanda `METODO PAGO: PENDIENTE` · Estimación: 30 min · Completado: 2026-11-07 16:44
+
+**Notas**
+
+- Nivel 3: cambia el cobro. Pendiente = sin pagos en `sale_payments`; no hay migración.
+- Los E2E que cobraban con el Efectivo preseleccionado ahora lo eligen.
+
+### US-69 · Completar el pago desde Ventas/Pedidos
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-11-07 |
+| Tamaño       | M         |
+| Depende de   | US-68     |
+| Plan         | [`docs/plans/actualizacion-7.md`](docs/plans/actualizacion-7.md) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como vendedor quiero completar el pago de una venta pendiente desde Ventas/Pedidos, de forma que la venta quede cobrada y cuente en Estadísticas.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · Las ventas sin pagos tienen en Acciones el ícono "Completar pago" (admin y vendedor). Abre un modal con descuento y medios de pago; el total es la comida con el descuento más el envío (D-3). Lo cubre `complete-payment-modal.test.tsx` · Estimación: 1 h 30 min · Completado: 2026-11-07 17:02
+
+- [x] **CA-2** · Al confirmar, el servidor recalcula el total, valida los pagos, aplica el recargo de la tarjeta y guarda total, descuentos y pagos; queda en Auditoría. Si otro ya la completó, `STALE_VERSION`. Lo cubren `sale-payment.service.test.ts`, `complete-sale-payment.contract.test.ts` y `sale-payment.int.test.ts` (dos a la vez: uno recibe `STALE_VERSION`) · Estimación: 1 h 30 min · Completado: 2026-11-07 17:02
+
+- [x] **CA-3** · Completada, deja de decir "Pendiente" y cuenta en Estadísticas, en la jornada de la venta (D-2). Lo cubren `compute-workday-stats.test.ts` y el E2E `pago-pendiente.spec.ts` · Estimación: 45 min · Completado: 2026-11-07 17:02
+
+### T-29 · Cierre de la Actualización 7
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-11-07 |
+| Tamaño       | S         |
+| Depende de   | todos     |
+| Plan         | [`docs/plans/actualizacion-7.md`](docs/plans/actualizacion-7.md) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como dev quiero la Actualización 7 verificada y en `main`, de forma que el local la use.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · `npm run verify` y todos los E2E en verde sobre `develop`; docs al día; merge a `main` con el tag `actualizacion-7` (D-6) · Estimación: 45 min · Completado: 2026-11-07 17:28
+
+**Notas**
+
+- `npm run verify` verde (1319 tests unit y de componente, 146 de integración, cobertura 96,4 / 90,4, mutación 85,9 y build) y los 85 E2E en verde (2026-11-07). En una primera corrida completa el E2E nuevo tardó más de 15 s en confirmar la venta por la carga de la máquina; solo y en la segunda corrida completa pasó.

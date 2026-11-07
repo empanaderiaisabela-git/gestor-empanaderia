@@ -29,6 +29,7 @@ function ReceiptTotals({ sale }: { sale: SaleDef }): JSX.Element {
         <span>Total</span>
         <span>{formatMoney(sale.total)}</span>
       </p>
+      {sale.payments.length === 0 && <p className={`${row} font-bold`}>Pago pendiente</p>}
       {sale.payments.map((payment) => (
         <p key={payment.type} className={`${row} text-zinc-800`}>
           <span>{describePayment(payment)}</span>

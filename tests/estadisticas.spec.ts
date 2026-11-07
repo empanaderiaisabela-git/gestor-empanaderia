@@ -14,7 +14,6 @@ test.describe('Estadísticas de la jornada (US-12)', () => {
     await page.getByRole('region', { name: 'Pedido actual' }).getByLabel('Nombre del cliente').fill('Cliente estadísticas');
     await page.getByRole('region', { name: 'Pedido actual' }).getByRole('button', { name: 'Cobrar $3.200' }).click();
     await page.getByRole('button', { name: 'Transferencia' }).click();
-    await page.getByRole('button', { name: 'Efectivo' }).click();
     await page.getByRole('button', { name: 'Confirmar $3.200' }).click();
     await expect(page.getByText('Venta registrada por $3.200')).toBeVisible();
 
@@ -49,6 +48,7 @@ test.describe('Estadísticas de la jornada (US-12)', () => {
     await page.getByRole('button', { name: /^Ver pedido/ }).click();
     await page.getByRole('region', { name: 'Pedido actual' }).getByLabel('Nombre del cliente').fill('Cliente al día');
     await page.getByRole('region', { name: 'Pedido actual' }).getByRole('button', { name: /^Cobrar/ }).click();
+    await page.getByRole('button', { name: 'Efectivo' }).click();
     await page.getByRole('button', { name: /^Confirmar/ }).click();
     await expect(page.getByText(/Venta registrada/)).toBeVisible();
     await page.getByRole('navigation').getByRole('link', { name: 'Estadísticas' }).click();

@@ -6,7 +6,9 @@ import type { NewPayment } from '@/features/order/repository/sale-writer.reposit
 
 type RequestedPayment = CheckoutData['payments'][number];
 
-async function creditPayment(scope: CheckoutScope, { type, amount, cardId, installments }: RequestedPayment): Promise<NewPayment> {
+type CardScope = Pick<CheckoutScope, 'cards'>;
+
+async function creditPayment(scope: CardScope, { type, amount, cardId, installments }: RequestedPayment): Promise<NewPayment> {
   const card = cardId === undefined ? null : await scope.cards.findById(cardId);
   if (!card?.isActive) throw new AppError('NOT_FOUND', { entity: 'la tarjeta' });
   const plan = card.plans.find((candidate) => candidate.installments === installments);
@@ -15,7 +17,7 @@ async function creditPayment(scope: CheckoutScope, { type, amount, cardId, insta
   return { type, amount, cardId: card.id, installments: plan.installments, surchargePct, surchargeAmount: round2((amount * surchargePct) / 100) };
 }
 
-export async function chargePayments(scope: CheckoutScope, payments: readonly RequestedPayment[]): Promise<NewPayment[]> {
+export async function chargePayments(scope: CardScope, payments: readonly RequestedPayment[]): Promise<NewPayment[]> {
   const charged: NewPayment[] = [];
   for (const payment of payments) {
     const plain = { type: payment.type, amount: payment.amount, cardId: null, installments: null, surchargePct: null, surchargeAmount: null };

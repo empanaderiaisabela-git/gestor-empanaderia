@@ -1,3 +1,4 @@
+import { eq } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { saleLineItems, saleLines } from '@/lib/db/order-schema';
 import { salePayments, sales } from '@/lib/db/schema';
@@ -6,6 +7,7 @@ import type { MenuGroup } from '@/features/menu/domain/menu-groups';
 import type { PaymentType } from '@/features/order/domain/order-validation';
 
 export type NewSale = { vendorId: string; customerId: string | null; buyerName: string; buyerPhone: string | null; buyerAddress: string | null; total: number; discountAmount: number; discountPercentage: number; shippingOptionId: string | null; shippingTitle: string | null; shippingAmount: number };
+export type SaleTotals = Pick<NewSale, 'total' | 'discountAmount' | 'discountPercentage'>;
 export type NewPayment = { type: PaymentType; amount: number; cardId: string | null; installments: number | null; surchargePct: number | null; surchargeAmount: number | null };
 export type NewSaleItem = { menuItemId: string; units: number; unitCost: number };
 export type NewSaleLine = { group: MenuGroup | null; presentationKey: string | null; promotionId: string | null; quantity: number; unitPrice: number; subtotal: number; description: string; position: number; items: NewSaleItem[] };
@@ -14,6 +16,7 @@ export type SaleWriter = {
   insertSale(sale: NewSale): Promise<string>;
   insertLine(saleId: string, line: NewSaleLine): Promise<string>;
   insertPayments(saleId: string, payments: NewPayment[]): Promise<void>;
+  updateTotals(saleId: string, totals: SaleTotals): Promise<void>;
 };
 
 type Executor = typeof db | DbTransaction;
@@ -39,8 +42,12 @@ export function drizzleSaleWriter(executor: Executor = db): SaleWriter {
       return row.id;
     },
     insertPayments: async (saleId, payments) => {
+      if (payments.length === 0) return;
       const rows = payments.map(({ amount, surchargePct, surchargeAmount, ...payment }) => ({ ...payment, saleId, amount: money(amount), surchargePct: optionalMoney(surchargePct), surchargeAmount: optionalMoney(surchargeAmount) }));
       await executor.insert(salePayments).values(rows);
+    },
+    updateTotals: async (saleId, { total, discountAmount, discountPercentage }) => {
+      await executor.update(sales).set({ total: money(total), discountAmount: money(discountAmount), discountPercentage: money(discountPercentage) }).where(eq(sales.id, saleId));
     },
   };
 }

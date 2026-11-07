@@ -24,6 +24,7 @@ test.describe('cobrar el pedido (US-6)', () => {
     const pedido = page.getByRole('region', { name: 'Pedido actual' });
     await pedido.getByLabel('Nombre del cliente').fill('Marta');
     await pedido.getByRole('button', { name: 'Cobrar $15.100' }).click();
+    await page.getByRole('button', { name: 'Efectivo' }).click();
     await page.getByRole('button', { name: 'Débito' }).click();
     await page.getByLabel('Monto en Efectivo').fill('10000');
     await expect(page.getByText('Resto en Débito: $5.100')).toBeVisible();

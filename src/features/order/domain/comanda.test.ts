@@ -66,6 +66,10 @@ describe('comanda de 57 mm (US-65 CA-3 y CA-4)', () => {
     expect(text.slice(10, 14)).toEqual(['BEBIDAS', cols('1x COCA 500', '$2.500'), cols('2x QUILMES 1L', '$6.000'), DASH]);
   });
 
+  it('sin pagos, el medio de pago dice PENDIENTE (US-68)', () => {
+    expect(buildComanda(saleDef({ payments: [] }), 'Empanadería Isabela')).toContain('METODO PAGO: PENDIENTE');
+  });
+
   it('ningún renglón pasa de 32 caracteres, aunque el domicilio sea largo', () => {
     const text = buildComanda(saleDef({ buyerAddress: 'Avenida Gobernador Hudson 1250, entre Mitre y Belgrano, casa del fondo' }), 'Empanadería Isabela');
     expect(text.every((row) => row.length <= 32)).toBe(true);

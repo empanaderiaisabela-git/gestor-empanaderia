@@ -4,7 +4,7 @@ import { MORNING_SALE, saleDef } from '../testing/sale-fixtures';
 import { getSaleHistoryColumns, renderSaleCard, SaleButtons } from './sale-history-columns';
 
 const SALE = saleDef();
-const actions = (isAdmin: boolean) => ({ isAdmin, onReceipt: vi.fn(), onVoid: vi.fn() });
+const actions = (isAdmin: boolean) => ({ isAdmin, onReceipt: vi.fn(), onVoid: vi.fn(), onComplete: vi.fn() });
 
 describe('grilla de Ventas/Pedidos (US-7 CA-1)', () => {
   it('tiene toda la información de la grilla de historial', () => {
@@ -16,6 +16,11 @@ describe('grilla de Ventas/Pedidos (US-7 CA-1)', () => {
     render(<div>{columns.slice(0, 7).map((column, index) => <span key={index}>{column.cell(SALE)}</span>)}</div>);
     ['25/10/2026, 14:05', 'Marta', 'vendedora', 'Efectivo', 'Débito', '—', '$18.500'].forEach((text) => expect(screen.getByText(text)).toBeDefined());
     expect(screen.getByText('Empanadas · ½ docena: 2 Carne + 4 Pollo · Pizzas · 2 sabores: Muzza / Napolitana')).toBeDefined();
+  });
+
+  it('una venta sin pagos dice "Pendiente" en la columna Pago (US-68)', () => {
+    render(<div>{getSaleHistoryColumns(actions(false))[4].cell(saleDef({ payments: [] }))}</div>);
+    expect(screen.getByText('Pendiente')).toBeDefined();
   });
 
   it('muestra los descuentos y "Sin nombre" cuando no hay comprador', () => {
