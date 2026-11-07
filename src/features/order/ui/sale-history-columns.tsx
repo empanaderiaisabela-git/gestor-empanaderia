@@ -35,14 +35,14 @@ export function SaleButtons({ sale, actions }: { sale: SaleDef; actions: SaleRow
   const button = 'p-1.5 rounded-lg transition hover:bg-zinc-100 dark:hover:bg-zinc-800';
   return (
     <>
-      <button onClick={() => actions.onReceipt(sale)} className={`${button} text-brand-600 dark:text-brand-400`} title='Ver comprobante'>
-        <FileText className='w-4 h-4' />
-      </button>
       {sale.payments.length === 0 && (
         <button onClick={() => actions.onComplete(sale)} className={`${button} text-amber-700 dark:text-amber-400`} title='Completar pago'>
           <Wallet className='w-4 h-4' />
         </button>
       )}
+      <button onClick={() => actions.onReceipt(sale)} className={`${button} text-brand-600 dark:text-brand-400`} title='Ver comprobante'>
+        <FileText className='w-4 h-4' />
+      </button>
       <button onClick={() => printComanda(sale)} className={`${button} text-zinc-700 dark:text-zinc-200`} title='Imprimir comanda'>
         <Printer className='w-4 h-4' />
       </button>
@@ -68,7 +68,7 @@ export function getSaleHistoryColumns(actions: SaleRowActions): ColumnDef<SaleDe
     { header: 'Pago', headerClassName: `${pad} w-32`, cellClassName: pad, cell: (sale) => <PaymentChips sale={sale} /> },
     { header: 'Desc.', headerClassName: `${pad} w-20 text-right`, cellClassName: `${pad} text-right`, cell: (sale) => <DiscountCell sale={sale} /> },
     { header: 'Total', headerClassName: `${pad} w-28 text-right`, cellClassName: `${pad} text-right font-black text-zinc-900 dark:text-zinc-50`, cell: (sale) => formatMoney(sale.total) },
-    { header: 'Acciones', headerClassName: `${pad} w-28 text-right`, cellClassName: `${pad} flex gap-1 justify-end`, cell: (sale) => <SaleButtons sale={sale} actions={actions} /> },
+    { header: 'Acciones', headerClassName: `${pad} w-36 text-right`, cellClassName: `${pad} flex gap-1 justify-end`, cell: (sale) => <SaleButtons sale={sale} actions={actions} /> },
   ];
 }
 
