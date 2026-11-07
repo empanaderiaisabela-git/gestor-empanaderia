@@ -10,7 +10,7 @@ const HAM = 'Jamón extra';
 const HAM_ROW = `   + ${upper(HAM)}`;
 
 function titleOf(line: SaleLineDef): string {
-  if (line.promotionId === null && line.group !== null) return upper(GROUPS[line.group].label);
+  if (line.promotionId === null && line.group !== null) return GROUPS[line.group].kind === 'bebida' ? 'BEBIDAS' : upper(GROUPS[line.group].label);
   return `${line.quantity > 1 ? `${line.quantity}x ` : ''}PROMO ${upper(line.promotionName ?? '')}`;
 }
 

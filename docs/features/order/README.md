@@ -207,7 +207,8 @@ borre.
 - Lleva: la marca, `NRO PEDIDO: #000143` (correlativo de 6 dígitos, `sales.order_number`), fecha y hora de Argentina,
   `TIPO: ENVIO A DOMICILIO` o `RETIRA EN LOCAL`, los datos del cliente (los que haya; el domicilio largo se parte en
   renglones), el detalle, subtotal, descuento (si hubo), envío (si hubo), total general y medio de pago, sin "Paga con".
-- Detalle: el nombre del grupo o de la promo, y debajo un renglón por gusto con sus unidades; el subtotal del producto
+- Detalle (sin título ni encabezado de columnas, US-67): el nombre del grupo (las bebidas de Coca-Cola y Quilmes juntas
+  bajo `BEBIDAS`) o de la promo, y debajo un renglón por gusto con sus unidades; el subtotal del producto
   va en el primero. Los gustos iguales de renglones distintos se juntan ("7x JAMÓN Y QUESO"). Las mitades salen como
   "1/2x MUZZA" y el jamón extra como "+ JAMÓN EXTRA".
 - El historial (`sale-history.repository.ts`) trae para eso el número de pedido, el nombre de la promo de cada línea y

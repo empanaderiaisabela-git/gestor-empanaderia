@@ -39,6 +39,6 @@ function payment(sale: SaleDef): string[] {
 }
 
 export function buildComanda(sale: SaleDef, brand: string): string[] {
-  const detail = ['[ DETALLE DE LA ORDEN ]', `${'Cant Producto'.padEnd(WIDTH - 6)}Subtot`, DASH, ...detailRows(sale.lines), DASH];
+  const detail = [...detailRows(sale.lines), DASH];
   return [...header(sale, brand), ...customer(sale), ...detail, ...totals(sale), ...payment(sale), DASH, center('¡GRACIAS POR SU COMPRA!'), EQ];
 }
