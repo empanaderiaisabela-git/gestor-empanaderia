@@ -65,14 +65,14 @@ describe('grilla de Stock (US-4 CA-1)', () => {
     render(<div>{getStockColumns({ open: vi.fn(), editLast: vi.fn() }).map((column, index) => <span key={index}>{column.cell(base)}</span>)}</div>);
     expect([screen.getByText('Prepizza'), screen.getByText('3')]).toHaveLength(2);
     expect(screen.getAllByText('—')).toHaveLength(3);
-    expect(screen.getAllByRole('button').map((button) => button.title)).toEqual(['Editar último ingreso', 'Ingresar stock', 'Registrar pérdida', 'Historial de ingresos']);
+    expect(screen.getAllByRole('button').map((button) => button.title)).toEqual(['Editar stock', 'Ingresar stock', 'Registrar pérdida', 'Historial de ingresos']);
   });
 
-  it('el lápiz de la fila, primero a la izquierda, edita el último ingreso (US-48)', () => {
+  it('el lápiz de la fila, primero a la izquierda, edita el stock (US-48, US-70)', () => {
     const editLast = vi.fn();
     render(<StockButtons item={ITEM} actions={{ open: vi.fn(), editLast }} />);
-    expect(screen.getAllByRole('button')[0].title).toBe('Editar último ingreso');
-    fireEvent.click(screen.getByTitle('Editar último ingreso'));
+    expect(screen.getAllByRole('button')[0].title).toBe('Editar stock');
+    fireEvent.click(screen.getByTitle('Editar stock'));
     expect(editLast).toHaveBeenCalledWith(ITEM);
   });
 

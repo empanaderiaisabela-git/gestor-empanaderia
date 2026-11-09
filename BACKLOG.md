@@ -22,6 +22,7 @@
 - [Actualización 5 · Precios enteros en la comanda](#actualización-5--precios-enteros-en-la-comanda)
 - [Actualización 6 · Comanda más limpia](#actualización-6--comanda-más-limpia)
 - [Actualización 7 · Venta con pago pendiente](#actualización-7--venta-con-pago-pendiente)
+- [Actualización 9 · El lápiz pisa el stock](#actualización-9--el-lápiz-pisa-el-stock)
 
 ## Convenciones
 
@@ -5082,8 +5083,8 @@ el cadete tengan el pedido, el cliente y el envío en papel.
 
 **Notas**
 
-- Nivel 3: migración y lectura de ventas. Supabase pasa a 34 migraciones; la migra el dev antes de `main` (D-7).
-- La comanda se miró en una captura del navegador (Chromium, ventana de 360 px): 32 columnas parejas a 48 mm. No se probó en la térmica del local.
+- Nivel 3: migración y lectura de ventas. Supabase pasa a 34 migraciones; la migra el dev antes de `main` (D-7).
+- La comanda se miró en una captura del navegador (Chromium, ventana de 360 px): 32 columnas parejas a 48 mm. No se probó en la térmica del local.
 - El encabezado "Cant Producto Subtot" del ejemplo tenía 33 caracteres; quedó en 32, como el resto (I-1 del plan).
 
 ### T-28 · Cierre de la Actualización 3
@@ -5288,3 +5289,69 @@ que la versión que use el cliente sea la que se probó.
 **Notas**
 
 - `npm run verify` verde (1319 tests unit y de componente, 146 de integración, cobertura 96,4 / 90,4, mutación 85,9 y build) y los 85 E2E en verde (2026-11-07). En una primera corrida completa el E2E nuevo tardó más de 15 s en confirmar la venta por la carga de la máquina; solo y en la segunda corrida completa pasó.
+
+------------------------------------------------------------------------------------------------------------------------
+
+## Actualización 9 · El lápiz pisa el stock
+
+------------------------------------------------------------------------------------------------------------------------
+
+**Objetivo**: pedido del cliente del 2026-11-09. El lápiz de Stock sumaba o restaba la diferencia con el ingreso, y tras las ventas el número no coincidía con la grilla. Ahora el lápiz manda: guarda tal cual el stock escrito.
+
+**Plan**: [`docs/plans/actualizacion-9.md`](docs/plans/actualizacion-9.md), con las decisiones del dev (D-1 a D-6). Sin migración.
+
+### US-70 · El lápiz de Stock pisa el stock
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-11-09 |
+| Tamaño       | M         |
+| Depende de   | US-46, US-48 |
+| Plan         | [`docs/plans/actualizacion-9.md`](docs/plans/actualizacion-9.md) |
+| Merge        | feda026   |
+| Horas reales | —         |
+
+**Historia**: Como administrador quiero escribir el stock real de un gusto con el lápiz, de forma que quede exactamente ese número, sin que las ventas o los ingresos lo cambien.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · El lápiz de la fila ("Editar stock") y "Editar ingreso" del Historial abren el mismo formulario, con "Stock" precargado con el de la grilla. Al guardar, el stock queda exactamente en el número escrito (D-1, D-3) · Estimación: 1 h · Completado: 2026-11-09 14:01
+
+- [x] **CA-2** · El ingreso conserva su cantidad y su gusto; sólo cambian su costo y su proveedor. La categoría y el gusto no se pueden cambiar (D-2, D-5) · Estimación: 30 min · Completado: 2026-11-09 14:01
+
+- [x] **CA-3** · Un gusto sin ingresos también tiene lápiz: el formulario va sin Proveedor y guarda en el gusto sin crear ningún ingreso (D-4) · Estimación: 30 min · Completado: 2026-11-09 14:01
+
+- [x] **CA-4** · Si el gusto cambió desde que se abrió el formulario (por ejemplo, por una venta), `STALE_VERSION` y no se guarda nada (D-6) · Estimación: 30 min · Completado: 2026-11-09 14:01
+
+- [x] **CA-5** · Auditoría guarda `ACTUALIZAR` / `PRODUCTO` con el stock de antes y de después · Estimación: 15 min · Completado: 2026-11-09 14:01
+
+**Notas**
+
+- Nivel 3: cambia cómo se mueve el stock. Sin migración: Supabase sigue en 34.
+- I-1: el aviso "Stock ingresado" salía antes de recargar la grilla, y el lápiz podía abrir con el stock viejo. Ahora se recarga primero (`stock-reload.test.tsx`). I-2: el E2E usa Fanta 1,5 L, que no toca ningún otro spec.
+- `npm run verify` verde (2026-11-09): 1327 tests unit y de componente, 146 de integración, cobertura 96,42 / 90,5, mutación 86,04 y build. Los 10 E2E de Stock en verde. Probado a mano en el dev local: "carne picante" 35 → 17 → 35.
+
+### T-30 · Cierre de la Actualización 9
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-11-09 |
+| Tamaño       | S         |
+| Depende de   | US-70     |
+| Plan         | [`docs/plans/actualizacion-9.md`](docs/plans/actualizacion-9.md) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Historia**: Como dev quiero la Actualización 9 verificada y en `main`, de forma que el local la use.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · `npm run verify` y los E2E de Stock en verde sobre `develop`; docs al día; merge a `main` con el tag `actualizacion-9`, con el OK del dev · Estimación: 45 min · Completado: 2026-11-09 14:35
+
+**Notas**
+
+- `npm run verify` verde (1327 tests unit y de componente, 146 de integración, cobertura 96,42 / 90,5, mutación 86,04 y build) y los 85 E2E en verde sobre `develop` (2026-11-09). El dev pidió llevarlo a `main` para producción el 2026-11-09. El número 8 ya lo usaba el release del fix de Ventas (tag `actualizacion-8`, 2026-11-07): esta es la Actualización 9.

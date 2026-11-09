@@ -16,7 +16,7 @@ const PROVIDER = { id: '22222222-2222-4222-8222-222222222222', name: 'Bebidas No
 
 function model(overrides: Partial<StockPanelModel>): StockPanelModel {
   const noop = vi.fn(async () => null);
-  const base: StockPanelModel = { loading: false, items: [], activeItems: [MANZANA, PERA, LEGACY], providers: [PROVIDER], search: '', setSearch: vi.fn(), categoryFilter: 'todos', setCategoryFilter: vi.fn(), stockOrder: 'categoria', setStockOrder: vi.fn(), dialog: { kind: 'entry', item: null }, setDialog: vi.fn(), message: null, submitEntry: noop, submitLoss: noop, submitPricing: noop, submitEntryUpdate: noop, ham: { price: null, version: 0 }, submitHamPrice: noop, submitIncrease: noop };
+  const base: StockPanelModel = { loading: false, items: [], activeItems: [MANZANA, PERA, LEGACY], providers: [PROVIDER], search: '', setSearch: vi.fn(), categoryFilter: 'todos', setCategoryFilter: vi.fn(), stockOrder: 'categoria', setStockOrder: vi.fn(), dialog: { kind: 'entry', item: null }, setDialog: vi.fn(), message: null, submitEntry: noop, submitLoss: noop, submitPricing: noop, submitOverwrite: noop, ham: { price: null, version: 0 }, submitHamPrice: noop, submitIncrease: noop };
   return { ...base, ...overrides };
 }
 

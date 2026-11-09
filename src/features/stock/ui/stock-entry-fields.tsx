@@ -3,7 +3,7 @@ import { FormField, inputClass } from '@/components/ui/form-field';
 import type { MenuItemDef } from '@/features/menu/domain/menu-item.schema';
 import { costLabelOf } from '@/features/menu/domain/menu-terms';
 import type { HamPriceDef } from '@/features/menu/domain/pizza-extra.schema';
-import { HAM_CATEGORY, isPriceOnlyCategory, type StockCategory } from '@/features/stock/domain/stock-categories';
+import { CATEGORY_LABELS, categoryOf, HAM_CATEGORY, isPriceOnlyCategory, type StockCategory } from '@/features/stock/domain/stock-categories';
 import { formatMoney } from '@/lib/format-money';
 import type { ProviderDef } from '@/features/provider/domain/provider.schema';
 import { HamPriceField, MinStockField, ProviderField } from './stock-entry-optional-fields';
@@ -19,11 +19,14 @@ type StockEntryFieldsProps = {
   onChange: (values: EntryValues) => void;
   categories?: readonly StockCategory[];
   ham?: HamPriceDef;
-  editing?: boolean;
+  editing?: { withProvider: boolean };
 };
 
-function CostFields({ values, errors, items, providers, onChange }: StockEntryFieldsProps): JSX.Element {
-  const item = items.find((candidate) => candidate.id === values.menuItemId) ?? null;
+const itemOf = ({ items, values }: StockEntryFieldsProps): MenuItemDef | null => items.find((candidate) => candidate.id === values.menuItemId) ?? null;
+
+function CostFields(props: StockEntryFieldsProps): JSX.Element {
+  const { values, errors, providers, onChange, editing } = props;
+  const item = itemOf(props);
   return (
     <>
       {!item?.isBase && (
@@ -33,9 +36,16 @@ function CostFields({ values, errors, items, providers, onChange }: StockEntryFi
       )}
       {item && !item.isBase && <StockPriceFields item={item} values={values} errors={errors} onChange={onChange} />}
       {!isPriceOnlyCategory(values.category) && values.category !== '' && <MinStockField values={values} errors={errors} onChange={onChange} />}
-      {!isPriceOnlyCategory(values.category) && <ProviderField values={values} errors={errors} providers={providers} onChange={onChange} />}
+      {!isPriceOnlyCategory(values.category) && (editing?.withProvider ?? true) && <ProviderField values={values} errors={errors} providers={providers} onChange={onChange} />}
     </>
   );
+}
+
+function EditedItem(props: StockEntryFieldsProps): JSX.Element | null {
+  const item = itemOf(props);
+  if (!item) return null;
+  const category = CATEGORY_LABELS[categoryOf(item)];
+  return <p className='text-sm font-bold text-zinc-900 dark:text-zinc-50'>{item.isBase ? category : `${category} · ${item.name}`}</p>;
 }
 
 export function StockEntryFields(props: StockEntryFieldsProps): JSX.Element {
@@ -50,10 +60,10 @@ export function StockEntryFields(props: StockEntryFieldsProps): JSX.Element {
   }
   return (
     <div className='space-y-4'>
-      <ItemSelects values={values} errors={errors} items={items} onChange={onChange} categories={categories} ham={ham} editing={editing} />
+      {editing ? <EditedItem {...props} /> : <ItemSelects values={values} errors={errors} items={items} onChange={onChange} categories={categories} ham={ham} />}
       {!isPriceOnlyCategory(values.category) && (
-        <FormField label='Cantidad que entra' error={errors.quantity}>
-          <input inputMode='numeric' value={values.quantity} onChange={(event) => onChange({ ...values, quantity: event.target.value })} placeholder='Ej: 24' className={inputClass(Boolean(errors.quantity))} />
+        <FormField label={editing ? 'Stock' : 'Cantidad que entra'} error={errors.quantity ?? errors.stock}>
+          <input inputMode='numeric' value={values.quantity} onChange={(event) => onChange({ ...values, quantity: event.target.value })} placeholder='Ej: 24' className={inputClass(Boolean(errors.quantity ?? errors.stock))} />
         </FormField>
       )}
       <CostFields {...props} />

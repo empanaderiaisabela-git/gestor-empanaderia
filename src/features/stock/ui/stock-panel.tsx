@@ -37,7 +37,6 @@ export function StockPanel(): JSX.Element {
   if (model.loading) return <TableSkeleton />;
   const editLast = (item: MenuItemDef): void => void openLastEntry(item, model.setDialog);
   const actions: StockRowActions | null = isAdmin ? { open: model.setDialog, editLast } : null;
-  const editing = model.dialog?.kind === 'entry' && model.dialog.item && model.dialog.entry ? { item: model.dialog.item, entry: model.dialog.entry } : null;
   const addButton = (
     <Button variant='primary' onClick={() => model.setDialog({ kind: 'entry', item: null })} leftIcon={<PackagePlus className='w-5 h-5' />} className='h-11 w-full sm:w-auto shrink-0' data-testid={TEST_IDS.general.btnAgregar}>
       Ingresar stock
@@ -60,7 +59,7 @@ export function StockPanel(): JSX.Element {
       <StockPricingModal model={model} />
       <StockHistoryModal model={model} />
       <StockIncreaseModal model={model} isOpen={increaseOpen} onClose={() => setIncreaseOpen(false)} />
-      {editing && <StockEntryEditModal key={editing.entry.id} model={model} item={editing.item} entry={editing.entry} />}
+      {model.dialog?.kind === 'edit' && <StockEntryEditModal key={model.dialog.entry?.id ?? model.dialog.item.id} model={model} item={model.dialog.item} entry={model.dialog.entry} />}
     </div>
   );
 }

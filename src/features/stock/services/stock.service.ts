@@ -1,14 +1,14 @@
 import { AppError } from '@/lib/errors';
 import { hasBase } from '@/features/menu/domain/menu-groups';
 import type { PriceIncreaseInput } from '@/features/stock/domain/stock-increase';
-import type { StockEntryInput, StockEntryUpdateInput, StockLossInput, StockPricingInput } from '@/features/stock/domain/stock.schema';
+import type { StockEntryInput, StockLossInput, StockOverwriteInput, StockPricingInput } from '@/features/stock/domain/stock.schema';
 import type { EntryView, StockEntry, StockItem, StockLoss } from '@/features/stock/repository/stock.repository';
 import { drizzleStockUnitOfWork, type StockScope, type StockUnitOfWork } from '@/features/stock/repository/stock-unit-of-work';
-import { updateEntry } from './stock-entry-edit';
 import { planEntry } from './stock-entry-plan';
 import { applyIncrease, type IncreaseResult } from './stock-increase';
 import { familyOf, inherited, inheritedPrices, shareWithFamily } from './stock-family';
 import { lockedItem, saved } from './stock-locks';
+import { type OverwriteResult, overwriteStock } from './stock-overwrite';
 import { type PricingResult, setPricing } from './stock-pricing';
 
 type Caller = { id: string };
@@ -17,7 +17,7 @@ export type LossResult = { item: StockItem; loss: StockLoss };
 
 export type StockService = {
   registerEntry(caller: Caller, input: StockEntryInput): Promise<EntryResult>;
-  updateEntry(caller: Caller, input: StockEntryUpdateInput): Promise<EntryResult>;
+  overwriteStock(caller: Caller, input: StockOverwriteInput): Promise<OverwriteResult>;
   registerLoss(caller: Caller, input: StockLossInput): Promise<LossResult>;
   setPricing(caller: Caller, input: StockPricingInput): Promise<PricingResult>;
   applyIncrease(caller: Caller, input: PriceIncreaseInput): Promise<IncreaseResult>;
@@ -55,7 +55,7 @@ async function registerLoss(scope: StockScope, caller: Caller, input: StockLossI
 export function createStockService({ unitOfWork }: { unitOfWork: StockUnitOfWork }): StockService {
   return {
     registerEntry: (caller, input) => unitOfWork.run((scope) => registerEntry(scope, caller, input)),
-    updateEntry: (caller, input) => unitOfWork.run((scope) => updateEntry(scope, caller, input)),
+    overwriteStock: (caller, input) => unitOfWork.run((scope) => overwriteStock(scope, caller, input)),
     registerLoss: (caller, input) => unitOfWork.run((scope) => registerLoss(scope, caller, input)),
     setPricing: (caller, input) => unitOfWork.run((scope) => setPricing(scope, caller, input)),
     applyIncrease: (caller, input) => unitOfWork.run((scope) => applyIncrease(scope, caller, input)),
