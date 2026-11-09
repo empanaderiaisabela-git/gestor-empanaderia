@@ -5310,7 +5310,7 @@ que la versión que use el cliente sea la que se probó.
 | Tamaño       | M         |
 | Depende de   | US-46, US-48 |
 | Plan         | [`docs/plans/actualizacion-9.md`](docs/plans/actualizacion-9.md) |
-| Merge        | —         |
+| Merge        | feda026   |
 | Horas reales | —         |
 
 **Historia**: Como administrador quiero escribir el stock real de un gusto con el lápiz, de forma que quede exactamente ese número, sin que las ventas o los ingresos lo cambien.
@@ -5337,9 +5337,9 @@ que la versión que use el cliente sea la que se probó.
 
 | Campo        | Valor     |
 | ------------ | --------- |
-| Estado       | Pendiente |
+| Estado       | En revisión |
 | Dueño        | Agente    |
-| Inicio       | —         |
+| Inicio       | 2026-11-09 |
 | Tamaño       | S         |
 | Depende de   | US-70     |
 | Plan         | [`docs/plans/actualizacion-9.md`](docs/plans/actualizacion-9.md) |
@@ -5350,4 +5350,8 @@ que la versión que use el cliente sea la que se probó.
 
 **Criterios de aceptación**
 
-- [ ] **CA-1** · `npm run verify` y los E2E de Stock en verde sobre `develop`; docs al día; merge a `main` con el tag `actualizacion-9`, con el OK del dev · Estimación: 45 min
+- [x] **CA-1** · `npm run verify` y los E2E de Stock en verde sobre `develop`; docs al día; merge a `main` con el tag `actualizacion-9`, con el OK del dev · Estimación: 45 min · Completado: 2026-11-09 14:35
+
+**Notas**
+
+- `npm run verify` verde (1327 tests unit y de componente, 146 de integración, cobertura 96,42 / 90,5, mutación 86,04 y build) y los 85 E2E en verde sobre `develop` (2026-11-09). El dev pidió llevarlo a `main` para producción el 2026-11-09. El número 8 ya lo usaba el release del fix de Ventas (tag `actualizacion-8`, 2026-11-07): esta es la Actualización 9.
