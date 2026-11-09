@@ -41,7 +41,7 @@ export function StockHistoryModal({ model }: { model: StockPanelModel }): JSX.El
       {entries?.length === 0 && <p className='text-sm text-zinc-700 dark:text-zinc-200'>Todavía no hay ingresos de stock para este producto.</p>}
       <ul>
         {entries?.map((entry) => (
-          <EntryRow key={entry.id} entry={entry} onEdit={() => model.setDialog({ kind: 'entry', item, entry })} />
+          <EntryRow key={entry.id} entry={entry} onEdit={() => item && model.setDialog({ kind: 'edit', item, entry })} />
         ))}
       </ul>
     </ResponsiveModal>

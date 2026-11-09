@@ -17,8 +17,14 @@ export const stockEntrySchema = z.strictObject({
 });
 export type StockEntryInput = z.infer<typeof stockEntrySchema>;
 
-export const stockEntryUpdateSchema = stockEntrySchema.extend({ id: z.uuid(), version: z.number().int().min(1) });
-export type StockEntryUpdateInput = z.infer<typeof stockEntryUpdateSchema>;
+const version = z.number().int().min(1);
+
+export const stockOverwriteSchema = stockEntrySchema.omit({ quantity: true }).extend({
+  itemVersion: version,
+  stock: z.number('Ingresá el stock').int('El stock tiene que ser un número entero').min(0, 'El stock no puede ser negativo').max(MAX_QUANTITY, 'El stock es demasiado grande'),
+  entry: z.strictObject({ id: z.uuid(), version }).nullable(),
+});
+export type StockOverwriteInput = z.infer<typeof stockOverwriteSchema>;
 
 export const stockLossSchema = z.strictObject({
   menuItemId,

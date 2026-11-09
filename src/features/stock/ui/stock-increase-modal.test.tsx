@@ -11,7 +11,7 @@ const [MANZANA, PERA] = [aquarius('44444444-4444-4444-8444-444444444444', 'Manza
 
 function renderModal(submitIncrease = vi.fn(async () => null), onClose = vi.fn()) {
   const noop = vi.fn(async () => null);
-  const model: StockPanelModel = { loading: false, items: [], activeItems: [CARNE, POLLO, HUMITA, MANZANA, PERA], providers: [], search: '', setSearch: vi.fn(), categoryFilter: 'todos', setCategoryFilter: vi.fn(), stockOrder: 'categoria', setStockOrder: vi.fn(), dialog: null, setDialog: vi.fn(), message: null, submitEntry: noop, submitLoss: noop, submitPricing: noop, submitEntryUpdate: noop, ham: { price: null, version: 0 }, submitHamPrice: noop, submitIncrease };
+  const model: StockPanelModel = { loading: false, items: [], activeItems: [CARNE, POLLO, HUMITA, MANZANA, PERA], providers: [], search: '', setSearch: vi.fn(), categoryFilter: 'todos', setCategoryFilter: vi.fn(), stockOrder: 'categoria', setStockOrder: vi.fn(), dialog: null, setDialog: vi.fn(), message: null, submitEntry: noop, submitLoss: noop, submitPricing: noop, submitOverwrite: noop, ham: { price: null, version: 0 }, submitHamPrice: noop, submitIncrease };
   render(<StockIncreaseModal model={model} isOpen onClose={onClose} />);
   return { submitIncrease, onClose };
 }

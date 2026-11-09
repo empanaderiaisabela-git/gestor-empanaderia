@@ -25,7 +25,7 @@ export async function run<T>(parsed: Parsed<T>, send: (input: T) => Promise<stri
 const blank = (category: string, menuItemId: string, minStock = ''): EntryValues => ({ category, menuItemId, quantity: '', unitCost: '', providerId: '', minStock, price1: '', price3: '', price6: '', price12: '' });
 
 export function StockEntryModal({ model }: { model: StockPanelModel }): JSX.Element {
-  const isOpen = model.dialog?.kind === 'entry' && !model.dialog.entry;
+  const isOpen = model.dialog?.kind === 'entry';
   const preselectedItem = model.dialog?.item ?? null;
   const preselected = preselectedItem?.id ?? '';
   const preselectedMin = textOf(preselectedItem?.minStock);

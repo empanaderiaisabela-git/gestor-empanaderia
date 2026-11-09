@@ -64,14 +64,14 @@ describe('ingresos y mermas simultáneos sobre el mismo gusto (US-4 CA-2)', () =
     await expect(stockService.setPricing(CALLER, { menuItemId: pollo.id, version: 1, unitCost: 1, prices, applyToGroup: false })).rejects.toMatchObject({ code: 'STALE_VERSION' });
   });
 
-  it('editar un ingreso lo pasa a otro gusto en una transacción, y si no alcanza no cambia nada (US-46 CA-3)', async () => {
-    const [pollo] = await db.insert(menuItems).values({ group: 'empanadas', name: 'Pollo', unitCost: '350.00', stock: '2', ...DOZEN }).returning({ id: menuItems.id });
+  it('el lápiz pisa el stock y deja el ingreso igual; con una venta en el medio, o dos a la vez, gana uno solo (US-70)', async () => {
     const { entry } = await stockService.registerEntry(CALLER, { menuItemId: itemId, quantity: 6 });
-    await stockService.updateEntry(CALLER, { id: entry.id, version: 1, menuItemId: pollo.id, quantity: 6 });
-    expect([await stockOf(itemId), await stockOf(pollo.id)]).toEqual([10, 8]);
-    await stockService.registerLoss(CALLER, { menuItemId: pollo.id, quantity: 5, reason: 'Se cayó' });
-    await expect(stockService.updateEntry(CALLER, { id: entry.id, version: 2, menuItemId: itemId, quantity: 6 })).rejects.toMatchObject({ code: 'INSUFFICIENT_STOCK' });
-    expect([await stockOf(itemId), await stockOf(pollo.id), (await db.select().from(stockEntries))[0].version]).toEqual([10, 3, 2]);
+    await stockService.registerLoss(CALLER, { menuItemId: itemId, quantity: 1, reason: 'Se cayó' });
+    await expect(stockService.overwriteStock(CALLER, { menuItemId: itemId, itemVersion: 2, stock: 3, entry: { id: entry.id, version: 1 } })).rejects.toMatchObject({ code: 'STALE_VERSION' });
+    const both = await Promise.allSettled([4, 5].map((stock) => stockService.overwriteStock(CALLER, { menuItemId: itemId, itemVersion: 3, stock, entry: null })));
+    expect(both.map((result) => result.status).sort()).toEqual(['fulfilled', 'rejected']);
+    expect([4, 5]).toContain(await stockOf(itemId));
+    expect((await db.select().from(stockEntries))[0]).toMatchObject({ quantity: 6, version: 1 });
   });
 
   it('si la merma no alcanza, no se registra nada', async () => {

@@ -38,4 +38,11 @@ describe('bebidas: la familia comparte costo y precio (US-49 CA-3 y CA-4)', () =
     expect([MANZANA, PERA, POMELO].map((item) => row(item.id)?.price1)).toEqual(['2800.00', '2800.00', '2800.00']);
     expect(row(MANZANA.id)?.unitCost).toBe('1000.00');
   });
+
+  it('el lápiz pisa el stock de un sabor y comparte costo y precio con la familia (US-70)', async () => {
+    const { entry } = await service.registerEntry(CALLER, { menuItemId: MANZANA.id, quantity: 6, unitCost: 900, prices: { price1: 2500 } });
+    const input = { menuItemId: MANZANA.id, itemVersion: 2, stock: 2, unitCost: 950, prices: { price1: 2700 }, entry: { id: entry.id, version: 1 } };
+    expect((await service.overwriteStock(CALLER, input)).item.stock).toBe('2.0');
+    expect([PERA, POMELO].map((item) => [row(item.id)?.stock, row(item.id)?.unitCost, row(item.id)?.price1])).toEqual([['0.0', '950.00', '2700.00'], ['0.0', '950.00', '2700.00']]);
+  });
 });

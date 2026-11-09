@@ -10,7 +10,7 @@ import { formatMoney } from '@/lib/format-money';
 import type { StockDialog } from './use-stock-panel';
 
 export type StockRowActions = { open: (dialog: StockDialog) => void; editLast: (item: MenuItemDef) => void };
-type DialogKind = NonNullable<StockDialog>['kind'];
+type DialogKind = Exclude<NonNullable<StockDialog>['kind'], 'edit'>;
 
 const BUTTONS: Record<DialogKind, { title: string; tone: string; Icon: LucideIcon }> = {
   entry: { title: 'Ingresar stock', tone: 'text-emerald-700 dark:text-emerald-400', Icon: PackagePlus },
@@ -41,7 +41,7 @@ export function StockButtons({ item, actions }: { item: MenuItemDef; actions: St
   return (
     <>
       {kindsOf(item).includes('history') && (
-        <button onClick={() => actions.editLast(item)} className='p-1.5 rounded-lg transition hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-200' title='Editar último ingreso'>
+        <button onClick={() => actions.editLast(item)} className='p-1.5 rounded-lg transition hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-200' title='Editar stock'>
           <Pencil className='w-4 h-4' />
         </button>
       )}

@@ -1,7 +1,7 @@
 # Prompt inicial: contexto completo de gestor-empanaderia
 
 > **Uso.** Al empezar una sesión nueva de Claude Code: `Leé @docs/initial_prompt.md y seguilo.`
-> Foto del proyecto al **2026-11-07**. Se adapta en cada avance significativo
+> Foto del proyecto al **2026-11-09**. Se adapta en cada avance significativo
 > ([criterios](how-to-document.md#mantener-al-día-docsinitial_promptmd)). Si algo de acá contradice a
 > [`AGENTS.md`](../AGENTS.md) o a los docs que enlaza, **ganan ellos**: avisale al dev que este archivo quedó
 > desactualizado.
@@ -52,8 +52,8 @@ Funciones que ya existen (Sprints 1 a 4):
 - Catálogo público que se regenera a demanda.
 - Desde el Sprint 6: los grupos se ven como "Quilmes" y "Sándwich de miga" (US-44); stock mínimo opcional con aviso
   amarillo (US-45); editar un ingreso de stock desde el Historial (US-46); el switch "Jamón extra" en cada pizza del
-  carrito, con su precio en "Ingresar stock" (US-47); el lápiz de acceso directo para editar el último ingreso
-  (US-48); bebidas con Bebida, Litros o mililitros y Sabor, cuyos sabores comparten costo y precio por familia (US-49,
+  carrito, con su precio en "Ingresar stock" (US-47); el lápiz "Editar stock" de cada fila,
+  que desde US-70 pisa el stock con el número escrito (US-48, US-70); bebidas con Bebida, Litros o mililitros y Sabor, cuyos sabores comparten costo y precio por familia (US-49,
   US-51); "Registrar aumento" de costo y precio por porcentaje en una categoría (US-50).
 
 ## 3. Origen: código heredado en remodelación
@@ -191,6 +191,11 @@ Hacer preguntas de más es mejor que inventar.
   columnas, sin encabezado de detalle y con las bebidas bajo `BEBIDAS` (US-66, BUG-32, US-67); y la **venta con el pago
   pendiente**: el cobro arranca sin medio, la venta se registra sin pagos y se completa desde Ventas/Pedidos (US-68 y
   US-69, plan en [`actualizacion-7.md`](plans/actualizacion-7.md)). Sin migraciones: Supabase sigue en **34**.
+- **Actualización 9** (2026-11-09, plan en [`actualizacion-9.md`](plans/actualizacion-9.md)): el lápiz de Stock
+  **pisa el stock** (US-70). "Editar stock" (el lápiz de la fila) y "Editar ingreso" del Historial abren el mismo
+  formulario con "Stock" precargado con el de la grilla. Guardan ese número tal cual, sin restar ventas, y el ingreso
+  conserva su cantidad. Gusto fijo; sin ingresos, sin Proveedor; con una venta en el medio, `STALE_VERSION`. Queda en
+  Auditoría con el stock de antes y de después. Sin migración: Supabase sigue en **34**.
 - **Actualización 3** (2026-11-05, plan en [`actualizacion-3.md`](plans/actualizacion-3.md)): los renglones del mismo
   gusto van en un solo ítem del carrito (US-64), y cada venta imprime su comanda de 57 mm desde Ventas/Pedidos, con un
   número de pedido correlativo (US-65, migración **0033**: `sales.order_number`). Supabase está en **34** (la migró el dev

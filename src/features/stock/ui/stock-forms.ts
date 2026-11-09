@@ -3,7 +3,7 @@ import type { MenuItemDef } from '@/features/menu/domain/menu-item.schema';
 import { type HamPriceInput, hamPriceSchema } from '@/features/menu/domain/pizza-extra.schema';
 import { categoryOf } from '@/features/stock/domain/stock-categories';
 import { type PriceIncreaseInput, priceIncreaseSchema } from '@/features/stock/domain/stock-increase';
-import { type StockEntryDef, type StockEntryInput, stockEntrySchema, type StockLossInput, stockLossSchema, type StockPricingInput, stockPricingSchema } from '@/features/stock/domain/stock.schema';
+import { type StockEntryDef, type StockEntryInput, stockEntrySchema, type StockLossInput, stockLossSchema, type StockOverwriteInput, stockOverwriteSchema, type StockPricingInput, stockPricingSchema } from '@/features/stock/domain/stock.schema';
 
 export type PriceTexts = Record<PriceField, string>;
 export type EntryValues = PriceTexts & { category: string; menuItemId: string; quantity: string; unitCost: string; providerId: string; minStock: string };
@@ -32,17 +32,30 @@ function pricesOf(values: EntryValues): Record<string, number> | undefined {
   return filled.length === 0 ? undefined : Object.fromEntries(filled.map((field) => [field, toNumber(values[field])]));
 }
 
-export function parseEntry(values: EntryValues): Parsed<StockEntryInput> {
-  const costs = { unitCost: values.unitCost.trim() === '' ? undefined : toNumber(values.unitCost), providerId: values.providerId || null, prices: pricesOf(values) };
+type Optional = { unitCost?: number; providerId: string | null; prices?: Record<string, number>; minStock: number | null };
+
+function optionalOf(values: EntryValues): Optional {
   const minStock = values.minStock.trim() === '' ? null : toNumber(values.minStock);
-  const result = stockEntrySchema.safeParse({ menuItemId: values.menuItemId, quantity: toNumber(values.quantity), ...costs, minStock });
+  return { unitCost: values.unitCost.trim() === '' ? undefined : toNumber(values.unitCost), providerId: values.providerId || null, prices: pricesOf(values), minStock };
+}
+
+export function parseEntry(values: EntryValues): Parsed<StockEntryInput> {
+  const result = stockEntrySchema.safeParse({ menuItemId: values.menuItemId, quantity: toNumber(values.quantity), ...optionalOf(values) });
   return result.success ? { ok: true, input: result.data } : { ok: false, errors: errorsOf(result.error.issues) };
 }
 
-export function entryValuesOf(item: MenuItemDef, entry: StockEntryDef): EntryValues {
+export type Overwritten = { item: MenuItemDef; entry: StockEntryDef | null };
+
+export function parseOverwrite(values: EntryValues, { item, entry }: Overwritten): Parsed<StockOverwriteInput> {
+  const target = { menuItemId: item.id, itemVersion: item.version, entry: entry && { id: entry.id, version: entry.version } };
+  const result = stockOverwriteSchema.safeParse({ ...target, stock: toNumber(values.quantity), ...optionalOf(values) });
+  return result.success ? { ok: true, input: result.data } : { ok: false, errors: errorsOf(result.error.issues) };
+}
+
+export function entryValuesOf({ item, entry }: Overwritten): EntryValues {
   const prices = { price1: textOf(item.price1), price3: textOf(item.price3), price6: textOf(item.price6), price12: textOf(item.price12) };
-  const unitCost = item.isBase ? '' : textOf(entry.unitCost);
-  return { category: categoryOf(item), menuItemId: item.id, quantity: String(entry.quantity), unitCost, providerId: entry.providerId ?? '', minStock: textOf(item.minStock), ...prices };
+  const unitCost = item.isBase ? '' : textOf(entry ? entry.unitCost : item.unitCost);
+  return { category: categoryOf(item), menuItemId: item.id, quantity: String(item.stock), unitCost, providerId: entry?.providerId ?? '', minStock: textOf(item.minStock), ...prices };
 }
 
 export function parseHamPrice(text: string, version: number): Parsed<HamPriceInput> {

@@ -14,26 +14,25 @@ type ItemSelectsProps = {
   onChange: (values: EntryValues) => void;
   categories?: readonly StockCategory[];
   ham?: HamPriceDef;
-  editing?: boolean;
 };
 
 const isDrinkCategory = (category: string): boolean => DRINK_GROUPS.some((group) => group === category);
 
-function pickedValues({ values, items, editing }: Pick<ItemSelectsProps, 'values' | 'items' | 'editing'>, item: MenuItemDef): EntryValues {
+function pickedValues({ values, items }: Pick<ItemSelectsProps, 'values' | 'items'>, item: MenuItemDef): EntryValues {
   if (isPriceOnlyCategory(values.category)) return { ...values, ...pricingValuesOf(item), menuItemId: item.id };
   const source = isDrinkCategory(values.category) ? familySourceOf(item, items) : null;
   const prices = source ? { ...NO_PRICES, price1: textOf(source.price1) } : NO_PRICES;
-  const cost = source && !editing ? { unitCost: textOf(source.unitCost) } : {};
+  const cost = source ? { unitCost: textOf(source.unitCost) } : {};
   return { ...values, ...prices, ...cost, menuItemId: item.id, minStock: textOf(item.minStock) };
 }
 
-export function ItemSelects({ values, errors, items, onChange, categories = STOCK_CATEGORIES, ham, editing }: ItemSelectsProps): JSX.Element {
+export function ItemSelects({ values, errors, items, onChange, categories = STOCK_CATEGORIES, ham }: ItemSelectsProps): JSX.Element {
   const inCategory = items.filter((item) => categoryOf(item) === values.category);
   const isBase = isBaseCategory(values.category);
   const noFlavor = isBase || values.category === HAM_CATEGORY;
   const pick = (menuItemId: string): void => {
     const item = items.find((candidate) => candidate.id === menuItemId);
-    onChange(item ? pickedValues({ values, items, editing }, item) : { ...values, menuItemId });
+    onChange(item ? pickedValues({ values, items }, item) : { ...values, menuItemId });
   };
   const choose = (category: string): void => {
     if (category === HAM_CATEGORY) return onChange({ ...values, category, menuItemId: '', price1: textOf(ham?.price) });

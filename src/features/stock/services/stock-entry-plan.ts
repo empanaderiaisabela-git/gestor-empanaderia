@@ -4,20 +4,21 @@ import { type MenuPrices, priceIssues } from '@/features/menu/domain/menu-prices
 import type { StockEntryInput } from '@/features/stock/domain/stock.schema';
 import type { StockItem } from '@/features/stock/repository/stock.repository';
 
+type PlanInput = Pick<StockEntryInput, 'unitCost' | 'prices'>;
 export type EntryPlan = { unitCost: number; itemCost?: number; itemPrices?: MenuPrices };
 
-function costOf(item: StockItem, input: StockEntryInput): number {
+function costOf(item: StockItem, input: PlanInput): number {
   const cost = input.unitCost ?? (item.unitCost === null ? null : Number(item.unitCost));
   if (cost === null) throw new AppError('MISSING_COST');
   return cost;
 }
 
-function basePlan(input: StockEntryInput): EntryPlan {
+function basePlan(input: PlanInput): EntryPlan {
   if (input.unitCost !== undefined || input.prices) throw new AppError('VALIDATION');
   return { unitCost: 0 };
 }
 
-export function planEntry(item: StockItem, input: StockEntryInput): EntryPlan {
+export function planEntry(item: StockItem, input: PlanInput): EntryPlan {
   if (item.isBase) return basePlan(input);
   if (hasBase(item.group)) throw new AppError('VALIDATION');
   const unitCost = costOf(item, input);
