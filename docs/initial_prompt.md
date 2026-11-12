@@ -1,7 +1,7 @@
 # Prompt inicial: contexto completo de gestor-empanaderia
 
 > **Uso.** Al empezar una sesión nueva de Claude Code: `Leé @docs/initial_prompt.md y seguilo.`
-> Foto del proyecto al **2026-11-09**. Se adapta en cada avance significativo
+> Foto del proyecto al **2026-11-12**. Se adapta en cada avance significativo
 > ([criterios](how-to-document.md#mantener-al-día-docsinitial_promptmd)). Si algo de acá contradice a
 > [`AGENTS.md`](../AGENTS.md) o a los docs que enlaza, **ganan ellos**: avisale al dev que este archivo quedó
 > desactualizado.
@@ -196,6 +196,11 @@ Hacer preguntas de más es mejor que inventar.
   formulario con "Stock" precargado con el de la grilla. Guardan ese número tal cual, sin restar ventas, y el ingreso
   conserva su cantidad. Gusto fijo; sin ingresos, sin Proveedor; con una venta en el medio, `STALE_VERSION`. Queda en
   Auditoría con el stock de antes y de después. Sin migración: Supabase sigue en **34**.
+- **Actualización 10** (2026-11-12, plan en [`actualizacion-10.md`](plans/actualizacion-10.md)): el mismo cobro ya no
+  se registra dos veces (BUG-33). Cada carrito lleva una **clave de cobro** (`checkoutKey`, uuid, se renueva al
+  vaciarlo); si llega otra vez, el servidor devuelve la venta ya guardada. Si falla la llamada, el modal avisa "No se
+  pudo confirmar. Reintentá." Migración **0034** (sólo aditiva: `sales.checkout_key` única). Supabase pasa a **35**
+  cuando el dev la migre.
 - **Actualización 3** (2026-11-05, plan en [`actualizacion-3.md`](plans/actualizacion-3.md)): los renglones del mismo
   gusto van en un solo ítem del carrito (US-64), y cada venta imprime su comanda de 57 mm desde Ventas/Pedidos, con un
   número de pedido correlativo (US-65, migración **0033**: `sales.order_number`). Supabase está en **34** (la migró el dev

@@ -60,6 +60,7 @@ export const discountAmountSchema = money.min(0, 'El descuento no puede ser nega
 
 export const checkoutSchema = z
   .strictObject({
+    checkoutKey: z.uuid('Recargá la página'),
     buyer: buyerSchema,
     lines: z.array(lineSchema).max(MAX_LINES, 'El pedido tiene demasiadas líneas'),
     promos: z.array(promoLineSchema).max(MAX_LINES, 'El pedido tiene demasiadas promos').optional(),

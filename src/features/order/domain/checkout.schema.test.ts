@@ -5,7 +5,7 @@ import { checkoutSchema } from './checkout.schema';
 const ITEM = '11111111-1111-4111-8111-111111111111';
 const LINE = { group: 'empanadas', presentationKey: 'u1', flavors: [{ menuItemId: ITEM, units: 1 }], quantity: 2 };
 const BUYER = { customerId: null, name: 'Marta', phone: '', address: '' };
-const VALID = { buyer: BUYER, lines: [LINE], discountPercentage: 0, discountAmount: 0, payments: [{ type: 'efectivo', amount: 3000 }] };
+const VALID = { checkoutKey: ITEM, buyer: BUYER, lines: [LINE], discountPercentage: 0, discountAmount: 0, payments: [{ type: 'efectivo', amount: 3000 }] };
 const first = (input: unknown): string | undefined => checkoutSchema.safeParse(input).error?.issues[0]?.message;
 
 describe('lo que el navegador puede mandar al cobrar (US-6 CA-1 y CA-2)', () => {
@@ -44,6 +44,8 @@ describe('lo que el navegador puede mandar al cobrar (US-6 CA-1 y CA-2)', () => 
     { caso: 'cantidad 1,5', input: { ...VALID, lines: [{ ...LINE, quantity: 1.5 }] }, message: 'La cantidad tiene que ser un número entero' },
     { caso: 'gusto inválido', input: { ...VALID, lines: [{ ...LINE, flavors: [{ menuItemId: 'x', units: 1 }] }] }, message: 'Elegí un gusto válido' },
     { caso: 'grupo inexistente', input: { ...VALID, lines: [{ ...LINE, group: 'helados' }] }, message: 'Elegí un grupo válido' },
+    { caso: 'sin clave de cobro (BUG-33)', input: { ...VALID, checkoutKey: undefined }, message: 'Recargá la página' },
+    { caso: 'clave de cobro inválida (BUG-33)', input: { ...VALID, checkoutKey: 'x' }, message: 'Recargá la página' },
   ])('rechaza $caso con el mensaje exacto', ({ input, message }) => {
     expect(first(input)).toBe(message);
   });

@@ -67,6 +67,7 @@ export const sales = pgTable(
     shippingTitle: varchar('shipping_title', { length: 60 }),
     shippingAmount: numeric('shipping_amount', { precision: 10, scale: 2 }).default('0').notNull(),
     orderNumber: serial('order_number').notNull().unique('sales_order_number_unique'),
+    checkoutKey: uuid('checkout_key').unique('sales_checkout_key_unique'),
     createdAt: timestamp('created_at').defaultNow().notNull(),
   },
   (table) => [

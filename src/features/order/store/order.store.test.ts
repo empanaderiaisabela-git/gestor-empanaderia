@@ -9,6 +9,13 @@ describe('pedido actual (US-5)', () => {
     state().clear();
   });
 
+  it('al vaciar el pedido, el próximo cobro lleva otra clave (BUG-33 CA-4)', () => {
+    const before = state().checkoutKey;
+    state().clear();
+    expect(state().checkoutKey).not.toBe(before);
+    expect(state().checkoutKey).toMatch(/^[0-9a-f-]{36}$/);
+  });
+
   it('½ docena surtida: +1 carne, +1 carne, completar con pollo; queda abierta otra ½ docena vacía', () => {
     state().start('empanadas', 'u6');
     state().add('carne', 'one');

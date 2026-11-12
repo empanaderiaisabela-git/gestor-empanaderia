@@ -4,7 +4,7 @@ import { checkoutSchema } from './checkout.schema';
 const ITEM = '11111111-1111-4111-8111-111111111111';
 const LINE = { group: 'empanadas', presentationKey: 'u1', flavors: [{ menuItemId: ITEM, units: 1 }], quantity: 2 };
 const BUYER = { customerId: null, name: 'Marta', phone: '', address: 'Mitre 123' };
-const VALID = { buyer: BUYER, lines: [LINE], discountPercentage: 0, discountAmount: 0, payments: [{ type: 'efectivo', amount: 3000 }], shippingOptionId: ITEM };
+const VALID = { checkoutKey: ITEM, buyer: BUYER, lines: [LINE], discountPercentage: 0, discountAmount: 0, payments: [{ type: 'efectivo', amount: 3000 }], shippingOptionId: ITEM };
 const messages = (input: unknown): string[] => checkoutSchema.safeParse(input).error?.issues.map((issue) => issue.message) ?? [];
 
 describe('el envío en lo que manda el navegador al cobrar (US-59)', () => {

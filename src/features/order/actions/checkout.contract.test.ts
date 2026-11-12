@@ -33,6 +33,7 @@ describe('acción de cobro (US-6)', () => {
     const tampered = [{ ...ORDER, total: 1 }, { ...ORDER, lines: [{ ...halfDozen, unitPrice: 1 }] }, { ...ORDER, lines: [{ ...halfDozen, flavors: [{ menuItemId: CARNE.id, units: 6, unitCost: 0 }] }] }];
     for (const input of tampered) expect(await Reflect.apply(checkoutAction, undefined, [input])).toMatchObject({ code: 'VALIDATION' });
     expect(await checkoutAction({ ...ORDER, payments: [{ type: 'efectivo', amount: 100 }] })).toMatchObject({ code: 'VALIDATION' });
+    expect(await checkoutAction({ ...ORDER, checkoutKey: 'x' })).toMatchObject({ code: 'VALIDATION' });
     expect(fakeCheckout.sales).toEqual([]);
   });
 

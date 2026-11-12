@@ -30,8 +30,8 @@ describe('lo que lee la comanda del historial contra Postgres (US-65)', () => {
   it('cada venta trae su número de pedido correlativo y cada línea sus gustos con las unidades, sin las bases', async () => {
     const half = { group: 'pizzas' as const, presentationKey: 'pizza_2', flavors: [{ menuItemId: muzza, units: 0.5 }, { menuItemId: napo, units: 0.5 }], quantity: 1 };
     const whole = { group: 'pizzas' as const, presentationKey: 'pizza_1', flavors: [{ menuItemId: muzza, units: 1 }], quantity: 2 };
-    await checkoutService.checkout(VENDOR, { buyer: BUYER, lines: [whole], discountPercentage: 0, discountAmount: 0, payments: cash(22000) });
-    await checkoutService.checkout(VENDOR, { buyer: BUYER, lines: [half], discountPercentage: 0, discountAmount: 0, payments: cash(12000) });
+    await checkoutService.checkout(VENDOR, { checkoutKey: crypto.randomUUID(), buyer: BUYER, lines: [whole], discountPercentage: 0, discountAmount: 0, payments: cash(22000) });
+    await checkoutService.checkout(VENDOR, { checkoutKey: crypto.randomUUID(), buyer: BUYER, lines: [half], discountPercentage: 0, discountAmount: 0, payments: cash(12000) });
     const [last, first] = await saleHistoryService.list();
     expect(last.orderNumber).toBe(first.orderNumber + 1);
     expect(first.lines).toMatchObject([{ promotionName: null, items: [{ name: 'Muzza', units: '2.0' }] }]);
