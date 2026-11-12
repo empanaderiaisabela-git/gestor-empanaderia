@@ -15,7 +15,7 @@ const CALLER = { id: TEST_USER_IDS.vendedor };
 const cash = (amount: number) => [{ type: 'efectivo' as const, amount }];
 const line = (menuItemId: string, quantity = 1) => ({ group: 'coca_cola' as const, presentationKey: 'u1', flavors: [{ menuItemId, units: 1 }], quantity });
 const BUYER = { customerId: null, name: 'Mostrador', phone: '', address: '' };
-const order = (lines: ReturnType<typeof line>[], paid: number) => ({ buyer: BUYER, lines, discountPercentage: 0, discountAmount: 0, payments: cash(paid) });
+const order = (lines: ReturnType<typeof line>[], paid: number) => ({ checkoutKey: crypto.randomUUID(), buyer: BUYER, lines, discountPercentage: 0, discountAmount: 0, payments: cash(paid) });
 
 async function stockOf(id: string): Promise<number> {
   const [row] = await db.select({ stock: menuItems.stock }).from(menuItems).where(eq(menuItems.id, id));

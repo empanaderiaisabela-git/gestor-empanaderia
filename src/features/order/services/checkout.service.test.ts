@@ -20,6 +20,7 @@ describe('cobrar el pedido (US-6)', () => {
         id: result.saleId,
         orderNumber: 1,
         createdAt: expect.any(Date),
+        checkoutKey: expect.any(String),
         vendorId: CALLER.id,
         customerId: CLIENTE.id,
         buyerName: 'Marta',

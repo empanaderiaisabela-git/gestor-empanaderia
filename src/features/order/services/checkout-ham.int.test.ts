@@ -28,14 +28,14 @@ describe('cobro con jamón extra contra Postgres (US-47 CA-5)', () => {
   it('guarda la línea con el jamón en el precio y en la descripción, y el costo sólo del gusto', async () => {
     await db.insert(pizzaExtras).values({ code: 'jamon', price: '1500.00' });
     const lines = [{ group: 'pizzas' as const, presentationKey: 'pizza_1', flavors: [{ menuItemId: muzza, units: 1 }], quantity: 2, ham: true }];
-    expect(await checkoutService.checkout(CALLER, { buyer: BUYER, lines, discountPercentage: 0, discountAmount: 0, payments: [{ type: 'efectivo', amount: 21000 }] })).toMatchObject({ total: 21000 });
+    expect(await checkoutService.checkout(CALLER, { checkoutKey: crypto.randomUUID(), buyer: BUYER, lines, discountPercentage: 0, discountAmount: 0, payments: [{ type: 'efectivo', amount: 21000 }] })).toMatchObject({ total: 21000 });
     expect(await db.select({ unitPrice: saleLines.unitPrice, subtotal: saleLines.subtotal, description: saleLines.description }).from(saleLines)).toEqual([{ unitPrice: '10500.00', subtotal: '21000.00', description: 'Muzza + Jamón extra' }]);
     expect(await db.select({ unitCost: saleLineItems.unitCost }).from(saleLineItems)).toEqual([{ unitCost: '2000.00' }]);
   });
 
   it('sin precio de jamón, MISSING_PRICE y no se guarda nada', async () => {
     const lines = [{ group: 'pizzas' as const, presentationKey: 'pizza_1', flavors: [{ menuItemId: muzza, units: 1 }], quantity: 1, ham: true }];
-    await expect(checkoutService.checkout(CALLER, { buyer: BUYER, lines, discountPercentage: 0, discountAmount: 0, payments: [{ type: 'efectivo', amount: 10500 }] })).rejects.toMatchObject({ code: 'MISSING_PRICE' });
+    await expect(checkoutService.checkout(CALLER, { checkoutKey: crypto.randomUUID(), buyer: BUYER, lines, discountPercentage: 0, discountAmount: 0, payments: [{ type: 'efectivo', amount: 10500 }] })).rejects.toMatchObject({ code: 'MISSING_PRICE' });
     expect(await db.select().from(saleLines)).toEqual([]);
   });
 });

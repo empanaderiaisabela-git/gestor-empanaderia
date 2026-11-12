@@ -12,7 +12,7 @@ const CALLER = { id: TEST_USER_IDS.vendedor };
 let coca: string;
 
 const sell = (buyer: { customerId: string | null; name: string; phone: string; address: string }, quantity = 1) =>
-  checkoutService.checkout(CALLER, { buyer, lines: [{ group: 'coca_cola', presentationKey: 'u1', flavors: [{ menuItemId: coca, units: 1 }], quantity }], discountPercentage: 0, discountAmount: 0, payments: [{ type: 'efectivo', amount: 2500 * quantity }] });
+  checkoutService.checkout(CALLER, { checkoutKey: crypto.randomUUID(), buyer, lines: [{ group: 'coca_cola', presentationKey: 'u1', flavors: [{ menuItemId: coca, units: 1 }], quantity }], discountPercentage: 0, discountAmount: 0, payments: [{ type: 'efectivo', amount: 2500 * quantity }] });
 
 describe('el cliente de la venta contra Postgres (US-37 CA-1 y CA-4)', () => {
   beforeEach(async () => {

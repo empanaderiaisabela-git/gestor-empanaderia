@@ -239,6 +239,13 @@
       "when": 1793928092446,
       "tag": "0033_numero-de-pedido",
       "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "7",
+      "when": 1794514649319,
+      "tag": "0034_clave-de-cobro",
+      "breakpoints": true
     }
   ]
 }

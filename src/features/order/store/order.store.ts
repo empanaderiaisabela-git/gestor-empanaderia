@@ -12,6 +12,7 @@ type OrderState = PromoState &
     openLineId: string | null;
     buyer: CheckoutBuyer;
     shippingId: string | null;
+    checkoutKey: string;
     start: (group: MenuGroup, presentationKey: string) => void;
     add: (menuItemId: string, mode: AddMode) => boolean;
     close: () => void;
@@ -30,6 +31,7 @@ export const useOrderStore = create<OrderState>((set, get) => ({
   openLineId: null,
   buyer: NO_BUYER,
   shippingId: null,
+  checkoutKey: crypto.randomUUID(),
   promos: [],
   openPromo: null,
   ...promoActions(set, get),
@@ -53,7 +55,7 @@ export const useOrderStore = create<OrderState>((set, get) => ({
   },
   close: () => set({ lines: withoutEmpty(get().lines), openLineId: null, openPromo: null }),
   remove: (lineId) => set({ lines: get().lines.filter((line) => line.id !== lineId), openLineId: get().openLineId === lineId ? null : get().openLineId }),
-  clear: () => set({ lines: [], openLineId: null, buyer: NO_BUYER, shippingId: null, promos: [], openPromo: null }),
+  clear: () => set({ lines: [], openLineId: null, buyer: NO_BUYER, shippingId: null, checkoutKey: crypto.randomUUID(), promos: [], openPromo: null }),
   setBuyer: (patch) => set({ buyer: { ...get().buyer, ...patch } }),
   setShipping: (shippingId) => set({ shippingId }),
 }));

@@ -5355,3 +5355,44 @@ que la versión que use el cliente sea la que se probó.
 **Notas**
 
 - `npm run verify` verde (1327 tests unit y de componente, 146 de integración, cobertura 96,42 / 90,5, mutación 86,04 y build) y los 85 E2E en verde sobre `develop` (2026-11-09). El dev pidió llevarlo a `main` para producción el 2026-11-09. El número 8 ya lo usaba el release del fix de Ventas (tag `actualizacion-8`, 2026-11-07): esta es la Actualización 9.
+
+------------------------------------------------------------------------------------------------------------------------
+
+## Actualización 10 · Ventas duplicadas
+
+------------------------------------------------------------------------------------------------------------------------
+
+**Objetivo**: reporte del cliente del 2026-11-12. Algunas ventas quedan anotadas dos veces en Ventas/Pedidos, con el stock descontado dos veces.
+
+**Plan**: [`docs/plans/actualizacion-10.md`](docs/plans/actualizacion-10.md). Migración 0034, sólo aditiva.
+
+### BUG-33 · El mismo cobro se registra dos veces
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-11-12 |
+| Tamaño       | M         |
+| Depende de   | US-6      |
+| Plan         | [`docs/plans/actualizacion-10.md`](docs/plans/actualizacion-10.md) |
+| Merge        | —         |
+| Horas reales | —         |
+
+**Actual**: la venta se guarda, pero la respuesta no llega al navegador (red inestable o demora del servidor). El carrito sigue lleno, el vendedor confirma otra vez y queda una segunda venta igual, con el stock descontado otra vez y, si el cliente era nuevo, otro cliente igual. En Supabase hay 7 pares (80/81, 98/99, 118/119, 134/135, 137/138, 214/215, 221/222) separados por 7 a 25 s, sin ventas en el medio.
+
+**Esperado**: el mismo carrito confirmado más de una vez deja una sola venta. Si falla la red, la pantalla avisa y se puede reintentar sin duplicar.
+
+- [x] **CA-1** · Cada carrito lleva una clave de cobro. Si el servidor recibe una clave que ya tiene venta, devuelve esa venta: no guarda otra, no descuenta stock ni crea cliente · Estimación: 1 h · Completado: 2026-11-12 17:32
+
+- [x] **CA-2** · Dos cobros simultáneos con la misma clave dejan una sola venta (restricción única en `sales.checkout_key`) · Estimación: 30 min · Completado: 2026-11-12 17:32
+
+- [x] **CA-3** · Si la llamada al servidor falla, el cobro muestra "No se pudo confirmar. Reintentá." y el botón vuelve a quedar habilitado · Estimación: 30 min · Completado: 2026-11-12 17:32
+
+- [x] **CA-4** · Al vaciar el carrito después de cobrar, el próximo pedido lleva una clave nueva · Estimación: 15 min · Completado: 2026-11-12 17:32
+
+**Notas**
+
+- Nivel 3: toca schema, repositorio y el cobro. La migración 0034 la corre el dev en Supabase.
+- Las 7 ventas repetidas que ya existen se anulan desde Ventas/Pedidos (la segunda de cada par), lo que devuelve el stock.
+- `npm run verify` verde (2026-11-12): 1335 tests unit y de componente, 149 de integración, cobertura 96,42 / 90,53, mutación 86,05 y build. Migración 0034 aplicada en la base local.

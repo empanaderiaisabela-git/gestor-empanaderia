@@ -61,13 +61,20 @@ Corren en el navegador y el servidor las reutiliza al cobrar.
 "Cobrar" abre un modal con el cliente, el descuento en % y en $, y los 4 medios de pago. Se eligen hasta 2: con
 dos, se carga el monto del primero y el segundo se lleva el resto. El navegador manda **sólo** el pedido (grupo,
 presentación, gustos con sus unidades y cantidad), el cliente (`buyer`: el cliente elegido o `null`, nombre,
-teléfono y domicilio), el descuento y los pagos. Nunca manda precios,
+teléfono y domicilio), el descuento, los pagos y la **clave de cobro** (`checkoutKey`, BUG-33). Nunca manda precios,
 costos ni total: `checkoutSchema` es `strictObject` y rechaza cualquier campo de más.
+
+La clave de cobro es un uuid que el carrito genera al crearse y renueva al vaciarse (`order.store.ts`). Si la venta
+se guardó pero la respuesta no llegó (red inestable, demora del servidor), reintentar manda la misma clave y el
+servidor devuelve esa venta en lugar de guardar otra. `sales.checkout_key` es única (migración 0034); las ventas
+anteriores la tienen en `null`.
 
 `checkout.service` hace todo en una transacción:
 
 1. Bloquea los gustos con `SELECT … FOR UPDATE`, de a uno y ordenados por id, para que dos cobros no se traben.
    Después bloquea la base de cada grupo con base que use el pedido (Pizzas y después Ciabattas, `lockBase`).
+   Si la clave de cobro ya tiene venta, la devuelve y no hace nada más (BUG-33). El bloqueo hace que dos cobros
+   simultáneos del mismo carrito se esperen: el segundo ve la venta del primero.
 2. Valida cada línea (`isValidLine`) y que cada gusto esté activo, sea de su grupo y no sea una base.
 3. Recalcula los precios con la base, aplica el descuento y controla que los pagos sumen el total.
 4. Controla el stock de todos los gustos y recién después lo descuenta, filtrando por `id` y `version`. En Pizzas
@@ -78,7 +85,9 @@ costos ni total: `checkoutSchema` es `strictObject` y rechaza cualquier campo de
 6. Audita `CREAR` / `SALE`.
 
 Si el cobro sale bien, el pedido se vacía y el tablero vuelve a leer gustos y stock. Si falla, el pedido queda como
-estaba, se muestra el motivo y también se recargan precios y stock, porque pueden haber cambiado.
+estaba, se muestra el motivo y también se recargan precios y stock, porque pueden haber cambiado. Si la llamada
+misma falla, el modal muestra "No se pudo confirmar. Reintentá." y el botón vuelve a habilitarse
+(`checkout-retry.test.tsx`).
 
 ## Crédito en cuotas (US-11)
 
@@ -251,6 +260,9 @@ borre.
 | Promo inexistente o desactivada (US-9) | `NOT_FOUND` | La promoción ya no existe. | `checkout-promos.test.ts`, `checkout.contract.test.ts` |
 | Partes de la promo que no coinciden con sus productos, gustos incompletos o de otro grupo (US-9), u otra familia en la parte fija (US-55, US-57) | `VALIDATION` | Los datos proporcionados no son válidos. | `checkout-promos.test.ts` |
 | Otro movimiento cambió el gusto entre el bloqueo y el guardado | `STALE_VERSION` | mensaje de concurrencia | `checkout-errors.test.ts` |
+| Sin clave de cobro o con una que no es uuid (BUG-33) | `VALIDATION` | Los datos proporcionados no son válidos. | `checkout.schema.test.ts`, `checkout.contract.test.ts` |
+| La misma clave de cobro otra vez (BUG-33) | — | Devuelve la venta ya guardada: "Venta registrada por $N" | `checkout-repeat.test.ts`, `checkout-repeat.int.test.ts` |
+| Falla la llamada al cobrar (BUG-33) | — | No se pudo confirmar. Reintentá. | `checkout-retry.test.tsx` |
 | Anular: el vendedor lo intenta | `FORBIDDEN` | Solo los administradores pueden realizar esta acción | `sale-history.contract.test.ts` |
 | Anular: la venta no existe o ya se anuló | `NOT_FOUND` | La venta ya no existe. | `sale-history.contract.test.ts` y `sale-history.service.int.test.ts` |
 | Anular: id inválido | `VALIDATION` | Los datos proporcionados no son válidos. | `sale-history.contract.test.ts` |

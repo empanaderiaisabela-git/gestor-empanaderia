@@ -49,6 +49,7 @@ describe('cobrar desde el tablero (US-6 CA-1 y CA-5)', () => {
 
     expect(await screen.findByText('Venta registrada por $15.500')).toBeDefined();
     expect(checkoutAction).toHaveBeenCalledWith({
+      checkoutKey: expect.any(String),
       buyer: { customerId: null, name: 'Marta', phone: '', address: '' },
       lines: [PIZZA, COCA],
       promos: [],

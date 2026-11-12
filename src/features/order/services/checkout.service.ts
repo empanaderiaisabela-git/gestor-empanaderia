@@ -27,6 +27,8 @@ async function checkout(scope: CheckoutScope, caller: Caller, input: CheckoutDat
   const promos = await resolvePromos(scope, input.promos ?? []);
   const sold = [...lines, ...promos.flatMap((promo) => promo.parts)];
   const items = await lockFlavors(scope, sold);
+  const done = await scope.sales.findByCheckoutKey(input.checkoutKey);
+  if (done) return done;
   assertFixedDrinks(promos, items);
   assertSellable(sold, items);
   const ham = await hamPriceOf(scope, sold);
@@ -41,7 +43,7 @@ async function checkout(scope: CheckoutScope, caller: Caller, input: CheckoutDat
   const charged = await chargePayments(scope, payments);
   await consumeStock(scope, items, sold);
   const customerId = await customerFor(scope, caller.id, buyer);
-  const saleId = await scope.sales.insertSale({ vendorId: caller.id, customerId, buyerName: buyer.name, buyerPhone: buyer.phone || null, buyerAddress: buyer.address || null, total, discountAmount, discountPercentage, ...shipping });
+  const saleId = await scope.sales.insertSale({ checkoutKey: input.checkoutKey, vendorId: caller.id, customerId, buyerName: buyer.name, buyerPhone: buyer.phone || null, buyerAddress: buyer.address || null, total, discountAmount, discountPercentage, ...shipping });
   const saleLines = [...priced.map((line) => saleLineOf(line, items)), ...promos.map((promo) => promoSaleLineOf(promo, items, ham))];
   for (const [position, line] of saleLines.entries()) await scope.sales.insertLine(saleId, { ...line, position });
   await scope.sales.insertPayments(saleId, charged);

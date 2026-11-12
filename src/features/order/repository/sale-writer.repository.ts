@@ -4,15 +4,17 @@ import { saleLineItems, saleLines } from '@/lib/db/order-schema';
 import { salePayments, sales } from '@/lib/db/schema';
 import type { DbTransaction } from '@/lib/db/transaction';
 import type { MenuGroup } from '@/features/menu/domain/menu-groups';
+import type { CheckoutResult } from '@/features/order/domain/checkout.schema';
 import type { PaymentType } from '@/features/order/domain/order-validation';
 
-export type NewSale = { vendorId: string; customerId: string | null; buyerName: string; buyerPhone: string | null; buyerAddress: string | null; total: number; discountAmount: number; discountPercentage: number; shippingOptionId: string | null; shippingTitle: string | null; shippingAmount: number };
+export type NewSale = { checkoutKey: string; vendorId: string; customerId: string | null; buyerName: string; buyerPhone: string | null; buyerAddress: string | null; total: number; discountAmount: number; discountPercentage: number; shippingOptionId: string | null; shippingTitle: string | null; shippingAmount: number };
 export type SaleTotals = Pick<NewSale, 'total' | 'discountAmount' | 'discountPercentage'>;
 export type NewPayment = { type: PaymentType; amount: number; cardId: string | null; installments: number | null; surchargePct: number | null; surchargeAmount: number | null };
 export type NewSaleItem = { menuItemId: string; units: number; unitCost: number };
 export type NewSaleLine = { group: MenuGroup | null; presentationKey: string | null; promotionId: string | null; quantity: number; unitPrice: number; subtotal: number; description: string; position: number; items: NewSaleItem[] };
 
 export type SaleWriter = {
+  findByCheckoutKey(checkoutKey: string): Promise<CheckoutResult | null>;
   insertSale(sale: NewSale): Promise<string>;
   insertLine(saleId: string, line: NewSaleLine): Promise<string>;
   insertPayments(saleId: string, payments: NewPayment[]): Promise<void>;
@@ -26,6 +28,10 @@ const optionalMoney = (value: number | null): string | null => (value === null ?
 
 export function drizzleSaleWriter(executor: Executor = db): SaleWriter {
   return {
+    findByCheckoutKey: async (checkoutKey) => {
+      const [row] = await executor.select({ saleId: sales.id, total: sales.total }).from(sales).where(eq(sales.checkoutKey, checkoutKey));
+      return row ? { saleId: row.saleId, total: Number(row.total) } : null;
+    },
     insertSale: async ({ total, discountAmount, discountPercentage, shippingAmount, ...sale }) => {
       const [row] = await executor
         .insert(sales)

@@ -30,7 +30,7 @@ describe('cobro con envío contra Postgres (US-59 CA-3)', () => {
 
   it('guarda el envío, su título y su monto en la venta, y el envío ya no se puede borrar', async () => {
     const lines = [{ group: 'empanadas' as const, presentationKey: 'u12', flavors: [{ menuItemId: carne, units: 12 }], quantity: 1 }];
-    const input = { buyer: BUYER, lines, discountPercentage: 10, discountAmount: 0, payments: [{ type: 'efectivo' as const, amount: 15000 }], shippingOptionId: centro };
+    const input = { checkoutKey: crypto.randomUUID(), buyer: BUYER, lines, discountPercentage: 10, discountAmount: 0, payments: [{ type: 'efectivo' as const, amount: 15000 }], shippingOptionId: centro };
     expect(await checkoutService.checkout(CALLER, input)).toMatchObject({ total: 15000 });
     expect(await db.select({ total: sales.total, id: sales.shippingOptionId, title: sales.shippingTitle, amount: sales.shippingAmount }).from(sales)).toEqual([{ total: '15000.00', id: centro, title: 'Centro', amount: '1500.00' }]);
     const failure = await drizzleShippingRepository(db).remove({ id: centro, version: 1 }).then(() => null, databaseErrorCode);

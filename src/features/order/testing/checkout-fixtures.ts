@@ -31,7 +31,7 @@ export function promoOf(promotionId: string, quantity = 1): CheckoutPromo {
 }
 
 export function checkoutOf(lines: CheckoutLine[], overrides: Partial<CheckoutData> = {}): CheckoutData {
-  return { buyer: buyerOf(CLIENTE.name, { customerId: CLIENTE.id }), lines, discountPercentage: 0, discountAmount: 0, payments: [], ...overrides };
+  return { checkoutKey: crypto.randomUUID(), buyer: buyerOf(CLIENTE.name, { customerId: CLIENTE.id }), lines, discountPercentage: 0, discountAmount: 0, payments: [], ...overrides };
 }
 
 export function loadMenu(fake: FakeCheckoutUnitOfWork): void {

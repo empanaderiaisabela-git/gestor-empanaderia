@@ -18,9 +18,10 @@ export type CheckoutModel = {
 };
 
 async function submit({ discount, payments }: CheckoutDraft): ReturnType<typeof checkoutAction> {
-  const { lines, promos, buyer, shippingId } = useOrderStore.getState();
+  const { lines, promos, buyer, shippingId, checkoutKey } = useOrderStore.getState();
   const filled = lines.filter((line) => line.flavors.length > 0);
   return checkoutAction({
+    checkoutKey,
     buyer,
     lines: filled.map(({ group, presentationKey, flavors, quantity, ham }) => ({ group, presentationKey, flavors, quantity, ...(ham ? { ham } : {}) })),
     promos: promos.map(({ promotionId, parts }) => ({ promotionId, quantity: 1, parts: parts.map(({ group, presentationKey, flavors, ham }) => ({ group, presentationKey, flavors, ...(ham ? { ham } : {}) })) })),
@@ -36,7 +37,8 @@ export function useCheckout(): CheckoutModel {
   const [notice, setNotice] = useState<Notice | null>(null);
 
   const confirm = async (draft: CheckoutDraft): Promise<string | null> => {
-    const result = await submit(draft);
+    const result = await submit(draft).catch(() => null);
+    if (!result) return 'No se pudo confirmar. Reintentá.';
     useMenuStore.getState().setLoaded(false);
     useCustomerStore.getState().setLoaded(false);
     if (!result.success) return result.error;

@@ -20,7 +20,7 @@ describe('venta pendiente y pago completado contra Postgres (US-68, US-69)', () 
     await seedTestUser('vendedor');
     const [{ id: carne }] = await db.insert(menuItems).values({ group: 'empanadas', name: 'Carne', unitCost: '400.00', stock: '12.0', price1: '1500.00', price3: '4200.00', price6: '8000.00', price12: '15000.00' }).returning({ id: menuItems.id });
     const lines = [{ group: 'empanadas' as const, presentationKey: 'u6', flavors: [{ menuItemId: carne, units: 6 }], quantity: 1 }];
-    ({ saleId } = await checkoutService.checkout(CALLER, { buyer: BUYER, lines, discountPercentage: 0, discountAmount: 0, payments: [] }));
+    ({ saleId } = await checkoutService.checkout(CALLER, { checkoutKey: crypto.randomUUID(), buyer: BUYER, lines, discountPercentage: 0, discountAmount: 0, payments: [] }));
   });
 
   afterAll(async () => {

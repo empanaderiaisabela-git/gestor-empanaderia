@@ -30,6 +30,7 @@ function saleOf(sales: FakeSale[], saleId: string): FakeSale {
 
 export function fakeSaleWriter(sales: FakeSale[]): SaleWriter {
   return {
+    findByCheckoutKey: async (key) => sales.filter((row) => row.checkoutKey === key).map((row) => ({ saleId: row.id, total: row.total }))[0] ?? null,
     insertSale: async (sale) => {
       const id = crypto.randomUUID();
       sales.push({ ...sale, id, orderNumber: Math.max(0, ...sales.map((row) => row.orderNumber)) + 1, createdAt: new Date(Date.UTC(2026, 9, 25, 15, sales.length)), lines: [], payments: [] });
