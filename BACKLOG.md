@@ -5417,7 +5417,7 @@ que la versión que use el cliente sea la que se probó.
 | Tamaño       | M         |
 | Depende de   | US-52     |
 | Plan         | [`docs/plans/actualizacion-11.md`](docs/plans/actualizacion-11.md) |
-| Merge        | —         |
+| Merge        | 37e0018   |
 | Horas reales | —         |
 
 **Historia**: Como administrador o vendedor quiero escribir en el buscador de una grilla cualquier dato que veo en ella, de forma que encuentre la fila sin acordarme de qué columna mira el buscador.
@@ -5439,5 +5439,6 @@ que la versión que use el cliente sea la que se probó.
 **Notas**
 
 - Quedan afuera Auditoría, que ya busca en el servidor, "Buscar gusto" del tablero de Ventas y el catálogo público (D-5, D-6).
-- Sin tests nuevos, por decisión del dev (D-9): lo prueba él a mano. Los E2E que usan los textos viejos de los buscadores se actualizaron, pero no se corrieron.
+- Sin tests nuevos, por decisión del dev (D-9): lo prueba él a mano. Los E2E que usan los textos viejos de los buscadores se actualizaron.
 - Lint y typecheck en verde; `npm run test:coverage` en verde (2026-11-13): 1335 tests unit y de componente, cobertura 96,43 / 90,6. Probado en el dev local: Ventas/Pedidos por pago, pedido y monto ("$3.000"), y Stock por categoría, "Sin stock" y "Sin costo".
+- `npm run verify` verde (2026-11-13): 1335 tests unit y de componente, 149 de integración, cobertura 96,43 / 90,6, mutación 86,05 y build. Los 85 E2E en verde sobre `develop`.
