@@ -14,7 +14,7 @@ import { useCustomerStore } from '@/features/customer/store/customer.store';
 import { useEntityActions } from '@/hooks/use-entity-actions';
 import { getCustomerColumns } from '@/config/tables/customer-columns';
 import { useEntityManager } from '@/hooks/use-entity-manager';
-import { normalizeForSearch } from '@/lib/utils';
+import { matchesAllWords } from '@/lib/utils';
 import { CustomerModal } from '@/features/customer/ui/components/customer-modal';
 import { GlobalMessage } from '@/components/ui/alert';
 import { TEST_IDS } from '@/constants/test-ids';
@@ -50,9 +50,8 @@ export function CustomerPanel() {
   const filteredCustomers = useMemo(() =>
     customers
       .filter((c) => {
-        const terms = normalizeForSearch(search).split(/\s+/);
-        const text = [normalizeForSearch(c.name), normalizeForSearch(c.email), normalizeForSearch(c.phone), normalizeForSearch(c.documentNumber)].join(' ');
-        return terms.every((w) => text.includes(w)) && (showInactive || c.isActive);
+        const text = [c.name, c.documentNumber, c.phone, c.address, c.email, c.isActive ? '' : 'Inactivo'].join(' ');
+        return matchesAllWords(text, search) && (showInactive || c.isActive);
       })
       .sort((a, b) => (a.isActive === b.isActive ? 0 : a.isActive ? -1 : 1)),
     [customers, search, showInactive]
@@ -67,8 +66,7 @@ export function CustomerPanel() {
       <PanelToolbar
         search={search}
         onSearchChange={setSearch}
-        searchPlaceholder='Buscar clientes por nombre, mail o DNI...'
-        searchPlaceholderMobile='Buscar clientes...'
+        searchPlaceholder='Buscar clientes...'
         data-testid={TEST_IDS.general.inputBusquedaTabla}
         filters={
           <ToggleFilter id='showInactive-customer' checked={showInactive} onChange={setShowInactive} label='Ver Inactivos' data-testid={TEST_IDS.general.btnVerOcultos} />

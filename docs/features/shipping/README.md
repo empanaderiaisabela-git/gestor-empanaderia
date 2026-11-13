@@ -61,6 +61,6 @@ borrar filtran por `id` y `version`). Toda mutación queda en `audit_logs` con l
 
 ## Pantallas
 
-`/envios` (`ShippingsPanel`): buscador por título o detalle, "Ver Inactivos" y "Nuevo envío". La tabla (tarjetas en
+`/envios` (`ShippingsPanel`): buscador por título, detalle, monto o "Inactivo" (US-71), "Ver Inactivos" y "Nuevo envío". La tabla (tarjetas en
 mobile) muestra Título, Detalle y Monto, con activar o desactivar, editar y eliminar. Mientras carga muestra el
 esqueleto; vacía, "Todavía no hay envíos."; un error del servidor se ve en el modal o arriba de la lista.

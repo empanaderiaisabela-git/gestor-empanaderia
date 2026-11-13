@@ -5396,3 +5396,49 @@ que la versión que use el cliente sea la que se probó.
 - Nivel 3: toca schema, repositorio y el cobro. La migración 0034 la corre el dev en Supabase.
 - Las 7 ventas repetidas que ya existen se anulan desde Ventas/Pedidos (la segunda de cada par), lo que devuelve el stock.
 - `npm run verify` verde (2026-11-12): 1335 tests unit y de componente, 149 de integración, cobertura 96,42 / 90,53, mutación 86,05 y build. Migración 0034 aplicada en la base local.
+
+------------------------------------------------------------------------------------------------------------------------
+
+## Actualización 11 · Buscadores
+
+------------------------------------------------------------------------------------------------------------------------
+
+**Objetivo**: pedido del dev del 2026-11-13. El buscador de cada grilla encuentra por cualquier columna que se ve, salvo las fechas.
+
+**Plan**: [`docs/plans/actualizacion-11.md`](docs/plans/actualizacion-11.md), con las decisiones del dev (D-1 a D-9). Sin migración.
+
+### US-71 · Buscar por cualquier columna de la grilla
+
+| Campo        | Valor     |
+| ------------ | --------- |
+| Estado       | En revisión |
+| Dueño        | Agente    |
+| Inicio       | 2026-11-13 |
+| Tamaño       | M         |
+| Depende de   | US-52     |
+| Plan         | [`docs/plans/actualizacion-11.md`](docs/plans/actualizacion-11.md) |
+| Merge        | 37e0018   |
+| Horas reales | —         |
+
+**Historia**: Como administrador o vendedor quiero escribir en el buscador de una grilla cualquier dato que veo en ella, de forma que encuentre la fila sin acordarme de qué columna mira el buscador.
+
+**Criterios de aceptación**
+
+- [x] **CA-1** · En Ventas/Pedidos, Stock, Alta de productos, Promociones, Tarjetas, Envíos, Gastos, Clientes, Proveedores y Usuarios, el buscador encuentra por el texto de cualquier columna, salvo las fechas y "Acciones". Por ejemplo: "efectivo" en Ventas/Pedidos, "Quilmes" (la categoría) en Stock, el domicilio en Clientes y "3 cuotas" en Tarjetas · Estimación: 45 min · Completado: 2026-11-13 14:07
+
+- [x] **CA-2** · Busca todas las palabras, en cualquier orden y sin distinguir mayúsculas ni acentos, y cada palabra puede estar en una columna distinta: "juan carne" encuentra la venta de Juan con empanadas de carne (D-2) · Estimación: 10 min · Completado: 2026-11-13 14:07
+
+- [x] **CA-3** · Los montos y el stock se buscan como se ven, sin "$" ni punto de miles: "12500", "12.500" y "$12.500" encuentran lo mismo (D-3) · Estimación: 10 min · Completado: 2026-11-13 14:07
+
+- [x] **CA-4** · También se buscan las etiquetas que se ven: "Pendiente", "Inactivo", "Inactiva", "En catálogo", "Sin stock", "Sin precio" y "Sin costo" (D-4) · Estimación: 10 min · Completado: 2026-11-13 14:07
+
+- [x] **CA-5** · Cada rol busca sólo en lo que ve: el vendedor no encuentra nada por el costo en Stock (D-7) · Estimación: 10 min · Completado: 2026-11-13 14:07
+
+- [x] **CA-6** · Los buscadores muestran el texto corto en todas las pantallas ("Buscar ventas...", "Buscar gastos...") (D-8) · Estimación: 10 min · Completado: 2026-11-13 14:07
+
+**Notas**
+
+- Quedan afuera Auditoría, que ya busca en el servidor, "Buscar gusto" del tablero de Ventas y el catálogo público (D-5, D-6).
+- Sin tests nuevos, por decisión del dev (D-9): lo prueba él a mano. Los E2E que usan los textos viejos de los buscadores se actualizaron.
+- Lint y typecheck en verde; `npm run test:coverage` en verde (2026-11-13): 1335 tests unit y de componente, cobertura 96,43 / 90,6. Probado en el dev local: Ventas/Pedidos por pago, pedido y monto ("$3.000"), y Stock por categoría, "Sin stock" y "Sin costo".
+- `npm run verify` verde (2026-11-13): 1335 tests unit y de componente, 149 de integración, cobertura 96,43 / 90,6, mutación 86,05 y build. Los 85 E2E en verde sobre `develop`.

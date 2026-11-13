@@ -9,9 +9,11 @@ export function normalizeForSearch(str: string | null | undefined): string {
     .toLowerCase();
 }
 
+const searchable = (text: string | null | undefined): string => normalizeForSearch(text).replace(/[$.]/g, '');
+
 export function matchesAllWords(text: string | null | undefined, search: string): boolean {
-  const haystack = normalizeForSearch(text);
-  return normalizeForSearch(search).split(/\s+/).filter(Boolean).every((word) => haystack.includes(word));
+  const haystack = searchable(text);
+  return searchable(search).split(/\s+/).filter(Boolean).every((word) => haystack.includes(word));
 }
 
 /**

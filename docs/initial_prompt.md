@@ -1,7 +1,7 @@
 # Prompt inicial: contexto completo de gestor-empanaderia
 
 > **Uso.** Al empezar una sesión nueva de Claude Code: `Leé @docs/initial_prompt.md y seguilo.`
-> Foto del proyecto al **2026-11-12**. Se adapta en cada avance significativo
+> Foto del proyecto al **2026-11-13**. Se adapta en cada avance significativo
 > ([criterios](how-to-document.md#mantener-al-día-docsinitial_promptmd)). Si algo de acá contradice a
 > [`AGENTS.md`](../AGENTS.md) o a los docs que enlaza, **ganan ellos**: avisale al dev que este archivo quedó
 > desactualizado.
@@ -201,6 +201,10 @@ Hacer preguntas de más es mejor que inventar.
   vaciarlo); si llega otra vez, el servidor devuelve la venta ya guardada. Si falla la llamada, el modal avisa "No se
   pudo confirmar. Reintentá." Migración **0034** (sólo aditiva: `sales.checkout_key` única). Supabase pasa a **35**
   cuando el dev la migre.
+- **Actualización 11** (2026-11-13, plan en [`actualizacion-11.md`](plans/actualizacion-11.md)): el buscador de cada
+  grilla encuentra por cualquier columna que se ve, salvo las fechas (US-71): todas las palabras, en cualquier orden, y
+  `matchesAllWords` ignora "$" y "." ("12500" encuentra "$12.500"). Auditoría sigue buscando en el servidor. Sin
+  migración.
 - **Actualización 3** (2026-11-05, plan en [`actualizacion-3.md`](plans/actualizacion-3.md)): los renglones del mismo
   gusto van en un solo ítem del carrito (US-64), y cada venta imprime su comanda de 57 mm desde Ventas/Pedidos, con un
   número de pedido correlativo (US-65, migración **0033**: `sales.order_number`). Supabase está en **34** (la migró el dev

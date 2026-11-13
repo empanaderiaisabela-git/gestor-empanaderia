@@ -12,8 +12,7 @@ export function CardsToolbar({ model }: { model: CardsPanelModel }): JSX.Element
     <PanelToolbar
       search={manager.search}
       onSearchChange={manager.setSearch}
-      searchPlaceholder='Buscar tarjeta por nombre...'
-      searchPlaceholderMobile='Buscar tarjetas...'
+      searchPlaceholder='Buscar tarjetas...'
       data-testid={TEST_IDS.general.inputBusquedaTabla}
       filters={<ToggleFilter id='showInactive-card' checked={model.showInactive} onChange={model.setShowInactive} label='Ver Inactivas' data-testid={TEST_IDS.general.btnVerOcultos} />}
       actions={

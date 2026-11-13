@@ -7,6 +7,7 @@ import { COST_TERM, SALE_PRICE_TERM } from '@/features/menu/domain/menu-terms';
 import { CATEGORY_LABELS, categoryOf, hasOwnStock } from '@/features/stock/domain/stock-categories';
 import { type StockLevel, stockLevel } from '@/features/stock/domain/stock-level';
 import { formatMoney } from '@/lib/format-money';
+import { costText } from './stock-search';
 import type { StockDialog } from './use-stock-panel';
 
 export type StockRowActions = { open: (dialog: StockDialog) => void; editLast: (item: MenuItemDef) => void };
@@ -68,11 +69,6 @@ function PriceCell({ item }: { item: MenuItemDef }): JSX.Element {
     </ul>
   );
 }
-
-const costText = (item: MenuItemDef): string => {
-  if (item.isBase) return '—';
-  return item.unitCost === null ? 'Sin costo' : formatMoney(item.unitCost);
-};
 
 export function getStockViewColumns(): ColumnDef<MenuItemDef>[] {
   return [

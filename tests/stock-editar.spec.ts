@@ -6,7 +6,7 @@ test.describe('el lápiz pisa el stock (US-70)', () => {
     const fila = page.getByRole('row', { name: /Fanta 1,5 L/ });
     const stock = page.getByLabel('Stock', { exact: true });
     const guardar = page.getByRole('button', { name: 'Guardar', exact: true });
-    await page.getByPlaceholder('Buscar gusto o bebida...').filter({ visible: true }).fill('Fanta');
+    await page.getByPlaceholder('Buscar...', { exact: true }).filter({ visible: true }).fill('Fanta');
 
     await fila.getByTitle('Editar stock').click();
     await expect(stock).toHaveValue('12');

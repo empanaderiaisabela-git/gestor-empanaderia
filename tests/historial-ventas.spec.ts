@@ -4,7 +4,7 @@ const grupo = (page: Page, nombre: string): Locator => page.getByRole('region', 
 const gusto = (page: Page, nombre: string): Locator => page.getByRole('list', { name: 'Gustos' }).getByRole('listitem').filter({ hasText: new RegExp(`^${nombre}\\$`) });
 
 async function stockDe(page: Page, nombre: string): Promise<Locator> {
-  await page.getByPlaceholder('Buscar gusto o bebida...').filter({ visible: true }).fill(nombre);
+  await page.getByPlaceholder('Buscar...', { exact: true }).filter({ visible: true }).fill(nombre);
   return page.getByRole('row').filter({ has: page.getByRole('cell', { name: nombre, exact: true }) });
 }
 
@@ -31,7 +31,7 @@ test.describe('Ventas/Pedidos (US-7)', () => {
     await cobrarPedidoDeRocio(page);
 
     await page.goto('/ventas');
-    await page.getByPlaceholder('Buscar por comprador o vendedor...').filter({ visible: true }).fill('Rocío');
+    await page.getByPlaceholder('Buscar ventas...').filter({ visible: true }).fill('Rocío');
     const fila = page.getByRole('row').filter({ hasText: 'Rocío' });
     await expect(fila).toContainText('$10.500');
     await expect(fila).toContainText('Efectivo');
@@ -43,7 +43,7 @@ test.describe('Ventas/Pedidos (US-7)', () => {
     await expect(comprobante.getByRole('row', { name: /Empanadas · ½ docena Carne picante \$6\.500/ })).toBeVisible();
     await page.getByRole('button', { name: 'Volver' }).click();
 
-    await page.getByPlaceholder('Buscar por comprador o vendedor...').filter({ visible: true }).fill('Rocío');
+    await page.getByPlaceholder('Buscar ventas...').filter({ visible: true }).fill('Rocío');
     await fila.getByTitle('Anular venta').click();
     await page.getByRole('button', { name: 'Confirmar anulación' }).click();
     await expect(page.getByText('Venta anulada y stock repuesto.')).toBeVisible();

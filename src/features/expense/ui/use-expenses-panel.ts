@@ -10,7 +10,8 @@ import { useExpenseStore } from '@/features/expense/store/expense.store';
 import { useEntityActions } from '@/hooks/use-entity-actions';
 import { useEntityManager } from '@/hooks/use-entity-manager';
 import { argentinaMonth } from '@/lib/format-date-time';
-import { normalizeForSearch } from '@/lib/utils';
+import { formatMoney } from '@/lib/format-money';
+import { matchesAllWords } from '@/lib/utils';
 
 export type DateRange = { start: string; end: string };
 
@@ -25,11 +26,10 @@ export type ExpensesPanelModel = {
 };
 
 function visible(expenses: ExpenseDef[], search: string, { start, end }: DateRange): ExpenseDef[] {
-  const terms = normalizeForSearch(search).split(/\s+/);
   return expenses.filter((expense) => {
-    const text = normalizeForSearch(`${expense.invoiceNumber} ${expense.title} ${expense.providerName ?? ''}`);
+    const text = [expense.invoiceNumber, expense.title, expense.providerName, formatMoney(expense.amount)].join(' ');
     const inRange = (!start || expense.invoiceDate >= start) && (!end || expense.invoiceDate <= end);
-    return inRange && terms.every((term) => text.includes(term));
+    return inRange && matchesAllWords(text, search);
   });
 }
 

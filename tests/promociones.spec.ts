@@ -20,7 +20,7 @@ test.describe('Promociones (US-8)', () => {
     await page.getByRole('button', { name: 'Crear promoción' }).click();
     await expect(page.getByText('Se registró la promoción')).toBeVisible();
 
-    await page.getByPlaceholder('Buscar promoción por nombre...').filter({ visible: true }).fill(nombre);
+    await page.getByPlaceholder('Buscar promos...').filter({ visible: true }).fill(nombre);
     const fila = page.getByRole('row', { name: new RegExp(nombre) });
     await expect(fila.getByText('Empanadas · 1 docena + Coca-Cola · 1 unidad')).toBeVisible();
     await expect(fila.getByText('$15.000')).toBeVisible();

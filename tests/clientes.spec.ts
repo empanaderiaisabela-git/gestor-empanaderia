@@ -16,7 +16,7 @@ const UI = {
   // Botones y Búsqueda
   BTN_AGREGAR_NUEVO: 'Registrar Cliente', // Ej: 'Agregar Cliente'
   BTN_REGISTRAR: 'Guardar Cliente', // Ej: 'Registrar Cliente' o 'Guardar'
-  BUSQUEDA: 'Buscar clientes por nombre,', // Ej: 'Buscar cliente por'
+  BUSQUEDA: 'Buscar clientes...',
 
   // Botones comunes (copiados de providers, ajustar si necesario)
   BTN_EDITAR: 'Editar Profile',

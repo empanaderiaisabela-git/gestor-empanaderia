@@ -18,7 +18,7 @@ test.describe('Envíos (US-58)', () => {
     await page.getByRole('button', { name: 'Guardar envío' }).click();
     await expect(page.getByText('Se registró el envío')).toBeVisible();
 
-    await page.getByPlaceholder('Buscar por título o detalle...').filter({ visible: true }).fill(titulo);
+    await page.getByPlaceholder('Buscar envíos...').filter({ visible: true }).fill(titulo);
     const fila = page.getByRole('row', { name: new RegExp(titulo) });
     await expect(fila).toContainText('Barrio A hasta Barrio B');
     await expect(fila).toContainText('$1.500');

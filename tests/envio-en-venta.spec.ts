@@ -33,7 +33,7 @@ test.describe('envío en la venta (US-59)', () => {
     await expect(page.getByText(/Venta registrada/)).toBeVisible();
 
     await page.goto('/ventas');
-    await page.getByPlaceholder('Buscar por comprador o vendedor...').filter({ visible: true }).fill(cliente);
+    await page.getByPlaceholder('Buscar ventas...').filter({ visible: true }).fill(cliente);
     await page.getByRole('row').filter({ hasText: cliente }).getByTitle('Ver comprobante').click();
     await expect(page.getByRole('article', { name: 'Comprobante' })).toContainText(`Envío · ${titulo}$1.500`);
   });

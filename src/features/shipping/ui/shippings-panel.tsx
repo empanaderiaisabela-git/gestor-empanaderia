@@ -23,7 +23,7 @@ function ShippingsToolbar({ model }: { model: ShippingsPanelModel }): JSX.Elemen
       Nuevo envío
     </Button>
   );
-  return <PanelToolbar search={manager.search} onSearchChange={manager.setSearch} searchPlaceholder='Buscar por título o detalle...' searchPlaceholderMobile='Buscar envíos...' data-testid={TEST_IDS.general.inputBusquedaTabla} filters={inactive} actions={add} />;
+  return <PanelToolbar search={manager.search} onSearchChange={manager.setSearch} searchPlaceholder='Buscar envíos...' data-testid={TEST_IDS.general.inputBusquedaTabla} filters={inactive} actions={add} />;
 }
 
 export function ShippingsPanel(): JSX.Element {

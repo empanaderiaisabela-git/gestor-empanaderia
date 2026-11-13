@@ -5,7 +5,7 @@ const GUSTO = 'Quilmes 500 ml';
 
 async function alternarEnAlta(page: Page, boton: 'Ocultar del catálogo' | 'Mostrar en el catálogo'): Promise<void> {
   await page.goto('/alta-de-productos');
-  await page.getByPlaceholder('Buscar gusto o bebida por nombre...').filter({ visible: true }).fill(GUSTO);
+  await page.getByPlaceholder('Buscar gustos...').filter({ visible: true }).fill(GUSTO);
   await page.getByRole('row').filter({ hasText: GUSTO }).getByTitle(boton).focus();
   await page.keyboard.press('Enter');
 }

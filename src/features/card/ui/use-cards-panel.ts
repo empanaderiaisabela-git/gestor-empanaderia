@@ -4,11 +4,12 @@ import { deleteCardAction } from '@/features/card/actions/delete-card';
 import { fetchCards } from '@/features/card/actions/fetch-cards';
 import { toggleCardActiveAction } from '@/features/card/actions/toggle-card-active';
 import { updateCardAction } from '@/features/card/actions/update-card';
+import { describePlans } from '@/features/card/domain/card-describe';
 import type { CardDef, CardInput, CardUpdateInput } from '@/features/card/domain/card.schema';
 import { useCardStore } from '@/features/card/store/card.store';
 import { useEntityActions } from '@/hooks/use-entity-actions';
 import { useEntityManager } from '@/hooks/use-entity-manager';
-import { normalizeForSearch } from '@/lib/utils';
+import { matchesAllWords } from '@/lib/utils';
 
 export type CardsPanelModel = {
   manager: ReturnType<typeof useEntityManager<CardDef>>;
@@ -20,8 +21,8 @@ export type CardsPanelModel = {
 };
 
 function visible(cards: CardDef[], search: string, showInactive: boolean): CardDef[] {
-  const terms = normalizeForSearch(search).split(/\s+/);
-  return cards.filter((card) => terms.every((term) => normalizeForSearch(card.name).includes(term)) && (showInactive || card.isActive));
+  const searchText = (card: CardDef): string => [card.name, describePlans(card.plans), card.isActive ? '' : 'Inactiva'].join(' ');
+  return cards.filter((card) => matchesAllWords(searchText(card), search) && (showInactive || card.isActive));
 }
 
 function useInitialLoad(isLoaded: boolean, setCards: (rows: CardDef[]) => void): boolean {

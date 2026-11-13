@@ -41,7 +41,7 @@ test.describe('vender una promo desde el tablero (US-9)', () => {
     await expect(page.getByText('Venta registrada por $9.000')).toBeVisible();
 
     await page.goto('/ventas');
-    await page.getByPlaceholder('Buscar por comprador o vendedor...').filter({ visible: true }).fill('Comprador promo');
+    await page.getByPlaceholder('Buscar ventas...').filter({ visible: true }).fill('Comprador promo');
     await expect(page.getByRole('row').filter({ hasText: 'Comprador promo' })).toContainText(`Promo: ${nombre}: Muzza y cebolla · Sprite 1,5 L`);
   });
 
@@ -63,7 +63,7 @@ test.describe('vender una promo desde el tablero (US-9)', () => {
     await expect(page.getByText('Venta registrada por $9.000')).toBeVisible();
 
     await page.goto('/ventas');
-    await page.getByPlaceholder('Buscar por comprador o vendedor...').filter({ visible: true }).fill('Comprador sprite fija');
+    await page.getByPlaceholder('Buscar ventas...').filter({ visible: true }).fill('Comprador sprite fija');
     await expect(page.getByRole('row').filter({ hasText: 'Comprador sprite fija' })).toContainText(`Promo: ${nombre}: Muzza y cebolla · Sprite 1,5 L`);
   });
 });

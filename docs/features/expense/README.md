@@ -15,7 +15,7 @@ demuestra).
 - Número de factura único, sin distinguir mayúsculas, de hasta 30 caracteres (cliente, 2026-10-25).
 - Título de hasta 100 caracteres; monto mayor a 0 con 2 decimales como máximo; fecha de la factura obligatoria, sin
   foto (cliente, 2026-10-25).
-- La lista va por fecha de la factura, la más nueva primero, con búsqueda por número o título.
+- La lista va por fecha de la factura, la más nueva primero, con búsqueda por número, título, proveedor o monto (US-71).
 - "Desde" y "Hasta" filtran por fecha de la factura, ambas incluidas, y arrancan en el 1 y el último día del mes en
   curso, en hora de Argentina (US-33, D-13). La X las limpia y muestra todos los gastos. El filtro es del lado del
   cliente: `fetchExpenses` ya trae todos.
@@ -56,6 +56,6 @@ Cada cambio se audita con la entidad `EXPENSE` ("GASTO" en Auditoría).
 
 ## Pantallas
 
-`ExpensesPanel`: búsqueda por número o título, "Desde" y "Hasta" (`DateRangePicker`) y "Nuevo gasto"; grilla con fecha de la factura, número,
+`ExpensesPanel`: búsqueda por cualquier columna salvo la fecha (US-71), "Desde" y "Hasta" (`DateRangePicker`) y "Nuevo gasto"; grilla con fecha de la factura, número,
 título, monto y acciones (editar, borrar); en mobile, tarjetas. El formulario (`ExpenseFormModal`) pide número,
 título, monto y fecha de la factura (por defecto, hoy).
