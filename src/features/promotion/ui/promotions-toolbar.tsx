@@ -12,8 +12,7 @@ export function PromotionsToolbar({ model }: { model: PromotionsPanelModel }): J
     <PanelToolbar
       search={manager.search}
       onSearchChange={manager.setSearch}
-      searchPlaceholder='Buscar promoción por nombre...'
-      searchPlaceholderMobile='Buscar promos...'
+      searchPlaceholder='Buscar promos...'
       data-testid={TEST_IDS.general.inputBusquedaTabla}
       filters={<ToggleFilter id='showInactive-promotion' checked={model.showInactive} onChange={model.setShowInactive} label='Ver Inactivas' data-testid={TEST_IDS.general.btnVerOcultos} />}
       actions={

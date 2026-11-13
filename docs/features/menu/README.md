@@ -149,7 +149,7 @@ Si Cloudinary sube la foto pero falla el guardado en la base, la imagen se borra
 
 `src/app/(main)/alta-de-productos/page.tsx` → `MenuPanel`:
 
-- La barra con búsqueda, filtro por grupo y "Ver inactivos", y la grilla: tabla en escritorio y tarjetas en
+- La barra con búsqueda por grupo, nombre, stock, "Inactivo" o "En catálogo" (US-71), filtro por grupo y "Ver inactivos", y la grilla: tabla en escritorio y tarjetas en
   mobile.
 - El formulario (`MenuItemFormModal`) pide sólo "Grupo" y "Nombre del gusto o bebida". El grupo no se cambia al editar.
 - La grilla muestra Grupo, Gusto / bebida, Stock y Acciones. No lista las bases (US-29).

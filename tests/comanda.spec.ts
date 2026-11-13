@@ -37,7 +37,7 @@ test.describe('gustos agrupados y comanda (US-64, US-65)', () => {
       };
     });
     await page.goto('/ventas');
-    await page.getByPlaceholder('Buscar por comprador o vendedor...').filter({ visible: true }).fill(cliente);
+    await page.getByPlaceholder('Buscar ventas...').filter({ visible: true }).fill(cliente);
     const venta = page.getByRole('row').filter({ hasText: cliente });
     const [comanda] = await Promise.all([page.waitForEvent('popup'), venta.getByTitle('Imprimir comanda').click()]);
     const ticket = comanda.locator('pre');

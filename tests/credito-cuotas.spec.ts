@@ -35,7 +35,7 @@ test.describe('cobrar con crédito en cuotas (US-11)', () => {
     await expect(page.getByText('Venta registrada por $3.000')).toBeVisible();
 
     await page.goto('/ventas');
-    await page.getByPlaceholder('Buscar por comprador o vendedor...').filter({ visible: true }).fill('Comprador crédito');
+    await page.getByPlaceholder('Buscar ventas...').filter({ visible: true }).fill('Comprador crédito');
     const fila = page.getByRole('row').filter({ hasText: 'Comprador crédito' });
     await expect(fila).toContainText('$3.000');
     await expect(fila).toContainText(`Crédito · ${tarjeta} · 3 cuotas`);

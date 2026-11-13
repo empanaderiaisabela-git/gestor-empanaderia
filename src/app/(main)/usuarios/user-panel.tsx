@@ -14,7 +14,7 @@ import { useUserStore } from '@/features/user/store/user.store';
 import { useEntityActions } from '@/hooks/use-entity-actions';
 import { getUserColumns } from '@/config/tables/user-columns';
 import { useEntityManager } from '@/hooks/use-entity-manager';
-import { normalizeForSearch } from '@/lib/utils';
+import { matchesAllWords } from '@/lib/utils';
 import { UserModal } from '@/features/user/ui/components/user-modal';
 import { ConfirmModal } from '@/components/ui/responsive-modal';
 import { GlobalMessage } from '@/components/ui/alert';
@@ -52,10 +52,9 @@ export function UserPanel() {
   const filteredUsers = useMemo(() =>
     users
       .filter((u) => {
-        const terms = normalizeForSearch(search).split(/\s+/);
         const roleDisplay = u.role === 'admin' ? 'administrador' : 'vendedor';
-        const text = [normalizeForSearch(u.username), normalizeForSearch(u.role), normalizeForSearch(roleDisplay)].join(' ');
-        return terms.every((w) => text.includes(w)) && (showInactives || u.isActive);
+        const text = [u.username, u.role, roleDisplay, u.isActive ? '' : 'Inactivo'].join(' ');
+        return matchesAllWords(text, search) && (showInactives || u.isActive);
       })
       .sort((a, b) => (a.isActive === b.isActive ? 0 : a.isActive ? -1 : 1)),
     [users, search, showInactives]
@@ -70,8 +69,7 @@ export function UserPanel() {
       <PanelToolbar
         search={search}
         onSearchChange={setSearch}
-        searchPlaceholder='Buscar usuarios por nombre o rol...'
-        searchPlaceholderMobile='Buscar usuarios...'
+        searchPlaceholder='Buscar usuarios...'
         data-testid={TEST_IDS.general.inputBusquedaTabla}
         filters={
           <ToggleFilter id='showInactives-user' checked={showInactives} onChange={setShowInactives} label='Ver Inactivos' data-testid={TEST_IDS.general.btnVerOcultos} />

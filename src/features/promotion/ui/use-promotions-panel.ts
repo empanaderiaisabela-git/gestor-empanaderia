@@ -4,11 +4,13 @@ import { deletePromotionAction } from '@/features/promotion/actions/delete-promo
 import { fetchPromotions } from '@/features/promotion/actions/fetch-promotions';
 import { togglePromotionActiveAction } from '@/features/promotion/actions/toggle-promotion-active';
 import { updatePromotionAction } from '@/features/promotion/actions/update-promotion';
+import { describeComponents } from '@/features/promotion/domain/promotion-describe';
 import type { PromotionDef, PromotionInput, PromotionUpdateInput } from '@/features/promotion/domain/promotion.schema';
 import { usePromotionStore } from '@/features/promotion/store/promotion.store';
 import { useEntityActions } from '@/hooks/use-entity-actions';
 import { useEntityManager } from '@/hooks/use-entity-manager';
-import { normalizeForSearch } from '@/lib/utils';
+import { formatMoney } from '@/lib/format-money';
+import { matchesAllWords } from '@/lib/utils';
 
 export type PromotionsPanelModel = {
   manager: ReturnType<typeof useEntityManager<PromotionDef>>;
@@ -20,8 +22,8 @@ export type PromotionsPanelModel = {
 };
 
 function visible(promotions: PromotionDef[], search: string, showInactive: boolean): PromotionDef[] {
-  const terms = normalizeForSearch(search).split(/\s+/);
-  return promotions.filter((promotion) => terms.every((term) => normalizeForSearch(promotion.name).includes(term)) && (showInactive || promotion.isActive));
+  const searchText = (promotion: PromotionDef): string => [promotion.name, describeComponents(promotion.components), formatMoney(promotion.price), promotion.isActive ? '' : 'Inactiva'].join(' ');
+  return promotions.filter((promotion) => matchesAllWords(searchText(promotion), search) && (showInactive || promotion.isActive));
 }
 
 function useInitialLoad(isLoaded: boolean, setPromotions: (rows: PromotionDef[]) => void): boolean {

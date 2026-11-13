@@ -35,9 +35,9 @@ test.describe('menú y navegación por rol (US-2)', () => {
       await expect(page.getByRole('columnheader')).toHaveText(['Categoría', 'Gusto / bebida', 'Stock', 'Precio de venta']);
       await expect(page.getByRole('button', { name: 'Ingresar stock' })).toHaveCount(0);
       await page.getByLabel('Filtrar Stock').selectOption('todos');
-      await page.getByPlaceholder('Buscar gusto o bebida...').filter({ visible: true }).fill('Humita');
+      await page.getByPlaceholder('Buscar...', { exact: true }).filter({ visible: true }).fill('Humita');
       await expect(page.getByRole('row', { name: /Humita/ }).first()).toContainText(/1 unidad: \$/);
-      await page.getByPlaceholder('Buscar gusto o bebida...').filter({ visible: true }).fill('Muzza');
+      await page.getByPlaceholder('Buscar...', { exact: true }).filter({ visible: true }).fill('Muzza');
       await expect(page.getByRole('cell', { name: 'Muzza', exact: true })).toHaveCount(0);
     });
   });

@@ -23,7 +23,7 @@ test.describe('venta con el pago pendiente (US-68, US-69)', () => {
       };
     });
     await page.goto('/ventas');
-    await page.getByPlaceholder('Buscar por comprador o vendedor...').filter({ visible: true }).fill(cliente);
+    await page.getByPlaceholder('Buscar ventas...').filter({ visible: true }).fill(cliente);
     const venta = page.getByRole('row').filter({ hasText: cliente });
     await expect(venta).toContainText('Pendiente');
     const [comanda] = await Promise.all([page.waitForEvent('popup'), venta.getByTitle('Imprimir comanda').click()]);

@@ -33,7 +33,7 @@ test.describe('Registrar aumento (US-50)', () => {
     await page.getByRole('button', { name: 'Aplicar aumento' }).click();
     await expect(page.getByText('Aumento aplicado a 1 producto')).toBeVisible();
 
-    await page.getByPlaceholder('Buscar gusto o bebida...').filter({ visible: true }).fill(bebida);
+    await page.getByPlaceholder('Buscar...', { exact: true }).filter({ visible: true }).fill(bebida);
     await expect(page.getByRole('row', { name: new RegExp(bebida) }).getByText('1 unidad: $12.100')).toBeVisible();
   });
 });

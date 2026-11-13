@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useAuthStore } from '@/features/auth/store/auth.store';
 import { fetchMenuItems } from '@/features/menu/actions/fetch-menu-items';
 import { setHamPriceAction } from '@/features/menu/actions/set-ham-price';
 import type { HamPriceDef, HamPriceInput } from '@/features/menu/domain/pizza-extra.schema';
@@ -16,6 +17,7 @@ import { overwriteStockAction } from '@/features/stock/actions/overwrite-stock';
 import type { PriceIncreaseInput } from '@/features/stock/domain/stock-increase';
 import type { StockEntryDef, StockEntryInput, StockLossInput, StockOverwriteInput, StockPricingInput } from '@/features/stock/domain/stock.schema';
 import { matchesAllWords } from '@/lib/utils';
+import { stockSearchText } from './stock-search';
 import { useHamPrice } from './use-ham-price';
 
 export type StockDialog = { kind: 'entry' | 'loss' | 'pricing' | 'history'; item: MenuItemDef | null } | { kind: 'edit'; item: MenuItemDef; entry: StockEntryDef | null } | null;
@@ -68,11 +70,12 @@ export function useStockPanel(): StockPanelModel {
   const [stockOrder, setStockOrder] = useState<StockOrder>('categoria');
   const [dialog, setDialog] = useState<StockDialog>(null);
   const [message, setMessage] = useState<Message>(null);
+  const isAdmin = useAuthStore((state) => state.user?.role) === 'admin';
   const activeItems = useMemo(() => allItems.filter((item) => item.isActive), [allItems]);
   const items = useMemo(() => {
-    const matching = activeItems.filter((item) => matchesAllWords(item.name, search) && (categoryFilter === 'todos' || categoryOf(item) === categoryFilter));
+    const matching = activeItems.filter((item) => matchesAllWords(stockSearchText(item, isAdmin), search) && (categoryFilter === 'todos' || categoryOf(item) === categoryFilter));
     return orderStock(matching, stockOrder);
-  }, [activeItems, search, categoryFilter, stockOrder]);
+  }, [activeItems, search, categoryFilter, stockOrder, isAdmin]);
   const submit = async (result: Promise<{ success: boolean; error?: string; message?: string }>): Promise<string | null> => {
     const outcome = await result;
     if (!outcome.success) return outcome.error ?? 'No se pudo registrar el movimiento';

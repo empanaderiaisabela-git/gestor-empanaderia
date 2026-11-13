@@ -180,7 +180,7 @@ devuelve `HAS_RELATIONS` (decisión provisoria D-1).
 ## Historial, comprobante y anulación (US-7)
 
 **Ventas/Pedidos** (`/ventas`) es el historial: fecha y hora de Argentina, comprador ("Sin nombre" si no hay),
-vendedor, el pedido, los medios de pago, el descuento y el total, con búsqueda por comprador o vendedor y filtro por
+vendedor, el pedido, los medios de pago, el descuento y el total, con búsqueda por cualquier columna salvo la fecha (US-71) y filtro por
 fechas (días de Argentina, con `argentinaDay`). **"Nuevo pedido"** abre el tablero; reemplaza al "Nueva Venta" del
 POS viejo ("Consideraciones del primer sprint" de `specs.md`).
 

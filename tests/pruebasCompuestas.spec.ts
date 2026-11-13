@@ -17,7 +17,7 @@ test.describe.serial('Pruebas compuestas: restricciones de eliminación', () => 
     await expect(page.getByText(/Venta registrada por/)).toBeVisible();
 
     await page.goto('/alta-de-productos');
-    await page.getByPlaceholder('Buscar gusto o bebida por nombre...').filter({ visible: true }).fill(GUSTO);
+    await page.getByPlaceholder('Buscar gustos...').filter({ visible: true }).fill(GUSTO);
     await page.getByRole('row').filter({ hasText: GUSTO }).getByTitle('Eliminar').focus();
     await page.keyboard.press('Enter');
     await page.getByRole('button', { name: 'Eliminar', exact: true }).last().click();

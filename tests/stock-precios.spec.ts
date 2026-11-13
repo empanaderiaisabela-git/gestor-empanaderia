@@ -1,7 +1,7 @@
 import { expect, type Locator, type Page, test } from '@playwright/test';
 
 async function filaDeStock(page: Page, nombre: string): Promise<Locator> {
-  await page.getByPlaceholder('Buscar gusto o bebida...').filter({ visible: true }).fill(nombre);
+  await page.getByPlaceholder('Buscar...', { exact: true }).filter({ visible: true }).fill(nombre);
   return page.getByRole('row').filter({ has: page.getByRole('cell', { name: nombre, exact: true }) });
 }
 
@@ -33,7 +33,7 @@ test.describe('Precios en Stock (US-17 y US-28)', () => {
       await expect(page.getByText(`Stock ingresado: ${bebida} 1.5L ${sabor} queda con 5`)).toBeVisible();
     }
 
-    await page.getByPlaceholder('Buscar gusto o bebida...').filter({ visible: true }).fill(bebida);
+    await page.getByPlaceholder('Buscar...', { exact: true }).filter({ visible: true }).fill(bebida);
     await expect(page.getByRole('row', { name: new RegExp(`${bebida} 1.5L Pera`) }).getByText('1 unidad: $11.000')).toBeVisible();
   });
 

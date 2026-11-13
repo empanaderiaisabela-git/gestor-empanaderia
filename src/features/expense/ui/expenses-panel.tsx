@@ -23,7 +23,7 @@ function ExpensesToolbar({ model }: { model: ExpensesPanelModel }): JSX.Element 
       Nuevo gasto
     </Button>
   );
-  return <PanelToolbar search={manager.search} onSearchChange={manager.setSearch} searchPlaceholder='Buscar por número de factura o título...' searchPlaceholderMobile='Buscar gastos...' data-testid={TEST_IDS.general.inputBusquedaTabla} filters={range} actions={add} />;
+  return <PanelToolbar search={manager.search} onSearchChange={manager.setSearch} searchPlaceholder='Buscar gastos...' data-testid={TEST_IDS.general.inputBusquedaTabla} filters={range} actions={add} />;
 }
 
 export function ExpensesPanel(): JSX.Element {

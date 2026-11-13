@@ -60,7 +60,7 @@ recargo · 3 cuotas +10 %").
 
 ## Pantallas
 
-`src/app/(main)/tarjetas/page.tsx` → `CardsPanel`: barra con búsqueda, "Ver Inactivas" y "Nueva
+`src/app/(main)/tarjetas/page.tsx` → `CardsPanel`: barra con búsqueda por nombre, planes o "Inactiva" (US-71), "Ver Inactivas" y "Nueva
 tarjeta"; grilla con el nombre (marca "Inactiva"), los planes y las acciones; en mobile, tarjetas con lo mismo. El
 formulario (`CardFormModal`) pide el nombre y la lista de planes (cuotas y recargo %), con "Agregar plan" y "Quitar
 plan".

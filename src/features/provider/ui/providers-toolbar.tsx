@@ -13,8 +13,7 @@ export function ProvidersToolbar({ model }: { model: ProvidersPanelModel }): JSX
     <PanelToolbar
       search={manager.search}
       onSearchChange={manager.setSearch}
-      searchPlaceholder='Buscar distribuidor por nombre, teléfono o email...'
-      searchPlaceholderMobile='Buscar proveedores...'
+      searchPlaceholder='Buscar proveedores...'
       data-testid={TEST_IDS.general.inputBusquedaTabla}
       filters={<ToggleFilter id='showInactive-provider' checked={model.showInactive} onChange={model.setShowInactive} label='Ver Inactivos' data-testid={TEST_IDS.general.btnVerOcultos} />}
       actions={

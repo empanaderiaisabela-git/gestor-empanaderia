@@ -8,7 +8,8 @@ import type { ShippingDef, ShippingInput, ShippingUpdateInput } from '@/features
 import { useShippingStore } from '@/features/shipping/store/shipping.store';
 import { useEntityActions } from '@/hooks/use-entity-actions';
 import { useEntityManager } from '@/hooks/use-entity-manager';
-import { normalizeForSearch } from '@/lib/utils';
+import { formatMoney } from '@/lib/format-money';
+import { matchesAllWords } from '@/lib/utils';
 
 export type ShippingsPanelModel = {
   manager: ReturnType<typeof useEntityManager<ShippingDef>>;
@@ -20,8 +21,7 @@ export type ShippingsPanelModel = {
 };
 
 function visible(shippings: ShippingDef[], search: string, showInactive: boolean): ShippingDef[] {
-  const terms = normalizeForSearch(search).split(/\s+/);
-  const matches = (shipping: ShippingDef): boolean => terms.every((term) => normalizeForSearch(`${shipping.title} ${shipping.detail}`).includes(term));
+  const matches = (shipping: ShippingDef): boolean => matchesAllWords([shipping.title, shipping.detail, formatMoney(shipping.amount), shipping.isActive ? '' : 'Inactivo'].join(' '), search);
   const activeFirst = (a: ShippingDef, b: ShippingDef): number => Number(b.isActive) - Number(a.isActive);
   return shippings.filter((shipping) => matches(shipping) && (showInactive || shipping.isActive)).sort(activeFirst);
 }

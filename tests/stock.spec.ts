@@ -11,13 +11,13 @@ test.describe('Stock (US-4, US-34)', () => {
     await page.getByRole('button', { name: 'Ingresar', exact: true }).click();
 
     await expect(page.getByText('Stock ingresado: Humita queda con 60')).toBeVisible();
-    await page.getByPlaceholder('Buscar gusto o bebida...').filter({ visible: true }).fill('Humita');
+    await page.getByPlaceholder('Buscar...', { exact: true }).filter({ visible: true }).fill('Humita');
     await expect(page.getByRole('row', { name: /Humita/ }).getByText('60', { exact: true })).toBeVisible();
   });
 
   test('el historial muestra el ingreso con su costo y su usuario', async ({ page }) => {
     await page.goto('/stock');
-    await page.getByPlaceholder('Buscar gusto o bebida...').filter({ visible: true }).fill('Verdura');
+    await page.getByPlaceholder('Buscar...', { exact: true }).filter({ visible: true }).fill('Verdura');
     await page.getByRole('row', { name: /Verdura/ }).getByTitle('Ingresar stock').click();
     await page.getByLabel('Cantidad que entra').fill('6');
     await page.getByRole('button', { name: 'Ingresar', exact: true }).click();
@@ -30,7 +30,7 @@ test.describe('Stock (US-4, US-34)', () => {
 
   test('con un mínimo mayor al stock, el stock se ve amarillo (US-45)', async ({ page }) => {
     await page.goto('/stock');
-    await page.getByPlaceholder('Buscar gusto o bebida...').filter({ visible: true }).fill('Muzza y pepperoni');
+    await page.getByPlaceholder('Buscar...', { exact: true }).filter({ visible: true }).fill('Muzza y pepperoni');
     await page.getByRole('row', { name: /Muzza y pepperoni/ }).getByTitle('Ingresar stock').click();
     await page.getByLabel('Cantidad que entra').fill('1');
     await page.getByLabel('Stock mínimo (opcional)').fill('100');

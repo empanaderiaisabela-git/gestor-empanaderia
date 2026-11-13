@@ -155,8 +155,8 @@ La grilla lee los gustos con `fetchMenuItems` del feature `menu`. La tabla (desd
 
 `src/app/(main)/stock/page.tsx` → `StockPanel`:
 
-- Barra con búsqueda por palabras: aparece lo que tiene en el nombre todas las palabras escritas, en cualquier
-  orden y sin distinguir mayúsculas ni acentos ("empanada carne" encuentra "Empanada de carne"; `matchesAllWords`
+- Barra con búsqueda por palabras: aparece la fila que tiene todas las palabras escritas en cualquier columna (sólo el admin busca en el costo; US-71), en cualquier
+  orden y sin distinguir mayúsculas ni acentos ("empanada carne" encuentra "Empanada de carne"; ignora "$" y "." para que "12500" encuentre "$12.500"; `matchesAllWords`
   de `src/lib/utils.ts`, US-52), el desplegable "Ordenar Stock" (orden por categoría, stock creciente o decreciente, solo sin
   stock o quitar sin stock; US-34, `domain/stock-order.ts`), el filtro por categoría ("Filtrar Stock") e "Ingresar
   stock". Al ordenar, los gustos sin stock propio van al final y no cuentan como "sin stock" (D-16).

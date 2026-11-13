@@ -34,8 +34,7 @@ export function MenuToolbar({ model }: { model: MenuPanelModel }): JSX.Element {
     <PanelToolbar
       search={manager.search}
       onSearchChange={manager.setSearch}
-      searchPlaceholder='Buscar gusto o bebida por nombre...'
-      searchPlaceholderMobile='Buscar gustos...'
+      searchPlaceholder='Buscar gustos...'
       data-testid={TEST_IDS.general.inputBusquedaTabla}
       filters={
         <>

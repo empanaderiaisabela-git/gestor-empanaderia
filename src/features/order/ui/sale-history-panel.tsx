@@ -25,7 +25,7 @@ function Toolbar({ model }: { model: SaleHistoryModel }): JSX.Element {
       <Plus className='w-5 h-5' /> Nuevo pedido
     </Link>
   );
-  return <PanelToolbar search={filters.search} onSearchChange={(search) => setFilters({ search })} searchPlaceholder='Buscar por comprador o vendedor...' searchPlaceholderMobile='Buscar ventas...' data-testid={TEST_IDS.general.inputBusquedaTabla} filters={dates} actions={newOrder} />;
+  return <PanelToolbar search={filters.search} onSearchChange={(search) => setFilters({ search })} searchPlaceholder='Buscar ventas...' data-testid={TEST_IDS.general.inputBusquedaTabla} filters={dates} actions={newOrder} />;
 }
 
 function VoidConfirm({ model }: { model: SaleHistoryModel }): JSX.Element {

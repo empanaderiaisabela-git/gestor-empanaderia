@@ -28,7 +28,7 @@ test.describe('Gastos (US-14, US-33)', () => {
     await page.getByRole('button', { name: 'Anotar gasto' }).click();
     await expect(page.getByText('Se registró el gasto')).toBeVisible();
 
-    await page.getByPlaceholder('Buscar por número de factura o título...').filter({ visible: true }).fill(numero);
+    await page.getByPlaceholder('Buscar gastos...').filter({ visible: true }).fill(numero);
     const fila = page.getByRole('row', { name: new RegExp(numero) });
     await expect(fila).toContainText(hoy.split('-').reverse().join('/'));
     await expect(fila).toContainText(proveedor);

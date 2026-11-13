@@ -9,7 +9,7 @@ import type { ProviderDef, ProviderInput, ProviderUpdateInput } from '@/features
 import { useProviderStore } from '@/features/provider/store/provider.store';
 import { useEntityActions } from '@/hooks/use-entity-actions';
 import { useEntityManager } from '@/hooks/use-entity-manager';
-import { normalizeForSearch } from '@/lib/utils';
+import { matchesAllWords } from '@/lib/utils';
 
 export type ProvidersPanelModel = {
   role: string | undefined;
@@ -22,11 +22,7 @@ export type ProvidersPanelModel = {
 };
 
 function visible(providers: ProviderDef[], search: string, showInactive: boolean): ProviderDef[] {
-  const terms = normalizeForSearch(search).split(/\s+/);
-  const matches = (provider: ProviderDef): boolean => {
-    const text = [provider.name, provider.email, provider.phone].map((value) => normalizeForSearch(value)).join(' ');
-    return terms.every((term) => text.includes(term));
-  };
+  const matches = (provider: ProviderDef): boolean => matchesAllWords([provider.name, provider.email, provider.phone, provider.isActive ? '' : 'Inactivo'].join(' '), search);
   const activeFirst = (a: ProviderDef, b: ProviderDef): number => Number(b.isActive) - Number(a.isActive);
   return providers.filter((provider) => matches(provider) && (showInactive || provider.isActive)).sort(activeFirst);
 }

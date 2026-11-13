@@ -4,7 +4,7 @@ const grupo = (page: Page, nombre: string): Locator => page.getByRole('region', 
 const gusto = (page: Page, nombre: string): Locator => page.getByRole('list', { name: 'Gustos' }).getByRole('listitem').filter({ hasText: new RegExp(`^${nombre}\\$`) });
 
 async function filaDeStock(page: Page, nombre: string): Promise<Locator> {
-  await page.getByPlaceholder('Buscar gusto o bebida...').filter({ visible: true }).fill(nombre);
+  await page.getByPlaceholder('Buscar...', { exact: true }).filter({ visible: true }).fill(nombre);
   return page.getByRole('row').filter({ has: page.getByRole('cell', { name: nombre, exact: true }) });
 }
 

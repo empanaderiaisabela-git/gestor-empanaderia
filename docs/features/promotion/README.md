@@ -87,7 +87,7 @@ Cada cambio se audita con la entidad `PROMOTION` ("PROMOCIÓN" en Auditoría): n
 
 `src/app/(main)/promociones/page.tsx` → `PromotionsPanel`:
 
-- Barra con búsqueda por nombre, "Ver Inactivas" y "Nueva promoción".
+- Barra con búsqueda por nombre, contenido, precio o "Inactiva" (US-71), "Ver Inactivas" y "Nueva promoción".
 - Grilla con nombre (marca "Inactiva"), contenido ("Empanadas · 1 docena + Coca-Cola · 1 unidad × 2"; con bebida fija,
   "Coca-Cola 1.5L × 2"), precio de venta
   y acciones (activar o desactivar, editar, borrar). En mobile, tarjetas con lo mismo.

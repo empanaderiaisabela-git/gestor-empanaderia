@@ -5,12 +5,12 @@ import { deleteMenuItemAction } from '@/features/menu/actions/delete-menu-item';
 import { fetchMenuItems } from '@/features/menu/actions/fetch-menu-items';
 import { toggleMenuItemActiveAction } from '@/features/menu/actions/toggle-menu-item-active';
 import { updateMenuItemAction } from '@/features/menu/actions/update-menu-item';
-import type { MenuGroup } from '@/features/menu/domain/menu-groups';
+import { GROUPS, hasBase, type MenuGroup } from '@/features/menu/domain/menu-groups';
 import type { MenuItemDef, MenuItemInput, MenuItemUpdateInput } from '@/features/menu/domain/menu-item.schema';
 import { useMenuStore } from '@/features/menu/store/menu.store';
 import { useEntityActions } from '@/hooks/use-entity-actions';
 import { useEntityManager } from '@/hooks/use-entity-manager';
-import { normalizeForSearch } from '@/lib/utils';
+import { matchesAllWords } from '@/lib/utils';
 
 export type GroupFilter = MenuGroup | 'todos';
 
@@ -25,9 +25,11 @@ export type MenuPanelModel = {
   setGroupFilter: (value: GroupFilter) => void;
 };
 
+const searchText = (item: MenuItemDef): string =>
+  [GROUPS[item.group].label, item.name, hasBase(item.group) ? '' : item.stock.toLocaleString('es-AR'), item.isActive ? '' : 'Inactivo', item.isVisible ? 'En catálogo' : ''].join(' ');
+
 function visible(items: MenuItemDef[], { search, showInactive, groupFilter }: { search: string; showInactive: boolean; groupFilter: GroupFilter }): MenuItemDef[] {
-  const terms = normalizeForSearch(search).split(/\s+/);
-  return items.filter((item) => !item.isBase && terms.every((term) => normalizeForSearch(item.name).includes(term)) && (showInactive || item.isActive) && (groupFilter === 'todos' || item.group === groupFilter));
+  return items.filter((item) => !item.isBase && matchesAllWords(searchText(item), search) && (showInactive || item.isActive) && (groupFilter === 'todos' || item.group === groupFilter));
 }
 
 function useInitialLoad(isLoaded: boolean): boolean {

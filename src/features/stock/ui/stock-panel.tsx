@@ -44,7 +44,7 @@ export function StockPanel(): JSX.Element {
   );
   return (
     <div className='flex flex-col flex-1 h-full overflow-hidden'>
-      <PanelToolbar search={model.search} onSearchChange={model.setSearch} searchPlaceholder='Buscar gusto o bebida...' searchPlaceholderMobile='Buscar...' data-testid={TEST_IDS.general.inputBusquedaTabla} filters={<StockFilters model={model} isAdmin={isAdmin} />} actions={actions && (
+      <PanelToolbar search={model.search} onSearchChange={model.setSearch} searchPlaceholder='Buscar...' data-testid={TEST_IDS.general.inputBusquedaTabla} filters={<StockFilters model={model} isAdmin={isAdmin} />} actions={actions && (
           <div className='flex flex-col gap-2 w-full sm:w-auto'>
             <Button variant='secondary' onClick={() => setIncreaseOpen(true)} leftIcon={<TrendingUp className='w-5 h-5' />} className='h-11 w-full sm:w-auto shrink-0 bg-zinc-900! text-white! border-zinc-900! hover:bg-zinc-700! dark:bg-white! dark:text-zinc-900! dark:border-white! dark:hover:bg-zinc-200!'>
               Registrar aumento
